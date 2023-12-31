@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card border-0">
+                    <!-- Add a card header "Login" -->
+                    <div class="card-header bg-white text-black text-center">
+                        <h2>Login</h2>
+                    </div>
+
+                    <!-- Center the image, add padding, and resize -->
+                    <div class="card-img-top text-center my-3">
+                        <img src="static/images/login.png" alt="Login Image" style="max-width: 300px; width: 5rem; height: 5rem;" class="img-fluid">
+                    </div>
+
+                    <div class="card-body">
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        {% for message in messages %}
+                                            <li>{{ message }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+
+                        <form method="post" action="{{ url_for('login') }}">
+                            {{ form.hidden_tag() }}
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label visually-hidden">Email:</label>
+                                <div class="input-group">
+                                    <span class="input-group-text text-danger"><i class="bi bi-envelope"></i></span>
+                                    {{ form.email(class="form-control", placeholder="Email", required=True) }}
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label visually-hidden">Password:</label>
+                                <div class="input-group">
+                                    <span class="input-group-text text-secondary"><i class="bi bi-lock-fill"></i></span>
+                                    {{ form.password(class="form-control", placeholder="Password", required=True) }}
+                                </div>
+                            </div>
+
+                            <div class="mb-3 text-center">
+                                {{ form.submit(class="btn btn-dark btn-lg") }}
+                            </div>
+
+                            <p class="text-center"><a href="#" class="text-muted">Forgot Password?</a></p>
+                            <p class="text-center">Don't have an account? <a href="{{ url_for('register') }}" class="text-muted">SignUp here</a></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
