@@ -42,6 +42,7 @@ def index():
             file_list = [('pdf_files', (filename, open(os.path.join(uploads_folder, filename), 'rb'))) for filename in files]
 
             response = api_calls.dashboard(file_list, current_user.id)
+            print(response.json())
             if response.status_code == 200:
                 result = response.json()
                 # Extract the CSV data from the response
@@ -134,6 +135,19 @@ def result():
     result = session.get('result', {})
     return render_template('result.html', result=result)
 
+@app.route("/profile")
+def profile():
+    response = api_calls.get_user_profile(current_user.id)
+    if (response.status_code == 200):
+       result = response.json()
+       username = result.get('username', '')
+       email = result.get('email', '')
+
+       return render_template('profile.html', username=username,email = email)
+
+
+
 
 if __name__ == '__main__':
     app.run()
+
