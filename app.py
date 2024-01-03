@@ -135,7 +135,9 @@ def result():
     result = session.get('result', {})
     return render_template('result.html', result=result)
 
+
 @app.route("/profile")
+@login_required
 def profile():
     response = api_calls.get_user_profile(current_user.id)
     if (response.status_code == 200):
@@ -146,6 +148,22 @@ def profile():
        return render_template('profile.html', username=username,email = email)
 
 
+@app.route("/admin-dashboard")
+@login_required
+def admin_dashboard():
+    respo = api_calls.get_user_profile(current_user.id)
+    if (respo.status_code == 200):
+        admin_detail = respo.json()
+        username = admin_detail.get('username', '')
+        email = admin_detail.get('email', '')
+
+    response = api_calls.get_all_users(current_user.id)
+    if (response.status_code == 200):
+        result = response.json()
+        print(result)
+
+
+    return render_template('admin_panel.html',result = result, username=username, email=email)
 
 
 if __name__ == '__main__':
