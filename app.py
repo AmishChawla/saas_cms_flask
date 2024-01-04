@@ -166,6 +166,35 @@ def admin_dashboard():
     return render_template('admin_panel.html',result = result, username=username, email=email)
 
 
+
+@app.route("/admin/login", methods=['GET', 'POST'])
+def admin_login():
+    print('trying')
+    if current_user.is_authenticated:
+        # If the user is already logged in, redirect them to the index page or any other page
+        return redirect(url_for('admin_dashboard'))
+    form = forms.LoginForm()
+    print(form.validate_on_submit())
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+        response = api_calls.admin_login(email, password)
+
+        if (response.status_code == 200):
+            token = response.json().get('access_token')
+            user = User(user_id=token)
+            login_user(user)
+
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash('Login unsuccessful. Please check email and password.', category='error')
+
+    return render_template('admin_login.html', form=form)
+
+
+
+
+
 if __name__ == '__main__':
     app.run()
 

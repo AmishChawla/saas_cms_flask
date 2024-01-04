@@ -90,3 +90,24 @@ def get_all_users(access_token: str):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
+def admin_login(email, password):
+    print('trying3')
+    data = {
+        "username": email,
+        "password": password
+    }
+
+    try:
+        response = requests.post(constants.BASE_URL+'/admin/login', data=data)
+        print(response.text)
+        print(constants.BASE_URL+'/admin/login')
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")

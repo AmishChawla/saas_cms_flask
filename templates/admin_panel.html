@@ -19,6 +19,28 @@
     <link rel="stylesheet" href="../static/assets/css/style.css">
     <!-- End layout styles -->
     <link rel="shortcut icon" href="../static/assets/images/favicon.ico" />
+
+    <style>
+      .button {
+        border: none;
+        border-radius : 10px;
+        color: white;
+        padding: 10px 15px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+        margin: 4px 2px;
+        cursor: pointer;
+      }
+
+    .button1 {background-color: #04AA6D;} /* Green */
+    .button2 {background-color: red;}
+
+    </style>
+
+
+
   </head>
   <body>
     <div class="container-scroller">
@@ -79,7 +101,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="../../index.html">
+              <a class="nav-link" href="{{ url_for('logout') }}">
                 <span class="menu-title">Dashboard</span>
                 <i class="mdi mdi-home menu-icon"></i>
               </a>
@@ -144,7 +166,8 @@
                            {{ row.email }}
                           </td>
                           <td> {{ row.role }} </td>
-                          <td> May 15, 2015 </td>
+                          <td> <button class="button button1">View</button>
+                                <button class="button button2">Delete</button></td>
                         </tr>
 
                       {% endfor %}
