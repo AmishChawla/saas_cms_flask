@@ -135,7 +135,9 @@ def result():
     result = session.get('result', {})
     return render_template('result.html', result=result)
 
+
 @app.route("/profile")
+@login_required
 def profile():
     response = api_calls.get_user_profile(current_user.id)
     if (response.status_code == 200):
@@ -144,6 +146,51 @@ def profile():
        email = result.get('email', '')
 
        return render_template('profile.html', username=username,email = email)
+
+
+@app.route("/admin-dashboard")
+@login_required
+def admin_dashboard():
+    respo = api_calls.get_user_profile(current_user.id)
+    if (respo.status_code == 200):
+        admin_detail = respo.json()
+        username = admin_detail.get('username', '')
+        email = admin_detail.get('email', '')
+
+    response = api_calls.get_all_users(current_user.id)
+    if (response.status_code == 200):
+        result = response.json()
+        print(result)
+
+
+    return render_template('admin_panel.html',result = result, username=username, email=email)
+
+
+
+@app.route("/admin/login", methods=['GET', 'POST'])
+def admin_login():
+    print('trying')
+    if current_user.is_authenticated:
+        # If the user is already logged in, redirect them to the index page or any other page
+        return redirect(url_for('admin_dashboard'))
+    form = forms.LoginForm()
+    print(form.validate_on_submit())
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+        response = api_calls.admin_login(email, password)
+
+        if (response.status_code == 200):
+            token = response.json().get('access_token')
+            user = User(user_id=token)
+            login_user(user)
+
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash('Login unsuccessful. Please check email and password.', category='error')
+
+    return render_template('admin_login.html', form=form)
+
 
 
 
