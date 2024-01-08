@@ -90,3 +90,26 @@ def get_all_users(access_token: str):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
+
+def update_password(current_password, new_password, confirm_new_password, access_token: str):
+    headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {access_token}'}
+    data = {
+        "current_password": current_password,
+        "new_password": new_password,
+        "confirm_new_password": confirm_new_password,
+
+    }
+
+    try:
+        response = requests.put(constants.BASE_URL + '/update-password', json=data, headers=headers)
+        print(response.text)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")

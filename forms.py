@@ -28,3 +28,19 @@ class RegisterForm(FlaskForm):
         validators.EqualTo('password', message='Passwords must match.')
     ])
     submit = SubmitField('Register')
+
+
+class UpdatePasswordForm(FlaskForm):
+    current_password = PasswordField('Current Password', validators=[validators.DataRequired()])
+    new_password = PasswordField('Password', validators=[
+        validators.DataRequired(),
+        validators.Length(min=6),
+        validators.Regexp(
+            regex="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]",
+            message="Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character."
+        )
+    ])
+    confirm_new_password = PasswordField('Confirm Password', validators=[
+        validators.EqualTo('password', message='Passwords must match.')
+    ])
+    update = SubmitField('Update')

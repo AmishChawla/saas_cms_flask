@@ -166,6 +166,26 @@ def admin_dashboard():
     return render_template('admin_panel.html',result = result, username=username, email=email)
 
 
+@app.route('/update_password', methods=['PUT'])
+@login_required
+def update_password():
+    form = forms.UpdatePasswordForm()
+
+    if form.validate_on_submit():
+        current_password = form.current_password.data
+        new_password = form.new_password.data
+        confirm_new_password = form.confirm_new_password.data
+        response = api_calls.update_password(current_password, new_password, confirm_new_password, current_user.id)
+        print(response.status_code)
+        if (response.status_code == 200):
+            flash('Registration Successful', category='info')
+            return redirect(url_for('login'))
+        else:
+            flash('Registration unsuccessful. Please check username, email and password.', category='error')
+
+    return render_template('update_password.html', form=form)
+
+
 if __name__ == '__main__':
     app.run()
 
