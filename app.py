@@ -192,6 +192,13 @@ def admin_login():
     return render_template('admin_login.html', form=form)
 
 
+@app.route('/admin/logout')
+@login_required
+def admin_logout():
+    logout_user()
+    flash('Logout successful!', 'success')
+    return redirect(url_for('admin_login'))
+
 
 
 
