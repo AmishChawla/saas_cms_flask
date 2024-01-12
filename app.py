@@ -1,9 +1,12 @@
 import csv
+import json
 import os
 from io import StringIO
-
+import csv
+import ast
 from flask import Flask, render_template, redirect, url_for, flash, request, session
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from jinja2 import Environment, FileSystemLoader
 from werkzeug.utils import secure_filename
 import forms
 import api_calls
@@ -14,16 +17,27 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
 uploads_folder = 'uploads'
-
-
+########################################################################################################################
+# def parse_csv(csv_data):
+#     csv_file = StringIO(csv_data)
+#     csv_reader = list(csv.reader(csv_file))
+#     headers = csv_reader[0]
+#     data_rows = csv_reader[1:]
+#     return headers, data_rows
+#
+# env = Environment(loader=FileSystemLoader('templates'))
+# env.filters['parse_csv'] = parse_csv
+#########################################################################################################################
 @login_manager.user_loader
 def load_user(user_id):
     user = User(user_id)
     return user
 
+
 class User(UserMixin):
     def __init__(self, user_id):
         self.id = user_id
+
 
 @app.route('/', methods=['GET', 'POST'])
 @login_required
@@ -39,7 +53,8 @@ def index():
             # Save the file to a designated folder
             file.save('uploads/' + filename)
             files = [f for f in os.listdir(uploads_folder) if os.path.isfile(os.path.join(uploads_folder, f))]
-            file_list = [('pdf_files', (filename, open(os.path.join(uploads_folder, filename), 'rb'))) for filename in files]
+            file_list = [('pdf_files', (filename, open(os.path.join(uploads_folder, filename), 'rb'))) for filename in
+                         files]
 
             response = api_calls.dashboard(file_list, current_user.id)
             print(response.json())
@@ -57,7 +72,7 @@ def index():
                 # The first row contains headers, and the rest are data rows
                 headers = csv_reader[0]
                 data_rows = csv_reader[1:]
-            # Process the uploaded files or redirect to a new page
+                # Process the uploaded files or redirect to a new page
                 xml_data = result.get('xml_file')
         return render_template('result.html', headers=headers, data_rows=data_rows, xml_data=xml_data)
     return render_template('index.html', form=form)
@@ -103,9 +118,7 @@ def login():
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
-    print('trying4')
     form = forms.RegisterForm()
-    print(form.validate_on_submit())
     if form.validate_on_submit():
         username = form.username.data
         email = form.email.data
@@ -141,11 +154,11 @@ def result():
 def profile():
     response = api_calls.get_user_profile(current_user.id)
     if (response.status_code == 200):
-       result = response.json()
-       username = result.get('username', '')
-       email = result.get('email', '')
+        result = response.json()
+        username = result.get('username', '')
+        email = result.get('email', '')
 
-       return render_template('profile.html', username=username,email = email)
+        return render_template('profile.html', username=username, email=email)
 
 
 @app.route("/admin-dashboard")
@@ -162,9 +175,7 @@ def admin_dashboard():
         result = response.json()
         print(result)
 
-
-    return render_template('admin_panel.html',result = result, username=username, email=email)
-
+    return render_template('admin_panel.html', result=result, username=username, email=email)
 
 
 @app.route("/admin/login", methods=['GET', 'POST'])
@@ -192,9 +203,52 @@ def admin_login():
     return render_template('admin_login.html', form=form)
 
 
+@app.route("/admin/add-user", methods=['GET', 'POST'])
+@login_required
+def add_user():
+    form = forms.AdminAddUserForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        email = form.email.data
+        password = form.password.data
+        role = form.role.data
+        response = api_calls.add_user(username, email, password, role, current_user.id)
+        print(response.status_code)
+        if (response.status_code == 200):
+            flash('Registration Successful', category='info')
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash('Registration unsuccessful. Please check username, email and password.', category='error')
+
+    return render_template('admin_add_user.html', form=form)
+
+
+@app.route("/admin/delete-user/<user_id>", methods=['GET', 'POST'])
+@login_required
+def admin_delete_user(user_id):
+    result = api_calls.admin_delete_user(access_token=current_user.id, user_id=user_id)
+    if (result.status_code == 200):
+        print(result)
+        return redirect(url_for('admin_dashboard'))
+
+
+@app.route("/admin/view-user-profile/<user_id>", methods=['GET', 'POST'])
+@login_required
+def admin_view_user_profile(user_id):
+    result = api_calls.admin_get_any_user(access_token=current_user.id, user_id=user_id)
+    username = result["username"]
+    email = result["email"]
+    role = result["role"]
+    data_list = []
+    for index in range(len(result["resume_data"])):
+        extracted_data = result["resume_data"][index]["extracted_data"]
+        data_list.append(extracted_data)
+    # template = env.get_template('admin_view_user_profile.html')
+    # output = template.render(csv_files=csv_files, email=email, role = role, username=username)
+
+    return render_template('admin_view_user_profile.html', data_list=data_list, email=email, role=role, username=username)
 
 
 
 if __name__ == '__main__':
     app.run()
-
