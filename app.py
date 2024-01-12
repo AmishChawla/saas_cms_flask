@@ -249,6 +249,14 @@ def admin_view_user_profile(user_id):
     return render_template('admin_view_user_profile.html', data_list=data_list, email=email, role=role, username=username)
 
 
+@app.route('/admin/logout')
+@login_required
+def admin_logout():
+    logout_user()
+    flash('Logout successful!', 'success')
+    return redirect(url_for('admin_login'))
+
+
 
 if __name__ == '__main__':
     app.run()
