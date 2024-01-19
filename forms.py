@@ -46,3 +46,27 @@ class AdminAddUserForm(FlaskForm):
     ])
     role = SelectField('Select Role :', choices=['user', 'admin'])
     submit = SubmitField('Add')
+
+
+class UserPasswordUpdateForm(FlaskForm):
+
+    current_password = PasswordField('Password', validators=[
+        validators.DataRequired(),
+        validators.Length(min=6),
+        validators.Regexp(
+            regex="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]",
+            message="Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character."
+        )
+    ])
+    new_password = PasswordField('Password', validators=[
+        validators.DataRequired(),
+        validators.Length(min=6),
+        validators.Regexp(
+            regex="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]",
+            message="Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character."
+        )
+    ])
+    confirm_new_password = PasswordField('Confirm Password', validators=[
+        validators.EqualTo('new_password', message='Passwords must match.')
+    ])
+    submit = SubmitField('Update Password')

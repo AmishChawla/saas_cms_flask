@@ -157,8 +157,9 @@ def profile():
         result = response.json()
         username = result.get('username', '')
         email = result.get('email', '')
+        role = result.get('role', '')
 
-        return render_template('profile.html', username=username, email=email)
+        return render_template('profile.html', username=username, email=email, role=role)
 
 
 @app.route("/admin-dashboard")
@@ -169,13 +170,14 @@ def admin_dashboard():
         admin_detail = respo.json()
         username = admin_detail.get('username', '')
         email = admin_detail.get('email', '')
+        role = admin_detail.get('role', '')
 
     response = api_calls.get_all_users(current_user.id)
     if (response.status_code == 200):
         result = response.json()
         print(result)
 
-    return render_template('admin_panel.html', result=result, username=username, email=email)
+    return render_template('admin_panel.html', result=result, username=username, email=email, role=role)
 
 
 @app.route("/admin/login", methods=['GET', 'POST'])
@@ -255,6 +257,28 @@ def admin_logout():
     logout_user()
     flash('Logout successful!', 'success')
     return redirect(url_for('admin_login'))
+
+@app.route("/profile/update_password/<role>", methods=['GET', 'POST'])
+@login_required
+def user_password_update(role):
+    form = forms.UserPasswordUpdateForm()
+
+    if form.validate_on_submit():
+
+        current_password = form.current_password.data
+        new_password = form.new_password.data
+        confirm_new_password = form.confirm_new_password.data
+        response = api_calls.update_user_password(current_password=current_password,new_password= new_password,confirm_new_password=confirm_new_password,access_token=current_user.id)
+        print(response.status_code)
+        if (response.status_code == 200):
+            flash('Password Updated Successfully', category='info')
+            if(role == 'user'):
+                return redirect(url_for('profile'))
+            else:
+                return redirect(url_for('admin_dashboard'))
+        else:
+            flash('Registration unsuccessful. Please check password.', category='error')
+    return render_template('user_password_update.html',form=form,role=role)
 
 
 

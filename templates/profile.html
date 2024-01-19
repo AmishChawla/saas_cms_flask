@@ -31,13 +31,19 @@
 
                                 </div>
                             </div>
-<div class="mb-3">
+                    <div class="mb-3">
 
                                 <div class="input-group">
-                                    <span class="input-group-text text-secondary" style="width:100%"><i class="bi bi-envelope" style = "margin-right:20px"></i>{{ email }}</span>
+                                  <span class="input-group-text text-secondary" style="width:100%"><i class="bi bi-envelope" style = "margin-right:20px"></i>{{ email }}</span>
 
                                 </div>
-                            </div>
+                             </div>
+
+
+                    <div class="card-img-top text-center my-3">
+                        <a href="{{ url_for('user_password_update',role=role)}}" class="btn btn-info" role="button">Update Password</a>
+                    </div>
+
 
 
                 </div>

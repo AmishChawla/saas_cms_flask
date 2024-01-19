@@ -62,7 +62,6 @@ def get_user_profile(access_token: str):
 
     try:
         response = requests.get(constants.BASE_URL + '/user-profile', headers=headers)
-        print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
@@ -164,6 +163,35 @@ def admin_get_any_user(access_token: str, user_id: int):
         response = requests.get(constants.BASE_URL + f'/admin/view-user/{user_id}', headers=headers)
         if response.status_code == 200:
             return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+
+def update_user_password(current_password, new_password, confirm_new_password, access_token: str):
+    print('trying3')
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'Content-type': 'application/json'
+
+               }
+
+    data = {
+        "current_password": current_password,
+        "new_password": new_password,
+        "confirm_new_password": confirm_new_password
+    }
+
+    try:
+        response = requests.put(constants.BASE_URL+'/update-password', params=data, headers=headers)
+        print(response.text)
+        return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except requests.exceptions.ConnectionError as errc:
