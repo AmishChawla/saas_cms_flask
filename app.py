@@ -26,8 +26,12 @@ class User(UserMixin):
         self.id = user_id
 
 @app.route('/', methods=['GET', 'POST'])
-@login_required
 def index():
+    return render_template('index.html')
+
+@app.route('/upload', methods=['GET', 'POST'])
+@login_required
+def upload_pdf():
     form = forms.UploadForm()
 
     if form.validate_on_submit():
@@ -60,7 +64,7 @@ def index():
             # Process the uploaded files or redirect to a new page
                 xml_data = result.get('xml_file')
         return render_template('result.html', headers=headers, data_rows=data_rows, xml_data=xml_data)
-    return render_template('index.html', form=form)
+    return render_template('upload_pdf.html', form=form)
 
 
 def empty_uploads_folder():
@@ -80,8 +84,7 @@ def empty_uploads_folder():
 def login():
     print('trying')
     if current_user.is_authenticated:
-        # If the user is already logged in, redirect them to the index page or any other page
-        return redirect(url_for('index'))
+                return redirect(url_for('upload_pdf'))
     form = forms.LoginForm()
     print(form.validate_on_submit())
     if form.validate_on_submit():
@@ -94,7 +97,7 @@ def login():
             user = User(user_id=token)
             login_user(user)
 
-            return redirect(url_for('index'))
+            return redirect(url_for('upload_pdf'))
         else:
             flash('Login unsuccessful. Please check email and password.', category='error')
 
@@ -166,6 +169,7 @@ def admin_dashboard():
     return render_template('admin_panel.html',result = result, username=username, email=email)
 
 
+
 @app.route('/update_password', methods=['PUT'])
 @login_required
 def update_password():
@@ -184,6 +188,35 @@ def update_password():
             flash('Registration unsuccessful. Please check username, email and password.', category='error')
 
     return render_template('update_password.html', form=form)
+
+
+@app.route("/admin/login", methods=['GET', 'POST'])
+def admin_login():
+    print('trying')
+    if current_user.is_authenticated:
+
+        return redirect(url_for('admin_dashboard'))
+    form = forms.LoginForm()
+    print(form.validate_on_submit())
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+        response = api_calls.admin_login(email, password)
+
+        if (response.status_code == 200):
+            token = response.json().get('access_token')
+            user = User(user_id=token)
+            login_user(user)
+
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash('Login unsuccessful. Please check email and password.', category='error')
+
+    return render_template('admin_login.html', form=form)
+
+
+
+
 
 
 if __name__ == '__main__':
