@@ -28,6 +28,8 @@ uploads_folder = 'uploads'
 # env = Environment(loader=FileSystemLoader('templates'))
 # env.filters['parse_csv'] = parse_csv
 #########################################################################################################################
+password_reset_token = ""
+
 @login_manager.user_loader
 def load_user(user_id):
     user = User(user_id)
@@ -284,6 +286,33 @@ def user_password_update(role):
         else:
             flash('Registration unsuccessful. Please check password.', category='error')
     return render_template('user_password_update.html',form=form,role=role)
+
+
+@app.route("/forget-password", methods=['GET', 'POST'])
+def forgot_password():
+    form = forms.ForgetPasword()
+
+    if form.validate_on_submit():
+        email = form.email.data
+        response = api_calls.forgot_password(email)
+        print(response.status_code)
+        if (response.status_code == 200):
+            return "Check mail for details"
+    return render_template('forgot_password.html', form=form)
+
+
+@app.route("/reset-password/<token>", methods=['GET', 'POST'])
+def reset_password(token):
+    form = forms.ResetPasswordForm()
+    if form.validate_on_submit():
+        new_password = form.new_password.data
+        print(f'===================================={token}')
+        response = api_calls.reset_password(token, new_password)
+        print(response.status_code)
+        if (response.status_code == 200):
+            flash("Password updated successfully")
+            return redirect(url_for('login'))
+    return render_template('reset_password.html', form=form, token=token)
 
 
 

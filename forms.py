@@ -70,3 +70,23 @@ class UserPasswordUpdateForm(FlaskForm):
         validators.EqualTo('new_password', message='Passwords must match.')
     ])
     submit = SubmitField('Update Password')
+
+
+class ForgetPasword(FlaskForm):
+    email = StringField('Email')
+    submit = SubmitField('Submit')
+
+
+class ResetPasswordForm(FlaskForm):
+    new_password = PasswordField('Password', validators=[
+        validators.DataRequired(),
+        validators.Length(min=6),
+        validators.Regexp(
+            regex="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]",
+            message="Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character."
+        )
+    ])
+    confirm_new_password = PasswordField('Confirm Password', validators=[
+        validators.EqualTo('new_password', message='Passwords must match.')
+    ])
+    submit = SubmitField('Submit')
