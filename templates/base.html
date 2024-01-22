@@ -34,6 +34,7 @@
             </a>
 
             <!-- Navigation Links -->
+            {% if request.endpoint != 'admin_login' %}
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
@@ -44,17 +45,21 @@
                     </li>
                 </ul>
             </div>
+            {% endif %}
+
 
             <!-- User-related Links -->
             <div class="navbar-nav">
-                {% if current_user.is_authenticated %}
-                    <!-- Show user-related links when the user is authenticated -->
-                    <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
-                    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-                {% else %}
-                    <!-- Show login and signup links when the user is not authenticated -->
-                    <a class="nav-link" href="{{ url_for('login') }}">Login</a>
-                    <a class="nav-link" href="{{ url_for('register') }}">Signup</a>
+                {% if request.endpoint != 'admin_login' %}
+                    {% if current_user.is_authenticated %}
+                        <!-- Show user-related links when the user is authenticated -->
+                        <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    {% else %}
+                        <!-- Show login and signup links when the user is not authenticated -->
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                        <a class="nav-link" href="{{ url_for('register') }}">Signup</a>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
