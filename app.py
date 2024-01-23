@@ -52,35 +52,44 @@ def upload_pdf():
 
     if form.validate_on_submit():
         uploaded_files = request.files.getlist('files')
+        print(len(uploaded_files))
         empty_uploads_folder()
+        file_list = []
+        print(len(uploaded_files))
         for file in uploaded_files:
             # Ensure the file has a secure filename
             filename = secure_filename(file.filename)
             # Save the file to a designated folder
-            file.save('uploads/' + filename)
-            files = [f for f in os.listdir(uploads_folder) if os.path.isfile(os.path.join(uploads_folder, f))]
-            file_list = [('pdf_files', (filename, open(os.path.join(uploads_folder, filename), 'rb'))) for filename in
-                         files]
+            file_path = 'uploads/' + filename
+            print(file_path)
+            file.save(file_path)
+            file_list.append(('pdf_files', (filename, open(file_path, 'rb'))))
+            # files = [f for f in os.listdir(uploads_folder) if os.path.isfile(os.path.join(uploads_folder, f))]
+            # file_list = [('pdf_files', (filename, open(os.path.join(uploads_folder, filename), 'rb'))) for filename in
+            #              files]
+            # file_list.append(('pdf_files', (filename, open(os.path.join(uploads_folder, filename), 'rb'))))
+            # print(file_list)
+        response = api_calls.dashboard(file_list, current_user.id)
+        print(response.json())
+        if response.status_code == 200:
+            result = response.json()
+            # Extract the CSV data from the response
+            csv_data = result.get('csv_file', '')
 
-            response = api_calls.dashboard(file_list, current_user.id)
-            print(response.json())
-            if response.status_code == 200:
-                result = response.json()
-                # Extract the CSV data from the response
-                csv_data = result.get('csv_file', '')
+            # Use StringIO to create a file-like object for the csv.reader
+            csv_file = StringIO(csv_data)
 
-                # Use StringIO to create a file-like object for the csv.reader
-                csv_file = StringIO(csv_data)
+            # Parse the CSV data into a list of lists
+            csv_reader = list(csv.reader(csv_file))
 
-                # Parse the CSV data into a list of lists
-                csv_reader = list(csv.reader(csv_file))
+            # The first row contains headers, and the rest are data rows
+            headers = csv_reader[0]
+            data_rows = csv_reader[1:]
+            # Process the uploaded files or redirect to a new page
+            xml_data = result.get('xml_file')
+            return render_template('result.html', headers=headers, data_rows=data_rows, xml_data=xml_data)
 
-                # The first row contains headers, and the rest are data rows
-                headers = csv_reader[0]
-                data_rows = csv_reader[1:]
-                # Process the uploaded files or redirect to a new page
-                xml_data = result.get('xml_file')
-        return render_template('result.html', headers=headers, data_rows=data_rows, xml_data=xml_data)
+
     return render_template('upload_pdf.html', form=form)
 
 
@@ -311,10 +320,8 @@ def reset_password(token):
         print(response.status_code)
         if (response.status_code == 200):
             flash("Password updated successfully")
-            return redirect(url_for('login'))
+            return redirect(url_for('logout'))
     return render_template('reset_password.html', form=form, token=token)
-
-
 
 
 if __name__ == '__main__':
