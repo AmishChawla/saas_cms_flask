@@ -68,7 +68,7 @@
           <ul class="navbar-nav navbar-nav-right">
 
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('add_user') }}">
+              <a class="nav-link" href="{{ url_for('user_password_update',role=role)}}">
                 <span class="menu-title">Update Password</span>
                 <i class="mdi mdi-lock-reset menu-icon" style="margin-left:10px"></i>
               </a>
@@ -156,44 +156,45 @@
     <tbody>
         {% for row in result|reverse %}
 
-            <tr class ="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
-              <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}">
-                <td class="py-1">{{ loop.index }}</td>
-                <td class="py-1">
+            <tr>
+<!--              <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}">-->
+                <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ loop.index }}</td>
+                <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
                     U_{{ row.id }}
                 </td>
-                <td> {{ row.username }}</td>
+                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')"> {{ row.username }}</td>
 
-                <td>
+                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
                     {{ row.email }}
                 </td>
 
-                <td> {{ row.role }} </td>
-                <td>{{ row.created_datetime }}</td>
-
+                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')"> {{ row.role }} </td>
+                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ row.created_datetime }}</td>
                 <td>
-                    <a class="button button1" href="{{ url_for('admin_view_user_profile', user_id=row.id) }}">View</a>
-                    <button class="button button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Delete</button>
-                    <!--Modal of delete button-->
-                    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete User</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <a type="button" class="btn btn-danger" href="{{ url_for('admin_delete_user', user_id=row.id) }}">Delete</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </td>
-                </a>
+    <a class="button button1" href="{{ url_for('admin_view_user_profile', user_id=row.id) }}">View</a>
+    <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ row.id }}">Delete</button>
+
+    <!-- Modal for delete button -->
+    <div class="modal fade" id="deleteModal_{{ row.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel_{{ row.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="deleteModalLabel_{{ row.id }}">Delete User</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a type="button" class="btn btn-danger" href="{{ url_for('admin_delete_user', user_id=row.id) }}">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</td>
+
+<!--                </a>-->
             </tr>
 
         {% endfor %}
@@ -215,14 +216,6 @@
             </div>
           </div>
           <!-- content-wrapper ends -->
-          <!-- partial:../../partials/_footer.html -->
-          <footer class="footer">
-            <div class="container-fluid d-flex justify-content-between">
-              <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © bootstrapdash.com 2021</span>
-              <span class="float-none float-sm-end mt-1 mt-sm-0 text-end"> Free <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin template</a> from Bootstrapdash.com</span>
-            </div>
-          </footer>
-          <!-- partial -->
         </div>
         <!-- main-panel ends -->
       </div>
@@ -245,6 +238,9 @@
         window.location.href = pageUrl;
     }
 </script>
+    <script>
+        var userId = document.querySelector('.button2').getAttribute('data-user-id');
+    </script>
 
     <!-- endinject -->
     <!-- Custom js for this page -->

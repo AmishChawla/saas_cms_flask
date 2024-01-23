@@ -10,6 +10,7 @@
               <h3 class="page-title"> Upload History </h3>
 
             </div>
+            {% if data_list %}
             {% for data in data_list %}
             <div class="row">
 
@@ -73,6 +74,11 @@
                                      <br>
                     <br>
               {% endfor %}
+           {% else %}
+   <div  class="d-flex justify-content-center align-items-center" style="height: 50vh;"><p>No history</p></div>
+
+        {% endif %}
+
    </div>
 {% endblock %}
 
