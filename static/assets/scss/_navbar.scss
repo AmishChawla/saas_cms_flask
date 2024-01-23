@@ -55,6 +55,8 @@
       }
     }
   }
+
+
   .navbar-menu-wrapper {
     transition: width $action-transition-duration $action-transition-timing-function;
     -webkit-transition: width $action-transition-duration $action-transition-timing-function;
@@ -121,6 +123,8 @@
         @extend .me-4;
       }
     }
+
+
 
     .count-indicator {
       position: relative;
