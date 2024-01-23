@@ -34,8 +34,9 @@
         cursor: pointer;
       }
 
-    .button1 {background-color: #04AA6D;} /* Green */
-    .button2 {background-color: red;}
+      .button1 {background-color: #04AA6D;} /* Green */
+      .button2 {background-color: red;}
+
 
     </style>
 
@@ -66,12 +67,18 @@
           </div>
           <ul class="navbar-nav navbar-nav-right">
 
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('add_user') }}">
+                <span class="menu-title">Update Password</span>
+                <i class="mdi mdi-lock-reset menu-icon" style="margin-left:10px"></i>
+              </a>
+            </li>
 
 
-
-            <li class="nav-item nav-logout d-none d-lg-block">
+            <li class="nav-item">
               <a class="nav-link" href="{{ url_for('admin_logout') }}">
-                <i class="mdi mdi-logout"></i>
+                <span class="menu-title">Logout</span>
+                <i class="mdi mdi-logout" style="margin-left:10px"></i>
               </a>
             </li>
 
@@ -112,21 +119,6 @@
                 <i class="mdi mdi-account-multiple-plus menu-icon"></i>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('user_password_update',role=role)}}">
-                <span class="menu-title">Update password</span>
-                <i class="mdi mdi-lock-reset menu-icon"></i>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('admin_logout') }}">
-                <span class="menu-title">Logout</span>
-                <i class="mdi mdi-logout menu-icon"></i>
-              </a>
-            </li>
-
-
-
 
           </ul>
         </nav>
@@ -144,57 +136,67 @@
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">User Details</h4>
+                    <table class="table table-hover">
+    <thead>
 
-                    <table class="table table-striped">
-                      <thead>
-                        <tr>
-                          <th> Sr. No. </th>
-                          <th> User ID </th>
-                          <th> Name </th>
-                          <th> Email </th>
-                          <th> Role </th>
-                          <th> Action </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      {% for row in result|reverse %}
-                        <tr>
-                          <td class="py-1">{{ loop.index }}</td>
-                          <td class="py-1">
-                           U_{{ row.id }}
-                          </td>
-                          <td> {{ row.username }}</td>
-                          <td>
-                           {{ row.email }}
-                          </td>
-                          <td> {{ row.role }} </td>
-                          <td> <a class="button button1" href="{{ url_for('admin_view_user_profile', user_id=row.id) }}">View</a>
-                            <button class="button button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop" >Delete</button>
-                          <!--Modal of delete button-->
-                          <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete User</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        Are you sure?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <a type="button" class="btn btn-danger" href="{{ url_for('admin_delete_user', user_id=row.id) }}">Delete</a>
-      </div>
-    </div>
-  </div>
-</div>
-                          </td>
-                        </tr>
+        <tr>
+            <th> Sr. No. </th>
+            <th> User ID </th>
+            <th> Name </th>
+            <th> Email </th>
+            <th> Role </th>
+            <th> Creation Time</th>
+            <th> Action </th>
+        </tr>
 
-                      {% endfor %}
+    </thead>
+    <tbody>
+        {% for row in result|reverse %}
 
-                        </tbody>
-                    </table>
+            <tr class ="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
+              <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}">
+                <td class="py-1">{{ loop.index }}</td>
+                <td class="py-1">
+                    U_{{ row.id }}
+                </td>
+                <td> {{ row.username }}</td>
+
+                <td>
+                    {{ row.email }}
+                </td>
+
+                <td> {{ row.role }} </td>
+                <td>{{ row.created_datetime }}</td>
+
+                <td>
+                    <a class="button button1" href="{{ url_for('admin_view_user_profile', user_id=row.id) }}">View</a>
+                    <button class="button button2" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Delete</button>
+                    <!--Modal of delete button-->
+                    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete User</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <a type="button" class="btn btn-danger" href="{{ url_for('admin_delete_user', user_id=row.id) }}">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                </a>
+            </tr>
+
+        {% endfor %}
+    </tbody>
+</table>
+
                   </div>
                 </div>
               </div>
@@ -233,6 +235,14 @@
     <script src="../static/assets/js/off-canvas.js"></script>
     <script src="../static/assets/js/hoverable-collapse.js"></script>
     <script src="../static/assets/js/misc.js"></script>
+    <script>
+    function redirectToPage(pageUrl) {
+        // You can customize this function to perform the redirection as needed
+        console.log(pageUrl);
+        window.location.href = pageUrl;
+    }
+</script>
+
     <!-- endinject -->
     <!-- Custom js for this page -->
     <!-- End custom js for this page -->
