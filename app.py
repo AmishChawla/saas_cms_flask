@@ -28,6 +28,8 @@ uploads_folder = 'uploads'
 # env = Environment(loader=FileSystemLoader('templates'))
 # env.filters['parse_csv'] = parse_csv
 #########################################################################################################################
+password_reset_token = ""
+
 @login_manager.user_loader
 def load_user(user_id):
     user = User(user_id)
@@ -40,8 +42,12 @@ class User(UserMixin):
 
 
 @app.route('/', methods=['GET', 'POST'])
-@login_required
 def index():
+    return render_template('index.html')
+
+@app.route('/upload', methods=['GET', 'POST'])
+@login_required
+def upload_pdf():
     form = forms.UploadForm()
 
     if form.validate_on_submit():
@@ -75,7 +81,7 @@ def index():
                 # Process the uploaded files or redirect to a new page
                 xml_data = result.get('xml_file')
         return render_template('result.html', headers=headers, data_rows=data_rows, xml_data=xml_data)
-    return render_template('index.html', form=form)
+    return render_template('upload_pdf.html', form=form)
 
 
 def empty_uploads_folder():
@@ -95,8 +101,7 @@ def empty_uploads_folder():
 def login():
     print('trying')
     if current_user.is_authenticated:
-        # If the user is already logged in, redirect them to the index page or any other page
-        return redirect(url_for('index'))
+        return redirect(url_for('upload_pdf'))
     form = forms.LoginForm()
     print(form.validate_on_submit())
     if form.validate_on_submit():
@@ -109,7 +114,7 @@ def login():
             user = User(user_id=token)
             login_user(user)
 
-            return redirect(url_for('index'))
+            return redirect(url_for('upload_pdf'))
         else:
             flash('Login unsuccessful. Please check email and password.', category='error')
 
@@ -180,11 +185,13 @@ def admin_dashboard():
     return render_template('admin_panel.html', result=result, username=username, email=email, role=role)
 
 
+
+
 @app.route("/admin/login", methods=['GET', 'POST'])
 def admin_login():
     print('trying')
     if current_user.is_authenticated:
-        # If the user is already logged in, redirect them to the index page or any other page
+
         return redirect(url_for('admin_dashboard'))
     form = forms.LoginForm()
     print(form.validate_on_submit())
@@ -279,6 +286,34 @@ def user_password_update(role):
         else:
             flash('Registration unsuccessful. Please check password.', category='error')
     return render_template('user_password_update.html',form=form,role=role)
+
+
+@app.route("/forget-password", methods=['GET', 'POST'])
+def forgot_password():
+    form = forms.ForgetPasword()
+
+    if form.validate_on_submit():
+        email = form.email.data
+        response = api_calls.forgot_password(email)
+        print(response.status_code)
+        if (response.status_code == 200):
+            return "Check mail for details"
+    return render_template('forgot_password.html', form=form)
+
+
+@app.route("/reset-password/<token>", methods=['GET', 'POST'])
+def reset_password(token):
+    form = forms.ResetPasswordForm()
+    if form.validate_on_submit():
+        new_password = form.new_password.data
+        print(f'===================================={token}')
+        response = api_calls.reset_password(token, new_password)
+        print(response.status_code)
+        if (response.status_code == 200):
+            flash("Password updated successfully")
+            return redirect(url_for('login'))
+    return render_template('reset_password.html', form=form, token=token)
+
 
 
 
