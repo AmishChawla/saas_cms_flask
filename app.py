@@ -306,7 +306,7 @@ def forgot_password():
         response = api_calls.forgot_password(email)
         print(response.status_code)
         if (response.status_code == 200):
-            return "Check mail for details"
+            return render_template('mail_success.html')
     return render_template('forgot_password.html', form=form)
 
 
@@ -315,13 +315,30 @@ def reset_password(token):
     form = forms.ResetPasswordForm()
     if form.validate_on_submit():
         new_password = form.new_password.data
-        print(f'===================================={token}')
         response = api_calls.reset_password(token, new_password)
         print(response.status_code)
         if (response.status_code == 200):
             flash("Password updated successfully")
             return redirect(url_for('logout'))
     return render_template('reset_password.html', form=form, token=token)
+
+@app.route("/user-history", methods=['GET', 'POST'])
+@login_required
+def user_history():
+    response = api_calls.get_user_profile(access_token=current_user.id)
+    if response.status_code == 200:
+        result = response.json()
+        username = result["username"]
+        email = result["email"]
+        role = result["role"]
+        data_list = []
+        for index in range(len(result["resume_data"])):
+            extracted_data = result["resume_data"][index]["extracted_data"]
+            data_list.append(extracted_data)
+    # template = env.get_template('admin_view_user_profile.html')
+    # output = template.render(csv_files=csv_files, email=email, role = role, username=username)
+    return render_template('admin_view_user_profile.html', data_list=data_list, email=email, role=role, username=username)
+
 
 
 if __name__ == '__main__':
