@@ -36,6 +36,15 @@
 
       .button1 {background-color: #04AA6D;} /* Green */
       .button2 {background-color: red;}
+      .btn-info {
+      border-radius : 10px;
+      }
+      .btn-info i {
+      margin-left: 5px;
+      }
+
+
+
 
 
     </style>
@@ -55,16 +64,17 @@
           <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
             <span class="mdi mdi-menu"></span>
           </button>
-          <div class="search-field d-none d-md-block">
-            <form class="d-flex align-items-center h-100" action="#">
-              <div class="input-group">
-                <div class="input-group-prepend bg-transparent">
-                  <i class="input-group-text border-0 mdi mdi-magnify"></i>
-                </div>
-                <input type="text" class="form-control bg-transparent border-0" placeholder="Search user">
-              </div>
-            </form>
-          </div>
+<div class="search-field d-none d-md-block">
+    <form class="d-flex align-items-center h-100">
+        <div class="input-group">
+            <div class="input-group-prepend bg-transparent">
+                <i class="input-group-text border-0 mdi mdi-magnify"></i>
+            </div>
+            <input type="text" class="form-control bg-transparent border-0" id="userSearchInput" placeholder="Search user" oninput="searchByName()">
+        </div>
+    </form>
+</div>
+
           <ul class="navbar-nav navbar-nav-right">
 
             <li class="nav-item">
@@ -102,13 +112,12 @@
                 </div>
                 <div class="nav-profile-text d-flex flex-column">
                   <span class="font-weight-bold mb-2">{{ username }}</span>
-                  <span class="text-secondary text-small">{{ email }}</span>
                 </div>
                 <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">
+              <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
                 <span class="menu-title">Dashboard</span>
                 <i class="mdi mdi-home menu-icon"></i>
               </a>
@@ -119,6 +128,12 @@
                 <i class="mdi mdi-account-multiple-plus menu-icon"></i>
               </a>
             </li>
+                          <li class="nav-item">
+              <a class="nav-link" href="#resume history">
+                <span class="menu-title">Resume History</span>
+                <i class="mdi mdi-file-document-outline menu-icon"></i>
+              </a>
+            </li>
 
           </ul>
         </nav>
@@ -127,7 +142,9 @@
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title"> User Table </h3>
-
+                <a class="btn btn-info" href="{{ url_for('add_user') }}">
+                <span class="menu-title">Add user</span>
+              </a>
             </div>
             <div class="row">
 
@@ -136,7 +153,7 @@
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">User Details</h4>
-                    <table class="table table-hover">
+                    <table class="table table-hover " id="userTable">
     <thead>
 
 
@@ -162,16 +179,16 @@
                 <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
                     U_{{ row.id }}
                 </td>
-                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')"> {{ row.username }}</td>
+                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')"> <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}"> {{ row.username }} </a></td>
 
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
                     {{ row.email }}
                 </td>
 
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')"> {{ row.role }} </td>
-                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ row.created_datetime }}</td>
+                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ row.created_datetime.split('T')[1][:8] }} &nbsp; {{ row.created_datetime.split('T')[0] }}</td>
                 <td>
-    <a class="button button1" href="{{ url_for('admin_view_user_profile', user_id=row.id) }}">View</a>
+    <a class="button button1" href="{{ url_for('admin_view_user_profile', user_id=row.id) }}">Edit</a>
     <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ row.id }}">Delete</button>
 
     <!-- Modal for delete button -->
@@ -241,6 +258,28 @@
     <script>
         var userId = document.querySelector('.button2').getAttribute('data-user-id');
     </script>
+    <script>
+function searchByName() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("userSearchInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("userTable");
+    tr = table.getElementsByTagName("tr");
+
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[2]; // Assuming the name is in the third column
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+</script>
+
 
     <!-- endinject -->
     <!-- Custom js for this page -->
