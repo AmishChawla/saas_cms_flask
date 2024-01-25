@@ -188,7 +188,7 @@
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')"> {{ row.role }} </td>
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ row.created_datetime.split('T')[1][:8] }} &nbsp; {{ row.created_datetime.split('T')[0] }}</td>
                 <td>
-    <a class="button button1" href="{{ url_for('admin_view_user_profile', user_id=row.id) }}">Edit</a>
+    <a class="button button1" href="{{ url_for('admin_edit_user_profile', user_id=row.id) }}">Edit</a>
     <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ row.id }}">Delete</button>
 
     <!-- Modal for delete button -->

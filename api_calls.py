@@ -252,3 +252,28 @@ def reset_password(token, new_password):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
+
+def admin_edit_any_user(access_token: str, user_id: int, username, role, status):
+    print("trying")
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    data = {
+        "user_id": user_id,
+        "username": username,
+        "role": role,
+        "status": status
+    }
+
+    try:
+        print("try")
+        response = requests.put(constants.BASE_URL + f'/admin/edit-user', headers=headers, params=data)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")

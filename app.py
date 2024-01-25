@@ -30,6 +30,7 @@ uploads_folder = 'uploads'
 #########################################################################################################################
 password_reset_token = ""
 
+
 @login_manager.user_loader
 def load_user(user_id):
     user = User(user_id)
@@ -44,6 +45,7 @@ class User(UserMixin):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('index.html')
+
 
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
@@ -88,7 +90,6 @@ def upload_pdf():
             # Process the uploaded files or redirect to a new page
             xml_data = result.get('xml_file')
             return render_template('result.html', headers=headers, data_rows=data_rows, xml_data=xml_data)
-
 
     return render_template('upload_pdf.html', form=form)
 
@@ -194,13 +195,10 @@ def admin_dashboard():
     return render_template('admin_panel.html', result=result, username=username, email=email, role=role)
 
 
-
-
 @app.route("/admin/login", methods=['GET', 'POST'])
 def admin_login():
     print('trying')
     if current_user.is_authenticated:
-
         return redirect(url_for('admin_dashboard'))
     form = forms.LoginForm()
     print(form.validate_on_submit())
@@ -264,7 +262,8 @@ def admin_view_user_profile(user_id):
     # template = env.get_template('admin_view_user_profile.html')
     # output = template.render(csv_files=csv_files, email=email, role = role, username=username)
 
-    return render_template('admin_view_user_profile.html', data_list=data_list, email=email, role=role, username=username)
+    return render_template('admin_view_user_profile.html', data_list=data_list, email=email, role=role,
+                           username=username)
 
 
 @app.route('/admin/logout')
@@ -273,6 +272,7 @@ def admin_logout():
     logout_user()
     flash('Logout successful!', 'success')
     return redirect(url_for('admin_login'))
+
 
 @app.route("/profile/update_password/<role>", methods=['GET', 'POST'])
 @login_required
@@ -284,17 +284,19 @@ def user_password_update(role):
         current_password = form.current_password.data
         new_password = form.new_password.data
         confirm_new_password = form.confirm_new_password.data
-        response = api_calls.update_user_password(current_password=current_password,new_password= new_password,confirm_new_password=confirm_new_password,access_token=current_user.id)
+        response = api_calls.update_user_password(current_password=current_password, new_password=new_password,
+                                                  confirm_new_password=confirm_new_password,
+                                                  access_token=current_user.id)
         print(response.status_code)
         if (response.status_code == 200):
             flash('Password Updated Successfully', category='info')
-            if(role == 'user'):
+            if (role == 'user'):
                 return redirect(url_for('profile'))
             else:
                 return redirect(url_for('admin_dashboard'))
         else:
             flash('Registration unsuccessful. Please check password.', category='error')
-    return render_template('user_password_update.html',form=form,role=role)
+    return render_template('user_password_update.html', form=form, role=role)
 
 
 @app.route("/forget-password", methods=['GET', 'POST'])
@@ -322,6 +324,7 @@ def reset_password(token):
             return redirect(url_for('logout'))
     return render_template('reset_password.html', form=form, token=token)
 
+
 @app.route("/user-history", methods=['GET', 'POST'])
 @login_required
 def user_history():
@@ -337,8 +340,45 @@ def user_history():
             data_list.append(extracted_data)
     # template = env.get_template('admin_view_user_profile.html')
     # output = template.render(csv_files=csv_files, email=email, role = role, username=username)
-    return render_template('admin_view_user_profile.html', data_list=data_list, email=email, role=role, username=username)
+    return render_template('admin_view_user_profile.html', data_list=data_list, email=email, role=role,
+                           username=username)
 
+
+@app.route("/admin/edit-user-profile/<user_id>", methods=['GET', 'POST'])
+@login_required
+def admin_edit_user_profile(user_id):
+    form = forms.AdminEditUserForm()
+    print(form.errors)
+    result = api_calls.admin_get_any_user(access_token=current_user.id, user_id=user_id)
+    username = result["username"]
+    role = result["role"]
+    status = result["status"]
+
+    # Prefill the form fields with user information
+    form.username.data = username
+    form.role.data = role
+    form.status.data = status
+    print("haan")
+
+    if form.validate():
+        print("valid")
+
+    if form.is_submitted():
+        print("submitted")
+
+    if form.validate_on_submit():
+        # Update user information
+        new_username = form.username.data
+        new_role = form.role.data
+        new_status = form.status.data
+
+        response = api_calls.admin_edit_any_user(access_token=current_user.id, user_id=user_id,
+                                                 username=new_username, role=new_role, status=new_status)
+        print(response.status_code)
+        if response.status_code == 200:
+            return redirect(url_for('admin_dashboard'))
+
+    return render_template('edit_form.html', status=status, role=role, username=username, form=form, user_id=user_id)
 
 
 if __name__ == '__main__':

@@ -1,7 +1,8 @@
 from wtforms import StringField, PasswordField, SubmitField, validators, SelectField
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileRequired,FileAllowed
+from flask_wtf.file import FileField, FileRequired, FileAllowed
 import email_validator
+
 
 class UploadForm(FlaskForm):
     ALLOWED_EXTENSIONS = {'pdf', 'docx'}
@@ -54,7 +55,6 @@ class AdminAddUserForm(FlaskForm):
 
 
 class UserPasswordUpdateForm(FlaskForm):
-
     current_password = PasswordField('Password', validators=[
         validators.DataRequired(),
         validators.Length(min=6),
@@ -95,3 +95,11 @@ class ResetPasswordForm(FlaskForm):
         validators.EqualTo('new_password', message='Passwords must match.')
     ])
     submit = SubmitField('Submit')
+
+
+class AdminEditUserForm(FlaskForm):
+    username = StringField('Username', validators=[validators.Length(min=4, max=25), validators.DataRequired()])
+
+    role = SelectField('Select Role :', choices=['user', 'admin'])
+    status = SelectField('Select Status :', choices=['active', 'block'])
+    submit = SubmitField('Save')
