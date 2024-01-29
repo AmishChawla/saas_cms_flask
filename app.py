@@ -82,6 +82,7 @@ def upload_pdf():
     return render_template('upload_pdf.html', form=form)
 
 
+
 def empty_uploads_folder():
     # Remove all files in the uploads folder
     for file in os.listdir(uploads_folder):

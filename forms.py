@@ -1,10 +1,15 @@
 from wtforms import StringField, PasswordField, SubmitField, validators, SelectField
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileRequired
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 import email_validator
 
 class UploadForm(FlaskForm):
-    files = FileField('Upload PDF Files', validators=[FileRequired()])
+    ALLOWED_EXTENSIONS = {'pdf', 'docx'}
+
+    files = FileField('Upload PDF Files', validators=[
+        FileRequired(),
+        FileAllowed(ALLOWED_EXTENSIONS, 'Only PDF files are allowed.')
+    ])
 
 
 class LoginForm(FlaskForm):
