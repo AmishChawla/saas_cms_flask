@@ -40,7 +40,19 @@
         <h1 class="mb-4">Upload Resume Files</h1>
 
         <form method="POST" action="{{ url_for('upload_pdf') }}" enctype="multipart/form-data">
-            {{ form.hidden_tag() }}
+    {{ form.hidden_tag() }}
+
+
+    <div class="mb-3">
+        <label for="files" class="form-label">Select PDF Files:</label>
+        {{ form.files.label }}
+        <input type="file" class="form-control" name="files" id="files" multiple>
+
+    </div>
+
+    <button type="submit" class="btn btn-dark" id="upload-btn">Upload</button>
+</form>
+
 
             <div class="mb-3">
                 <label for="files" class="form-label">Select PDF Files:</label>
@@ -54,6 +66,7 @@
 
             <button type="submit" class="btn btn-dark">Upload</button>
         </form>
+
     </div>
 <br>
 <script>
