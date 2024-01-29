@@ -9,13 +9,13 @@
                 <div class="card border-0">
                     <!-- Add a card header "Login" -->
                     <div class="card-header bg-white text-black text-center">
-                        <h2>Admin Login</h2>
+                        <h2>Login</h2>
                     </div>
 
                     <!-- Center the image, add padding, and resize -->
-                    <div class="card-img-top text-center my-3">
-                        <img src="/static/images/login.png" alt="Login Image" style="max-width: 300px; width: 5rem; height: 5rem;" class="img-fluid">
-                    </div>
+<!--                    <div class="card-img-top text-center my-3">-->
+<!--                        <img src="/static/images/login.png" alt="Login Image" style="max-width: 300px; width: 5rem; height: 5rem;" class="img-fluid">-->
+<!--                    </div>-->
 
                     <div class="card-body">
                         {% with messages = get_flashed_messages() %}
@@ -53,7 +53,7 @@
                                 {{ form.submit(class="btn btn-dark btn-lg") }}
                             </div>
 
-                            <p class="text-center"><a href="#" class="text-muted">Forgot Password?</a></p>
+                            <p class="text-center"><a href="{{url_for('forgot_password')}}" class="text-muted">Forgot Password?</a></p>
 
                         </form>
                     </div>

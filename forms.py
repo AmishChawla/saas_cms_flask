@@ -1,14 +1,21 @@
 from wtforms import StringField, PasswordField, SubmitField, validators, SelectField
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed, FileRequired
+
+
+
+from flask_wtf.file import FileField, FileRequired, FileAllowed
+
 import email_validator
+
 
 class UploadForm(FlaskForm):
     ALLOWED_EXTENSIONS = {'pdf', 'docx'}
 
     files = FileField('Upload PDF Files', validators=[
         FileRequired(),
-        FileAllowed(ALLOWED_EXTENSIONS, 'Only PDF files are allowed.')
+
+        FileAllowed(ALLOWED_EXTENSIONS, 'Only PDF files are allowed.'),
+        FileAllowed(ALLOWED_EXTENSIONS, 'Only pdf and docx files are allowed.')
     ])
 
 
@@ -54,7 +61,6 @@ class AdminAddUserForm(FlaskForm):
 
 
 class UserPasswordUpdateForm(FlaskForm):
-
     current_password = PasswordField('Password', validators=[
         validators.DataRequired(),
         validators.Length(min=6),
@@ -75,3 +81,31 @@ class UserPasswordUpdateForm(FlaskForm):
         validators.EqualTo('new_password', message='Passwords must match.')
     ])
     submit = SubmitField('Update Password')
+
+
+class ForgetPasword(FlaskForm):
+    email = StringField('Email')
+    submit = SubmitField('Submit')
+
+
+class ResetPasswordForm(FlaskForm):
+    new_password = PasswordField('Password', validators=[
+        validators.DataRequired(),
+        validators.Length(min=6),
+        validators.Regexp(
+            regex="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]",
+            message="Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character."
+        )
+    ])
+    confirm_new_password = PasswordField('Confirm Password', validators=[
+        validators.EqualTo('new_password', message='Passwords must match.')
+    ])
+    submit = SubmitField('Submit')
+
+
+class AdminEditUserForm(FlaskForm):
+    username = StringField('Username', validators=[validators.Length(min=4, max=25), validators.DataRequired()])
+
+    role = SelectField('Select Role :', choices=['user', 'admin'])
+    status = SelectField('Select Status :', choices=['active', 'block'])
+    submit = SubmitField('Save')

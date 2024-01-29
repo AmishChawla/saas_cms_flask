@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card border-0">
+                    <!-- Add a card header "Profile" -->
+                    <div class="card-header bg-white text-black text-center">
+                        <h2>Profile</h2>
+                    </div>
+
+                    <!-- Center the image, add padding, and resize -->
+                    <div class="card-img-top text-center my-3">
+                        <img src="/static/images/man.png" alt="Login Image" style="max-width: 300px; width: 5rem; height: 5rem;" class="img-fluid">
+                    </div>
+
+                    <!-- User Profile Form -->
+                    <form method="post" action="{{ url_for('admin_edit_user_profile', user_id=user_id) }}">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label visually-hidden">Username:</label>
+                            {{ form.username(class="form-control", placeholder=username, required=True) }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Role" class="form-label">Select Role :</label>
+                            {{ form.role(class="form-select", required=True) }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Select status :</label>
+                            {{ form.status(class="form-select", required=True) }}
+                        </div>
+
+                        <div class="mb-3 text-center">
+                            {{ form.submit(class="btn btn-dark btn-lg") }}
+                        </div>
+                    </form>
+                    <!-- End User Profile Form -->
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
