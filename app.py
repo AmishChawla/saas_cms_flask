@@ -1,10 +1,10 @@
 import csv
 import json
 import os
-from io import StringIO
+from io import StringIO, BytesIO
 import csv
 import ast
-from flask import Flask, render_template, redirect, url_for, flash, request, session
+from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from jinja2 import Environment, FileSystemLoader
 from werkzeug.utils import secure_filename
@@ -255,14 +255,11 @@ def admin_view_user_profile(user_id):
     username = result["username"]
     email = result["email"]
     role = result["role"]
-    data_list = []
-    for index in range(len(result["resume_data"])):
-        extracted_data = result["resume_data"][index]["extracted_data"]
-        data_list.append(extracted_data)
-    # template = env.get_template('admin_view_user_profile.html')
-    # output = template.render(csv_files=csv_files, email=email, role = role, username=username)
 
-    return render_template('admin_view_user_profile.html', data_list=data_list, email=email, role=role,
+    resume_data = result["resume_data"]
+
+
+    return render_template('admin_view_user_profile.html', resume_data=resume_data, email=email, role=role,
                            username=username)
 
 
@@ -334,14 +331,16 @@ def user_history():
         username = result["username"]
         email = result["email"]
         role = result["role"]
-        data_list = []
-        for index in range(len(result["resume_data"])):
-            extracted_data = result["resume_data"][index]["extracted_data"]
-            data_list.append(extracted_data)
+        resume_data = result["resume_data"]
+        # data_list = []
+        # for index in range(len(result["resume_data"])):
+        #     extracted_data = result["resume_data"][index]["extracted_data"]
+        #     data_list.append(extracted_data)
     # template = env.get_template('admin_view_user_profile.html')
     # output = template.render(csv_files=csv_files, email=email, role = role, username=username)
-    return render_template('admin_view_user_profile.html', data_list=data_list, email=email, role=role,
-                           username=username)
+    print(resume_data[0]["upload_datetime"])
+    return render_template('admin_view_user_profile.html', email=email, role=role,
+                           username=username, resume_data=resume_data)
 
 
 @app.route("/admin/edit-user-profile/<user_id>", methods=['GET', 'POST'])
