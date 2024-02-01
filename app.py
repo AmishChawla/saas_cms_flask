@@ -360,9 +360,6 @@ def admin_edit_user_profile(user_id):
     form.status.data = status
     print("haan")
 
-    if form.validate():
-        print("valid")
-
     if form.is_submitted():
         print("submitted")
 

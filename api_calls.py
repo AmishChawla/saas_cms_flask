@@ -2,6 +2,7 @@ import json
 import requests
 import constants
 
+
 def user_login(email, password):
     print('trying2')
     data = {
@@ -10,9 +11,9 @@ def user_login(email, password):
     }
 
     try:
-        response = requests.post(constants.BASE_URL+'/login', data=data)
+        response = requests.post(constants.BASE_URL + '/login', data=data)
         print(response.text)
-        print(constants.BASE_URL+'/login')
+        print(constants.BASE_URL + '/login')
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
@@ -23,10 +24,11 @@ def user_login(email, password):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+
 def dashboard(file_list, access_token: str):
     headers = {'Authorization': f'Bearer {access_token}'}
     try:
-        response = requests.post(constants.BASE_URL+'/process-resume/', files=file_list, headers=headers)
+        response = requests.post(constants.BASE_URL + '/process-resume/', files=file_list, headers=headers)
         return response
 
     except requests.exceptions.RequestException as e:
@@ -45,7 +47,7 @@ def user_register(username, email, password):
     }
 
     try:
-        response = requests.post(constants.BASE_URL+'/register', data=json.dumps(data), headers=headers)
+        response = requests.post(constants.BASE_URL + '/register', data=json.dumps(data), headers=headers)
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:
@@ -56,6 +58,7 @@ def user_register(username, email, password):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
 
 def get_user_profile(access_token: str):
     headers = {'Authorization': f'Bearer {access_token}'}
@@ -98,9 +101,9 @@ def admin_login(email, password):
     }
 
     try:
-        response = requests.post(constants.BASE_URL+'/admin/login', data=data)
+        response = requests.post(constants.BASE_URL + '/admin/login', data=data)
         print(response.text)
-        print(constants.BASE_URL+'/admin/login')
+        print(constants.BASE_URL + '/admin/login')
 
         return response
     except requests.exceptions.HTTPError as errh:
@@ -113,13 +116,13 @@ def admin_login(email, password):
         print(f"An unexpected error occurred: {err}")
 
 
-#Endpoint only accessible to admin
+# Endpoint only accessible to admin
 def add_user(username, email, password, role, access_token: str):
     print('trying3')
     headers = {
         'Content-Type': 'application/json',
         'Authorization': f'Bearer {access_token}'
-               }
+    }
 
     data = {
         "username": username,
@@ -129,7 +132,7 @@ def add_user(username, email, password, role, access_token: str):
     }
 
     try:
-        response = requests.post(constants.BASE_URL+'/admin/add-user', data=json.dumps(data), headers=headers)
+        response = requests.post(constants.BASE_URL + '/admin/add-user', data=json.dumps(data), headers=headers)
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:
@@ -175,14 +178,13 @@ def admin_get_any_user(access_token: str, user_id: int):
         print(f"An unexpected error occurred: {err}")
 
 
-
 def update_user_password(current_password, new_password, confirm_new_password, access_token: str):
     print('trying3')
     headers = {
         'Authorization': f'Bearer {access_token}',
         'Content-type': 'application/json'
 
-               }
+    }
 
     data = {
         "current_password": current_password,
@@ -191,7 +193,7 @@ def update_user_password(current_password, new_password, confirm_new_password, a
     }
 
     try:
-        response = requests.put(constants.BASE_URL+'/update-password', params=data, headers=headers)
+        response = requests.put(constants.BASE_URL + '/update-password', params=data, headers=headers)
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:
@@ -202,7 +204,6 @@ def update_user_password(current_password, new_password, confirm_new_password, a
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
-
 
 
 def forgot_password(email):
@@ -216,7 +217,7 @@ def forgot_password(email):
     }
 
     try:
-        response = requests.post(constants.BASE_URL+'/forgot-password', params=data, headers=headers)
+        response = requests.post(constants.BASE_URL + '/forgot-password', params=data, headers=headers)
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:
@@ -241,7 +242,7 @@ def reset_password(token, new_password):
     }
 
     try:
-        response = requests.post(constants.BASE_URL+'/reset-password', params=data, headers=headers)
+        response = requests.post(constants.BASE_URL + '/reset-password', params=data, headers=headers)
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:
