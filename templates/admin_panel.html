@@ -117,6 +117,27 @@ margin-left:10px;
 
 
 
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+    display:inline-block;
+}
+
+.pagination button {
+    padding: 5px 10px;
+    margin: 0 5px;
+    border: none;
+    background-colo:none;
+    cursor: pointer;
+}
+
+.pagination button:hover {
+    background-color: #e0e0e0;
+}
+
+#pageInfo {
+    font-weight: bold;
+}
 
 
     </style>
@@ -337,6 +358,12 @@ margin-left:10px;
         {% endfor %}
     </tbody>
 </table>
+
+<div class="pagination">
+    <button id="prevPageBtn" onclick="redirectToPage('{{ url_for('admin_dashboard', page=(page-1)) }}')"><span class="mdi mdi-chevron-left"></span></button>
+    <span id="pageInfo">{{ page }} of {{ total_pages }}</span>
+    <button id="nextPageBtn" onclick="redirectToPage('{{ url_for('admin_dashboard', page=(page+1)) }}')"><span class="mdi mdi-chevron-right"></span></button>
+</div>
 
                   </div>
                 </div>

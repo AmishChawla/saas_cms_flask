@@ -77,11 +77,14 @@ def get_user_profile(access_token: str):
         print(f"An unexpected error occurred: {err}")
 
 
-def get_all_users(access_token: str):
+def get_all_users(access_token: str, page: int, per_page: int):
     headers = {'Authorization': f'Bearer {access_token}'}
-
+    params = {
+        "page": page,
+        "per_page":per_page
+    }
     try:
-        response = requests.get(constants.BASE_URL + '/admin/users', headers=headers)
+        response = requests.get(constants.BASE_URL + '/admin/users', headers=headers, params=params)
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:

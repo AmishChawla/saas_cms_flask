@@ -1,10 +1,10 @@
 import csv
 import json
 import os
-from io import StringIO
+from io import StringIO, BytesIO
 import csv
 import ast
-from flask import Flask, render_template, redirect, url_for, flash, request, session
+from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from jinja2 import Environment, FileSystemLoader
 from werkzeug.utils import secure_filename
@@ -181,23 +181,34 @@ def profile():
         return render_template('profile.html', username=username, email=email, role=role)
 
 
+
+
 @app.route("/admin-dashboard")
 @login_required
 def admin_dashboard():
+    ITEMS_PER_PAGE = 5
+    # Fetch user profile details
     respo = api_calls.get_user_profile(current_user.id)
-    if (respo.status_code == 200):
+    username, email, role = '', '', ''
+
+    if respo.status_code == 200:
         admin_detail = respo.json()
         username = admin_detail.get('username', '')
         email = admin_detail.get('email', '')
         role = admin_detail.get('role', '')
 
+    # Fetch all users
+    page = request.args.get('page', 1, type=int)
+    response = api_calls.get_all_users(current_user.id, page=page, per_page=ITEMS_PER_PAGE)
 
-    response = api_calls.get_all_users(current_user.id)
-    if (response.status_code == 200):
+    if response.status_code == 200:
         result = response.json()
-        print(result)
+        total_pages = result["total_pages"]
+        users = result["users"]
+    else:
+        print("Failed response")
 
-    return render_template('admin_panel.html', result=result, username=username, email=email, role=role)
+    return render_template('admin_panel.html', result=users, username=username, email=email, role=role, page=page, total_pages=total_pages)
 
 
 @app.route("/admin/login", methods=['GET', 'POST'])
@@ -260,14 +271,11 @@ def admin_view_user_profile(user_id):
     username = result["username"]
     email = result["email"]
     role = result["role"]
-    data_list = []
-    for index in range(len(result["resume_data"])):
-        extracted_data = result["resume_data"][index]["extracted_data"]
-        data_list.append(extracted_data)
-    # template = env.get_template('admin_view_user_profile.html')
-    # output = template.render(csv_files=csv_files, email=email, role = role, username=username)
 
-    return render_template('admin_view_user_profile.html', data_list=data_list, email=email, role=role,
+    resume_data = result["resume_data"]
+
+
+    return render_template('admin_view_user_profile.html', resume_data=resume_data, email=email, role=role,
                            username=username)
 
 
@@ -339,14 +347,16 @@ def user_history():
         username = result["username"]
         email = result["email"]
         role = result["role"]
-        data_list = []
-        for index in range(len(result["resume_data"])):
-            extracted_data = result["resume_data"][index]["extracted_data"]
-            data_list.append(extracted_data)
+        resume_data = result["resume_data"]
+        # data_list = []
+        # for index in range(len(result["resume_data"])):
+        #     extracted_data = result["resume_data"][index]["extracted_data"]
+        #     data_list.append(extracted_data)
     # template = env.get_template('admin_view_user_profile.html')
     # output = template.render(csv_files=csv_files, email=email, role = role, username=username)
-    return render_template('admin_view_user_profile.html', data_list=data_list, email=email, role=role,
-                           username=username)
+    print(resume_data[0]["upload_datetime"])
+    return render_template('admin_view_user_profile.html', email=email, role=role,
+                           username=username, resume_data=resume_data)
 
 
 @app.route("/admin/edit-user-profile/<user_id>", methods=['GET', 'POST'])
