@@ -45,6 +45,78 @@
 
 
 
+/* Style for the custom select container */
+.custom-select {
+    position: relative;
+    display: inline-block;
+
+}
+
+/* Style for the select element */
+#dateRangeDropdown {
+width: 100px;
+margin-left:10px;
+    padding: 5px; /* Adjust padding as needed */
+    font-size: 14px; /* Adjust font size as needed */
+    border: none; /* Remove border */
+    background-color: transparent; /* Set background color */
+    color: #333; /* Set text color */
+    font-weight: 100;
+    cursor: pointer; /* Show pointer cursor on hover */
+    appearance: none; /* Remove default appearance */
+    -webkit-appearance: none; /* Safari and Chrome */
+    -moz-appearance: none; /* Firefox */
+    outline: none; /* Remove outline */
+}
+
+#roleRangeDropdown {
+width: 70px;
+margin-left:10px;
+    padding: 5px; /* Adjust padding as needed */
+    font-size: 14px; /* Adjust font size as needed */
+    border: none; /* Remove border */
+    background-color: transparent; /* Set background color */
+    color: #333; /* Set text color */
+    font-weight: 100;
+    cursor: pointer; /* Show pointer cursor on hover */
+    appearance: none; /* Remove default appearance */
+    -webkit-appearance: none; /* Safari and Chrome */
+    -moz-appearance: none; /* Firefox */
+    outline: none; /* Remove outline */
+}
+
+#statusRangeDropdown {
+width: 80px;
+margin-left:10px;
+    padding: 5px; /* Adjust padding as needed */
+    font-size: 14px; /* Adjust font size as needed */
+    border: none; /* Remove border */
+    background-color: transparent; /* Set background color */
+    color: #333; /* Set text color */
+    font-weight: 100;
+    cursor: pointer; /* Show pointer cursor on hover */
+    appearance: none; /* Remove default appearance */
+    -webkit-appearance: none; /* Safari and Chrome */
+    -moz-appearance: none; /* Firefox */
+    outline: none; /* Remove outline */
+}
+
+
+/* Style for the down arrow */
+.custom-select::after {
+    content: '\25BC'; /* Unicode character for down arrow */
+    position: absolute;
+    top: 50%;
+
+    right: 2px; /* Adjust as needed */
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+
+
+
+
 
 
     </style>
@@ -116,22 +188,36 @@
                 <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
               </a>
             </li>
+<!--            <li class="nav-item">-->
+<!--              <a class="nav-link" href="{{ url_for('admin_dashboard') }}">-->
+<!--                <span class="menu-title">Dashboard</span>-->
+<!--                <i class="mdi mdi-home menu-icon"></i>-->
+<!--              </a>-->
+<!--            </li>-->
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
-                <span class="menu-title">Dashboard</span>
-                <i class="mdi mdi-home menu-icon"></i>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('add_user') }}">
-                <span class="menu-title">Add user</span>
-                <i class="mdi mdi-account-multiple-plus menu-icon"></i>
+                <span class="menu-title">List of Users</span>
+                <i class="mdi mdi-account-multiple menu-icon"></i>
               </a>
             </li>
                           <li class="nav-item">
               <a class="nav-link" href="#resume history">
                 <span class="menu-title">Resume History</span>
                 <i class="mdi mdi-file-document-outline menu-icon"></i>
+              </a>
+            </li>
+
+              <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span class="menu-title">Trash</span>
+                <i class="mdi mdi-trash-can menu-icon"></i>
+              </a>
+            </li>
+
+              <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span class="menu-title">Settings</span>
+                <i class="mdi mdi-cogs menu-icon"></i>
               </a>
             </li>
 
@@ -149,7 +235,7 @@
             <div class="row">
 
 
-              <div class="col-lg-12 grid-margin stretch-card">
+              <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">User Details</h4>
@@ -162,8 +248,41 @@
             <th> User ID </th>
             <th> Name </th>
             <th> Email </th>
-            <th> Role </th>
-            <th> Creation Time</th>
+            <th> Role
+            <div class="custom-select">
+        <select id="roleRangeDropdown">
+            <option value="user" disabled selected hidden></option>
+             <option value="all">All</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+
+        </select>
+    </div></th>
+            <th> Creation Time
+    <div class="custom-select">
+        <select id="dateRangeDropdown">
+            <option value="last7days" disabled selected hidden></option>
+            <option value="all">All</option>
+            <option value="last7days">Last 7 Days</option>
+            <option value="lastMonth">Last Month</option>
+            <option value="lastYear">Last Year</option>
+            <option value="latestFirst">Latest First</option>
+            <option value="olderFirst">Older First</option>
+        </select>
+    </div>
+</th>
+
+
+            <th> Status
+            <div class="custom-select">
+        <select id="statusRangeDropdown">
+            <option value="active" disabled selected hidden></option>
+             <option value="all">All</option>
+            <option value="active">Active</option>
+            <option value="blocked">Blocked</option>
+
+        </select>
+    </div></th>
             <th> Action </th>
         </tr>
 
@@ -179,14 +298,15 @@
                 <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
                     U_{{ row.id }}
                 </td>
-                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')"> <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}"> {{ row.username }} </a></td>
+                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}"> {{ row.username }} </a></td>
 
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
                     {{ row.email }}
                 </td>
 
-                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')"> {{ row.role }} </td>
+                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> {{ row.role }} </td>
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ row.created_datetime.split('T')[1][:8] }} &nbsp; {{ row.created_datetime.split('T')[0] }}</td>
+                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> {{ row.status }} </td>
                 <td>
     <a class="button button1" href="{{ url_for('admin_edit_user_profile', user_id=row.id) }}">Edit</a>
     <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ row.id }}">Delete</button>
@@ -260,26 +380,231 @@
     </script>
     <script>
 function searchByName() {
-    var input, filter, table, tr, td, i, txtValue;
+    var input, filter, table, tr, td, i, j, txtValue;
     input = document.getElementById("userSearchInput");
     filter = input.value.toUpperCase();
     table = document.getElementById("userTable");
     tr = table.getElementsByTagName("tr");
 
-    for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[2]; // Assuming the name is in the third column
-        if (td) {
-            txtValue = td.textContent || td.innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
+    // Start loop from the second row, skipping the header row
+    for (i = 1; i < tr.length; i++) {
+        var found = false;
+        td = tr[i].getElementsByTagName("td");
+        for (j = 0; j < td.length; j++) {
+            if (td[j]) {
+                txtValue = td[j].textContent || td[j].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    found = true;
+                    break;
+                }
             }
+        }
+        if (found) {
+            tr[i].style.display = "";
+        } else {
+            tr[i].style.display = "none";
         }
     }
 }
-</script>
 
+
+</script>
+    <script>
+       function filterByDateRange(option) {
+        switch(option) {
+            case 'all':
+                displayAllData();
+                break;
+            case 'last7days':
+                filterLast7Days();
+                break;
+            case 'lastMonth':
+                filterLastMonth();
+                break;
+            case 'lastYear':
+                filterLastYear();
+                break;
+            case 'latestFirst':
+                sortByCreationDateTime('desc');
+                break;
+            case 'olderFirst':
+                sortByCreationDateTime('asc');
+                break;
+            default:
+                break;
+        }
+    }
+
+    // Function to display all data
+    function displayAllData() {
+        var table = document.getElementById("userTable");
+        var rows = table.rows;
+
+        // Loop through all rows starting from the second row (skipping the header row)
+        for (var i = 1; i < rows.length; i++) {
+            // Make the row visible by setting its display property to table-row
+            rows[i].style.display = "table-row";
+        }
+    }
+
+
+// Function to filter data for last 7 days
+function filterLast7Days() {
+    var table = document.getElementById("userTable");
+    var rows = table.rows;
+
+    var today = new Date(); // Get today's date
+    var sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 7); // Calculate date 7 days ago
+
+    // Loop through all rows starting from the second row (skipping the header row)
+    for (var i = 1; i < rows.length; i++) {
+        var creationDate = new Date(rows[i].cells[5].innerText); // Assuming creation datetime is in the 6th column
+
+        // Check if creation date is within the last 7 days
+        if (creationDate >= sevenDaysAgo && creationDate <= today) {
+            // Make the row visible by setting its display property to table-row
+            rows[i].style.display = "table-row";
+        } else {
+            // Hide the row if creation date is not within the last 7 days
+            rows[i].style.display = "none";
+        }
+    }
+}
+
+// Function to filter data for last month
+function filterLastMonth() {
+    var table = document.getElementById("userTable");
+    var rows = table.rows;
+
+    var today = new Date(); // Get today's date
+    var firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1); // Get first day of the current month
+
+    // Loop through all rows starting from the second row (skipping the header row)
+    for (var i = 1; i < rows.length; i++) {
+        var creationDate = new Date(rows[i].cells[5].innerText); // Assuming creation datetime is in the 6th column
+
+        // Check if creation date is within the last month
+        if (creationDate >= firstDayOfMonth && creationDate <= today) {
+            // Make the row visible by setting its display property to table-row
+            rows[i].style.display = "table-row";
+        } else {
+            // Hide the row if creation date is not within the last month
+            rows[i].style.display = "none";
+        }
+    }
+}
+
+// Function to filter data for last year
+function filterLastYear() {
+    var table = document.getElementById("userTable");
+    var rows = table.rows;
+
+    var today = new Date(); // Get today's date
+    var firstDayOfYear = new Date(today.getFullYear() - 1, 0, 1); // Get first day of the previous year
+
+    // Loop through all rows starting from the second row (skipping the header row)
+    for (var i = 1; i < rows.length; i++) {
+        var creationDate = new Date(rows[i].cells[5].innerText); // Assuming creation datetime is in the 6th column
+
+        // Check if creation date is within the last year
+        if (creationDate >= firstDayOfYear && creationDate <= today) {
+            // Make the row visible by setting its display property to table-row
+            rows[i].style.display = "table-row";
+        } else {
+            // Hide the row if creation date is not within the last year
+            rows[i].style.display = "none";
+        }
+    }
+}
+
+
+
+// Function to sort data by creation datetime
+function sortByCreationDateTime(order) {
+    // Get the table body
+    var tbody = document.querySelector('#userTable tbody');
+
+    // Get all rows in the table body
+    var rows = tbody.querySelectorAll('tr');
+
+    // Convert the NodeList to an array so that we can use the sort function
+    var rowsArray = Array.from(rows);
+
+    // Sort the array based on creation datetime
+    rowsArray.sort(function(a, b) {
+        var dateA = new Date(a.cells[5].innerText); // Assuming creation datetime is in the 6th column
+        var dateB = new Date(b.cells[5].innerText);
+        return (order === 'desc') ? (dateB - dateA) : (dateA - dateB);
+    });
+
+    // Remove existing rows from the table
+    rowsArray.forEach(function(row) {
+        tbody.appendChild(row);
+    });
+}
+
+ document.getElementById('dateRangeDropdown').addEventListener('change', function() {
+        var selectedRange = this.value;
+        filterByDateRange(selectedRange);
+    });
+
+
+// Add event listener to the role dropdown menu
+document.getElementById('roleRangeDropdown').addEventListener('change', function() {
+    // Get the selected role from the dropdown menu
+    var selectedRole = this.value;
+
+    // Call the function to filter by role
+    filterByRole(selectedRole);
+});
+
+// Function to filter table rows based on the selected role
+function filterByRole(selectedRole) {
+    var table = document.getElementById("userTable");
+    var rows = table.rows;
+
+    // Loop through all rows, starting from the second row (skip header row)
+    for (var i = 1; i < rows.length; i++) {
+        var roleCell = rows[i].cells[4].innerText; // Assuming role is in the 5th column
+
+        // Check if the role matches the selected role or if the selected role is "All"
+        if (selectedRole === "all" || roleCell.toLowerCase() === selectedRole.toLowerCase()) {
+            rows[i].style.display = "table-row"; // Display the row
+        } else {
+            rows[i].style.display = "none"; // Hide the row
+        }
+    }
+}
+
+
+
+document.getElementById('statusRangeDropdown').addEventListener('change', function() {
+    // Get the selected role from the dropdown menu
+    var selectedStatus = this.value;
+
+    // Call the function to filter by role
+    filterByStatus(selectedStatus);
+});
+
+// Function to filter table rows based on the selected role
+function filterByStatus(selectedStatus) {
+    var table = document.getElementById("userTable");
+    var rows = table.rows;
+
+    // Loop through all rows, starting from the second row (skip header row)
+    for (var i = 1; i < rows.length; i++) {
+        var statusCell = rows[i].cells[6].innerText; // Assuming role is in the 7th column
+
+        // Check if the role matches the selected role or if the selected role is "All"
+        if (selectedStatus === "all" || statusCell.toLowerCase() === selectedStatus.toLowerCase()) {
+            rows[i].style.display = "table-row"; // Display the row
+        } else {
+            rows[i].style.display = "none"; // Hide the row
+        }
+    }
+}
+    </script>
 
     <!-- endinject -->
     <!-- Custom js for this page -->

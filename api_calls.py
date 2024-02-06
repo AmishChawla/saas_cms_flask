@@ -34,19 +34,23 @@ def dashboard(file_list, access_token: str):
         print(f"Error: {e}")
 
 
-def user_register(username, email, password):
+def user_register(username, email, password, company_id, company_name):
     print('trying3')
     headers = {'Content-Type': 'application/json'}
     data = {
+    "user": {
         "username": username,
         "email": email,
         "password": password,
         "role": "user"
+        },
+        "company_id": company_id
     }
-
+    print("adha me atak gya")
     try:
-        response = requests.post(constants.BASE_URL+'/register', data=json.dumps(data), headers=headers)
+        response = requests.post(constants.BASE_URL+f'/register/{company_name}', data=json.dumps(data), headers=headers)
         print(response.text)
+        print("chal gya bc")
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
@@ -269,6 +273,38 @@ def admin_edit_any_user(access_token: str, user_id: int, username, role, status)
         print("try")
         response = requests.put(constants.BASE_URL + f'/admin/edit-user', headers=headers, params=data)
         return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def get_companies():
+
+    try:
+        response = requests.get(constants.BASE_URL + f'/companies')
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def get_company_details(company_id: int):
+
+    try:
+        response = requests.get(constants.BASE_URL + f'/company/{company_id}')
+        if response.status_code == 200:
+            return response.json()
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except requests.exceptions.ConnectionError as errc:

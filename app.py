@@ -47,6 +47,7 @@ def index():
     return render_template('index.html')
 
 
+
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload_pdf():
@@ -132,14 +133,16 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route("/register", methods=['GET', 'POST'])
-def register():
+@app.route("/register/<name>/<company_id>", methods=['GET', 'POST'])
+def register(name, company_id):
     form = forms.RegisterForm()
+    print("outside")
     if form.validate_on_submit():
         username = form.username.data
         email = form.email.data
         password = form.password.data
-        response = api_calls.user_register(username, email, password)
+        response = api_calls.user_register(username, email, password, company_id, company_name=name)
+        print("inside")
 
         if (response.status_code == 200):
             flash('Registration Successful', category='info')
@@ -147,7 +150,7 @@ def register():
         else:
             flash('Registration unsuccessful. Please check username, email and password.', category='error')
 
-    return render_template('register.html', form=form)
+    return render_template('register.html', form=form, company_id=company_id, company_name=name)
 
 
 @app.route('/logout')
@@ -187,6 +190,7 @@ def admin_dashboard():
         username = admin_detail.get('username', '')
         email = admin_detail.get('email', '')
         role = admin_detail.get('role', '')
+
 
     response = api_calls.get_all_users(current_user.id)
     if (response.status_code == 200):
@@ -380,6 +384,41 @@ def admin_edit_user_profile(user_id):
             return redirect(url_for('admin_dashboard'))
 
     return render_template('edit_form.html', status=status, role=role, username=username, form=form, user_id=user_id)
+
+
+@app.route('/company-list', methods=['GET', 'POST'])
+def company_list():
+    response = api_calls.get_companies()
+    companies = []
+
+    if isinstance(response, list):  # Check if response is a list of dictionaries
+        for company in response:
+            id = company.get('id', '')
+            name = company.get('name', '')
+            phone_no = company.get('phone_no', '')
+            email = company.get('email', '')
+            address = company.get('address', '')
+            description = company.get('description', '')
+            companies.append({'id': id, 'name': name, 'phone_no': phone_no, 'email': email, 'address': address, 'description': description})
+    else:
+        # Handle the case when response is not a list of dictionaries
+        app.logger.error('Error retrieving companies. Response: %s', response)
+
+    return render_template('company_list.html', companies=companies)
+
+
+@app.route('/company-details/<company_id>', methods=['GET', 'POST'])
+def company_details(company_id):
+    result = api_calls.get_company_details(company_id=company_id)
+
+    name = result["name"]
+    phone_no = result['phone_no']
+    email = result['email']
+    address = result['address']
+    description = result['description']
+
+
+    return render_template('company_details.html', company_id=company_id, name=name, phone_no=phone_no, email=email, address=address, description=description)
 
 
 if __name__ == '__main__':
