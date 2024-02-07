@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Register Company{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card border-0">
+                    <!-- Add a card header "Register" -->
+                    <div class="card-header bg-white text-black text-center">
+                        <h2>Register Company</h2>
+                    </div>
+
+                    <div class="card-body">
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        {% for message in messages %}
+                                            <li>{{ message }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+
+                        <form method="post" action="{{ url_for('register_company') }}">
+                            {{ form.hidden_tag() }}
+
+                            <div class="mb-3">
+                                <label for="name" class="form-label visually-hidden">Company Name:</label>
+                                {{ form.name(class="form-control", placeholder="Company Name", required=True) }}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label visually-hidden">Email:</label>
+                                {{ form.email(class="form-control", placeholder="Email", required=True) }}
+                            </div>
+
+                            <div class="mb-3 text-center">
+                                {{ form.submit(class="btn btn-dark btn-lg") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

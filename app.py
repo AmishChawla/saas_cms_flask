@@ -200,22 +200,23 @@ def admin_dashboard():
 def admin_login():
     print('trying')
     if current_user.is_authenticated:
-        return redirect(url_for('admin_dashboard'))
-    form = forms.LoginForm()
-    print(form.validate_on_submit())
-    if form.validate_on_submit():
-        email = form.email.data
-        password = form.password.data
-        response = api_calls.admin_login(email, password)
+        return redirect(url_for('register_company'))
+    else:
+        form = forms.LoginForm()
+        print(form.validate_on_submit())
+        if form.validate_on_submit():
+            email = form.email.data
+            password = form.password.data
+            response = api_calls.admin_login(email, password)
 
-        if (response.status_code == 200):
-            token = response.json().get('access_token')
-            user = User(user_id=token)
-            login_user(user)
+            if (response.status_code == 200):
+                token = response.json().get('access_token')
+                user = User(user_id=token)
+                login_user(user)
 
-            return redirect(url_for('admin_dashboard'))
-        else:
-            flash('Login unsuccessful. Please check email and password.', category='error')
+                return redirect(url_for('register_company'))
+            else:
+                flash('Login unsuccessful. Please check email and password.', category='error')
 
     return render_template('admin_login.html', form=form)
 
@@ -379,6 +380,43 @@ def admin_edit_user_profile(user_id):
             return redirect(url_for('admin_dashboard'))
 
     return render_template('edit_form.html', status=status, role=role, username=username, form=form, user_id=user_id)
+
+
+@app.route("/admin-register", methods=['GET', 'POST'])
+def admin_register():
+    form = forms.AdminRegisterForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        email = form.email.data
+        password = form.password.data
+        response = api_calls.admin_register(username, email, password)
+
+        if (response.status_code == 200):
+            flash('Registration Successful', category='info')
+            return redirect(url_for('admin_login'))
+        else:
+            flash('Registration unsuccessful. Please check username, email and password.', category='error')
+
+    return render_template('admin_register.html', form=form)
+
+
+@app.route("/admin/register-company", methods=['GET', 'POST'])
+@login_required
+def register_company():
+    form = forms.CompanyRegisterForm()
+    # if form.validate_on_submit():
+    #     username = form.username.data
+    #     email = form.email.data
+    #     response = api_calls.add_user(username, email, password, role, current_user.id)
+    #     print(response.status_code)
+    #     if (response.status_code == 200):
+    #         flash('Registration Successful', category='info')
+    #         return redirect(url_for('admin_dashboard'))
+    #     else:
+    #         flash('Registration unsuccessful. Please check username, email and password.', category='error')
+
+    return render_template('company_register.html', form=form)
+
 
 
 if __name__ == '__main__':
