@@ -45,6 +45,99 @@
 
 
 
+/* Style for the custom select container */
+.custom-select {
+    position: relative;
+    display: inline-block;
+
+}
+
+/* Style for the select element */
+#dateRangeDropdown {
+width: 100px;
+margin-left:10px;
+    padding: 5px; /* Adjust padding as needed */
+    font-size: 14px; /* Adjust font size as needed */
+    border: none; /* Remove border */
+    background-color: transparent; /* Set background color */
+    color: #333; /* Set text color */
+    font-weight: 100;
+    cursor: pointer; /* Show pointer cursor on hover */
+    appearance: none; /* Remove default appearance */
+    -webkit-appearance: none; /* Safari and Chrome */
+    -moz-appearance: none; /* Firefox */
+    outline: none; /* Remove outline */
+}
+
+#roleRangeDropdown {
+width: 70px;
+margin-left:10px;
+    padding: 5px; /* Adjust padding as needed */
+    font-size: 14px; /* Adjust font size as needed */
+    border: none; /* Remove border */
+    background-color: transparent; /* Set background color */
+    color: #333; /* Set text color */
+    font-weight: 100;
+    cursor: pointer; /* Show pointer cursor on hover */
+    appearance: none; /* Remove default appearance */
+    -webkit-appearance: none; /* Safari and Chrome */
+    -moz-appearance: none; /* Firefox */
+    outline: none; /* Remove outline */
+}
+
+#statusRangeDropdown {
+width: 80px;
+margin-left:10px;
+    padding: 5px; /* Adjust padding as needed */
+    font-size: 14px; /* Adjust font size as needed */
+    border: none; /* Remove border */
+    background-color: transparent; /* Set background color */
+    color: #333; /* Set text color */
+    font-weight: 100;
+    cursor: pointer; /* Show pointer cursor on hover */
+    appearance: none; /* Remove default appearance */
+    -webkit-appearance: none; /* Safari and Chrome */
+    -moz-appearance: none; /* Firefox */
+    outline: none; /* Remove outline */
+}
+
+
+/* Style for the down arrow */
+.custom-select::after {
+    content: '\25BC'; /* Unicode character for down arrow */
+    position: absolute;
+    top: 50%;
+
+    right: 2px; /* Adjust as needed */
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+
+
+
+
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+    display:inline-block;
+}
+
+.pagination button {
+    padding: 5px 10px;
+    margin: 0 5px;
+    border: none;
+    background-colo:none;
+    cursor: pointer;
+}
+
+.pagination button:hover {
+    background-color: #e0e0e0;
+}
+
+#pageInfo {
+    font-weight: bold;
+}
 
 
     </style>
@@ -64,17 +157,6 @@
           <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
             <span class="mdi mdi-menu"></span>
           </button>
-<div class="search-field d-none d-md-block">
-    <form class="d-flex align-items-center h-100">
-        <div class="input-group">
-            <div class="input-group-prepend bg-transparent">
-                <i class="input-group-text border-0 mdi mdi-magnify"></i>
-            </div>
-            <input type="text" class="form-control bg-transparent border-0" id="userSearchInput" placeholder="Search user" oninput="searchByName()">
-        </div>
-    </form>
-</div>
-
           <ul class="navbar-nav navbar-nav-right">
 
             <li class="nav-item">
@@ -116,22 +198,36 @@
                 <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
               </a>
             </li>
+<!--            <li class="nav-item">-->
+<!--              <a class="nav-link" href="{{ url_for('admin_dashboard') }}">-->
+<!--                <span class="menu-title">Dashboard</span>-->
+<!--                <i class="mdi mdi-home menu-icon"></i>-->
+<!--              </a>-->
+<!--            </li>-->
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
-                <span class="menu-title">Dashboard</span>
-                <i class="mdi mdi-home menu-icon"></i>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('add_user') }}">
-                <span class="menu-title">Add user</span>
-                <i class="mdi mdi-account-multiple-plus menu-icon"></i>
+                <span class="menu-title">List of Users</span>
+                <i class="mdi mdi-account-multiple menu-icon"></i>
               </a>
             </li>
                           <li class="nav-item">
               <a class="nav-link" href="#resume history">
                 <span class="menu-title">Resume History</span>
                 <i class="mdi mdi-file-document-outline menu-icon"></i>
+              </a>
+            </li>
+
+              <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span class="menu-title">Trash</span>
+                <i class="mdi mdi-trash-can menu-icon"></i>
+              </a>
+            </li>
+
+              <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span class="menu-title">Settings</span>
+                <i class="mdi mdi-cogs menu-icon"></i>
               </a>
             </li>
 
@@ -142,18 +238,36 @@
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title"> User Table </h3>
-                <a class="btn btn-info" href="{{ url_for('add_user') }}">
-                <span class="menu-title">Add user</span>
-              </a>
-            </div>
+               </div>
             <div class="row">
 
 
-              <div class="col-lg-12 grid-margin stretch-card">
+              <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
                 <div class="card">
-                  <div class="card-body">
+                  <div class="card-body" style="overflow-x: auto;">
                     <h4 class="card-title">User Details</h4>
-                    <table class="table table-hover " id="userTable">
+                      <div style="display: flex; justify-content: space-between;">
+                      <div class="search-field d-none d-md-block" >
+    <form class="d-flex align-items-center h-100" onsubmit="event.preventDefault(); applyFilters();">
+        <div class="input-group" style="border: 0.07px solid #9C9FA6">
+            <div class="input-group-prepend">
+                <button class="btn btn-inverse-info btn-icon" type="button" onclick="applyFilters()">
+                    <i class="mdi mdi-magnify"></i>
+                </button>
+            </div>
+            {% if request.args.get('search_filter')%}
+            <input  type="text" class="form-control border align-items-center" id="searchInput" placeholder="{{request.args.get('search_filter')}}" style="height: 38px; padding-top: 6px; padding-bottom: 6px;">
+            {% else %}
+            <input type="text" class="form-control border align-items-center" id="searchInput" placeholder="Search User" style="height: 38px; padding-top: 6px; padding-bottom: 6px;">
+         {% endif %}
+        </div>
+    </form>
+</div>
+                                      <a class="btn btn-info" href="{{ url_for('add_user') }}">
+                <span class="menu-title">Add user</span>
+              </a>
+                          </div>
+                    <table class="table table-hover " id="userTable" style="overflow-x: scroll">
     <thead>
 
 
@@ -162,8 +276,41 @@
             <th> User ID </th>
             <th> Name </th>
             <th> Email </th>
-            <th> Role </th>
-            <th> Creation Time</th>
+            <th> Role
+            <div class="custom-select">
+        <select id="roleRangeDropdown" onchange="applyFilters()">
+            <option value="all" disabled selected hidden></option>
+             <option value="all">All</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+
+        </select>
+    </div></th>
+            <th> Creation Time
+    <div class="custom-select">
+        <select id="dateRangeDropdown">
+            <option value="last7days" disabled selected hidden></option>
+            <option value="all">All</option>
+            <option value="last7days">Last 7 Days</option>
+            <option value="lastMonth">Last Month</option>
+            <option value="lastYear">Last Year</option>
+            <option value="latestFirst">Latest First</option>
+            <option value="olderFirst">Older First</option>
+        </select>
+    </div>
+</th>
+
+
+            <th> Status
+            <div class="custom-select">
+        <select id="statusRangeDropdown" onchange="applyFilters()">
+            <option value="all" disabled selected hidden></option>
+             <option value="all">All</option>
+            <option value="active">Active</option>
+            <option value="blocked">Blocked</option>
+
+        </select>
+    </div></th>
             <th> Action </th>
         </tr>
 
@@ -179,14 +326,15 @@
                 <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
                     U_{{ row.id }}
                 </td>
-                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')"> <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}"> {{ row.username }} </a></td>
+                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}"> {{ row.username }} </a></td>
 
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
                     {{ row.email }}
                 </td>
 
-                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')"> {{ row.role }} </td>
+                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> {{ row.role }} </td>
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ row.created_datetime.split('T')[1][:8] }} &nbsp; {{ row.created_datetime.split('T')[0] }}</td>
+                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> {{ row.status }} </td>
                 <td>
     <a class="button button1" href="{{ url_for('admin_edit_user_profile', user_id=row.id) }}">Edit</a>
     <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ row.id }}">Delete</button>
@@ -217,6 +365,12 @@
         {% endfor %}
     </tbody>
 </table>
+
+<div class="pagination">
+    <button id="prevPageBtn" onclick="redirectToPage('{{ url_for('admin_dashboard', page=(page-1)) }}')"><span class="mdi mdi-chevron-left"></span></button>
+    <span id="pageInfo">{{ page }} of {{ total_pages }}</span>
+    <button id="nextPageBtn" onclick="redirectToPage('{{ url_for('admin_dashboard', page=(page+1)) }}')"><span class="mdi mdi-chevron-right"></span></button>
+</div>
 
                   </div>
                 </div>
@@ -249,6 +403,19 @@
     <script src="../static/assets/js/hoverable-collapse.js"></script>
     <script src="../static/assets/js/misc.js"></script>
     <script>
+        function applyFilters() {
+        // Get the selected filter values
+        var roleFilter = document.getElementById("roleRangeDropdown").value;
+        var dateFilter = document.getElementById("dateRangeDropdown").value;
+        var statusFilter = document.getElementById("statusRangeDropdown").value;
+        var searchFilter = document.getElementById("searchInput").value.trim();
+        // Redirect to the admin dashboard with filter parameters
+        var redirectUrl = "{{ url_for('admin_dashboard') }}?role_filter=" + roleFilter + "&date_filter=" + dateFilter + "&status_filter=" + statusFilter + "&search_filter=" + searchFilter;
+        redirectToPage(redirectUrl);
+        document.getElementById("searchInput").value = searchFilter;
+    }
+
+
     function redirectToPage(pageUrl) {
         // You can customize this function to perform the redirection as needed
         console.log(pageUrl);
@@ -258,27 +425,8 @@
     <script>
         var userId = document.querySelector('.button2').getAttribute('data-user-id');
     </script>
-    <script>
-function searchByName() {
-    var input, filter, table, tr, td, i, txtValue;
-    input = document.getElementById("userSearchInput");
-    filter = input.value.toUpperCase();
-    table = document.getElementById("userTable");
-    tr = table.getElementsByTagName("tr");
 
-    for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[2]; // Assuming the name is in the third column
-        if (td) {
-            txtValue = td.textContent || td.innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
-            }
-        }
-    }
-}
-</script>
+
 
 
     <!-- endinject -->

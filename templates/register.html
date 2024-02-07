@@ -25,35 +25,36 @@
                             {% endif %}
                         {% endwith %}
 
-                        <form method="post" action="{{ url_for('register') }}">
-                            {{ form.hidden_tag() }}
+                        <form method="post" action="{{ url_for('register', name=company_name, company_id=company_id) }}">
+    {{ form.hidden_tag() }}
 
-                            <div class="mb-3">
-                                <label for="username" class="form-label visually-hidden">Username:</label>
-                                {{ form.username(class="form-control", placeholder="Username", required=True) }}
-                            </div>
+    <div class="mb-3">
+        <label for="username" class="form-label visually-hidden">Username:</label>
+        {{ form.username(class="form-control", placeholder="Username", required=True) }}
+    </div>
 
-                            <div class="mb-3">
-                                <label for="email" class="form-label visually-hidden">Email:</label>
-                                {{ form.email(class="form-control", placeholder="Email", required=True) }}
-                            </div>
+    <div class="mb-3">
+        <label for="email" class="form-label visually-hidden">Email:</label>
+        {{ form.email(class="form-control", placeholder="Email", required=True) }}
+    </div>
 
-                            <div class="mb-3">
-                                <label for="password" class="form-label visually-hidden">Password:</label>
-                                {{ form.password(class="form-control", placeholder="Password", required=True) }}
-                            </div>
+    <div class="mb-3">
+        <label for="password" class="form-label visually-hidden">Password:</label>
+        {{ form.password(class="form-control", placeholder="Password", required=True) }}
+    </div>
 
-                            <div class="mb-3">
-                                <label for="confirm_password" class="form-label visually-hidden">Confirm Password:</label>
-                                {{ form.confirm_password(class="form-control", placeholder="Confirm Password", required=True) }}
-                            </div>
+    <div class="mb-3">
+        <label for="confirm_password" class="form-label visually-hidden">Confirm Password:</label>
+        {{ form.confirm_password(class="form-control", placeholder="Confirm Password", required=True) }}
+    </div>
 
-                            <div class="mb-3 text-center">
-                                {{ form.submit(class="btn btn-dark btn-lg") }}
-                            </div>
+    <div class="mb-3 text-center">
+        {{ form.submit(class="btn btn-dark btn-lg") }}
+    </div>
 
-                            <p class="text-center">Already have an account? <a href="{{ url_for('login') }}" class="text-muted">Login here</a></p>
-                        </form>
+    <p class="text-center">Already have an account? <a href="{{ url_for('login') }}" class="text-muted">Login here</a></p>
+</form>
+
                     </div>
                 </div>
             </div>

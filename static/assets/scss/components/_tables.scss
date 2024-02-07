@@ -52,3 +52,7 @@
 .table > :not(:first-child), .jsgrid .jsgrid-table > :not(:first-child) {
   border-top: none;
 }
+
+.table tr {
+padding: 10px;
+}

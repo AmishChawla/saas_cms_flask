@@ -47,6 +47,7 @@ def index():
     return render_template('index.html')
 
 
+
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload_pdf():
@@ -132,14 +133,16 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route("/register", methods=['GET', 'POST'])
-def register():
+@app.route("/register/<name>/<company_id>", methods=['GET', 'POST'])
+def register(name, company_id):
     form = forms.RegisterForm()
+    print("outside")
     if form.validate_on_submit():
         username = form.username.data
         email = form.email.data
         password = form.password.data
-        response = api_calls.user_register(username, email, password)
+        response = api_calls.user_register(username, email, password, company_id, company_name=name)
+        print("inside")
 
         if (response.status_code == 200):
             flash('Registration Successful', category='info')
@@ -147,7 +150,7 @@ def register():
         else:
             flash('Registration unsuccessful. Please check username, email and password.', category='error')
 
-    return render_template('register.html', form=form)
+    return render_template('register.html', form=form, company_id=company_id, company_name=name)
 
 
 @app.route('/logout')
@@ -178,45 +181,71 @@ def profile():
         return render_template('profile.html', username=username, email=email, role=role)
 
 
+
+
 @app.route("/admin-dashboard")
 @login_required
 def admin_dashboard():
+    ITEMS_PER_PAGE = 5
+    # Fetch user profile details
     respo = api_calls.get_user_profile(current_user.id)
-    if (respo.status_code == 200):
+    username, email, role = '', '', ''
+
+    if respo.status_code == 200:
         admin_detail = respo.json()
         username = admin_detail.get('username', '')
         email = admin_detail.get('email', '')
         role = admin_detail.get('role', '')
 
-    response = api_calls.get_all_users(current_user.id)
-    if (response.status_code == 200):
-        result = response.json()
-        print(result)
+    # Fetch all users
+    page = request.args.get('page', 1, type=int)
+    username_filter = request.args.get('username_filter')
+    email_filter = request.args.get('email_filter')
+    role_filter = request.args.get('role_filter')
+    status_filter = request.args.get('status_filter')
+    search_filter = request.args.get('search_filter')
 
-    return render_template('admin_panel.html', result=result, username=username, email=email, role=role)
+    response = api_calls.get_all_users(
+        current_user.id,
+        page=page,
+        per_page=ITEMS_PER_PAGE,
+        username_filter=username_filter,
+        email_filter=email_filter,
+        role_filter=role_filter,
+        status_filter=status_filter,
+        search_filter=search_filter
+    )
+
+    if response.status_code == 200:
+        result = response.json()
+        total_pages = result["total_pages"]
+        users = result["users"]
+    else:
+        print("Failed response")
+
+    return render_template('admin_panel.html', result=users, username=username, email=email, role=role, page=page, total_pages=total_pages)
 
 
 @app.route("/admin/login", methods=['GET', 'POST'])
 def admin_login():
     print('trying')
     if current_user.is_authenticated:
-        return redirect(url_for('register_company'))
-    else:
-        form = forms.LoginForm()
-        print(form.validate_on_submit())
-        if form.validate_on_submit():
-            email = form.email.data
-            password = form.password.data
-            response = api_calls.admin_login(email, password)
+        return redirect(url_for('admin_dashboard'))
+    form = forms.LoginForm()
+    print(form.validate_on_submit())
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+        response = api_calls.admin_login(email, password)
 
-            if (response.status_code == 200):
-                token = response.json().get('access_token')
-                user = User(user_id=token)
-                login_user(user)
+        if (response.status_code == 200):
+            token = response.json().get('access_token')
+            user = User(user_id=token)
+            login_user(user)
 
-                return redirect(url_for('register_company'))
-            else:
-                flash('Login unsuccessful. Please check email and password.', category='error')
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash('Login unsuccessful. Please check email and password.', category='error')
 
     return render_template('admin_login.html', form=form)
 
@@ -382,41 +411,39 @@ def admin_edit_user_profile(user_id):
     return render_template('edit_form.html', status=status, role=role, username=username, form=form, user_id=user_id)
 
 
-@app.route("/admin-register", methods=['GET', 'POST'])
-def admin_register():
-    form = forms.AdminRegisterForm()
-    if form.validate_on_submit():
-        username = form.username.data
-        email = form.email.data
-        password = form.password.data
-        response = api_calls.admin_register(username, email, password)
+@app.route('/company-list', methods=['GET', 'POST'])
+def company_list():
+    response = api_calls.get_companies()
+    companies = []
 
-        if (response.status_code == 200):
-            flash('Registration Successful', category='info')
-            return redirect(url_for('admin_login'))
-        else:
-            flash('Registration unsuccessful. Please check username, email and password.', category='error')
+    if isinstance(response, list):  # Check if response is a list of dictionaries
+        for company in response:
+            id = company.get('id', '')
+            name = company.get('name', '')
+            phone_no = company.get('phone_no', '')
+            email = company.get('email', '')
+            address = company.get('address', '')
+            description = company.get('description', '')
+            companies.append({'id': id, 'name': name, 'phone_no': phone_no, 'email': email, 'address': address, 'description': description})
+    else:
+        # Handle the case when response is not a list of dictionaries
+        app.logger.error('Error retrieving companies. Response: %s', response)
 
-    return render_template('admin_register.html', form=form)
+    return render_template('company_list.html', companies=companies)
 
 
-@app.route("/admin/register-company", methods=['GET', 'POST'])
-@login_required
-def register_company():
-    form = forms.CompanyRegisterForm()
-    # if form.validate_on_submit():
-    #     username = form.username.data
-    #     email = form.email.data
-    #     response = api_calls.add_user(username, email, password, role, current_user.id)
-    #     print(response.status_code)
-    #     if (response.status_code == 200):
-    #         flash('Registration Successful', category='info')
-    #         return redirect(url_for('admin_dashboard'))
-    #     else:
-    #         flash('Registration unsuccessful. Please check username, email and password.', category='error')
+@app.route('/company-details/<company_id>', methods=['GET', 'POST'])
+def company_details(company_id):
+    result = api_calls.get_company_details(company_id=company_id)
 
-    return render_template('company_register.html', form=form)
+    name = result["name"]
+    phone_no = result['phone_no']
+    email = result['email']
+    address = result['address']
+    description = result['description']
 
+
+    return render_template('company_details.html', company_id=company_id, name=name, phone_no=phone_no, email=email, address=address, description=description)
 
 
 if __name__ == '__main__':
