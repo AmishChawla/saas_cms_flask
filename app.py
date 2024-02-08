@@ -198,32 +198,18 @@ def admin_dashboard():
         role = admin_detail.get('role', '')
 
     # Fetch all users
-    page = request.args.get('page', 1, type=int)
-    username_filter = request.args.get('username_filter')
-    email_filter = request.args.get('email_filter')
-    role_filter = request.args.get('role_filter')
-    status_filter = request.args.get('status_filter')
-    search_filter = request.args.get('search_filter')
 
     response = api_calls.get_all_users(
         current_user.id,
-        page=page,
-        per_page=ITEMS_PER_PAGE,
-        username_filter=username_filter,
-        email_filter=email_filter,
-        role_filter=role_filter,
-        status_filter=status_filter,
-        search_filter=search_filter
     )
 
     if response.status_code == 200:
         result = response.json()
-        total_pages = result["total_pages"]
         users = result["users"]
     else:
         print("Failed response")
 
-    return render_template('admin_panel.html', result=users, username=username, email=email, role=role, page=page, total_pages=total_pages)
+    return render_template('admin_panel.html', result=users, username=username, email=email, role=role)
 
 
 @app.route("/admin/login", methods=['GET', 'POST'])

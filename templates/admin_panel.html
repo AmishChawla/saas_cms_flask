@@ -113,10 +113,6 @@ margin-left:10px;
     pointer-events: none;
 }
 
-
-
-
-
 .pagination {
     margin-top: 20px;
     text-align: center;
@@ -143,7 +139,7 @@ margin-left:10px;
     </style>
 
 
-
+<link href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" rel="stylesheet">
   </head>
   <body>
     <div class="container-scroller">
@@ -247,81 +243,32 @@ margin-left:10px;
                   <div class="card-body" style="overflow-x: auto;">
                     <h4 class="card-title">User Details</h4>
                       <div style="display: flex; justify-content: space-between;">
-                      <div class="search-field d-none d-md-block" >
-    <form class="d-flex align-items-center h-100" onsubmit="event.preventDefault(); applyFilters();">
-        <div class="input-group" style="border: 0.07px solid #9C9FA6">
-            <div class="input-group-prepend">
-                <button class="btn btn-inverse-info btn-icon" type="button" onclick="applyFilters()">
-                    <i class="mdi mdi-magnify"></i>
-                </button>
-            </div>
-            {% if request.args.get('search_filter')%}
-            <input  type="text" class="form-control border align-items-center" id="searchInput" placeholder="{{request.args.get('search_filter')}}" style="height: 38px; padding-top: 6px; padding-bottom: 6px;">
-            {% else %}
-            <input type="text" class="form-control border align-items-center" id="searchInput" placeholder="Search User" style="height: 38px; padding-top: 6px; padding-bottom: 6px;">
-         {% endif %}
-        </div>
-    </form>
-</div>
                                       <a class="btn btn-info" href="{{ url_for('add_user') }}">
                 <span class="menu-title">Add user</span>
               </a>
                           </div>
-                    <table class="table table-hover " id="userTable" style="overflow-x: scroll">
-    <thead>
-
-
-        <tr>
-            <th> Sr. No. </th>
-            <th> User ID </th>
-            <th> Name </th>
-            <th> Email </th>
-            <th> Role
-            <div class="custom-select">
-        <select id="roleRangeDropdown" onchange="applyFilters()">
-            <option value="all" disabled selected hidden></option>
-             <option value="all">All</option>
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-
-        </select>
-    </div></th>
-            <th> Creation Time
-    <div class="custom-select">
-        <select id="dateRangeDropdown">
-            <option value="last7days" disabled selected hidden></option>
-            <option value="all">All</option>
-            <option value="last7days">Last 7 Days</option>
-            <option value="lastMonth">Last Month</option>
-            <option value="lastYear">Last Year</option>
-            <option value="latestFirst">Latest First</option>
-            <option value="olderFirst">Older First</option>
-        </select>
-    </div>
-</th>
-
-
-            <th> Status
-            <div class="custom-select">
-        <select id="statusRangeDropdown" onchange="applyFilters()">
-            <option value="all" disabled selected hidden></option>
-             <option value="all">All</option>
-            <option value="active">Active</option>
-            <option value="blocked">Blocked</option>
-
-        </select>
-    </div></th>
-            <th> Action </th>
-        </tr>
-
-
-                      </thead>
-
-    <tbody>
+                      <br>
+                      <br>
+                <table id="userTable" class="table hover">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAllCheckbox"></th>
+                    <th>Sr. No.</th>
+                    <th>User ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Creation Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
         {% for row in result|reverse %}
 
             <tr>
 <!--              <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}">-->
+                <td><input type="checkbox" class="select-checkbox"></td>
                 <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ loop.index }}</td>
                 <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
                     U_{{ row.id }}
@@ -362,15 +309,22 @@ margin-left:10px;
 <!--                </a>-->
             </tr>
 
-        {% endfor %}
-    </tbody>
-</table>
+        {% endfor %} <!-- Your table body content here -->
+            </tbody>
 
-<div class="pagination">
-    <button id="prevPageBtn" onclick="redirectToPage('{{ url_for('admin_dashboard', page=(page-1)) }}')"><span class="mdi mdi-chevron-left"></span></button>
-    <span id="pageInfo">{{ page }} of {{ total_pages }}</span>
-    <button id="nextPageBtn" onclick="redirectToPage('{{ url_for('admin_dashboard', page=(page+1)) }}')"><span class="mdi mdi-chevron-right"></span></button>
-</div>
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th>Role</th>
+                    <th></th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
 
                   </div>
                 </div>
@@ -394,43 +348,50 @@ margin-left:10px;
     </div>
     <!-- container-scroller -->
     <!-- plugins:js -->
-    <script src="../static/assets/vendors/js/vendor.bundle.base.js"></script>
-    <!-- endinject -->
-    <!-- Plugin js for this page -->
-    <!-- End plugin js for this page -->
-    <!-- inject:js -->
-    <script src="../static/assets/js/off-canvas.js"></script>
-    <script src="../static/assets/js/hoverable-collapse.js"></script>
-    <script src="../static/assets/js/misc.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script>
-        function applyFilters() {
-        // Get the selected filter values
-        var roleFilter = document.getElementById("roleRangeDropdown").value;
-        var dateFilter = document.getElementById("dateRangeDropdown").value;
-        var statusFilter = document.getElementById("statusRangeDropdown").value;
-        var searchFilter = document.getElementById("searchInput").value.trim();
-        // Redirect to the admin dashboard with filter parameters
-        var redirectUrl = "{{ url_for('admin_dashboard') }}?role_filter=" + roleFilter + "&date_filter=" + dateFilter + "&status_filter=" + statusFilter + "&search_filter=" + searchFilter;
-        redirectToPage(redirectUrl);
-        document.getElementById("searchInput").value = searchFilter;
-    }
+        $(document).ready(function() {
+            var table = $('#userTable').DataTable({
+                initComplete: function () {
+                    this.api().columns().every(function () {
+                        var column = this;
+                        var select = $('<select><option value="">All</option></select>')
+                            .appendTo($(column.footer()).empty())
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+                                column.search(val ? '^' + val + '$' : '', true, false).draw();
+                            });
 
+                        column.data().unique().sort().each(function (d, j) {
+                           var val = $('<div/>').html(d).text();
+                            select.append( '<option value="' + val + '">' + val + '</option>' );
+                        });
+                    });
+                }
+            });
+        });
 
-    function redirectToPage(pageUrl) {
-        // You can customize this function to perform the redirection as needed
+         function redirectToPage(pageUrl) {
         console.log(pageUrl);
         window.location.href = pageUrl;
     }
-</script>
-    <script>
-        var userId = document.querySelector('.button2').getAttribute('data-user-id');
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="../static/assets/js/off-canvas.js"></script>
+    <script src="../static/assets/js/hoverable-collapse.js"></script>
+    <script src="../static/assets/js/misc.js"></script>
+  <script>
+    // jQuery script to handle select all checkbox
+    $(document).ready(function () {
+        $('#selectAllCheckbox').click(function () {
+            $('.select-checkbox').prop('checked', $(this).prop('checked'));
+        });
+    });
+</script>
 
-
-
-
-    <!-- endinject -->
-    <!-- Custom js for this page -->
-    <!-- End custom js for this page -->
   </body>
 </html>
