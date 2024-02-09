@@ -139,7 +139,11 @@ margin-left:10px;
     </style>
 
 
-<link href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" rel="stylesheet">
+      <link href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" rel="stylesheet">
+      <link href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.dataTables.min.css" rel="stylesheet">
+      <link href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css" rel="stylesheet">
+      <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css" rel="stylesheet">
+
   </head>
   <body>
     <div class="container-scroller">
@@ -249,7 +253,7 @@ margin-left:10px;
                           </div>
                       <br>
                       <br>
-                <table id="userTable" class="table hover">
+                <table id="userTable" class="display nowrap table hover">
             <thead>
                 <tr>
                     <th><input type="checkbox" id="selectAllCheckbox"></th>
@@ -280,7 +284,7 @@ margin-left:10px;
                 </td>
 
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> {{ row.role }} </td>
-                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ row.created_datetime.split('T')[1][:8] }} &nbsp; {{ row.created_datetime.split('T')[0] }}</td>
+                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ row.created_datetime.split('T')[0] }}&nbsp; &nbsp;{{ row.created_datetime.split('T')[1][:8] }} </td>
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> {{ row.status }} </td>
                 <td>
     <a class="button button1" href="{{ url_for('admin_edit_user_profile', user_id=row.id) }}">Edit</a>
@@ -312,18 +316,6 @@ margin-left:10px;
         {% endfor %} <!-- Your table body content here -->
             </tbody>
 
-            <tfoot>
-                <tr>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th>Role</th>
-                    <th></th>
-                    <th>Status</th>
-                    <th></th>
-                </tr>
-            </tfoot>
         </table>
 
                   </div>
@@ -351,29 +343,92 @@ margin-left:10px;
 
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/searchpanes/2.2.0/js/dataTables.searchPanes.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
     <script>
-        $(document).ready(function() {
-            var table = $('#userTable').DataTable({
-                initComplete: function () {
-                    this.api().columns().every(function () {
-                        var column = this;
-                        var select = $('<select><option value="">All</option></select>')
-                            .appendTo($(column.footer()).empty())
-                            .on('change', function () {
-                                var val = $.fn.dataTable.util.escapeRegex(
-                                    $(this).val()
-                                );
-                                column.search(val ? '^' + val + '$' : '', true, false).draw();
-                            });
+$(document).ready(function() {
+  $('#userTable').DataTable({
+    searchPanes: {
+      panes: [
+        {
+          header: 'Custom',
+          options: [
+            {
+              label: 'Last Week',
+              value: function(rowData, rowIdx) {
+                var currentDate = new Date();
+                var lastWeekDate = new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000);
+                var creationDateTime = parseDateTime(rowData[6]);
+                console.log(creationDateTime);
+                return creationDateTime >= lastWeekDate && creationDateTime <= currentDate;
+              },
+              className: 'last-week'
+            },
+            {
+              label: 'Last Month',
+              value: function(rowData, rowIdx) {
+                var currentDate = new Date();
+                var lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, currentDate.getDate());
+                var creationDateTime = parseDateTime(rowData[6]);
+                console.log(creationDateTime);
+                return creationDateTime >= lastMonthDate && creationDateTime <= currentDate;
+              },
+              className: 'last-month'
+            },
+            {
+              label: 'Last Year',
+              value: function(rowData, rowIdx) {
+                var currentDate = new Date();
+                var lastYearDate = new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate());
+                var creationDateTime = parseDateTime(rowData[6]);
+                console.log(creationDateTime);
+                return creationDateTime >= lastYearDate && creationDateTime <= currentDate;
+              },
+              className: 'last-year'
+            }
+          ],
+          dtOpts: {
+            searching: false,
+            order: [[1, 'desc']]
+          }
+        }
+      ]
+    },
+    dom: 'Plfrtip'
+  });
+});
 
-                        column.data().unique().sort().each(function (d, j) {
-                           var val = $('<div/>').html(d).text();
-                            select.append( '<option value="' + val + '">' + val + '</option>' );
-                        });
-                    });
-                }
-            });
-        });
+function parseDateTime(dateTimeString) {
+    // Remove non-breaking spaces
+    dateTimeString = dateTimeString.replace(/&nbsp;/g, ' ');
+
+    // Split date and time parts
+    var parts = dateTimeString.split(' ');
+
+    var dateParts = parts[0].split('-');
+    var year = parseInt(dateParts[0], 10);
+    var month = parseInt(dateParts[1], 10) - 1; // Month is zero-indexed
+    var day = parseInt(dateParts[2], 10);
+
+    var hours, minutes, seconds;
+
+    if (parts[1]) {
+        var timeParts = parts[1].split(':');
+        hours = parseInt(timeParts[0], 10);
+        minutes = parseInt(timeParts[1], 10);
+        seconds = parseInt(timeParts[2], 10);
+    } else {
+        // Set default values for time components
+        hours = 0;
+        minutes = 0;
+        seconds = 0;
+    }
+
+    // Create a Date object
+    return new Date(year, month, day, hours, minutes, seconds);
+}
+
 
          function redirectToPage(pageUrl) {
         console.log(pageUrl);
@@ -384,7 +439,7 @@ margin-left:10px;
     <script src="../static/assets/js/off-canvas.js"></script>
     <script src="../static/assets/js/hoverable-collapse.js"></script>
     <script src="../static/assets/js/misc.js"></script>
-  <script>
+    <script>
     // jQuery script to handle select all checkbox
     $(document).ready(function () {
         $('#selectAllCheckbox').click(function () {
