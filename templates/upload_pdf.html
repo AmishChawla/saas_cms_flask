@@ -40,7 +40,7 @@
         <h1 class="mb-4">Upload Resume Files</h1>
 
         <form method="POST" action="{{ url_for('upload_pdf') }}" enctype="multipart/form-data">
-            {{ form.hidden_tag() }}
+    {{ form.hidden_tag() }}
 
             <div class="mb-3">
                 <label for="files" class="form-label">Select PDF Files:</label>
@@ -50,13 +50,11 @@
             <div class="text-danger">{{ form.errors['files'][0] }}</div>
             {% endif %}
             </div>
-
-
             <button type="submit" class="btn btn-dark">Upload</button>
         </form>
+
     </div>
 <br>
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var form = document.querySelector('form');

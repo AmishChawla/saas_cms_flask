@@ -1,10 +1,10 @@
 import csv
 import json
 import os
-from io import StringIO
+from io import StringIO, BytesIO
 import csv
 import ast
-from flask import Flask, render_template, redirect, url_for, flash, request, session
+from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from jinja2 import Environment, FileSystemLoader
 from werkzeug.utils import secure_filename
@@ -51,47 +51,54 @@ def index():
 @login_required
 def upload_pdf():
     form = forms.UploadForm()
+    response = api_calls.get_user_profile(current_user.id)
+    if (response.status_code == 200):
+        result = response.json()
+        username = result.get('username', '')
+        email = result.get('email', '')
+        role = result.get('role', '')
 
-    if form.validate_on_submit():
-        uploaded_files = request.files.getlist('files')
-        print(len(uploaded_files))
-        empty_uploads_folder()
-        file_list = []
-        print(len(uploaded_files))
-        for file in uploaded_files:
-            # Ensure the file has a secure filename
-            filename = secure_filename(file.filename)
-            # Save the file to a designated folder
-            file_path = 'uploads/' + filename
-            print(file_path)
-            file.save(file_path)
-            file_list.append(('pdf_files', (filename, open(file_path, 'rb'))))
-            # files = [f for f in os.listdir(uploads_folder) if os.path.isfile(os.path.join(uploads_folder, f))]
-            # file_list = [('pdf_files', (filename, open(os.path.join(uploads_folder, filename), 'rb'))) for filename in
-            #              files]
-            # file_list.append(('pdf_files', (filename, open(os.path.join(uploads_folder, filename), 'rb'))))
-            # print(file_list)
-        response = api_calls.dashboard(file_list, current_user.id)
-        print(response.json())
-        if response.status_code == 200:
-            result = response.json()
-            # Extract the CSV data from the response
-            csv_data = result.get('csv_file', '')
+        if form.validate_on_submit():
+            uploaded_files = request.files.getlist('files')
+            print(len(uploaded_files))
+            empty_uploads_folder()
+            file_list = []
+            print(len(uploaded_files))
+            for file in uploaded_files:
+                # Ensure the file has a secure filename
+                filename = secure_filename(file.filename)
+                # Save the file to a designated folder
+                file_path = 'uploads/' + filename
+                print(file_path)
+                file.save(file_path)
+                file_list.append(('pdf_files', (filename, open(file_path, 'rb'))))
+                # files = [f for f in os.listdir(uploads_folder) if os.path.isfile(os.path.join(uploads_folder, f))]
+                # file_list = [('pdf_files', (filename, open(os.path.join(uploads_folder, filename), 'rb'))) for filename in
+                #              files]
+                # file_list.append(('pdf_files', (filename, open(os.path.join(uploads_folder, filename), 'rb'))))
+                # print(file_list)
+            response = api_calls.dashboard(file_list, current_user.id)
+            print(response.json())
+            if response.status_code == 200:
+                result = response.json()
+                # Extract the CSV data from the response
+                csv_data = result.get('csv_file', '')
 
-            # Use StringIO to create a file-like object for the csv.reader
-            csv_file = StringIO(csv_data)
+                # Use StringIO to create a file-like object for the csv.reader
+                csv_file = StringIO(csv_data)
 
-            # Parse the CSV data into a list of lists
-            csv_reader = list(csv.reader(csv_file))
+                # Parse the CSV data into a list of lists
+                csv_reader = list(csv.reader(csv_file))
 
-            # The first row contains headers, and the rest are data rows
-            headers = csv_reader[0]
-            data_rows = csv_reader[1:]
-            # Process the uploaded files or redirect to a new page
-            xml_data = result.get('xml_file')
-            return render_template('result.html', headers=headers, data_rows=data_rows, xml_data=xml_data)
+                # The first row contains headers, and the rest are data rows
+                headers = csv_reader[0]
+                data_rows = csv_reader[1:]
+                # Process the uploaded files or redirect to a new page
+                xml_data = result.get('xml_file')
+                return render_template('result.html', headers=headers, data_rows=data_rows, xml_data=xml_data, username=username, email=email, role=role)
 
-    return render_template('upload_pdf.html', form=form)
+    return render_template('upload_pdf.html', form=form, username=username, email=email, role=role)
+
 
 
 def empty_uploads_folder():
@@ -255,14 +262,11 @@ def admin_view_user_profile(user_id):
     username = result["username"]
     email = result["email"]
     role = result["role"]
-    data_list = []
-    for index in range(len(result["resume_data"])):
-        extracted_data = result["resume_data"][index]["extracted_data"]
-        data_list.append(extracted_data)
-    # template = env.get_template('admin_view_user_profile.html')
-    # output = template.render(csv_files=csv_files, email=email, role = role, username=username)
 
-    return render_template('admin_view_user_profile.html', data_list=data_list, email=email, role=role,
+    resume_data = result["resume_data"]
+
+
+    return render_template('admin_view_user_profile.html', resume_data=resume_data, email=email, role=role,
                            username=username)
 
 
@@ -334,14 +338,16 @@ def user_history():
         username = result["username"]
         email = result["email"]
         role = result["role"]
-        data_list = []
-        for index in range(len(result["resume_data"])):
-            extracted_data = result["resume_data"][index]["extracted_data"]
-            data_list.append(extracted_data)
+        resume_data = result["resume_data"]
+        # data_list = []
+        # for index in range(len(result["resume_data"])):
+        #     extracted_data = result["resume_data"][index]["extracted_data"]
+        #     data_list.append(extracted_data)
     # template = env.get_template('admin_view_user_profile.html')
     # output = template.render(csv_files=csv_files, email=email, role = role, username=username)
-    return render_template('admin_view_user_profile.html', data_list=data_list, email=email, role=role,
-                           username=username)
+    print(resume_data[0]["upload_datetime"])
+    return render_template('admin_view_user_profile.html', email=email, role=role,
+                           username=username, resume_data=resume_data)
 
 
 @app.route("/admin/edit-user-profile/<user_id>", methods=['GET', 'POST'])

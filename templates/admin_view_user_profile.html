@@ -3,136 +3,82 @@
 {% block title %}User History{% endblock %}
 
 {% block content %}
-{%  if request.endpoint != 'user_history'  %}
-<div style="margin-bottom: 20px">
-<div class="card-header bg-white text-black text-center">
-                        <h2>Profile</h2>
-                    </div>
+    {% if request.endpoint != 'user_history' %}
+        <div style="margin-bottom: 20px">
+            <div class="card-header bg-white text-black text-center">
+                <h2>Profile</h2>
+            </div>
 
-                    <!-- Add a card header "Profile" -->
-  <div class="profile-arrange" style="display: flex; flex-direction: row; justify-content: space-between; width: 60%; margin: auto;">
-                  <div class="profile-picture text-center" style="width: 20%;">
-
-                    <!-- Center the image, add padding, and resize -->
+            <div class="profile-arrange" style="display: flex; flex-direction: row; justify-content: space-between; width: 60%; margin: auto;">
+                <div class="profile-picture text-center" style="width: 20%;">
                     <div class="card-img-top text-center my-3" style="margin-top: 5%;">
-                      <img src="/static/images/man.png" style="max-width: 300px; width: 10rem; height: 10rem;">
+                        <img src="/static/images/man.png" style="max-width: 300px; width: 10rem; height: 10rem;">
                     </div>
-</div>
-<!--                    <div class="card-img-top text-center my-3">-->
-<!--                        <label><i class="bi bi-person"></i> {{username}}</label>-->
-<!--                        <br>-->
-<!--                        <br>-->
-<!--                        <label><i class="bi bi-envelope"></i> {{email}}</label>-->
-<!--                    </div>-->
-<div class="profile-details" style="width: 70%; margin-top: 4%">
-                 <div class="mb-3">
-
-                                <div class="input-group">
-                                    <span class="input-group-text text-secondary" style="width:100%"><i class="bi bi-person-fill" style = "margin-right:20px"></i>{{ username }}</span>
-
-                                </div>
-                            </div>
-                    <div class="mb-3">
-
-                                <div class="input-group">
-                                  <span class="input-group-text text-secondary" style="width:100%"><i class="bi bi-envelope" style = "margin-right:20px"></i>{{ email }}</span>
-
-                                </div>
-
-                             </div>
-                    <div class="mb-3">
-
-                                <div class="input-group">
-                                  <span class="input-group-text text-secondary" style="width:100%"><i class="bi bi-envelope" style = "margin-right:20px"></i>{{ role }}</span>
-
-                                </div>
-
-                             </div>
-</div>
-            </div>
-  </div>
-{% endif %}
- <div class="main-panel">
-          <div class="content-wrapper">
-            <div class="page-header">
-
-            </div>
-            {% if data_list %}
-            {% for data in data_list %}
-            <div class="row">
-
-
-              <div class="col-lg-12 grid-margin stretch-card">
-                <div class="card"  style="overflow-x:auto;" >
-                  <div class="card-body" style="padding: 2rem;">
-                    <h4 class="card-title">User History</h4>
-
-                    <table class="table table-striped" style="width:200%; overflow:auto;">
-                      <thead>
-                        <tr>
-                          <th> Sr. No. </th>
-                          <th> Name </th>
-                          <th> Email </th>
-                          <th> Mobile Number </th>
-                          <th style="width: 20%;"> Skills </th>
-                          <th> College</th>
-                          <th> degree</th>
-                          <th> designation</th>
-                          <th  style="width: 30%;"> experience</th>
-                          <th> company_names</th>
-                          <th> no_of_pages</th>
-                          <th> total_experience</th>
-
-                        </tr>
-                      </thead>
-                      <tbody>
-                      {% for row in data %}
-                        <tr style="max-height: 100px; overflow-y: auto; ">
-                          <td class="py-1">{{ loop.index }}</td>
-                          <td class="py-1">
-                            {{ row.name}}
-                          </td>
-                          <td> {{ row.email }}</td>
-                          <td>
-                           {{ row.mobile_number }}
-                          </td>
-                          <td>
-                           {{ row.skills }}
-                          </td>
-                          <td> {{ row.college_name }} </td>
-                          <td> {{ row.degree }} </td>
-                          <td> {{ row.designation }} </td>
-                          <td> {{ row.experience }} </td>
-                          <td> {{ row.company_names }} </td>
-                          <td> {{ row.no_of_pages }} </td>
-                          <td> {{ row.total_experience }} </td>
-                        </tr>
-
-                      {% endfor %}
-
-                        </tbody>
-                    </table>
-                  </div>
-                  </div>
                 </div>
-
-              </div>
+                <div class="profile-details" style="width: 70%; margin-top: 4%">
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text text-secondary" style="width:100%"><i class="bi bi-person-fill" style="margin-right:20px"></i>{{ username }}</span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text text-secondary" style="width:100%"><i class="bi bi-envelope" style="margin-right:20px"></i>{{ email }}</span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text text-secondary" style="width:100%"><i class="bi bi-envelope" style="margin-right:20px"></i>{{ role }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-                                     <br>
-                    <br>
-              {% endfor %}
-           {% else %}
-   <div  class="d-flex justify-content-center align-items-center" style="height: 50vh;"><p>No history</p></div>
+        </div>
+    {% endif %}
 
-        {% endif %}
+    <div class="main-panel">
+        <div class="content-wrapper">
+            <div class="page-header"></div>
+            {% if resume_data %}
+                <div class="row">
+                    <div class="col-lg-12 grid-margin stretch-card">
+                        <div class="card" style="overflow-x:auto;">
+                            <div class="card-body" style="padding: 2rem;">
+                                <h4 class="card-title">User History</h4>
+                                <table class="table table-striped" style="width:100%; overflow:auto;">
+                                    <thead>
+                                        <tr>
+                                            <th> Sr. No. </th>
+                                            <th> Upload Date </th>
+                                            <th> Upload Time </th>
+                                            <th> CSV File </th>
+                                            <th> XML File </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for data in resume_data %}
+                                            <tr style="max-height: 100px; overflow-y: auto; ">
+                                                <td class="py-1">{{ loop.index }}</td>
+                                                <td class="py-1">{{ data.upload_datetime.split('T')[0] }}</td>
+                                                <td class="py-1">{{ data.upload_datetime.split('T')[1][:8]  }}</td>
+                                                <td><a href="data:application/csv;charset=utf-8,{{ data.csv_file }}" download="data.csv">Download CSV</a></td>
+                                                <td><a href="data:application/xml;charset=utf-8,{{ data.xml_file|e }}" download="data.xml">Download XML</a></td>
 
-   </div>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <br>
+            {% else %}
+                <div class="d-flex justify-content-center align-items-center" style="height: 50vh;">
+                    <p>No history</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}
-
-
-
-
-
-
-
-
