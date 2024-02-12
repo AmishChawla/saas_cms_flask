@@ -41,6 +41,28 @@ class RegisterForm(FlaskForm):
     ])
     submit = SubmitField('Register')
 
+class AdminRegisterForm(FlaskForm):
+    username = StringField('Username', validators=[validators.Length(min=4, max=25), validators.DataRequired()])
+    email = StringField('Email', validators=[validators.Email(), validators.DataRequired()])
+    password = PasswordField('Password', validators=[
+        validators.DataRequired(),
+        validators.Length(min=6),
+        validators.Regexp(
+            regex="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]",
+            message="Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character."
+        )
+    ])
+    confirm_password = PasswordField('Confirm Password', validators=[
+        validators.EqualTo('password', message='Passwords must match.')
+    ])
+    submit = SubmitField('Register')
+
+
+class CompanyRegisterForm(FlaskForm):
+    name = StringField('Name')
+    email = StringField('Email', validators=[validators.Email(), validators.DataRequired()])
+    submit = SubmitField('Submit')
+
 
 class AdminAddUserForm(FlaskForm):
     username = StringField('Username', validators=[validators.Length(min=4, max=25), validators.DataRequired()])

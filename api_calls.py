@@ -36,18 +36,47 @@ def dashboard(file_list, access_token: str):
         print(f"Error: {e}")
 
 
-def user_register(username, email, password):
+def user_register(username, email, password, company_id, company_name):
     print('trying3')
+    headers = {'Content-Type': 'application/json'}
+    data = {
+    "user": {
+        "username": username,
+        "email": email,
+        "password": password,
+        "role": "user"
+        },
+        "company_id": company_id
+    }
+    print("adha me atak gya")
+    try:
+        response = requests.post(constants.BASE_URL+f'/register/{company_name}', data=json.dumps(data), headers=headers)
+        print(response.text)
+        print("chal gya bc")
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+def admin_register(username, email, password):
+    print('trying9')
     headers = {'Content-Type': 'application/json'}
     data = {
         "username": username,
         "email": email,
         "password": password,
-        "role": "user"
+        "role": "admin"
     }
 
     try:
-        response = requests.post(constants.BASE_URL + '/register', data=json.dumps(data), headers=headers)
+        # response = requests.post(constants.BASE_URL + '/register', data=json.dumps(data), headers=headers)
+        response = requests.post(constants.BASE_URL+'/register-admin', data=json.dumps(data), headers=headers)
+
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:
@@ -78,7 +107,6 @@ def get_user_profile(access_token: str):
 
 def get_all_users(access_token: str):
     headers = {'Authorization': f'Bearer {access_token}'}
-
     try:
         response = requests.get(constants.BASE_URL + '/admin/users', headers=headers)
         print(response.text)
@@ -91,7 +119,6 @@ def get_all_users(access_token: str):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
-
 
 def admin_login(email, password):
     print('trying3')
@@ -278,3 +305,37 @@ def admin_edit_any_user(access_token: str, user_id: int, username, role, status)
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
+
+
+def get_companies():
+
+    try:
+        response = requests.get(constants.BASE_URL + f'/companies')
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def get_company_details(company_id: int):
+
+    try:
+        response = requests.get(constants.BASE_URL + f'/company/{company_id}')
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+

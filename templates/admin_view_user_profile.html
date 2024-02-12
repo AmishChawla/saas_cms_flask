@@ -35,7 +35,7 @@
             </div>
         </div>
     {% endif %}
-
+<link href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css", rel="stylesheet">
     <div class="main-panel">
         <div class="content-wrapper">
             <div class="page-header"></div>
@@ -45,7 +45,7 @@
                         <div class="card" style="overflow-x:auto;">
                             <div class="card-body" style="padding: 2rem;">
                                 <h4 class="card-title">User History</h4>
-                                <table class="table table-striped" style="width:100%; overflow:auto;">
+                                <table id="userHistoryTable" class="hover table " style="width:100%; ">
                                     <thead>
                                         <tr>
                                             <th> Sr. No. </th>
@@ -81,4 +81,7 @@
             {% endif %}
         </div>
     </div>
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script>new DataTable('#userHistoryTable');</script>
 {% endblock %}

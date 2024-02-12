@@ -1,20 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Register{% endblock %}
 
 {% block content %}
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card border-0">
-                    <!-- Add a card header "Login" -->
+                    <!-- Add a card header "Register" -->
                     <div class="card-header bg-white text-black text-center">
-                        <h2>Login</h2>
-                    </div>
-
-                    <!-- Center the image, add padding, and resize -->
-                    <div class="card-img-top text-center my-3">
-                        <img src="static/images/login.png" alt="Login Image" style="max-width: 300px; width: 5rem; height: 5rem;" class="img-fluid">
+                        <h2>Register</h2>
                     </div>
 
                     <div class="card-body">
@@ -30,31 +25,34 @@
                             {% endif %}
                         {% endwith %}
 
-                        <form method="post" action="{{ url_for('login') }}">
+                        <form method="post" action="{{ url_for('admin_register') }}">
                             {{ form.hidden_tag() }}
 
                             <div class="mb-3">
+                                <label for="username" class="form-label visually-hidden">Username:</label>
+                                {{ form.username(class="form-control", placeholder="Username", required=True) }}
+                            </div>
+
+                            <div class="mb-3">
                                 <label for="email" class="form-label visually-hidden">Email:</label>
-                                <div class="input-group">
-                                    <span class="input-group-text text-danger"><i class="bi bi-envelope"></i></span>
-                                    {{ form.email(class="form-control", placeholder="Email", required=True) }}
-                                </div>
+                                {{ form.email(class="form-control", placeholder="Email", required=True) }}
                             </div>
 
                             <div class="mb-3">
                                 <label for="password" class="form-label visually-hidden">Password:</label>
-                                <div class="input-group">
-                                    <span class="input-group-text text-secondary"><i class="bi bi-lock-fill"></i></span>
-                                    {{ form.password(class="form-control", placeholder="Password", required=True) }}
-                                </div>
+                                {{ form.password(class="form-control", placeholder="Password", required=True) }}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label visually-hidden">Confirm Password:</label>
+                                {{ form.confirm_password(class="form-control", placeholder="Confirm Password", required=True) }}
                             </div>
 
                             <div class="mb-3 text-center">
                                 {{ form.submit(class="btn btn-dark btn-lg") }}
                             </div>
 
-                            <p class="text-center"><a href="{{url_for('forgot_password')}}" class="text-muted">Forgot Password?</a></p>
-                            <p class="text-center">Don't have an account? <a href="{{ url_for('company_list') }}" class="text-muted">SignUp here</a></p>
+                            <p class="text-center">Already have an account? <a href="{{ url_for('login') }}" class="text-muted">Login here</a></p>
                         </form>
                     </div>
                 </div>
