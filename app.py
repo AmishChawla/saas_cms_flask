@@ -33,13 +33,24 @@ password_reset_token = ""
 
 @login_manager.user_loader
 def load_user(user_id):
-    user = User(user_id)
-    return user
+    response = api_calls.get_user_profile(access_token=user_id)
+    if response.status_code == 200:
+        user_data = response.json()
+        user = User(user_id = user_id, role = user_data['role'],username = user_data['username'],email = user_data['email'])
+        return user
+    else:
+        return None
+
 
 
 class User(UserMixin):
-    def __init__(self, user_id):
+    def __init__(self, user_id, role, username, email):
         self.id = user_id
+        self.role = role
+        self.username = username
+        self.email = email
+
+
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -129,7 +140,11 @@ def login():
 
         if (response.status_code == 200):
             token = response.json().get('access_token')
-            user = User(user_id=token)
+            role = response.json().get('role')
+            username = response.json().get('username')
+            email = response.json().get('email')
+            company_id = response.json().get('company_id')
+            user = User(user_id=token,role=role,username=username,email=email)
             login_user(user)
 
             return redirect(url_for('upload_pdf'))
@@ -232,7 +247,11 @@ def admin_login():
 
         if (response.status_code == 200):
             token = response.json().get('access_token')
-            user = User(user_id=token)
+            role = response.json().get('role')
+            username = response.json().get('username')
+            email = response.json().get('email')
+            company_id = response.json().get('company_id')
+            user = User(user_id=token, role=role, username=username, email=email)
             login_user(user)
 
             return redirect(url_for('admin_dashboard'))
@@ -274,6 +293,7 @@ def admin_delete_user(user_id):
 @app.route("/admin/view-user-profile/<user_id>", methods=['GET', 'POST'])
 @login_required
 def admin_view_user_profile(user_id):
+    user_role = current_user.role
     result = api_calls.admin_get_any_user(access_token=current_user.id, user_id=user_id)
     username = result["username"]
     email = result["email"]
@@ -281,9 +301,8 @@ def admin_view_user_profile(user_id):
 
     resume_data = result["resume_data"]
 
-
     return render_template('admin_view_user_profile.html', resume_data=resume_data, email=email, role=role,
-                           username=username)
+                           username=username, user_role=user_role)
 
 
 @app.route('/admin/logout')
@@ -306,7 +325,7 @@ def user_password_update(role):
         confirm_new_password = form.confirm_new_password.data
         response = api_calls.update_user_password(current_password=current_password, new_password=new_password,
                                                   confirm_new_password=confirm_new_password,
-                                                  access_token=current_user.id)
+                                                  access_token=current_user.id,username=current_user.username)
         print(response.status_code)
         if (response.status_code == 200):
             flash('Password Updated Successfully', category='info')
@@ -315,7 +334,7 @@ def user_password_update(role):
             else:
                 return redirect(url_for('admin_dashboard'))
         else:
-            flash('Registration unsuccessful. Please check password.', category='error')
+            flash('Unsuccessful. Please check password.', category='error')
     return render_template('user_password_update.html', form=form, role=role)
 
 
@@ -380,7 +399,6 @@ def admin_edit_user_profile(user_id):
     form.username.data = username
     form.role.data = role
     form.status.data = status
-    print("haan")
 
     if form.is_submitted():
         print("submitted")

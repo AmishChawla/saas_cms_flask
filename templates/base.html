@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{% block title %}My Website{% endblock %}</title>
     <!-- plugins:css -->
-    <link rel="stylesheet" href="../static/assets/vendors/mdi/css/materialdesignicons.min.css">
-    <link rel="stylesheet" href="../static/assets/vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="/static/assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="/static/assets/vendors/css/vendor.bundle.base.css">
 
 
 
@@ -16,7 +16,7 @@
     <!-- Option 1: Include in HTML -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap">
-    <link href="../static/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="/static/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
     <!-- endinject -->
@@ -25,9 +25,9 @@
     <!-- inject:css -->
     <!-- endinject -->
     <!-- Layout styles -->
-    <link rel="stylesheet" href="../static/assets/css/style.css">
+    <link rel="stylesheet" href="/static/assets/css/style.css">
     <!-- End layout styles -->
-    <link rel="shortcut icon" href="../static/assets/images/favicon.ico" />
+    <link rel="shortcut icon" href="/static/assets/images/favicon.ico" />
 
 
       <style>
@@ -47,8 +47,8 @@
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="../static/assets/images/favicon.png" rel="icon">
-  <link href="../static/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="/static/assets/images/favicon.png" rel="icon">
+  <link href="/static/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
 
 
@@ -58,11 +58,11 @@
       <!-- partial:../../partials/_navbar.html -->
       <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-          <a class="navbar-brand brand-logo" href="../../index.html"><img src="../static/images/logo.png" alt="logo" style="width:20px" /><b>Resume Parser</b></a>
-          <a class="navbar-brand brand-logo-mini" href="../../index.html"><img src="../static/images/logo.png" alt="logo" /></a>
+          <a class="navbar-brand brand-logo" href="../../index.html"><img src="/static/images/logo.png" alt="logo" style="width:20px" /><b>Resume Parser</b></a>
+          <a class="navbar-brand brand-logo-mini" href="../../index.html"><img src="/static/images/logo.png" alt="logo" /></a>
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-stretch">
-            {% if request.endpoint != 'login' %}
+            {% if request.endpoint != 'login' and request.endpoint != 'admin_login' %}
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                 <span class="mdi mdi-menu"></span>
                 </button>
@@ -85,7 +85,7 @@
 
 
           <ul class="navbar-nav navbar-nav-right">
-                {% if request.endpoint != 'login' %}
+                {% if request.endpoint != 'login' and request.endpoint != 'admin_login' %}
                     {% if current_user.is_authenticated %}
                         <!-- Show user-related links when the user is authenticated -->
 
@@ -105,6 +105,7 @@
 
 
                     {% else %}
+
                         <!-- Show login and signup links when the user is not authenticated -->
 
                                 <li class="nav-item">
@@ -132,18 +133,18 @@
       <!-- partial -->
       <div class="container-fluid page-body-wrapper">
         <!-- partial:../../partials/_sidebar.html -->
-          {% if request.endpoint != 'login' %}
+          {% if request.endpoint != 'login' and request.endpoint != 'admin_login' %}
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
           <ul class="nav">
             <li class="nav-item nav-profile">
               <a href="{{ url_for('profile') }}" class="nav-link">
                 <div class="nav-profile-image">
-                  <img src="../static/images/man.png" alt="profile">
+                  <img src="/static/images/man.png" alt="profile">
                   <span class="login-status online"></span>
                   <!--change to offline or busy as needed-->
                 </div>
                 <div class="nav-profile-text d-flex flex-column">
-                  <span class="font-weight-bold mb-2">{{ username }}</span>
+                  <span class="font-weight-bold mb-2">{{ current_user.username }}</span>
                 </div>
               </a>
             </li>
@@ -177,7 +178,8 @@
 
 
    <div class="container mt-4">
-        {% block content %}{% endblock %}
+        {% block content %}
+       {% endblock %}
     </div>
 
 
@@ -197,14 +199,14 @@
 
     <!-- container-scroller -->
     <!-- plugins:js -->
-    <script src="../static/assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="/static/assets/vendors/js/vendor.bundle.base.js"></script>
     <!-- endinject -->
     <!-- Plugin js for this page -->
     <!-- End plugin js for this page -->
     <!-- inject:js -->
-    <script src="../static/assets/js/off-canvas.js"></script>
-    <script src="../static/assets/js/hoverable-collapse.js"></script>
-    <script src="../static/assets/js/misc.js"></script>
+    <script src="/static/assets/js/off-canvas.js"></script>
+    <script src="/static/assets/js/hoverable-collapse.js"></script>
+    <script src="/static/assets/js/misc.js"></script>
     <script>
     function redirectToPage(pageUrl) {
         // You can customize this function to perform the redirection as needed

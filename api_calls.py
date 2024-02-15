@@ -48,11 +48,10 @@ def user_register(username, email, password, company_id, company_name):
         },
         "company_id": company_id
     }
-    print("adha me atak gya")
+
     try:
         response = requests.post(constants.BASE_URL+f'/register/{company_name}', data=json.dumps(data), headers=headers)
         print(response.text)
-        print("chal gya bc")
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
