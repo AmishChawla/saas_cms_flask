@@ -36,21 +36,19 @@ def dashboard(file_list, access_token: str):
         print(f"Error: {e}")
 
 
-def user_register(username, email, password, company_id, company_name):
+def user_register(username, email, password):
     print('trying3')
     headers = {'Content-Type': 'application/json'}
     data = {
-    "user": {
         "username": username,
         "email": email,
         "password": password,
         "role": "user"
-        },
-        "company_id": company_id
-    }
+        }
+
 
     try:
-        response = requests.post(constants.BASE_URL+f'/register/{company_name}', data=json.dumps(data), headers=headers)
+        response = requests.post(constants.BASE_URL+f'/register', data=json.dumps(data), headers=headers)
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:

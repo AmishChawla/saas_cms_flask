@@ -36,11 +36,10 @@ def load_user(user_id):
     response = api_calls.get_user_profile(access_token=user_id)
     if response.status_code == 200:
         user_data = response.json()
-        user = User(user_id = user_id, role = user_data['role'],username = user_data['username'],email = user_data['email'])
+        user = User(user_id=user_id, role=user_data['role'], username=user_data['username'], email=user_data['email'])
         return user
     else:
         return None
-
 
 
 class User(UserMixin):
@@ -51,12 +50,9 @@ class User(UserMixin):
         self.email = email
 
 
-
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('index.html')
-
 
 
 @app.route('/upload', methods=['GET', 'POST'])
@@ -107,10 +103,10 @@ def upload_pdf():
                 data_rows = csv_reader[1:]
                 # Process the uploaded files or redirect to a new page
                 xml_data = result.get('xml_file')
-                return render_template('result.html', headers=headers, data_rows=data_rows, xml_data=xml_data, username=username, email=email, role=role)
+                return render_template('result.html', headers=headers, data_rows=data_rows, xml_data=xml_data,
+                                       username=username, email=email, role=role)
 
     return render_template('upload_pdf.html', form=form, username=username, email=email, role=role)
-
 
 
 def empty_uploads_folder():
@@ -143,8 +139,7 @@ def login():
             role = response.json().get('role')
             username = response.json().get('username')
             email = response.json().get('email')
-            company_id = response.json().get('company_id')
-            user = User(user_id=token,role=role,username=username,email=email)
+            user = User(user_id=token, role=role, username=username, email=email)
             login_user(user)
 
             return redirect(url_for('upload_pdf'))
@@ -154,15 +149,15 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route("/register/<name>/<company_id>", methods=['GET', 'POST'])
-def register(name, company_id):
+@app.route("/register", methods=['GET', 'POST'])
+def register():
     form = forms.RegisterForm()
     print("outside")
     if form.validate_on_submit():
         username = form.username.data
         email = form.email.data
         password = form.password.data
-        response = api_calls.user_register(username, email, password, company_id, company_name=name)
+        response = api_calls.user_register(username, email, password)
         print("inside")
 
         if (response.status_code == 200):
@@ -171,7 +166,7 @@ def register(name, company_id):
         else:
             flash('Registration unsuccessful. Please check username, email and password.', category='error')
 
-    return render_template('register.html', form=form, company_id=company_id, company_name=name)
+    return render_template('register.html', form=form)
 
 
 @app.route('/logout')
@@ -200,8 +195,6 @@ def profile():
         role = result.get('role', '')
 
         return render_template('profile.html', username=username, email=email, role=role)
-
-
 
 
 @app.route("/admin-dashboard")
@@ -325,7 +318,7 @@ def user_password_update(role):
         confirm_new_password = form.confirm_new_password.data
         response = api_calls.update_user_password(current_password=current_password, new_password=new_password,
                                                   confirm_new_password=confirm_new_password,
-                                                  access_token=current_user.id,username=current_user.username)
+                                                  access_token=current_user.id, username=current_user.username)
         print(response.status_code)
         if (response.status_code == 200):
             flash('Password Updated Successfully', category='info')
@@ -380,7 +373,7 @@ def user_history():
         #     data_list.append(extracted_data)
     # template = env.get_template('admin_view_user_profile.html')
     # output = template.render(csv_files=csv_files, email=email, role = role, username=username)
-    print(resume_data[0]["upload_datetime"])
+    # print(resume_data[0]["upload_datetime"])
     return render_template('admin_view_user_profile.html', email=email, role=role,
                            username=username, resume_data=resume_data)
 
@@ -431,7 +424,8 @@ def company_list():
             email = company.get('email', '')
             address = company.get('address', '')
             description = company.get('description', '')
-            companies.append({'id': id, 'name': name, 'phone_no': phone_no, 'email': email, 'address': address, 'description': description})
+            companies.append({'id': id, 'name': name, 'phone_no': phone_no, 'email': email, 'address': address,
+                              'description': description})
     else:
         # Handle the case when response is not a list of dictionaries
         app.logger.error('Error retrieving companies. Response: %s', response)
@@ -449,8 +443,8 @@ def company_details(company_id):
     address = result['address']
     description = result['description']
 
-
-    return render_template('company_details.html', company_id=company_id, name=name, phone_no=phone_no, email=email, address=address, description=description)
+    return render_template('company_details.html', company_id=company_id, name=name, phone_no=phone_no, email=email,
+                           address=address, description=description)
 
 
 if __name__ == '__main__':
