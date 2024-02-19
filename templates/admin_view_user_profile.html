@@ -1,4 +1,8 @@
-{% extends 'base.html' %}
+{% if request.endpoint == 'user_history' %}
+    {% extends 'base.html' %}
+{% else %}
+    {% extends 'admin_base.html' %}
+{% endif %}
 
 {% block title %}User History{% endblock %}
 
@@ -37,7 +41,8 @@
     {% endif %}
 <link href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css", rel="stylesheet">
     <div class="main-panel">
-        <div class="content-wrapper">
+        <div class="content-wrapper" style = "background-color:#ffffff">
+
             <div class="page-header"></div>
             {% if resume_data %}
                 <div class="row">
@@ -83,5 +88,9 @@
     </div>
 <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script>new DataTable('#userHistoryTable');</script>
+
+<script>new DataTable('#userHistoryTable', {
+     orderFixed: [1, 'desc']
+});</script>
+
 {% endblock %}

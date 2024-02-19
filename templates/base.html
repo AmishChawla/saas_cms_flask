@@ -1,31 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{% block title %}My Website{% endblock %}</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="/static/assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="/static/assets/vendors/css/vendor.bundle.base.css">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons CSS -->
     <!-- Option 1: Include in HTML -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap">
-
-  <link href="../static/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="/static/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <!-- endinject -->
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="/static/assets/css/style.css">
+    <!-- End layout styles -->
+    <link rel="shortcut icon" href="/static/assets/images/favicon.ico" />
 
-    <style>
-        /* Apply the Open Sans font to the "Resume Parser" text */
+
+      <style>
         .navbar-brand {
-            font-family: 'Open Sans', sans-serif;
-            font-weight: 700;
+        font-family: 'Roboto', sans-serif;
+        font-weight: 700;
         }
 
+        /* Apply the Roboto font to all paragraphs */
+        p {
+        font-family: 'Roboto', sans-serif;
+        }
+      </style>
 
-    </style>
+
     <!-- Your additional styles go here -->
     {% block styles %}{% endblock %}
 
@@ -34,80 +52,207 @@
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="../static/assets/images/favicon.png" rel="icon">
-  <link href="../static/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
-
-  <!-- Google Fonts -->
+  <link href="/static/assets/images/favicon.png" rel="icon">
+  <link href="/static/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
 
-  <!-- Template Main CSS File -->
 
-</head>
-<body style="height:100vh; margin:0; width:100%">
-<!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <!-- Logo and Project Name -->
-            <a class="navbar-brand" href="#">
-                <img src="/static/images/logo.png" alt="Logo" height="30" class="d-inline-block align-top">
-                Resume Parser
-            </a>
-
-            <!-- Navigation Links -->
-            {% if request.endpoint != 'admin_login' %}
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{url_for('index')}}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
-                    </li>
-                </ul>
-            </div>
+  </head>
+  <body>
+    <div class="container-scroller">
+      <!-- partial:../../partials/_navbar.html -->
+      <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+        <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+          <a class="navbar-brand brand-logo" href="../../index.html"><img src="/static/images/logo.png" alt="logo" style="width:20px" /><b>Resume Parser</b></a>
+          <a class="navbar-brand brand-logo-mini" href="../../index.html"><img src="/static/images/logo.png" alt="logo" /></a>
+        </div>
+        <div class="navbar-menu-wrapper d-flex align-items-stretch">
+            {% if request.endpoint != 'login' and request.endpoint != 'admin_login' and request.endpoint != 'register' %}
+                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                <span class="mdi mdi-menu"></span>
+                </button>
             {% endif %}
 
+     <ul class="navbar-nav navbar-nav-left">
+         <li class="nav-item">
+              <a class="nav-link scrollto active" href="{{ url_for('index',role=role)}}">
+                <span class="menu-title">Home</span>
+              </a>
+            </li>
 
-            <!-- User-related Links -->
-            <div class="navbar-nav">
-                {% if request.endpoint != 'admin_login' %}
+         <li class="nav-item">
+              <a class="nav-link scrollto active" href="{{ url_for('index',role=role)}}">
+                <span class="menu-title">About</span>
+              </a>
+            </li>
+         </ul>
+
+
+
+          <ul class="navbar-nav navbar-nav-right">
+                {% if request.endpoint != 'login' and request.endpoint != 'admin_login' and request.endpoint != 'register' %}
                     {% if current_user.is_authenticated %}
                         <!-- Show user-related links when the user is authenticated -->
-                        <a class="nav-link" href="{{ url_for('user_history') }}">History</a>
-                        <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
-                        {% if 'admin' in request.endpoint %}
-                                <a class="nav-link" href="{{ url_for('admin_logout') }}">Logout</a>
-                        {% else %}
-                                <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-                        {% endif %}
+
+
+                         <li class="nav-item">
+                                  <a class="nav-link" href="{{ url_for('profile') }}">
+                                    <span class="menu-title">Profile</span>
+                                  </a>
+                                </li>
+
+
+                                <li class="nav-item">
+                                  <a class="nav-link" href="{{ url_for('logout') }}">
+                                    <span class="menu-title">Logout</span>
+                                  </a>
+                                </li>
+
+
                     {% else %}
+
                         <!-- Show login and signup links when the user is not authenticated -->
-                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
-                        <a class="nav-link" href="{{ url_for('company_list') }}">Signup</a>
-                    {% endif %}
+
+                                <li class="nav-item">
+                                  <a class="nav-link" href="{{ url_for('login') }}">
+                                    <span class="menu-title">Login</span>
+                                  </a>
+                                </li>
+
+                                <li class="nav-item">
+                                  <a class="nav-link" href="#">
+                                    <span class="menu-title">SignUp</span>
+                                  </a>
+                                </li>
+                   {% endif %}
+
+
+
                 {% endif %}
-            </div>
+          </ul>
+          <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+
+              <span class="mdi mdi-menu"></span>
+          </button>
         </div>
-    </nav>
+      </nav>
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        <!-- partial:../../partials/_sidebar.html -->
+          {% if request.endpoint != 'login' and request.endpoint != 'admin_login' and request.endpoint != 'register' %}
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+          <ul class="nav">
+            <li class="nav-item nav-profile">
+              <a href="{{ url_for('profile') }}" class="nav-link">
+                <div class="nav-profile-image">
+                  <img src="/static/images/man.png" alt="profile">
+                  <span class="login-status online"></span>
+                  <!--change to offline or busy as needed-->
+                </div>
+                <div class="nav-profile-text d-flex flex-column">
+                  <span class="font-weight-bold mb-2">{{ current_user.username }}</span>
+                </div>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('user_dashboard') }}">
+                <span class="menu-title">Dashboard</span>
+                <i class="mdi mdi-home menu-icon"></i>
+              </a>
+            </li>
+               <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('upload_pdf') }}">
+                <span class="menu-title">Parse Resume</span>
+                <i class="mdi mdi-file-document-outline menu-icon"></i>
+              </a>
+            </li>
+  <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('user_history') }}">
+                <span class="menu-title">History</span>
+                  <i class="mdi mdi-history menu-icon"></i>
+
+              </a>
+            </li>
 
 
 
-    <!-- Page Content -->
-    <div class="container mt-4">
-        {% block content %}{% endblock %}
+
+          </ul>
+        </nav>
+          {% endif %}
+        <!-- partial -->
+
+      <!-- page-body-wrapper ends -->
+
+
+   <div class="container mt-4">
+        {% block content %}
+       {% endblock %}
     </div>
+
+
+    </div>
+</div>
+
 
     <!-- Bootstrap JS and Popper.js (for Bootstrap modal, dropdown, etc.) -->
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Your additional scripts go here -->
 
-    {% block scripts %}{% endblock %}
 
-</body>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="/static/assets/vendors/js/vendor.bundle.base.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="/static/assets/js/off-canvas.js"></script>
+    <script src="/static/assets/js/hoverable-collapse.js"></script>
+    <script src="/static/assets/js/misc.js"></script>
+    <script>
+    function redirectToPage(pageUrl) {
+        // You can customize this function to perform the redirection as needed
+        console.log(pageUrl);
+        window.location.href = pageUrl;
+    }
+</script>
+    <script>
+        var userId = document.querySelector('.button2').getAttribute('data-user-id');
+    </script>
+    <script>
+function searchByName() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("userSearchInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("userTable");
+    tr = table.getElementsByTagName("tr");
+
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[2]; // Assuming the name is in the third column
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+</script>
+
+{% block scripts %}{% endblock %}
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <!-- End custom js for this page -->
+  </body>
+
 <footer id="footer" class="py-5 bg-light" style="margin-top: 25vh;width:100%">
 
     <div class="footer-top">
@@ -165,4 +310,6 @@
 
 
   </footer>
+
+
 </html>

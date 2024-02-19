@@ -1,24 +1,33 @@
-{% extends 'base.html' %}
+{% extends 'admin_base.html' %}
 
 {% block title %}Profile{% endblock %}
 
 {% block content %}
+
+
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card border-0">
-                    <!-- Add a card header "Profile" -->
+                    <!-- Add a card header "Register" -->
                     <div class="card-header bg-white text-black text-center">
                         <h2>Profile</h2>
                     </div>
 
-                    <!-- Center the image, add padding, and resize -->
-                    <div class="card-img-top text-center my-3">
-                        <img src="/static/images/man.png" alt="Login Image" style="max-width: 300px; width: 5rem; height: 5rem;" class="img-fluid">
-                    </div>
+                    <div class="card-body">
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        {% for message in messages %}
+                                            <li>{{ message }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
 
-                    <!-- User Profile Form -->
-                    <form method="post" action="{{ url_for('admin_edit_user_profile', user_id=user_id) }}">
+                       <form method="post" action="{{ url_for('admin_edit_user_profile', user_id=user_id) }}">
                         {{ form.hidden_tag() }}
 
                         <div class="mb-3">
@@ -40,7 +49,7 @@
                             {{ form.submit(class="btn btn-dark btn-lg") }}
                         </div>
                     </form>
-                    <!-- End User Profile Form -->
+                    </div>
                 </div>
             </div>
         </div>

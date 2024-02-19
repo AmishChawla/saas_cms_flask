@@ -145,111 +145,106 @@ margin-left:10px;
       <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css" rel="stylesheet">
 
   </head>
-
-
+  <body>
+    <div class="container-scroller">
       <!-- partial:../../partials/_navbar.html -->
+      <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+        <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+          <a class="navbar-brand brand-logo" href="../../index.html"><img src="../static/images/logo.png" alt="logo" style="width:20px" /><b>Resume Parser</b></a>
+          <a class="navbar-brand brand-logo-mini" href="../../index.html"><img src="../static/images/logo.png" alt="logo" /></a>
+        </div>
+        <div class="navbar-menu-wrapper d-flex align-items-stretch">
+          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+            <span class="mdi mdi-menu"></span>
+          </button>
+          <ul class="navbar-nav navbar-nav-right">
 
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('user_password_update',role=role)}}">
+                <span class="menu-title">Update Password</span>
+                <i class="mdi mdi-lock-reset menu-icon" style="margin-left:10px"></i>
+              </a>
+            </li>
+
+
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('admin_logout') }}">
+                <span class="menu-title">Logout</span>
+                <i class="mdi mdi-logout" style="margin-left:10px"></i>
+              </a>
+            </li>
+
+          </ul>
+          <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+            <span class="mdi mdi-menu"></span>
+          </button>
+        </div>
+      </nav>
       <!-- partial -->
-
+      <div class="container-fluid page-body-wrapper">
         <!-- partial:../../partials/_sidebar.html -->
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+          <ul class="nav">
+            <li class="nav-item nav-profile">
+              <a href="#" class="nav-link">
+                <div class="nav-profile-image">
+                  <img src="../static/images/man.png" alt="profile">
+                  <span class="login-status online"></span>
+                  <!--change to offline or busy as needed-->
+                </div>
+                <div class="nav-profile-text d-flex flex-column">
+                  <span class="font-weight-bold mb-2">{{ username }}</span>
+                </div>
+                <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
+              </a>
+            </li>
+<!--            <li class="nav-item">-->
+<!--              <a class="nav-link" href="{{ url_for('admin_dashboard') }}">-->
+<!--                <span class="menu-title">Dashboard</span>-->
+<!--                <i class="mdi mdi-home menu-icon"></i>-->
+<!--              </a>-->
+<!--            </li>-->
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
+                <span class="menu-title">List of Users</span>
+                <i class="mdi mdi-account-multiple menu-icon"></i>
+              </a>
+            </li>
+                          <li class="nav-item">
+              <a class="nav-link" href="#resume history">
+                <span class="menu-title">Resume History</span>
+                <i class="mdi mdi-file-document-outline menu-icon"></i>
+              </a>
+            </li>
 
+              <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span class="menu-title">Trash</span>
+                <i class="mdi mdi-trash-can menu-icon"></i>
+              </a>
+            </li>
+
+              <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span class="menu-title">Settings</span>
+                <i class="mdi mdi-cogs menu-icon"></i>
+              </a>
+            </li>
+
+          </ul>
+        </nav>
         <!-- partial -->
         <div class="main-panel">
           <div class="content-wrapper">
-            <div class="page-header">
-              <h3 class="page-title"> User Table </h3>
-               </div>
-            <div class="row">
 
-
-              <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
-                <div class="card">
-                  <div class="card-body" style="overflow-x: auto;">
-                    <h4 class="card-title">User Details</h4>
-                      <div style="display: flex; justify-content: space-between;">
-                                      <a class="btn btn-info" href="{{ url_for('add_user') }}">
-                <span class="menu-title">Add user</span>
-              </a>
-                          </div>
-                      <br>
-                      <br>
-                <table id="userTable" class="display nowrap table hover">
-            <thead>
-                <tr>
-                    <th><input type="checkbox" id="selectAllCheckbox"></th>
-                    <th>Sr. No.</th>
-                    <th>User ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Creation Time</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-        {% for row in result|reverse %}
-
-            <tr>
-<!--              <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}">-->
-                <td><input type="checkbox" class="select-checkbox"></td>
-                <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ loop.index }}</td>
-                <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
-                    U_{{ row.id }}
-                </td>
-                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}"> {{ row.username }} </a></td>
-
-                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
-                    {{ row.email }}
-                </td>
-
-                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> {{ row.role }} </td>
-                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ row.created_datetime.split('T')[0] }}&nbsp; &nbsp;{{ row.created_datetime.split('T')[1][:8] }} </td>
-                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> {{ row.status }} </td>
-                <td>
-    <a class="button button1" href="{{ url_for('admin_edit_user_profile', user_id=row.id) }}">Edit</a>
-    <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ row.id }}">Delete</button>
-
-    <!-- Modal for delete button -->
-    <div class="modal fade" id="deleteModal_{{ row.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel_{{ row.id }}" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="deleteModalLabel_{{ row.id }}">Delete User</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Are you sure?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <a type="button" class="btn btn-danger" href="{{ url_for('admin_delete_user', user_id=row.id) }}">Delete</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</td>
-
-<!--                </a>-->
-            </tr>
-
-        {% endfor %} <!-- Your table body content here -->
-            </tbody>
-
-        </table>
-
-                  </div>
-                </div>
-              </div>
-
-            </div>
+            {% block content %} {% endblock %}
           </div>
           <!-- content-wrapper ends -->
         </div>
         <!-- main-panel ends -->
-
+      </div>
       <!-- page-body-wrapper ends -->
-
+    </div>
     <!-- container-scroller -->
     <!-- plugins:js -->
 
@@ -360,5 +355,128 @@ function parseDateTime(dateTimeString) {
     });
 </script>
 
-
+  </body>
 </html>
+
+
+
+
+
+<form method="post" action="{{ url_for('admin_edit_user_profile', user_id=user_id) }}">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label visually-hidden">Username:</label>
+                            {{ form.username(class="form-control", placeholder=username, required=True) }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Role" class="form-label">Select Role :</label>
+                            {{ form.role(class="form-select", required=True) }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Select status :</label>
+                            {{ form.status(class="form-select", required=True) }}
+                        </div>
+
+                        <div class="mb-3 text-center">
+                            {{ form.submit(class="btn btn-dark btn-lg") }}
+                        </div>
+                    </form>
+
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/searchpanes/2.2.0/js/dataTables.searchPanes.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script>
+$(document).ready(function() {
+  $('#userTable').DataTable({
+    searchPanes: {
+      panes: [
+        {
+          header: 'Custom',
+          options: [
+            {
+              label: 'Last Week',
+              value: function(rowData, rowIdx) {
+                var currentDate = new Date();
+                var lastWeekDate = new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000);
+                var creationDateTime = parseDateTime(rowData[6]);
+                console.log(creationDateTime);
+                return creationDateTime >= lastWeekDate && creationDateTime <= currentDate;
+              },
+              className: 'last-week'
+            },
+            {
+              label: 'Last Month',
+              value: function(rowData, rowIdx) {
+                var currentDate = new Date();
+                var lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, currentDate.getDate());
+                var creationDateTime = parseDateTime(rowData[6]);
+                console.log(creationDateTime);
+                return creationDateTime >= lastMonthDate && creationDateTime <= currentDate;
+              },
+              className: 'last-month'
+            },
+            {
+              label: 'Last Year',
+              value: function(rowData, rowIdx) {
+                var currentDate = new Date();
+                var lastYearDate = new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate());
+                var creationDateTime = parseDateTime(rowData[6]);
+                console.log(creationDateTime);
+                return creationDateTime >= lastYearDate && creationDateTime <= currentDate;
+              },
+              className: 'last-year'
+            }
+          ],
+          dtOpts: {
+            searching: false,
+            order: [[1, 'desc']]
+          }
+        }
+      ]
+    },
+    dom: 'Plfrtip'
+  });
+});
+
+function parseDateTime(dateTimeString) {
+    // Remove non-breaking spaces
+    dateTimeString = dateTimeString.replace(/&nbsp;/g, ' ');
+
+    // Split date and time parts
+    var parts = dateTimeString.split(' ');
+
+    var dateParts = parts[0].split('-');
+    var year = parseInt(dateParts[0], 10);
+    var month = parseInt(dateParts[1], 10) - 1; // Month is zero-indexed
+    var day = parseInt(dateParts[2], 10);
+
+    var hours, minutes, seconds;
+
+    if (parts[1]) {
+        var timeParts = parts[1].split(':');
+        hours = parseInt(timeParts[0], 10);
+        minutes = parseInt(timeParts[1], 10);
+        seconds = parseInt(timeParts[2], 10);
+    } else {
+        // Set default values for time components
+        hours = 0;
+        minutes = 0;
+        seconds = 0;
+    }
+
+    // Create a Date object
+    return new Date(year, month, day, hours, minutes, seconds);
+}
+
+
+         function redirectToPage(pageUrl) {
+        console.log(pageUrl);
+        window.location.href = pageUrl;
+    }
+    </script>
