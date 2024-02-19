@@ -12,7 +12,7 @@
                             <div class="card-body" style="padding: 2rem;">
                                 <h4 class="card-title">Services</h4>
                                 <div style="display: flex; justify-content: space-between;">
-                                      <a class="btn btn-info" href="#">
+                                      <a class="btn btn-info" href="{{ url_for('add_service') }}">
                 <span class="menu-title">Add Service</span>
               </a>
                           </div>
@@ -35,7 +35,7 @@
                                                 <td class="py-1">{{ data.name }}</td>
                                                 <td class="py-1">{{ data.description }}</td>
                                                  <td style="display: flex">
-    <a class="button button1" href="#">Edit</a>
+    <a class="button button1" href=" {{url_for('admin_edit_service', service_id=data.service_id)}} ">Edit</a>
     <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.service_id }}">Delete</button>
 
     <!-- Modal for delete button -->
@@ -51,7 +51,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <a type="button" class="btn btn-danger" href="#">Delete</a>
+                    <a type="button" class="btn btn-danger" href="{{ url_for('admin_delete_service', service_id=data.service_id) }}">Delete</a>
                 </div>
             </div>
         </div>

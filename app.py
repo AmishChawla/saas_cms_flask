@@ -390,19 +390,10 @@ def user_history():
 @login_required
 def admin_edit_user_profile(user_id):
     form = forms.AdminEditUserForm()
-    print(form.errors)
     result = api_calls.admin_get_any_user(access_token=current_user.id, user_id=user_id)
     username = result["username"]
     role = result["role"]
     status = result["status"]
-
-    # Prefill the form fields with user information
-    form.username.data = username
-    form.role.data = role
-    form.status.data = status
-
-    if form.is_submitted():
-        print("submitted")
 
     if form.validate_on_submit():
         # Update user information
@@ -415,6 +406,11 @@ def admin_edit_user_profile(user_id):
         print(response.status_code)
         if response.status_code == 200:
             return redirect(url_for('admin_dashboard'))
+
+    # Prefill the form fields with user information
+    form.username.data = username
+    form.role.data = role
+    form.status.data = status
 
     return render_template('edit_form.html', status=status, role=role, username=username, form=form, user_id=user_id)
 
@@ -455,12 +451,67 @@ def company_details(company_id):
                            address=address, description=description)
 
 
+################################################################ SERVICES ############################################################################################
 @app.route('/services', methods=['GET', 'POST'])
 def services():
     response = api_calls.services()
     if response.status_code == 200:
         result = response.json()
         return render_template('services.html', result=result)
+
+@app.route("/admin/add-service", methods=['GET', 'POST'])
+@login_required
+def add_service():
+    form = forms.AdminAddServiceForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        description = form.description.data
+        response = api_calls.add_service(name, description)
+        print(response.status_code)
+        if (response.status_code == 200):
+            flash('Service added Successful', category='info')
+            return redirect(url_for('services'))
+        else:
+            flash('Some problem occured', category='error')
+
+    return render_template('admin_add_service.html', form=form)
+
+
+@app.route("/admin/delete-service/<service_id>", methods=['GET', 'POST'])
+@login_required
+def admin_delete_service(service_id):
+    result = api_calls.admin_delete_service(service_id=service_id)
+    if (result.status_code == 200):
+        print(result)
+        return redirect(url_for('services'))
+
+
+@app.route("/admin/edit-service/<service_id>", methods=['GET', 'POST'])
+@login_required
+def admin_edit_service(service_id):
+    form = forms.AdminEditServiceForm()
+    result = api_calls.admin_get_any_service(service_id=service_id)
+    name = result["service_name"]
+    description = result["service_description"]
+
+    if form.validate_on_submit():
+        # Update user information
+        name = form.name.data
+        description = form.description.data
+
+        response = api_calls.admin_edit_any_service(service_id=service_id,
+                                                 service_name=name, service_description=description)
+        print(response.status_code)
+        if response.status_code == 200:
+            return redirect(url_for('services'))
+
+    # Prefill the form fields with user information
+    form.name.data = name
+    form.description.data = description
+
+    return render_template('admin_edit_service.html', description=description, name=name, form=form, service_id=service_id)
+
+
 
 if __name__ == '__main__':
     app.run()

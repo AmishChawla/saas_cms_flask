@@ -344,3 +344,81 @@ def services():
     except requests.exceptions.RequestException as e:
         # Handle request errors
         print(f"Error: {e}")
+
+
+def add_service(name, description):
+    headers = {
+        'Content-Type': 'application/json',
+    }
+
+    params = {
+        "name": name,
+        "description": description,
+    }
+
+    try:
+        response = requests.post(constants.BASE_URL + '/services/create-service', params=params, headers=headers)
+        print(response.text)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def admin_delete_service(service_id: int):
+
+    try:
+        response = requests.delete(constants.BASE_URL + f'/services/delete-service/{service_id}')
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def admin_get_any_service(service_id: int):
+    try:
+        response = requests.get(constants.BASE_URL + f'/services/{service_id}')
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def admin_edit_any_service(service_id, service_name, service_description):
+    print("trying")
+
+    data = {
+        "name": service_name,
+        "description": service_description
+    }
+
+    try:
+        print("try")
+        response = requests.put(constants.BASE_URL + f'/services/update-service/{service_id}',  json=data)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+

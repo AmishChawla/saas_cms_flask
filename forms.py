@@ -131,3 +131,15 @@ class AdminEditUserForm(FlaskForm):
     role = SelectField('Select Role :', choices=['user', 'admin'])
     status = SelectField('Select Status :', choices=['active', 'block'])
     submit = SubmitField('Save')
+
+
+class AdminAddServiceForm(FlaskForm):
+    name = StringField('name', validators=[validators.DataRequired()])
+    description =  StringField('description', validators=[validators.DataRequired()])
+    submit = SubmitField('Add Service')
+
+
+class AdminEditServiceForm(FlaskForm):
+    name = StringField('Name', validators=[validators.DataRequired()])
+    description = StringField('Description', validators=[validators.DataRequired()])
+    submit = SubmitField('Update Service')
