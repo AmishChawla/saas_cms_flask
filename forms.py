@@ -1,8 +1,6 @@
 from wtforms import StringField, PasswordField, SubmitField, validators, SelectField
 from flask_wtf import FlaskForm
 
-
-
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 
 import email_validator
@@ -40,6 +38,7 @@ class RegisterForm(FlaskForm):
         validators.EqualTo('password', message='Passwords must match.')
     ])
     submit = SubmitField('Register')
+
 
 class AdminRegisterForm(FlaskForm):
     username = StringField('Username', validators=[validators.Length(min=4, max=25), validators.DataRequired()])
@@ -135,7 +134,7 @@ class AdminEditUserForm(FlaskForm):
 
 class AdminAddServiceForm(FlaskForm):
     name = StringField('name', validators=[validators.DataRequired()])
-    description =  StringField('description', validators=[validators.DataRequired()])
+    description = StringField('description', validators=[validators.DataRequired()])
     submit = SubmitField('Add Service')
 
 

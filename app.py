@@ -228,6 +228,7 @@ def admin_dashboard():
     if response.status_code == 200:
         result = response.json()
         users = result["users"]
+        print(result["users"])
     else:
         print("Failed response")
 
@@ -251,7 +252,6 @@ def admin_login():
             role = response.json().get('role')
             username = response.json().get('username')
             email = response.json().get('email')
-            company_id = response.json().get('company_id')
             user = User(user_id=token, role=role, username=username, email=email)
             login_user(user)
 
@@ -394,6 +394,10 @@ def admin_edit_user_profile(user_id):
     username = result["username"]
     role = result["role"]
     status = result["status"]
+    service = api_calls.services()
+    if service.status_code == 200:
+        user_service = service.json()
+
 
     if form.validate_on_submit():
         # Update user information
@@ -412,7 +416,7 @@ def admin_edit_user_profile(user_id):
     form.role.data = role
     form.status.data = status
 
-    return render_template('edit_form.html', status=status, role=role, username=username, form=form, user_id=user_id)
+    return render_template('edit_form.html', status=status, role=role, username=username, form=form, user_id=user_id, user_service=user_service)
 
 
 @app.route('/company-list', methods=['GET', 'POST'])
@@ -510,6 +514,8 @@ def admin_edit_service(service_id):
     form.description.data = description
 
     return render_template('admin_edit_service.html', description=description, name=name, form=form, service_id=service_id)
+
+
 
 
 
