@@ -95,12 +95,19 @@
 
           <ul class="navbar-nav navbar-nav-right">
 
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('user_password_update',role=role)}}">
-                <span class="menu-title">Update Password</span>
-                <i class="mdi mdi-lock-reset menu-icon" style="margin-left:10px"></i>
-              </a>
-            </li>
+         <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="updatePasswordDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <span class="menu-title">{{ current_user.username }}</span>
+
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="updatePasswordDropdown" style="position:absolute;" >
+        <!-- Username will be displayed here -->
+         <li>
+            <a class="dropdown-item" href="{{ url_for('user_password_update',role=role)}}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'">Update Password <i class="mdi mdi-lock-reset menu-icon" style="margin-left:10px"></i></a>
+        </li>
+    </ul>
+</li>
+
 
 
             <li class="nav-item">
@@ -136,14 +143,14 @@
 
               </a>
             </li>
-<!--            <li class="nav-item">-->
-<!--              <a class="nav-link" href="{{ url_for('admin_dashboard') }}">-->
-<!--                <span class="menu-title">Dashboard</span>-->
-<!--                <i class="mdi mdi-home menu-icon"></i>-->
-<!--              </a>-->
-<!--            </li>-->
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
+                <span class="menu-title">Dashboard</span>
+                <i class="mdi mdi-home menu-icon"></i>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('list_of_users') }}">
                 <span class="menu-title">List of Users</span>
                 <i class="mdi mdi-account-multiple menu-icon"></i>
               </a>
@@ -155,7 +162,7 @@
               </a>
             </li>
                           <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('user_history') }}">
+              <a class="nav-link" href="#">
                 <span class="menu-title">Resume History</span>
                 <i class="mdi mdi-file-document-outline menu-icon"></i>
               </a>
@@ -201,6 +208,7 @@
     <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
     <script>
+
 $(document).ready(function() {
   $('#userTable').DataTable({
     searchPanes: {
@@ -251,6 +259,9 @@ $(document).ready(function() {
     },
     dom: 'Plfrtip'
   });
+
+  // Trigger click event on the "Collapse All" button
+  $('.dtsp-collapseAll').click();
 });
 
 function parseDateTime(dateTimeString) {
@@ -283,12 +294,13 @@ function parseDateTime(dateTimeString) {
     return new Date(year, month, day, hours, minutes, seconds);
 }
 
+function redirectToPage(pageUrl) {
+    console.log(pageUrl);
+    window.location.href = pageUrl;
+}
+</script>
 
-         function redirectToPage(pageUrl) {
-        console.log(pageUrl);
-        window.location.href = pageUrl;
-    }
-    </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="/static/assets/js/off-canvas.js"></script>
     <script src="/static/assets/js/hoverable-collapse.js"></script>
@@ -301,6 +313,7 @@ function parseDateTime(dateTimeString) {
         });
     });
 </script>
+
 
 
 

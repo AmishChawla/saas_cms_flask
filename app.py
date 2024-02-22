@@ -175,6 +175,12 @@ def user_dashboard():
 
     return render_template('dashboard.html')
 
+@app.route("/admin-dashboard")
+@login_required
+def admin_dashboard():
+
+
+    return render_template('admin_dashboard.html')
 
 
 @app.route('/logout')
@@ -205,9 +211,9 @@ def profile():
         return render_template('profile.html', username=username, email=email, role=role)
 
 
-@app.route("/admin-dashboard")
+@app.route("/list-of-users")
 @login_required
-def admin_dashboard():
+def list_of_users():
     ITEMS_PER_PAGE = 5
     # Fetch user profile details
     respo = api_calls.get_user_profile(current_user.id)
