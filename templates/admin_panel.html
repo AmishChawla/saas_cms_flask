@@ -32,7 +32,6 @@
                     <th><input type="checkbox" id="selectAllCheckbox"></th>
                     <th>Sr. No.</th>
                     <th>User ID</th>
-<!--                    <th>Company Name</th>-->
                     <th>Name</th>
                     <th>Email</th>
                     <th>Role</th>
@@ -52,7 +51,7 @@
                     U_{{ row.id }}
                 </td>
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}"> {{ row.username }} </a></td>
-<!--                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;">{{ row.company_name }}</td>-->
+
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
                     {{ row.email }}
                 </td>

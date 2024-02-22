@@ -232,9 +232,8 @@ def list_of_users():
     )
 
     if response.status_code == 200:
-        result = response.json()
-        users = result["users"]
-        print(result["users"])
+        users = response.json()
+
     else:
         print("Failed response")
 
