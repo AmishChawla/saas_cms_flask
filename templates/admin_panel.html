@@ -32,6 +32,7 @@
                     <th><input type="checkbox" id="selectAllCheckbox"></th>
                     <th>Sr. No.</th>
                     <th>User ID</th>
+                    <th>Company Name</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Role</th>
@@ -49,6 +50,13 @@
                 <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ loop.index }}</td>
                 <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
                     U_{{ row.id }}
+                </td>
+                <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
+                    {% if row["company"] %}
+                        {{ row["company"][0]["name"] }}
+                    {% else %}
+                        Not Registered
+                    {% endif %}
                 </td>
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}"> {{ row.username }} </a></td>
 

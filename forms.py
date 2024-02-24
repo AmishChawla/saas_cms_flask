@@ -142,3 +142,9 @@ class AdminEditServiceForm(FlaskForm):
     name = StringField('Name', validators=[validators.DataRequired()])
     description = StringField('Description', validators=[validators.DataRequired()])
     submit = SubmitField('Update Service')
+
+
+class AdminEditCompanyForm(FlaskForm):
+    name = StringField('Name')
+    location = StringField('Location')
+    submit = SubmitField('Update Company')
