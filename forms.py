@@ -59,7 +59,7 @@ class AdminRegisterForm(FlaskForm):
 
 class CompanyRegisterForm(FlaskForm):
     name = StringField('Name')
-    email = StringField('Email', validators=[validators.Email(), validators.DataRequired()])
+    location = StringField('Location')
     submit = SubmitField('Submit')
 
 

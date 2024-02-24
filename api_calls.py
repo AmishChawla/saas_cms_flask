@@ -336,6 +336,29 @@ def get_company_details(company_id: int):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+def company_register(name, location, access_token):
+    print('trying3')
+    headers = {'Authorization': f'Bearer {access_token}'}
+    params = {
+        "name": name,
+        "location": location,
+
+        }
+    try:
+        response = requests.post(constants.BASE_URL+f'/companies/create-company', params=params, headers=headers)
+        print(response.text)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+
 def services():
     try:
         response = requests.get(constants.BASE_URL + '/services/all-services')

@@ -36,18 +36,39 @@ def load_user(user_id):
     response = api_calls.get_user_profile(access_token=user_id)
     if response.status_code == 200:
         user_data = response.json()
-        user = User(user_id=user_id, role=user_data['role'], username=user_data['username'], email=user_data['email'])
+
+        # Initialize services as an empty list
+        services = []
+
+        # Check if 'services' key exists in user_data
+        if 'services' in user_data:
+            # Iterate over services and append details to the services list
+            for service_data in user_data['services']:
+                service = Service(id=service_data['id'], name=service_data['name'])
+                services.append(service)
+
+        # Initialize company as None
+        company = None
+        if 'company' in user_data and user_data['company'] is not None:
+            company = Company(id=user_data['company']['id'], name=user_data['company']['name'])
+
+        # Create a User object using the retrieved data
+        user = User(user_id=user_id, role=user_data['role'], username=user_data['username'], email=user_data['email'],
+                    services=services, company=company)
+
         return user
     else:
         return None
 
 
 class User(UserMixin):
-    def __init__(self, user_id, role, username, email):
+    def __init__(self, user_id, role, username, email, services, company):
         self.id = user_id
         self.role = role
         self.username = username
         self.email = email
+        self.services = services
+        self.company = company
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -126,7 +147,10 @@ def empty_uploads_folder():
 def login():
     print('trying')
     if current_user.is_authenticated:
-        return redirect(url_for('user_dashboard'))
+        if current_user.company is not None:
+            return redirect(url_for('user_dashboard'))
+        else:
+            return redirect(url_for('company_register'))
     form = forms.LoginForm()
     print(form.validate_on_submit())
     if form.validate_on_submit():
@@ -139,10 +163,15 @@ def login():
             role = response.json().get('role')
             username = response.json().get('username')
             email = response.json().get('email')
-            user = User(user_id=token, role=role, username=username, email=email)
+            services = response.json().get('services', [])
+            company = response.json().get('company', {})
+            user = User(user_id=token, role=role, username=username, email=email, services=services, company=company)
             login_user(user)
 
-            return redirect(url_for('user_dashboard'))
+            if current_user.company is not None:
+                return redirect(url_for('user_dashboard'))
+            else:
+                return redirect(url_for('company_register'))
         else:
             flash('Login unsuccessful. Please check email and password.', category='error')
 
@@ -207,8 +236,9 @@ def profile():
         username = result.get('username', '')
         email = result.get('email', '')
         role = result.get('role', '')
+        company = result.get('company', {})
 
-        return render_template('profile.html', username=username, email=email, role=role)
+        return render_template('profile.html', username=username, email=email, role=role, company=company)
 
 
 @app.route("/list-of-users")
@@ -458,6 +488,25 @@ def company_details(company_id):
 
     return render_template('company_details.html', company_id=company_id, name=name, phone_no=phone_no, email=email,
                            address=address, description=description)
+
+
+@app.route("/company-register", methods=['GET', 'POST'])
+def company_register():
+    form = forms.CompanyRegisterForm()
+    print("outside")
+    if form.validate_on_submit():
+        name = form.name.data
+        location = form.location.data
+        response = api_calls.company_register(name, location, access_token=current_user.id)
+        print("inside")
+
+        if (response.status_code == 200):
+            flash('Registration Successful', category='info')
+            return redirect(url_for('user_dashboard'))
+        else:
+            flash('Registration unsuccessful.', category='error')
+
+    return render_template('company_register.html', form=form)
 
 
 ################################################################ SERVICES ############################################################################################
