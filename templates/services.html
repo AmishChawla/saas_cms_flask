@@ -10,12 +10,15 @@
                     <div class="col-lg-12 grid-margin stretch-card">
                         <div class="card" style="overflow-x:auto;">
                             <div class="card-body" style="padding: 2rem;">
-                                <h4 class="card-title">Services</h4>
-                                <div style="display: flex; justify-content: space-between;">
-                                      <a class="btn btn-info" href="{{ url_for('add_service') }}">
-                <span class="menu-title">Add Service</span>
-              </a>
-                          </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <h4 class="card-title">Add Service</h4>
+                                       <div style="display: flex; justify-content: space-between;">
+                                          <a class="btn btn-info" href="{{ url_for('add_service') }}">
+                                          <span class="menu-title">Add service</span>
+                                          </a>
+                                       </div>
+                                 </div>
+
                                 <br>
                                 <br>
                                 <table id="serviceTable" class="display" style="width:100%; ">

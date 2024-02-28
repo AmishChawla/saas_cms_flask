@@ -237,7 +237,13 @@ def list_of_users():
     else:
         print("Failed response")
 
-    return render_template('admin_panel.html', result=users, username=username, email=email, role=role)
+    return render_template('list_of_users.html', result=users, username=username, email=email, role=role)
+
+
+
+
+
+
 
 
 @app.route("/admin/login", methods=['GET', 'POST'])
@@ -521,6 +527,31 @@ def admin_edit_service(service_id):
     return render_template('admin_edit_service.html', description=description, name=name, form=form, service_id=service_id)
 
 
+
+@app.route("/resume-history", methods=['GET', 'POST'])
+@login_required
+def resume_history():
+    response = api_calls.admin_get_resume_history()
+    if response.status_code == 200:
+        result = response.json()
+        return render_template('resume_history.html', result=result)
+
+
+@app.route("/trash")
+@login_required
+def trash():
+
+    response = api_calls.trash(
+        current_user.id,
+    )
+
+    if response.status_code == 200:
+        users = response.json()
+
+    else:
+        print("Failed response")
+
+    return render_template('trash.html', result=users )
 
 
 
