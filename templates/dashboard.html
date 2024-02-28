@@ -3,5 +3,42 @@
 {% block title %}User Dashboard{% endblock %}
 
 {% block content %}
+<canvas id="userRegistrationsChart" width="800" height="400"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+     document.addEventListener('DOMContentLoaded', function() {
+    // Fetch resume data from the template
+    const resumeData = {{ resume_data|tojson }};
 
+    // Extract dates and counts from resume data
+    const dates = Object.keys(resumeData);
+    const counts = Object.values(resumeData);
+
+    // Create a line chart
+    const ctx = document.getElementById('resumeDataChart').getContext('2d');
+    const resumeDataChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [{
+                label: 'Count of Parsed Resumes',
+                data: counts,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+});
+
+</script>
 {% endblock %}

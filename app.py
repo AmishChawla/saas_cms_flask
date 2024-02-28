@@ -37,20 +37,7 @@ def load_user(user_id):
     if response.status_code == 200:
         user_data = response.json()
 
-        # Initialize services as an empty list
-        services = []
 
-        # Check if 'services' key exists in user_data
-        if 'services' in user_data:
-            # Iterate over services and append details to the services list
-            for service_data in user_data['services']:
-                service = Service(id=service_data['id'], name=service_data['name'])
-                services.append(service)
-
-        # Initialize company as None
-        company = None
-        if 'company' in user_data and user_data['company'] is not None:
-            company = Company(id=user_data['company']['id'], name=user_data['company']['name'])
 
         # Create a User object using the retrieved data
         user = User(user_id=user_id, role=user_data['role'], username=user_data['username'], email=user_data['email'],
@@ -200,16 +187,22 @@ def register():
 @app.route("/user-dashboard")
 @login_required
 def user_dashboard():
+    response = api_calls.get_user_profile(access_token=current_user.id)
+    if response.status_code == 200:
+        result = response.json()
+        resume_data = result["resume_data"]
 
-
-    return render_template('dashboard.html')
+    return render_template('dashboard.html', resume_data=resume_data)
 
 @app.route("/admin-dashboard")
 @login_required
 def admin_dashboard():
+    response = api_calls.get_all_users(current_user.id)
 
+    if response.status_code == 200:
+        users = response.json()
 
-    return render_template('admin_dashboard.html')
+    return render_template('admin_dashboard.html', users=users)
 
 
 @app.route('/logout')
@@ -275,27 +268,31 @@ def admin_login():
     print('trying')
     if current_user.is_authenticated:
         return redirect(url_for('admin_dashboard'))
+
     form = forms.LoginForm()
     print(form.validate_on_submit())
+
     if form.validate_on_submit():
         email = form.email.data
         password = form.password.data
         response = api_calls.admin_login(email, password)
 
-        if (response.status_code == 200):
-            token = response.json().get('access_token')
-            role = response.json().get('role')
-            username = response.json().get('username')
-            email = response.json().get('email')
-            user = User(user_id=token, role=role, username=username, email=email)
-            login_user(user)
+        if response.status_code == 200:
+            data = response.json()
+            token = data.get('access_token')
+            role = data.get('role')
+            username = data.get('username')
+            email = data.get('email')
+            services = data.get('services')
+            company = data.get('company')
 
+            user = User(user_id=token, role=role, username=username, email=email, services=services, company=company)
+            login_user(user)
             return redirect(url_for('admin_dashboard'))
         else:
             flash('Login unsuccessful. Please check email and password.', category='error')
 
     return render_template('admin_login.html', form=form)
-
 
 @app.route("/admin/add-user", methods=['GET', 'POST'])
 @login_required
