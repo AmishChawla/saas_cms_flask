@@ -65,54 +65,42 @@ def index():
 @login_required
 def upload_pdf():
     form = forms.UploadForm()
-    response = api_calls.get_user_profile(current_user.id)
-    if (response.status_code == 200):
-        result = response.json()
-        username = result.get('username', '')
-        email = result.get('email', '')
-        role = result.get('role', '')
+    if form.validate_on_submit():
+        uploaded_files = request.files.getlist('files')
+        print(len(uploaded_files))
+        empty_uploads_folder()
+        file_list = []
+        print(len(uploaded_files))
+        for file in uploaded_files:
+            # Ensure the file has a secure filename
+            filename = secure_filename(file.filename)
+            # Save the file to a designated folder
+            file_path = 'uploads/' + filename
+            print(file_path)
+            file.save(file_path)
+            file_list.append(('pdf_files', (filename, open(file_path, 'rb'))))
 
-        if form.validate_on_submit():
-            uploaded_files = request.files.getlist('files')
-            print(len(uploaded_files))
-            empty_uploads_folder()
-            file_list = []
-            print(len(uploaded_files))
-            for file in uploaded_files:
-                # Ensure the file has a secure filename
-                filename = secure_filename(file.filename)
-                # Save the file to a designated folder
-                file_path = 'uploads/' + filename
-                print(file_path)
-                file.save(file_path)
-                file_list.append(('pdf_files', (filename, open(file_path, 'rb'))))
-                # files = [f for f in os.listdir(uploads_folder) if os.path.isfile(os.path.join(uploads_folder, f))]
-                # file_list = [('pdf_files', (filename, open(os.path.join(uploads_folder, filename), 'rb'))) for filename in
-                #              files]
-                # file_list.append(('pdf_files', (filename, open(os.path.join(uploads_folder, filename), 'rb'))))
-                # print(file_list)
-            response = api_calls.dashboard(file_list, current_user.id)
-            print(response.json())
-            if response.status_code == 200:
-                result = response.json()
-                # Extract the CSV data from the response
-                csv_data = result.get('csv_file', '')
+        response = api_calls.dashboard(file_list, current_user.id)
+        print(response.json())
+        if response.status_code == 200:
+            result = response.json()
+            # Extract the CSV data from the response
+            csv_data = result.get('extracted_data', [])
 
-                # Use StringIO to create a file-like object for the csv.reader
-                csv_file = StringIO(csv_data)
+            # Use StringIO to create a file-like object for the csv.reader
+            # csv_file = StringIO(csv_data)
 
-                # Parse the CSV data into a list of lists
-                csv_reader = list(csv.reader(csv_file))
+            # Parse the CSV data into a list of lists
+            # csv_reader = list(csv.reader(csv_file))
+            #
+            # The first row contains headers, and the rest are data rows
+            # headers = csv_reader[0]
+            # data_rows = csv_reader[1:]
+            # Process the uploaded files or redirect to a new page
+            xml_data = result.get('xml_file')
+            return render_template('result.html', csv_data=csv_data, xml_data=xml_data)
 
-                # The first row contains headers, and the rest are data rows
-                headers = csv_reader[0]
-                data_rows = csv_reader[1:]
-                # Process the uploaded files or redirect to a new page
-                xml_data = result.get('xml_file')
-                return render_template('result.html', headers=headers, data_rows=data_rows, xml_data=xml_data,
-                                       username=username, email=email, role=role)
-
-    return render_template('upload_pdf.html', form=form, username=username, email=email, role=role)
+    return render_template('upload_pdf.html', form=form)
 
 
 def empty_uploads_folder():
@@ -258,7 +246,10 @@ def list_of_users():
     else:
         print("Failed response")
 
-    return render_template('admin_panel.html', result=users)
+
+    return render_template('list_of_users.html', result=users)
+
+
 
 
 @app.route("/admin/login", methods=['GET', 'POST'])
@@ -366,7 +357,7 @@ def user_password_update(role):
         confirm_new_password = form.confirm_new_password.data
         response = api_calls.update_user_password(current_password=current_password, new_password=new_password,
                                                   confirm_new_password=confirm_new_password,
-                                                  access_token=current_user.id, username=current_user.username)
+                                                  access_token=current_user.id)
         print(response.status_code)
         if (response.status_code == 200):
             flash('Password Updated Successfully', category='info')
@@ -576,7 +567,7 @@ def admin_edit_service(service_id):
 
 ##########################################################################COMPANIES###############################################################3
 
-@app.route("/admin/list_of_companies", methods=['GET', 'POST'])
+@app.route("/admin/list-of-companies", methods=['GET', 'POST'])
 @login_required
 def list_of_companies():
     response = api_calls.admin_get_all_companies()
@@ -616,6 +607,34 @@ def admin_edit_company(company_id):
     form.location.data = location
 
     return render_template('admin_edit_company.html', location=location, name=name, form=form, company_id=company_id)
+
+
+
+######################################## resume history ##########################################################################
+@app.route("/resume-history", methods=['GET', 'POST'])
+@login_required
+def resume_history():
+    response = api_calls.admin_get_resume_history()
+    if response.status_code == 200:
+        result = response.json()
+        return render_template('resume_history.html', result=result)
+
+
+@app.route("/trash")
+@login_required
+def trash():
+
+    response = api_calls.trash(
+        current_user.id,
+    )
+
+    if response.status_code == 200:
+        users = response.json()
+
+    else:
+        print("Failed response")
+
+    return render_template('trash.html', result=users )
 
 
 

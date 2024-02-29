@@ -4,8 +4,13 @@
 
 {% block content %}
 
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
-
+<style>
+    td {
+    vertical-align: top;
+    height: 200px;
+}
+</style>
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" />
 
     <div class="container mt-5">
         <h4 class="mb-4">Parsing Complete</h4>
@@ -17,35 +22,55 @@
         </p>
 
         <!-- CSV Data Section -->
+        {% if csv_data %}
         <div class="row">
-            <div class="col">
-                <div class="collapse multi-collapse" id="csvData" data-bs-parent=".container">
-                    {% if headers and data_rows %}
-                        <table class="table table-bordered" style="width: 100%;" id="result">
-                            <thead class="thead-light">
+                    <div class="col-lg-12 grid-margin stretch-card">
+                        <div class="card" style="overflow-x:auto;">
+                            <div class="card-body" style="padding: 2rem;">
+
+                                <table class="table-bordered" id="result">
+                            <thead>
                                 <tr>
-                                    {% for header in headers %}
-                                        <th>{{ header }}</th>
-                                    {% endfor %}
+                                    <th> Name</th>
+                                    <th> Email </th>
+                                    <th> Phone Number </th>
+                                    <th> Skills </th>
+                                    <th> College name </th>
+                                    <th> Degree </th>
+                                    <th> Designation </th>
+                                    <th> Experience </th>
+                                    <th> Company names </th>
+                                    <th> No. of pages </th>
+                                    <th> Total Experience(Years) </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for row in data_rows %}
+                                {% for row in csv_data %}
                                     <tr>
-                                        {% for col in row %}
-                                            <td>{{ col }}</td>
-                                        {% endfor %}
+                                        <td>{{ row.name }}</td>
+                                        <td>{{ row.email }}</td>
+                                        <td>{{ row.mobile_number }}</td>
+                                        <td>{{ row.skills }}</td>
+                                        <td>{{ row.college_name }}</td>
+                                        <td>{{ row.degree }}</td>
+                                        <td>{{ row.designation }}</td>
+                                        <td>{{ row.experience }}</td>
+                                        <td>{{ row.company_names }}</td>
+                                        <td>{{ row.no_of_pages }}</td>
+                                        <td>{{ row.total_experience }}</td>
+
                                     </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
-                    {% else %}
-                        <p>No CSV data available.</p>
-                    {% endif %}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
 
+        {% else %}
+            <p>No CSV data available.</p>
+        {% endif %}
         <!-- XML Data Section -->
         <div class="row">
             <div class="col">
@@ -60,10 +85,8 @@
         </div>
     </div>
 <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
-<script>new DataTable('#result', {
-    scrollX: true,
-});</script>
+<script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
+<script>new DataTable('#result');</script>
 
     <!-- Bootstrap JS (Make sure Bootstrap JS is included in your project) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

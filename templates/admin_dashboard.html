@@ -3,7 +3,10 @@
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block content %}
-<canvas id="userRegistrationsChart" width="800" height="400"></canvas>
+<div id="chartContainer" style="width: 600px; height: 300px;">
+    <canvas id="userRegistrationsChart"></canvas>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
      document.addEventListener('DOMContentLoaded', function() {
@@ -34,13 +37,13 @@
         data: {
             labels: dates,
             datasets: [{
-                label: 'User Registrations',
+                label: 'User Registrations / Day',
                 data: userCounts,
                 backgroundColor: 'rgba(54, 162, 235, 0.6)',
-
+                fill: false,
                 borderColor: 'rgb(75, 192, 192)',
-
-                borderWidth: 1
+                tension: 0.2,
+                borderWidth: 2
             }]
         },
         options: {
@@ -56,7 +59,9 @@
     });
 });
 
-
+// Update chart container width and height
+    const chartContainer = document.getElementById('chartContainer');
+    userRegistrationsChart.resize(chartContainer.clientWidth, chartContainer.clientHeight);
 
 </script>
 {% endblock %}

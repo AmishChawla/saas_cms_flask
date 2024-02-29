@@ -3,7 +3,9 @@
 {% block title %}User Dashboard{% endblock %}
 
 {% block content %}
-<canvas id="parsedResumeChart" width="800" height="400"></canvas>
+<div id="chartContainer" style="width: 600px; height: 300px;">
+    <canvas id="parsedResumeChart"></canvas>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -35,8 +37,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 label: 'Count of Parsed Resumes',
                 data: resumeCounts,
                 backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.2,
+                borderWidth: 2
             }]
         },
         options: {
@@ -50,7 +54,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
+    // Update chart container width and height
+    const chartContainer = document.getElementById('chartContainer');
+    parsedResumeChart.resize(chartContainer.clientWidth, chartContainer.clientHeight);
 });
+
 </script>
 
 

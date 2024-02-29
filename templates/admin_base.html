@@ -63,6 +63,7 @@
 
 
 
+
     </style>
 {% block styles %}{% endblock %}
 
@@ -97,13 +98,16 @@
 
          <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" href="#" id="updatePasswordDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+       <img src="/static/images/man.png" alt="profile" style="width: 25px; height: 25px; margin-right:10px;">
         <span class="menu-title">{{ current_user.username }}</span>
 
     </a>
     <ul class="dropdown-menu" aria-labelledby="updatePasswordDropdown" style="position:absolute;" >
-        <!-- Username will be displayed here -->
          <li>
-            <a class="dropdown-item" href="{{ url_for('user_password_update',role=role)}}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'">Update Password <i class="mdi mdi-lock-reset menu-icon" style="margin-left:10px"></i></a>
+            <a class="dropdown-item" href="#" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Edit Profile<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="{{ url_for('user_password_update',role=role)}}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Update Password <i class="mdi mdi-lock-reset menu-icon" style="margin-left:10px"></i></a>
         </li>
     </ul>
 </li>
@@ -130,61 +134,50 @@
           {% if request.endpoint != 'admin_login' %}
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
           <ul class="nav">
-            <li class="nav-item nav-profile">
-              <a href="#" class="nav-link">
-                <div class="nav-profile-image">
-                  <img src="/static/images/man.png" alt="profile">
-                  <span class="login-status online"></span>
-                  <!--change to offline or busy as needed-->
-                </div>
-                <div class="nav-profile-text d-flex flex-column">
-                  <span class="font-weight-bold mb-2">{{ current_user.username }}</span>
-                </div>
 
-              </a>
-            </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
+                  <i class="mdi mdi-home menu-icon" style="margin-left:0; margin-right:2.5vw;"></i>
                 <span class="menu-title">Dashboard</span>
-                <i class="mdi mdi-home menu-icon"></i>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('list_of_users') }}">
+                  <i class="mdi mdi-account-multiple menu-icon" style="margin-left:0; margin-right:2.5vw;"></i>
                 <span class="menu-title">List of Users</span>
-                <i class="mdi mdi-account-multiple menu-icon"></i>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('services') }}">
-                <span class="menu-title">Services</span>
-                <i class="mdi mdi-shape-outline menu-icon"></i>
+                <i class="mdi mdi-shape-outline menu-icon" style="margin-left:0; margin-right:2.5vw;"></i>
+                  <span class="menu-title">Services</span>
               </a>
             </li>
               <li class="nav-item">
               <a class="nav-link" href="{{ url_for('list_of_companies') }}">
+                  <i class="mdi mdi-city menu-icon" style="margin-left:0; margin-right:2.5vw;"></i>
                 <span class="menu-title">Companies</span>
-                <i class="mdi mdi-city menu-icon"></i>
+
               </a>
             </li>
                           <li class="nav-item">
-              <a class="nav-link" href="#">
+              <a class="nav-link" href="{{ url_for('resume_history') }}">
+                  <i class="mdi mdi-file-document-outline menu-icon" style="margin-left:0; margin-right:2.5vw;"></i>
                 <span class="menu-title">Resume History</span>
-                <i class="mdi mdi-file-document-outline menu-icon"></i>
               </a>
             </li>
 
               <li class="nav-item">
-              <a class="nav-link" href="#">
+              <a class="nav-link" href="{{ url_for('trash') }}">
+                   <i class="mdi mdi-trash-can menu-icon" style="margin-left:0; margin-right:2.5vw;"></i>
                 <span class="menu-title">Trash</span>
-                <i class="mdi mdi-trash-can menu-icon"></i>
               </a>
             </li>
 
               <li class="nav-item">
               <a class="nav-link" href="#">
+                  <i class="mdi mdi-cogs menu-icon" style="margin-left:0; margin-right:2.5vw;"></i>
                 <span class="menu-title">Settings</span>
-                <i class="mdi mdi-cogs menu-icon"></i>
               </a>
             </li>
 
@@ -321,11 +314,8 @@ function redirectToPage(pageUrl) {
 </script>
 
 
-
-
-
-
   </body>
+
 <footer id="footer" class="py-5 bg-light" style="margin-top: 25vh;width:100%">
 
     <div class="footer-top">

@@ -1,15 +1,11 @@
 {% extends 'admin_base.html' %}
 
-{% block title %}admin dashboard{% endblock %}
+{% block title %}trash{% endblock %}
 
 {% block content %}
 
 
 
-
-            <div class="page-header">
-              <h3 class="page-title"> User Table </h3>
-               </div>
             <div class="row">
 
 
@@ -17,12 +13,8 @@
                 <div class="card">
                   <div class="card-body" style="overflow-x: auto;">
                       <div style="display:flex; justify-content:space-between;">
-                    <h4 class="card-title">User Details</h4>
-                      <div style="display: flex; justify-content: space-between;">
-                                      <a class="btn btn-info" href="{{ url_for('add_user') }}">
-                <span class="menu-title">Add user</span>
-              </a>
-                          </div>
+                    <h4 class="card-title">Deleted Users</h4>
+
                           </div>
                       <br>
                       <br>
@@ -32,7 +24,6 @@
                     <th><input type="checkbox" id="selectAllCheckbox"></th>
                     <th>Sr. No.</th>
                     <th>User ID</th>
-                    <th>Company Name</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Role</th>
@@ -51,13 +42,6 @@
                 <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
                     U_{{ row.id }}
                 </td>
-                <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
-                    {% if row["company"] %}
-                        {{ row["company"][0]["name"] }}
-                    {% else %}
-                        Not Registered
-                    {% endif %}
-                </td>
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}"> {{ row.username }} </a></td>
 
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
@@ -68,7 +52,7 @@
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ row.created_datetime.split('T')[0] }}&nbsp; &nbsp;{{ row.created_datetime.split('T')[1][:8] }} </td>
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> {{ row.status }} </td>
                 <td>
-    <a class="button button1" href="{{ url_for('admin_edit_user_profile', user_id=row.id) }}">Edit</a>
+    <a class="button button1" href="#">Restore</a>
     <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ row.id }}">Delete</button>
 
     <!-- Modal for delete button -->
