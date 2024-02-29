@@ -336,6 +336,29 @@ def get_company_details(company_id: int):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+def company_register(name, location, access_token):
+    print('trying3')
+    headers = {'Authorization': f'Bearer {access_token}'}
+    params = {
+        "name": name,
+        "location": location,
+
+        }
+    try:
+        response = requests.post(constants.BASE_URL+f'/companies/create-company', params=params, headers=headers)
+        print(response.text)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+
 def services():
     try:
         response = requests.get(constants.BASE_URL + '/services/all-services')
@@ -422,6 +445,7 @@ def admin_edit_any_service(service_id, service_name, service_description):
         print(f"An unexpected error occurred: {err}")
 
 
+
 def admin_get_resume_history():
 
     try:
@@ -437,11 +461,77 @@ def admin_get_resume_history():
         print(f"An unexpected error occurred: {err}")
 
 
+def admin_get_all_companies():
+    print("trying")
+    try:
+        print("try")
+        response = requests.get(constants.BASE_URL + '/companies/')
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+
 def trash(access_token: str):
     headers = {'Authorization': f'Bearer {access_token}'}
     try:
         response = requests.get(constants.BASE_URL + '/admin/deleted-users', headers=headers)
         print(response.text)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+def admin_delete_company(company_id: int):
+    try:
+        response = requests.delete(constants.BASE_URL + f'/companies/delete-company/{company_id}')
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def admin_get_any_company(company_id: int):
+    try:
+        response = requests.get(constants.BASE_URL + f'/companies/update-company/{company_id}')
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+def admin_edit_any_company(company_id, name, location):
+    print("trying")
+
+    data = {
+        "name": name,
+        "description": location
+    }
+
+    try:
+        print("try")
+        response = requests.put(constants.BASE_URL + f'/companies/update-company/{company_id}',  params=data)
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")

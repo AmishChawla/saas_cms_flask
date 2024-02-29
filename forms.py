@@ -59,7 +59,7 @@ class AdminRegisterForm(FlaskForm):
 
 class CompanyRegisterForm(FlaskForm):
     name = StringField('Name')
-    email = StringField('Email', validators=[validators.Email(), validators.DataRequired()])
+    location = StringField('Location')
     submit = SubmitField('Submit')
 
 
@@ -142,3 +142,9 @@ class AdminEditServiceForm(FlaskForm):
     name = StringField('Name', validators=[validators.DataRequired()])
     description = StringField('Description', validators=[validators.DataRequired()])
     submit = SubmitField('Update Service')
+
+
+class AdminEditCompanyForm(FlaskForm):
+    name = StringField('Name')
+    location = StringField('Location')
+    submit = SubmitField('Update Company')

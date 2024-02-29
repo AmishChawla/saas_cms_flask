@@ -36,18 +36,23 @@ def load_user(user_id):
     response = api_calls.get_user_profile(access_token=user_id)
     if response.status_code == 200:
         user_data = response.json()
-        user = User(user_id=user_id, role=user_data['role'], username=user_data['username'], email=user_data['email'])
+        # Create a User object using the retrieved data
+        user = User(user_id=user_id, role=user_data['role'], username=user_data['username'], email=user_data['email'],
+                    services=user_data['services'], company=user_data['company'])
+
         return user
     else:
         return None
 
 
 class User(UserMixin):
-    def __init__(self, user_id, role, username, email):
+    def __init__(self, user_id, role, username, email, services, company):
         self.id = user_id
         self.role = role
         self.username = username
         self.email = email
+        self.services = services
+        self.company = company
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -80,11 +85,7 @@ def upload_pdf():
                 print(file_path)
                 file.save(file_path)
                 file_list.append(('pdf_files', (filename, open(file_path, 'rb'))))
-                # files = [f for f in os.listdir(uploads_folder) if os.path.isfile(os.path.join(uploads_folder, f))]
-                # file_list = [('pdf_files', (filename, open(os.path.join(uploads_folder, filename), 'rb'))) for filename in
-                #              files]
-                # file_list.append(('pdf_files', (filename, open(os.path.join(uploads_folder, filename), 'rb'))))
-                # print(file_list)
+
             response = api_calls.dashboard(file_list, current_user.id)
             print(response.json())
             if response.status_code == 200:
@@ -126,7 +127,10 @@ def empty_uploads_folder():
 def login():
     print('trying')
     if current_user.is_authenticated:
-        return redirect(url_for('user_dashboard'))
+        if current_user.company is not None:
+            return redirect(url_for('user_dashboard'))
+        else:
+            return redirect(url_for('company_register'))
     form = forms.LoginForm()
     print(form.validate_on_submit())
     if form.validate_on_submit():
@@ -139,10 +143,15 @@ def login():
             role = response.json().get('role')
             username = response.json().get('username')
             email = response.json().get('email')
-            user = User(user_id=token, role=role, username=username, email=email)
+            services = response.json().get('services', [])
+            company = response.json().get('company', {})
+            user = User(user_id=token, role=role, username=username, email=email, services=services, company=company)
             login_user(user)
 
-            return redirect(url_for('user_dashboard'))
+            if current_user.company is not None:
+                return redirect(url_for('user_dashboard'))
+            else:
+                return redirect(url_for('company_register'))
         else:
             flash('Login unsuccessful. Please check email and password.', category='error')
 
@@ -207,8 +216,9 @@ def profile():
         username = result.get('username', '')
         email = result.get('email', '')
         role = result.get('role', '')
+        company = result.get('company', {})
 
-        return render_template('profile.html', username=username, email=email, role=role)
+        return render_template('profile.html', username=username, email=email, role=role, company=company)
 
 
 @app.route("/list-of-users")
@@ -216,14 +226,14 @@ def profile():
 def list_of_users():
     ITEMS_PER_PAGE = 5
     # Fetch user profile details
-    respo = api_calls.get_user_profile(current_user.id)
-    username, email, role = '', '', ''
-
-    if respo.status_code == 200:
-        admin_detail = respo.json()
-        username = admin_detail.get('username', '')
-        email = admin_detail.get('email', '')
-        role = admin_detail.get('role', '')
+    # respo = api_calls.get_user_profile(current_user.id)
+    # username, email, role = '', '', ''
+    #
+    # if respo.status_code == 200:
+    #     admin_detail = respo.json()
+    #     username = admin_detail.get('username', '')
+    #     email = admin_detail.get('email', '')
+    #     role = admin_detail.get('role', '')
 
     # Fetch all users
 
@@ -237,11 +247,8 @@ def list_of_users():
     else:
         print("Failed response")
 
-    return render_template('list_of_users.html', result=users, username=username, email=email, role=role)
 
-
-
-
+    return render_template('list_of_users.html', result=users)
 
 
 
@@ -263,7 +270,7 @@ def admin_login():
             role = response.json().get('role')
             username = response.json().get('username')
             email = response.json().get('email')
-            user = User(user_id=token, role=role, username=username, email=email)
+            user = User(user_id=token, role=role, username=username, email=email, services=[], company={})
             login_user(user)
 
             return redirect(url_for('admin_dashboard'))
@@ -337,7 +344,7 @@ def user_password_update(role):
         confirm_new_password = form.confirm_new_password.data
         response = api_calls.update_user_password(current_password=current_password, new_password=new_password,
                                                   confirm_new_password=confirm_new_password,
-                                                  access_token=current_user.id, username=current_user.username)
+                                                  access_token=current_user.id)
         print(response.status_code)
         if (response.status_code == 200):
             flash('Password Updated Successfully', category='info')
@@ -466,6 +473,25 @@ def company_details(company_id):
                            address=address, description=description)
 
 
+@app.route("/company-register", methods=['GET', 'POST'])
+def company_register():
+    form = forms.CompanyRegisterForm()
+    print("outside")
+    if form.validate_on_submit():
+        name = form.name.data
+        location = form.location.data
+        response = api_calls.company_register(name, location, access_token=current_user.id)
+        print("inside")
+
+        if (response.status_code == 200):
+            flash('Registration Successful', category='info')
+            return redirect(url_for('user_dashboard'))
+        else:
+            flash('Registration unsuccessful.', category='error')
+
+    return render_template('company_register.html', form=form)
+
+
 ################################################################ SERVICES ############################################################################################
 @app.route('/services', methods=['GET', 'POST'])
 def services():
@@ -526,8 +552,52 @@ def admin_edit_service(service_id):
 
     return render_template('admin_edit_service.html', description=description, name=name, form=form, service_id=service_id)
 
+##########################################################################COMPANIES###############################################################3
+
+@app.route("/admin/list-of-companies", methods=['GET', 'POST'])
+@login_required
+def list_of_companies():
+    response = api_calls.admin_get_all_companies()
+    if (response.status_code == 200):
+        result=response.json()
+    return render_template('list_of_companies.html', result=result)
 
 
+@app.route("/admin/delete-company/<company_id>", methods=['GET', 'POST'])
+@login_required
+def admin_delete_company(company_id):
+    result = api_calls.admin_delete_company(company_id=company_id)
+    if (result.status_code == 200):
+        return redirect(url_for('list_of_companies'))
+
+@app.route("/admin/edit-company/<company_id>", methods=['GET', 'POST'])
+@login_required
+def admin_edit_company(company_id):
+    form = forms.AdminEditCompanyForm()
+    result = api_calls.admin_get_any_company(company_id)
+    name = result["name"]
+    location = result["location"]
+
+    if form.validate_on_submit():
+        # Update user information
+        name = form.name.data
+        location = form.location.data
+
+        response = api_calls.admin_edit_any_company(company_id=company_id,
+                                                 name=name, location=location)
+        print(response.status_code)
+        if response.status_code == 200:
+            return redirect(url_for('list_of_companies'))
+
+    # Prefill the form fields with user information
+    form.name.data = name
+    form.location.data = location
+
+    return render_template('admin_edit_company.html', location=location, name=name, form=form, company_id=company_id)
+
+
+
+######################################## resume history ##########################################################################
 @app.route("/resume-history", methods=['GET', 'POST'])
 @login_required
 def resume_history():

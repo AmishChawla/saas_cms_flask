@@ -153,6 +153,13 @@
                   <span class="menu-title">Services</span>
               </a>
             </li>
+              <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('list_of_companies') }}">
+                  <i class="mdi mdi-city menu-icon" style="margin-left:0; margin-right:2.5vw;"></i>
+                <span class="menu-title">Companies</span>
+
+              </a>
+            </li>
                           <li class="nav-item">
               <a class="nav-link" href="{{ url_for('resume_history') }}">
                   <i class="mdi mdi-file-document-outline menu-icon" style="margin-left:0; margin-right:2.5vw;"></i>
@@ -307,11 +314,8 @@ function redirectToPage(pageUrl) {
 </script>
 
 
-
-
-
-
   </body>
+
 <footer id="footer" class="py-5 bg-light" style="margin-top: 25vh;width:100%">
 
     <div class="footer-top">
