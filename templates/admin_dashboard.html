@@ -9,7 +9,7 @@
      document.addEventListener('DOMContentLoaded', function() {
     // Fetch user data from the template
     const users = {{ users|tojson }};
-     console.log(users)
+
     // Prepare data for the chart
     const registrationDates = {};
     users.forEach(user => {

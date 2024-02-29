@@ -3,26 +3,37 @@
 {% block title %}User Dashboard{% endblock %}
 
 {% block content %}
-<canvas id="userRegistrationsChart" width="800" height="400"></canvas>
+<canvas id="parsedResumeChart" width="800" height="400"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-     document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     // Fetch resume data from the template
     const resumeData = {{ resume_data|tojson }};
 
-    // Extract dates and counts from resume data
-    const dates = Object.keys(resumeData);
-    const counts = Object.values(resumeData);
+    const uploadDates = {};
+    resumeData.forEach(item => {
+        const uploadDate = item.upload_datetime.split('T')[0]; // Extract date
+        if (uploadDates[uploadDate]) {
+            uploadDates[uploadDate]++;
+        } else {
+            uploadDates[uploadDate] = 1;
+        }
+    });
 
-    // Create a line chart
-    const ctx = document.getElementById('resumeDataChart').getContext('2d');
-    const resumeDataChart = new Chart(ctx, {
+    // Extract and sort dates in ascending order
+    const dates = Object.keys(uploadDates).sort();
+
+    const resumeCounts = dates.map(date => uploadDates[date]);
+
+    // Create a bar chart
+    const ctx = document.getElementById('parsedResumeChart').getContext('2d');
+    const parsedResumeChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: dates,
             datasets: [{
                 label: 'Count of Parsed Resumes',
-                data: counts,
+                data: resumeCounts,
                 backgroundColor: 'rgba(54, 162, 235, 0.6)',
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1
@@ -32,13 +43,15 @@
             scales: {
                 yAxes: [{
                     ticks: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        stepSize: 1
                     }
                 }]
             }
         }
     });
 });
-
 </script>
+
+
 {% endblock %}
