@@ -304,6 +304,34 @@ def admin_edit_any_user(access_token: str, user_id: int, username, role, status)
         print(f"An unexpected error occurred: {err}")
 
 
+def user_update_profile(access_token: str, username, email):
+    print("trying")
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    data = {
+
+        "username": username,
+        "email": email,
+
+    }
+
+    try:
+        print("try")
+        response = requests.put(constants.BASE_URL + f'/update-profile', headers=headers, data=data)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+
+
+
 
 def get_companies():
 

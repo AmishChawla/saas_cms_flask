@@ -1,62 +1,82 @@
+<!-- profile.html -->
 {% extends 'base.html' %}
 
 {% block title %}profile{% endblock %}
 
 {% block content %}
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card border-0">
-                    <!-- Add a card header "Profile" -->
-                    <div class="card-header bg-white text-black text-center">
-                        <h2>Profile</h2>
-                    </div>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0">
+                <div class="card-header bg-white text-black text-center">
+                    <h2>Profile</h2>
+                </div>
 
-                    <!-- Center the image, add padding, and resize -->
+                <form method="post" action="{{ url_for('profile') }}">
+                    {{ form.hidden_tag() }}
+
                     <div class="card-img-top text-center my-3">
                         <img src="static/images/man.png" alt="Login Image" style="max-width: 300px; width: 5rem; height: 5rem;" class="img-fluid">
                     </div>
 
-<!--                    <div class="card-img-top text-center my-3">-->
-<!--                        <label><i class="bi bi-person"></i> {{username}}</label>-->
-<!--                        <br>-->
-<!--                        <br>-->
-<!--                        <label><i class="bi bi-envelope"></i> {{email}}</label>-->
-<!--                    </div>-->
-
-                 <div class="mb-3">
-
-                                <div class="input-group">
-                                    <span class="input-group-text text-secondary" style="width:100%"><i class="bi bi-person-fill" style = "margin-right:20px"></i>{{ username }}</span>
-
-                                </div>
-                            </div>
                     <div class="mb-3">
-
-                                <div class="input-group">
-                                  <span class="input-group-text text-secondary" style="width:100%"><i class="bi bi-envelope" style = "margin-right:20px"></i>{{ email }}</span>
-
-                                </div>
-                             </div>
-
-                    <div class="mb-3">
-
-                                <div class="input-group">
-                                    <span class="input-group-text text-secondary" style="width:100%"><i class="bi bi-building" style = "margin-right:20px"></i>{{ company.name }}</span>
-
-                                </div>
-                            </div>
-
-
-                    <div class="card-img-top text-center my-3">
-                        <a href="{{ url_for('user_password_update',role=role)}}">Update Password</a>
+                        <label for="username" class="form-label visually-hidden">Username :</label>
+                        <div class="input-group">
+                            {{ form.username(class="form-control", placeholder=username, required=True) }}
+                            <i class="fas fa-edit" id="editUsername" style="margin-top:14px; margin-right:30px;margin-left:-45px;z-index:2"></i>
+                        </div>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="email" class="form-label visually-hidden">Email :</label>
+                        <div class="input-group">
+                            {{ form.email(class="form-control", placeholder=email, required=True) }}
+                            <i class="fas fa-edit" id="editEmail" style="margin-top:14px; margin-right:30px;margin-left:-45px;z-index:2"></i>
+                        </div>
+                    </div>
 
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text text-secondary" style="width:100%"><i class="bi bi-building" style="margin-right:20px"></i>{{ company.name }}</span>
+                        </div>
+                    </div>
 
+                    <div class="mb-3 text-center">
+                        {{ form.submit(class="btn btn-dark btn-lg") }}
+                    </div>
+                </form>
+
+                <!-- Center the image, add padding, and resize -->
+
+                <div class="card-img-top text-center my-3">
+                    <a href="{{ url_for('user_password_update',role=role)}}">Update Password</a>
                 </div>
+
             </div>
         </div>
     </div>
+</div>
+<script>
+    // Add JavaScript to handle edit button clicks for username field
+    document.getElementById('editUsername').addEventListener('click', function() {
+        var usernameField = document.querySelector('input[name="username"]');
+        if (usernameField.hasAttribute('readonly')) {
+            usernameField.removeAttribute('readonly');
+        } else {
+            usernameField.setAttribute('readonly', 'readonly');
+        }
+    });
+
+    // Add JavaScript to handle edit button clicks for email field
+    document.getElementById('editEmail').addEventListener('click', function() {
+        var emailField = document.querySelector('input[name="email"]');
+        if (emailField.hasAttribute('readonly')) {
+            emailField.removeAttribute('readonly');
+        } else {
+            emailField.setAttribute('readonly', 'readonly');
+        }
+    });
+</script>
 {% endblock %}
+
 

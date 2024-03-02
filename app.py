@@ -209,15 +209,32 @@ def result():
 @app.route("/profile")
 @login_required
 def profile():
+    form = forms.UserEditUserForm()
     response = api_calls.get_user_profile(current_user.id)
-    if (response.status_code == 200):
-        result = response.json()
-        username = result.get('username', '')
-        email = result.get('email', '')
-        role = result.get('role', '')
-        company = result.get('company', {})
+    result = response.json()
+    username = result["username"]
+    email = result["email"]
+    company = result.get('company', {})
+    role = result.get('role', '')
 
-        return render_template('profile.html', username=username, email=email, role=role, company=company)
+    if form.validate_on_submit():
+        # Update user information
+        new_username = form.username.data
+        new_email = form.email.data
+
+        response = api_calls.user_update_profile(access_token=current_user.id,
+                                                 username=new_username, email=new_email)
+        print(response.status_code)
+        if response.status_code == 200:
+            return redirect(url_for('profile'))
+
+    # Prefill the form fields with user information
+    form.username.data = username
+    form.email.data = email
+
+    return render_template('profile.html', username=username, form=form, company=company, role=role)
+
+
 
 
 @app.route("/list-of-users")
@@ -448,6 +465,10 @@ def admin_edit_user_profile(user_id):
     form.status.data = status
 
     return render_template('edit_form.html', status=status, role=role, username=username, form=form, user_id=user_id, user_service=user_service)
+
+
+
+
 
 
 @app.route('/company-list', methods=['GET', 'POST'])

@@ -148,3 +148,9 @@ class AdminEditCompanyForm(FlaskForm):
     name = StringField('Name')
     location = StringField('Location')
     submit = SubmitField('Update Company')
+
+
+class UserEditUserForm(FlaskForm):
+    username = StringField('Username', validators=[validators.Length(min=4, max=25), validators.DataRequired()], render_kw={"readonly": True})
+    email = StringField('Email', validators=[validators.Email(), validators.DataRequired()], render_kw={"readonly": True})
+    submit = SubmitField('Save')
