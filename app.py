@@ -206,7 +206,7 @@ def result():
     return render_template('result.html', result=result)
 
 
-@app.route("/profile")
+@app.route("/profile", methods=['GET', 'POST'])  # Add support for both GET and POST requests
 @login_required
 def profile():
     form = forms.UserEditUserForm()
@@ -216,23 +216,26 @@ def profile():
     email = result["email"]
     company = result.get('company', {})
     role = result.get('role', '')
+    profile_picture = f"http://127.0.0.1:8000/{result['profile_picture']}"
 
     if form.validate_on_submit():
         # Update user information
+        new_profile_picture = request.files.getlist('file')
         new_username = form.username.data
         new_email = form.email.data
-
         response = api_calls.user_update_profile(access_token=current_user.id,
-                                                 username=new_username, email=new_email)
+                                                 username=new_username, email=new_email,profile_picture=new_profile_picture)
         print(response.status_code)
         if response.status_code == 200:
+            print("haan")
             return redirect(url_for('profile'))
 
     # Prefill the form fields with user information
     form.username.data = username
     form.email.data = email
 
-    return render_template('profile.html', username=username, form=form, company=company, role=role)
+    return render_template('profile.html', username=username, form=form, company=company, role=role, profile_picture=profile_picture)
+
 
 
 
@@ -284,14 +287,14 @@ def admin_login():
         response = api_calls.admin_login(email, password)
 
 
-        if response.status_code == 200:
-            data = response.json()
-            token = data.get('access_token')
-            role = data.get('role')
-            username = data.get('username')
-            email = data.get('email')
-            services = data.get('services')
-            company = data.get('company')
+        # if response.status_code == 200:
+        #     data = response.json()
+        #     token = data.get('access_token')
+        #     role = data.get('role')
+        #     username = data.get('username')
+        #     email = data.get('email')
+        #     services = data.get('services')
+        #     company = data.get('company')
 
         if (response.status_code == 200):
             token = response.json().get('access_token')
@@ -302,8 +305,8 @@ def admin_login():
             login_user(user)
 
 
-            user = User(user_id=token, role=role, username=username, email=email, services=services, company=company)
-            login_user(user)
+            # user = User(user_id=token, role=role, username=username, email=email, services=services, company=company)
+            # login_user(user)
             return redirect(url_for('admin_dashboard'))
         else:
             flash('Login unsuccessful. Please check email and password.', category='error')

@@ -4,6 +4,25 @@
 {% block title %}profile{% endblock %}
 
 {% block content %}
+<style>
+    .custom-file-upload {
+    position: relative;
+    display: inline-block;
+}
+
+.custom-file-upload-label {
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: #4CAF50; /* Change the background color */
+    color: white; /* Change the text color */
+    border: none; /* Remove border */
+    border-radius: 4px; /* Add border radius */
+}
+
+.custom-file-upload-label:hover {
+    background-color: #45a049; /* Change the background color on hover */
+}
+</style>
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -12,18 +31,37 @@
                     <h2>Profile</h2>
                 </div>
 
-                <form method="post" action="{{ url_for('profile') }}">
+
+
+
+
+
+
+                <form method="post" action="{{ url_for('profile') }}" enctype="multipart/form-data">
                     {{ form.hidden_tag() }}
 
-                    <div class="card-img-top text-center my-3">
-                        <img src="static/images/man.png" alt="Login Image" style="max-width: 300px; width: 5rem; height: 5rem;" class="img-fluid">
-                    </div>
+                     <div class="card-img-top text-center my-3">
+                    {% if profile_picture %}
+                         <img id="profileImage" src="{{ profile_picture }}" alt="Profile Image" style="max-width: 300px; width: 5rem; height: 5rem; border-radius: 50%;" class="img-fluid">
+                    {% else %}
+                         <img id="profileImage" src="static/images/man.png" alt="Default Profile Image" style="max-width: 300px; width: 5rem; height: 5rem; border-radius: 50%;" class="img-fluid">
+                    {% endif %}
+
+                          <div style="margin-left:100px;">
+                    <label for="profile_picture_input"></label>
+                    <i id="edit_profile_picture" class="fa fa-pencil" style="cursor: pointer;"></i>
+                    {{ form.profile_picture(style="display: none;") }}
+                </div>
+                     </div>
+
+
+
 
                     <div class="mb-3">
                         <label for="username" class="form-label visually-hidden">Username :</label>
                         <div class="input-group">
                             {{ form.username(class="form-control", placeholder=username, required=True) }}
-                            <i class="fas fa-edit" id="editUsername" style="margin-top:14px; margin-right:30px;margin-left:-45px;z-index:2"></i>
+                            <i class="fa fa-pencil" id="editUsername" style="margin-top:14px; margin-right:30px;margin-left:-45px;z-index:2"></i>
                         </div>
                     </div>
 
@@ -31,7 +69,7 @@
                         <label for="email" class="form-label visually-hidden">Email :</label>
                         <div class="input-group">
                             {{ form.email(class="form-control", placeholder=email, required=True) }}
-                            <i class="fas fa-edit" id="editEmail" style="margin-top:14px; margin-right:30px;margin-left:-45px;z-index:2"></i>
+                            <i class="fa fa-pencil" id="editEmail" style="margin-top:14px; margin-right:30px;margin-left:-45px;z-index:2"></i>
                         </div>
                     </div>
 
@@ -45,6 +83,8 @@
                         {{ form.submit(class="btn btn-dark btn-lg") }}
                     </div>
                 </form>
+
+
 
                 <!-- Center the image, add padding, and resize -->
 
@@ -77,6 +117,23 @@
         }
     });
 </script>
+
+
+<script>
+    document.getElementById('edit_profile_picture').addEventListener('click', function() {
+        document.getElementById('profile_picture_input').click();
+    });
+
+    document.getElementById('profile_picture_input').addEventListener('change', function(e) {
+        var reader = new FileReader();
+        reader.onload = function(event) {
+            // Update the src attribute of the profileImage img tag
+            document.getElementById('profileImage').src = event.target.result;
+        }
+        reader.readAsDataURL(e.target.files[0]);
+    });
+</script>
+
 {% endblock %}
 
 

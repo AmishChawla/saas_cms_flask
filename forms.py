@@ -151,6 +151,7 @@ class AdminEditCompanyForm(FlaskForm):
 
 
 class UserEditUserForm(FlaskForm):
+    profile_picture = FileField('Profile Picture', render_kw={"id": "profile_picture_input", "style": "display: none;"})
     username = StringField('Username', validators=[validators.Length(min=4, max=25), validators.DataRequired()], render_kw={"readonly": True})
     email = StringField('Email', validators=[validators.Email(), validators.DataRequired()], render_kw={"readonly": True})
     submit = SubmitField('Save')
