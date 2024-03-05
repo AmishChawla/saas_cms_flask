@@ -283,16 +283,6 @@ def admin_login():
         password = form.password.data
         response = api_calls.admin_login(email, password)
 
-
-        if response.status_code == 200:
-            data = response.json()
-            token = data.get('access_token')
-            role = data.get('role')
-            username = data.get('username')
-            email = data.get('email')
-            services = data.get('services')
-            company = data.get('company')
-
         if (response.status_code == 200):
             token = response.json().get('access_token')
             role = response.json().get('role')
@@ -301,9 +291,6 @@ def admin_login():
             user = User(user_id=token, role=role, username=username, email=email, services=[], company={})
             login_user(user)
 
-
-            user = User(user_id=token, role=role, username=username, email=email, services=services, company=company)
-            login_user(user)
             return redirect(url_for('admin_dashboard'))
         else:
             flash('Login unsuccessful. Please check email and password.', category='error')
