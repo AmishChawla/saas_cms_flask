@@ -304,8 +304,8 @@ def admin_edit_any_user(access_token: str, user_id: int, username, role, status)
         print(f"An unexpected error occurred: {err}")
 
 
-def user_update_profile(access_token: str, username, email):
-    print("trying")
+def user_update_profile(access_token: str, username, email, profile_picture):
+    print("working")
     headers = {'Authorization': f'Bearer {access_token}'}
 
     data = {
@@ -317,7 +317,7 @@ def user_update_profile(access_token: str, username, email):
 
     try:
         print("try")
-        response = requests.put(constants.BASE_URL + f'/update-profile', headers=headers, data=data)
+        response = requests.put(constants.BASE_URL + f'/update-profile', files=profile_picture, headers=headers, data=data)
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
