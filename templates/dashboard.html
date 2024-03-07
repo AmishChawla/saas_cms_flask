@@ -38,7 +38,7 @@
             startDate.setDate(startDate.getDate() - range); // Calculate the start date
 
             // Initialize upload dates with zero counts for each date within the range
-            for (let i = 0; i < range; i++) {
+            for (let i = 0; i <= range; i++) {
                 const date = new Date(startDate);
                 date.setDate(date.getDate() + i);
                 uploadDates[formatDate(date)] = 0;
