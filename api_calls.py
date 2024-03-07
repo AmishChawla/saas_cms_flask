@@ -315,9 +315,13 @@ def user_update_profile(access_token: str, username, email, profile_picture):
 
     }
 
+    files = {
+        "profile_picture": profile_picture
+    }
+
     try:
         print("try")
-        response = requests.put(constants.BASE_URL + f'/update-profile', files=profile_picture, headers=headers, data=data)
+        response = requests.put(constants.BASE_URL + f'/update-profile', files=files, headers=headers, data=data)
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")

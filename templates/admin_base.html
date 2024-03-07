@@ -109,13 +109,13 @@
 
          <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" href="#" id="updatePasswordDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-       <img src="/static/images/man.png" alt="profile" style="width: 25px; height: 25px; margin-right:10px;">
+       <img src="{{ current_user.profile_picture }}" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%;">
         <span class="menu-title">{{ current_user.username }}</span>
 
     </a>
     <ul class="dropdown-menu" aria-labelledby="updatePasswordDropdown" style="position:absolute;left:-50px" >
          <li>
-            <a class="dropdown-item" href="#" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Edit Profile<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
+            <a class="dropdown-item" href="{{ url_for('profile') }}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Edit Profile<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
         </li>
         <li>
             <a class="dropdown-item" href="{{ url_for('user_password_update',role=role)}}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Update Password <i class="mdi mdi-lock-reset menu-icon" style="margin-left:10px"></i></a>
