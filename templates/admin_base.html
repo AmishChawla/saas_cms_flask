@@ -60,8 +60,18 @@
     display: inline-block;
 
 }
+ .sidenav a:hover {
+            background-color: #f1f1f1;
+            color: white; /* Optional: Change the text color to white for better contrast */
+            border-radius: 30px;
 
+        }
 
+.sidenav a.active {
+ background-color: #dbf3ff; /* Change the background color to purple */
+ color: white; /* Change the text color to white for better contrast */
+ border-radius: 30px;
+}
 
 
     </style>
@@ -103,24 +113,20 @@
         <span class="menu-title">{{ current_user.username }}</span>
 
     </a>
-    <ul class="dropdown-menu" aria-labelledby="updatePasswordDropdown" style="position:absolute;" >
+    <ul class="dropdown-menu" aria-labelledby="updatePasswordDropdown" style="position:absolute;left:-50px" >
          <li>
             <a class="dropdown-item" href="#" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Edit Profile<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
         </li>
         <li>
             <a class="dropdown-item" href="{{ url_for('user_password_update',role=role)}}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Update Password <i class="mdi mdi-lock-reset menu-icon" style="margin-left:10px"></i></a>
         </li>
+        <li>
+            <a class="dropdown-item" href="{{ url_for('admin_logout') }}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Logout <i class="mdi mdi-logout menu-icon" style="margin-left:10px"></i></a>
+        </li>
     </ul>
 </li>
 
 
-
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('admin_logout') }}">
-                <span class="menu-title">Logout</span>
-                <i class="mdi mdi-logout" style="margin-left:10px"></i>
-              </a>
-            </li>
 
           </ul>
           <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
@@ -136,49 +142,49 @@
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
           <ul class="nav">
 
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
-                  <i class="mdi mdi-home menu-icon" style="margin-left:0; margin-right:2.5vw;"></i>
-                <span class="menu-title">Dashboard</span>
+           <li class="nav-item sidenav">
+ <a class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" href="{{ url_for('admin_dashboard') }}">
+      <i class="mdi mdi-home menu-icon" style="margin-left:5px; margin-right:5px;"></i>
+    <span class="menu-title" style="margin-left:1.5vw;">Dashboard</span>
+ </a>
+</li>
+            <li class="nav-item sidenav">
+              <a class="nav-link {% if request.endpoint == 'list_of_users' %}active{% endif %}" href="{{ url_for('list_of_users') }}">
+                  <i class="mdi mdi-account-multiple menu-icon" style="margin-left:5px; margin-right:5px;"></i>
+                <span class="menu-title" style="margin-left:1.5vw;">List of Users</span>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('list_of_users') }}">
-                  <i class="mdi mdi-account-multiple menu-icon" style="margin-left:0; margin-right:2.5vw;"></i>
-                <span class="menu-title">List of Users</span>
+            <li class="nav-item sidenav">
+              <a class="nav-link {% if request.endpoint == 'services' %}active{% endif %}" href="{{ url_for('services') }}">
+                <i class="mdi mdi-shape-outline menu-icon" style="margin-left:5px; margin-right:5px;"></i>
+                  <span class="menu-title" style="margin-left:1.5vw;">Services</span>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('services') }}">
-                <i class="mdi mdi-shape-outline menu-icon" style="margin-left:0; margin-right:2.5vw;"></i>
-                  <span class="menu-title">Services</span>
-              </a>
-            </li>
-              <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('list_of_companies') }}">
-                  <i class="mdi mdi-city menu-icon" style="margin-left:0; margin-right:2.5vw;"></i>
-                <span class="menu-title">Companies</span>
+              <li class="nav-item sidenav">
+              <a class="nav-link {% if request.endpoint == 'list_of_companies' %}active{% endif %}" href="{{ url_for('list_of_companies') }}">
+                  <i class="mdi mdi-city menu-icon" style="margin-left:5px; margin-right:5px;"></i>
+                <span class="menu-title" style="margin-left:1.5vw;">Companies</span>
 
               </a>
             </li>
-                          <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('resume_history') }}">
-                  <i class="mdi mdi-file-document-outline menu-icon" style="margin-left:0; margin-right:2.5vw;"></i>
-                <span class="menu-title">Resume History</span>
+                          <li class="nav-item sidenav">
+              <a class="nav-link {% if request.endpoint == 'resume_history' %}active{% endif %}" href="{{ url_for('resume_history') }}">
+                  <i class="mdi mdi-file-document-outline menu-icon" style="margin-left:5px; margin-right:5px;"></i>
+                <span class="menu-title" style="margin-left:1.5vw;">Resume History</span>
               </a>
             </li>
 
-              <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('trash') }}">
-                   <i class="mdi mdi-trash-can menu-icon" style="margin-left:0; margin-right:2.5vw;"></i>
-                <span class="menu-title">Trash</span>
+              <li class="nav-item sidenav">
+              <a class="nav-link {% if request.endpoint == 'trash' %}active{% endif %}" href="{{ url_for('trash') }}">
+                   <i class="mdi mdi-trash-can menu-icon" style="margin-left:5px; margin-right:5px;"></i>
+                <span class="menu-title" style="margin-left:1.5vw;">Trash</span>
               </a>
             </li>
 
-              <li class="nav-item">
+              <li class="nav-item sidenav">
               <a class="nav-link" href="#">
-                  <i class="mdi mdi-cogs menu-icon" style="margin-left:0; margin-right:2.5vw;"></i>
-                <span class="menu-title">Settings</span>
+                  <i class="mdi mdi-cogs menu-icon" style="margin-left:5px; margin-right:5px;"></i>
+                <span class="menu-title" style="margin-left:1.5vw;">Settings</span>
               </a>
             </li>
 

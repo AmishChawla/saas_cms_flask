@@ -1,7 +1,17 @@
 # BASE_URL = 'https://resume-parser-fastapi.onrender.com/api'
-#BASE_URL = 'http://127.0.0.1:8000/api'
 
-BASE_URL = 'http://35.154.190.245:8000/api'
+BASE_URL = 'http://127.0.0.1:8000/api'
+
+# BASE_URL = 'http://35.154.190.245:8000/api'
+
+# BASE_URL = 'http://127.0.0.1:8000/api'
+
+
+# BASE_URL = 'http://35.154.190.245:8000/api'
+
+# BASE_URL = 'http://35.154.190.245:8000/api'
+
+
 # <script src="../static/assets/vendors/js/vendor.bundle.base.js"></script>
 
 # <script>

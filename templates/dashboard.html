@@ -3,64 +3,125 @@
 {% block title %}User Dashboard{% endblock %}
 
 {% block content %}
+<div>
+    <select id="timeRangeSelector">
+        <option value="7">Last 7 days</option>
+        <option value="14">Last 14 days</option>
+        <option value="28">Last 28 days</option>
+        <option value="90">Last 90 days</option>
+    </select>
+</div>
 <div id="chartContainer" style="width: 600px; height: 300px;">
     <canvas id="parsedResumeChart"></canvas>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Fetch resume data from the template
-    const resumeData = {{ resume_data|tojson }};
+    document.addEventListener('DOMContentLoaded', function() {
+        const resumeData = {{ resume_data|tojson }};
+        const ctx = document.getElementById('parsedResumeChart').getContext('2d');
+        let parsedResumeChart;
 
-    const uploadDates = {};
-    resumeData.forEach(item => {
-        const uploadDate = item.upload_datetime.split('T')[0]; // Extract date
-        if (uploadDates[uploadDate]) {
-            uploadDates[uploadDate]++;
-        } else {
-            uploadDates[uploadDate] = 1;
+        function formatDate(date) {
+            const d = new Date(date);
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ];
+            const day = d.getDate();
+            const monthIndex = d.getMonth();
+            return day + ' ' + monthNames[monthIndex];
         }
-    });
 
-    // Extract and sort dates in ascending order
-    const dates = Object.keys(uploadDates).sort();
+        function updateChart(range) {
+            const uploadDates = {};
+            const currentDate = new Date();
+            const startDate = new Date(currentDate);
+            startDate.setDate(startDate.getDate() - range); // Calculate the start date
 
-    const resumeCounts = dates.map(date => uploadDates[date]);
-
-    // Create a bar chart
-    const ctx = document.getElementById('parsedResumeChart').getContext('2d');
-    const parsedResumeChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: dates,
-            datasets: [{
-                label: 'Count of Parsed Resumes',
-                data: resumeCounts,
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.2,
-                borderWidth: 2
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                        stepSize: 1
-                    }
-                }]
+            // Initialize upload dates with zero counts for each date within the range
+            for (let i = 0; i < range; i++) {
+                const date = new Date(startDate);
+                date.setDate(date.getDate() + i);
+                uploadDates[formatDate(date)] = 0;
             }
+
+            resumeData.forEach(item => {
+                const uploadDate = new Date(item.upload_datetime.split('T')[0]);
+
+                // Check if the upload date is within the selected range
+                if (uploadDate >= startDate && uploadDate <= currentDate) {
+                    const dateString = formatDate(uploadDate);
+                    uploadDates[dateString]++;
+                }
+            });
+
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+
+            const dates = Object.keys(uploadDates).sort((a, b) => {
+                const [aDay, aMonth] = a.split(' ');
+                const [bDay, bMonth] = b.split(' ');
+
+                // Convert month names to month indices for comparison
+                const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                const aMonthIndex = monthNames.indexOf(aMonth);
+                const bMonthIndex = monthNames.indexOf(bMonth);
+
+                // Compare months and years
+                if (aMonthIndex !== bMonthIndex) {
+                    // If both months are in the current year
+                    if (currentYear === today.getFullYear()) {
+                        // Check if any month is beyond the current month
+                        if (aMonthIndex > currentMonth && bMonthIndex <= currentMonth) return -1;
+                        if (bMonthIndex > currentMonth && aMonthIndex <= currentMonth) return 1;
+                    }
+                    return aMonthIndex - bMonthIndex;
+                } else {
+                    return aDay - bDay;
+                }
+            });
+
+            const resumeCounts = dates.map(date => uploadDates[date]);
+
+            if (parsedResumeChart) {
+                parsedResumeChart.destroy();
+            }
+
+            parsedResumeChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Count of Parsed Resumes',
+                        data: resumeCounts,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.2,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 1
+                            }
+                        }]
+                    }
+                }
+            });
         }
+
+        document.getElementById('timeRangeSelector').addEventListener('change', function() {
+            const selectedRange = parseInt(this.value);
+            updateChart(selectedRange);
+        });
+
+        // Initially update the chart with the default selected value
+        updateChart(parseInt(document.getElementById('timeRangeSelector').value));
     });
-
-    // Update chart container width and height
-    const chartContainer = document.getElementById('chartContainer');
-    parsedResumeChart.resize(chartContainer.clientWidth, chartContainer.clientHeight);
-});
-
 </script>
-
 
 {% endblock %}
