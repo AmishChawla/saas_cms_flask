@@ -144,40 +144,40 @@
 
            <li class="nav-item sidenav">
  <a class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" href="{{ url_for('admin_dashboard') }}">
-      <i class="mdi mdi-home menu-icon" style="margin-left:5px; margin-right:5px;"></i>
-    <span class="menu-title" style="margin-left:1.5vw;">Dashboard</span>
+      <i class="mdi mdi-home menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'admin_dashboard' %}#453bcc !important{% endif %};"></i>
+    <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'admin_dashboard' %}#453bcc !important{% endif %};">Dashboard</span>
  </a>
 </li>
             <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'list_of_users' %}active{% endif %}" href="{{ url_for('list_of_users') }}">
-                  <i class="mdi mdi-account-multiple menu-icon" style="margin-left:5px; margin-right:5px;"></i>
-                <span class="menu-title" style="margin-left:1.5vw;">List of Users</span>
+                  <i class="mdi mdi-account-multiple menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'list_of_users' %}#453bcc !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'list_of_users' %}#453bcc !important{% endif %};">List of Users</span>
               </a>
             </li>
             <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'services' %}active{% endif %}" href="{{ url_for('services') }}">
-                <i class="mdi mdi-shape-outline menu-icon" style="margin-left:5px; margin-right:5px;"></i>
-                  <span class="menu-title" style="margin-left:1.5vw;">Services</span>
+                <i class="mdi mdi-shape-outline menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'services' %}#453bcc !important{% endif %};"></i>
+                  <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'services' %}#453bcc !important{% endif %};">Services</span>
               </a>
             </li>
               <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'list_of_companies' %}active{% endif %}" href="{{ url_for('list_of_companies') }}">
-                  <i class="mdi mdi-city menu-icon" style="margin-left:5px; margin-right:5px;"></i>
-                <span class="menu-title" style="margin-left:1.5vw;">Companies</span>
+                  <i class="mdi mdi-city menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'list_of_companies' %}#453bcc !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'list_of_companies' %}#453bcc !important{% endif %};">Companies</span>
 
               </a>
             </li>
                           <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'resume_history' %}active{% endif %}" href="{{ url_for('resume_history') }}">
-                  <i class="mdi mdi-file-document-outline menu-icon" style="margin-left:5px; margin-right:5px;"></i>
-                <span class="menu-title" style="margin-left:1.5vw;">Resume History</span>
+                  <i class="mdi mdi-file-document-outline menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'resume_history' %}#453bcc !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'resume_history' %}#453bcc !important{% endif %};">Resume History</span>
               </a>
             </li>
 
               <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'trash' %}active{% endif %}" href="{{ url_for('trash') }}">
-                   <i class="mdi mdi-trash-can menu-icon" style="margin-left:5px; margin-right:5px;"></i>
-                <span class="menu-title" style="margin-left:1.5vw;">Trash</span>
+                   <i class="mdi mdi-trash-can menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'trash' %}#453bcc !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'trash' %}#453bcc !important{% endif %};">Trash</span>
               </a>
             </li>
 

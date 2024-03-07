@@ -54,12 +54,13 @@
         }
           .sidenav a.active {
              background-color: #dbf3ff; /* Change the background color to purple */
-             color: white; /* Change the text color to white for better contrast */
+             color: red !important; /* Change the text color to white for better contrast */
              border-radius: 30px;
         }
 
 
       </style>
+
 
 
 
@@ -169,22 +170,22 @@
 
             <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'user_dashboard' %}active{% endif %}" href="{{ url_for('user_dashboard') }}">
-                  <i class="mdi mdi-home menu-icon" style="margin-left:5px; margin-right:5px;"></i>
-                <span class="menu-title" style="margin-left:1.5vw;">Dashboard</span>
+                  <i class="mdi mdi-home menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'user_dashboard' %}#453bcc !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'user_dashboard' %}#453bcc !important{% endif %};">Dashboard</span>
 
               </a>
             </li>
                <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'upload_pdf' %}active{% endif %}" href="{{ url_for('upload_pdf') }}">
-                  <i class="mdi mdi-file-document-outline menu-icon" style="margin-left:5px; margin-right:5px;"></i>
-                <span class="menu-title" style="margin-left:1.5vw;">Parse Resume</span>
+                  <i class="mdi mdi-file-document-outline menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'upload_pdf' %}#453bcc !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'upload_pdf' %}#453bcc !important{% endif %};">Parse Resume</span>
 
               </a>
             </li>
   <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'user_history' %}active{% endif %}" href="{{ url_for('user_history') }}">
-                  <i class="mdi mdi-history menu-icon" style="margin-left:5px; margin-right:5px;"></i>
-                <span class="menu-title" style="margin-left:1.5vw;">History</span>
+                  <i class="mdi mdi-history menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'user_history' %}#453bcc !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'user_history' %}#453bcc !important{% endif %};">History</span>
 
 
               </a>
