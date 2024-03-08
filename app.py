@@ -10,6 +10,7 @@ from jinja2 import Environment, FileSystemLoader
 from werkzeug.utils import secure_filename
 import forms
 import api_calls
+from constants import ROOT_URL
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -36,10 +37,11 @@ def load_user(user_id):
     response = api_calls.get_user_profile(access_token=user_id)
     if response.status_code == 200:
         user_data = response.json()
+        profile_picture = f"{ROOT_URL}/{user_data['profile_picture']}"
 
         # Create a User object using the retrieved data
         user = User(user_id=user_id, role=user_data['role'], username=user_data['username'], email=user_data['email'],
-                    services=user_data['services'], company=user_data['company'])
+                    services=user_data['services'], company=user_data['company'], profile_picture=profile_picture)
 
         return user
     else:
@@ -47,13 +49,14 @@ def load_user(user_id):
 
 
 class User(UserMixin):
-    def __init__(self, user_id, role, username, email, services, company):
+    def __init__(self, user_id, role, username, email, services, company, profile_picture):
         self.id = user_id
         self.role = role
         self.username = username
         self.email = email
         self.services = services
         self.company = company
+        self.profile_picture = profile_picture
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -131,21 +134,26 @@ def login():
         password = form.password.data
         response = api_calls.user_login(email, password)
 
-        if (response.status_code == 200):
-            token = response.json().get('access_token')
-            role = response.json().get('role')
-            username = response.json().get('username')
-            email = response.json().get('email')
-            services = response.json().get('services', [])
-            company = response.json().get('company', {})
-            user = User(user_id=token, role=role, username=username, email=email, services=services, company=company)
-            login_user(user)
+        if response is not None and response.status_code == 200:
+            data = response.json()
+            token = data.get('access_token')
+            role = data.get('role')
+            username = data.get('username')
+            email = data.get('email')
+            services = data.get('services', [])
+            company = data.get('company', {})
+            profile_picture = f"{ROOT_URL}/{data['profile_picture']}"
 
+            user = User(user_id=token, role=role, username=username, email=email, services=services, company=company,
+                        profile_picture=profile_picture)
+            login_user(user)
             if current_user.company is not None:
                 return redirect(url_for('user_dashboard'))
             else:
                 return redirect(url_for('company_register'))
         else:
+            # Handle the case where the response is None or the status code is not 200
+            print("Error: Response is None or status code is not 200")
             flash('Login unsuccessful. Please check email and password.', category='error')
 
     return render_template('login.html', form=form)
@@ -191,6 +199,13 @@ def admin_dashboard():
     return render_template('admin_dashboard.html', users=users)
 
 
+@app.route("/setting")
+@login_required
+def setting():
+
+    return render_template('setting.html')
+
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -206,7 +221,7 @@ def result():
     return render_template('result.html', result=result)
 
 
-@app.route("/profile", methods=['GET', 'POST'])  # Add support for both GET and POST requests
+@app.route("/profile", methods=['GET', 'POST'])
 @login_required
 def profile():
     form = forms.UserEditUserForm()
@@ -216,19 +231,26 @@ def profile():
     email = result["email"]
     company = result.get('company', {})
     role = result.get('role', '')
-    profile_picture = f"http://127.0.0.1:8000/{result['profile_picture']}"
+    profile_picture = f"{ROOT_URL}/{result['profile_picture']}"
 
     if form.validate_on_submit():
         # Update user information
-        new_profile_picture = request.files.getlist('file')
-        new_username = form.username.data
-        new_email = form.email.data
-        response = api_calls.user_update_profile(access_token=current_user.id,
-                                                 username=new_username, email=new_email,profile_picture=new_profile_picture)
-        print(response.status_code)
-        if response.status_code == 200:
-            print("haan")
-            return redirect(url_for('profile'))
+        new_profile_picture = form.profile_picture.data
+        if new_profile_picture:
+            # Assuming the API call expects the file as part of the request
+            new_username = form.username.data
+            new_email = form.email.data
+            # Ensure the file is included in the request
+            response = api_calls.user_update_profile(access_token=current_user.id,
+                                                     username=new_username, email=new_email, profile_picture=new_profile_picture)
+            if response.status_code == 200:
+                return redirect(url_for('profile'))
+            else:
+                # Handle error, e.g., flash a message
+                pass
+        else:
+            # Handle case where no file is uploaded
+            pass
 
     # Prefill the form fields with user information
     form.username.data = username
@@ -303,7 +325,8 @@ def admin_login():
             role = response.json().get('role')
             username = response.json().get('username')
             email = response.json().get('email')
-            user = User(user_id=token, role=role, username=username, email=email, services=[], company={})
+            profile_picture = f"{ROOT_URL}/{response.json()['profile_picture']}"
+            user = User(user_id=token, role=role, username=username, email=email, services=[], company={},profile_picture=profile_picture)
             login_user(user)
 
 
@@ -368,9 +391,9 @@ def admin_logout():
     return redirect(url_for('admin_login'))
 
 
-@app.route("/profile/update_password/<role>", methods=['GET', 'POST'])
+@app.route("/profile/update_password/", methods=['GET', 'POST'])
 @login_required
-def user_password_update(role):
+def user_password_update():
     form = forms.UserPasswordUpdateForm()
 
     if form.validate_on_submit():
@@ -384,13 +407,13 @@ def user_password_update(role):
         print(response.status_code)
         if (response.status_code == 200):
             flash('Password Updated Successfully', category='info')
-            if (role == 'user'):
+            if (current_user.role == 'user'):
                 return redirect(url_for('profile'))
             else:
                 return redirect(url_for('admin_dashboard'))
         else:
             flash('Unsuccessful. Please check password.', category='error')
-    return render_template('user_password_update.html', form=form, role=role)
+    return render_template('user_password_update.html', form=form)
 
 
 @app.route("/forget-password", methods=['GET', 'POST'])
@@ -525,7 +548,10 @@ def company_register():
 
         if (response.status_code == 200):
             flash('Registration Successful', category='info')
-            return redirect(url_for('user_dashboard'))
+            if (current_user.role == 'user'):
+                return redirect(url_for('user_dashboard'))
+            else:
+                return redirect(url_for('list_of_companies'))
         else:
             flash('Registration unsuccessful.', category='error')
 
@@ -622,6 +648,7 @@ def admin_edit_company(company_id):
         # Update user information
         name = form.name.data
         location = form.location.data
+        print(location)
 
         response = api_calls.admin_edit_any_company(company_id=company_id,
                                                  name=name, location=location)

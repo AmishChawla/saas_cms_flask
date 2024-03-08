@@ -48,30 +48,29 @@
           <li><a class="nav-link scrollto" href="#about">About</a></li>
           <li><a class="nav-link scrollto" href="#contact">Contact</a></li>
           {% if current_user.is_authenticated %}
-               <li>
-                 <a class="nav-link dropdown-toggle" href="#" id="updatePasswordDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-       <img src="/static/images/man.png" alt="profile" style="width: 25px; height: 25px; margin-right:10px;">
-        <span class="menu-title">{{ current_user.username }}</span>
-
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="updatePasswordDropdown" style="position:absolute;left:-50px" >
-       <li>
-          {% if current_user.role != 'admin' %}
-            <a class="dropdown-item" href="{{ url_for('user_dashboard') }}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Dashboard<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
-          {% else %}
-            <a class="dropdown-item" href="{{ url_for('admin_dashboard') }}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Dashboard<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
-          {% endif %}
-       </li>
-      <li>
-            <a class="dropdown-item" href="#" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Edit Profile<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
-        </li>
-        <li>
-            <a class="dropdown-item" href="{{ url_for('user_password_update',role=role)}}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Update Password <i class="mdi mdi-lock-reset menu-icon" style="margin-left:10px"></i></a>
-        </li>
-        <li>
-            <a class="dropdown-item" href="{{ url_for('admin_logout') }}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Logout <i class="mdi mdi-logout menu-icon" style="margin-left:10px"></i></a>
-        </li>
-    </ul>
+              <li class="nav-link dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="updatePasswordDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="/static/images/man.png" alt="profile" style="width: 25px; height: 25px; margin-right:10px;">
+                        <span class="menu-title">{{ current_user.username }}</span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="updatePasswordDropdown" style="position:absolute;left:-50px">
+                      <li>
+                        {% if current_user.role != 'admin' %}
+                          <a class="dropdown-item" href="{{ url_for('user_dashboard') }}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Dashboard<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
+                        {% else %}
+                          <a class="dropdown-item" href="{{ url_for('admin_dashboard') }}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Dashboard<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
+                        {% endif %}
+                     </li>
+                      <li>
+                            <a class="dropdown-item" href="#" onmouseover="this.style.color='blue'" onmouseout="this.style.color='grey'" style="display: flex; justify-content: space-between;">Edit Profile<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ url_for('user_password_update') }}" onmouseover="this.style.color='blue'" onmouseout="this.style.color='grey'" style="display: flex; justify-content: space-between;">Update Password <i class="mdi mdi-lock-reset menu-icon" style="margin-left:10px"></i></a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ url_for('logout') }}" onmouseover="this.style.color='blue'" onmouseout="this.style.color='grey'" style="display: flex; justify-content: space-between;">Logout <i class="mdi mdi-logout menu-icon" style="margin-left:10px"></i></a>
+                        </li>
+                    </ul>
                 </li>
 
         {% else %}

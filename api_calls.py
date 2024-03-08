@@ -315,9 +315,13 @@ def user_update_profile(access_token: str, username, email, profile_picture):
 
     }
 
+    files = {
+        "profile_picture": profile_picture
+    }
+
     try:
         print("try")
-        response = requests.put(constants.BASE_URL + f'/update-profile', files=profile_picture, headers=headers, data=data)
+        response = requests.put(constants.BASE_URL + f'/update-profile', files=files, headers=headers, data=data)
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
@@ -537,7 +541,7 @@ def admin_delete_company(company_id: int):
 
 def admin_get_any_company(company_id: int):
     try:
-        response = requests.get(constants.BASE_URL + f'/companies/update-company/{company_id}')
+        response = requests.get(constants.BASE_URL + f'/companies/{company_id}')
         if response.status_code == 200:
             return response.json()
     except requests.exceptions.HTTPError as errh:
@@ -554,7 +558,7 @@ def admin_edit_any_company(company_id, name, location):
 
     data = {
         "name": name,
-        "description": location
+        "location": location
     }
 
     try:
