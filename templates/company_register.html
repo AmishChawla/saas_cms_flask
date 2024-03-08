@@ -1,4 +1,8 @@
-{% extends 'base.html' %}
+{% if role == "user" %}
+    {% extends 'base.html' %}
+{% else %}
+    {% extends 'admin_base.html' %}
+{% endif %}
 
 {% block title %}Register Company{% endblock %}
 
@@ -37,6 +41,7 @@
                                 <label for="email" class="form-label visually-hidden">Location:</label>
                                 {{ form.location(class="form-control", placeholder="Location", required=True) }}
                             </div>
+
 
                             <div class="mb-3 text-center">
                                 {{ form.submit(class="btn btn-dark btn-lg") }}

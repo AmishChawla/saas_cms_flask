@@ -10,6 +10,7 @@ from jinja2 import Environment, FileSystemLoader
 from werkzeug.utils import secure_filename
 import forms
 import api_calls
+from constants import ROOT_URL
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -36,7 +37,7 @@ def load_user(user_id):
     response = api_calls.get_user_profile(access_token=user_id)
     if response.status_code == 200:
         user_data = response.json()
-        profile_picture = f"http://127.0.0.1:8000/{user_data['profile_picture']}"
+        profile_picture = f"{ROOT_URL}/{user_data['profile_picture']}"
 
         # Create a User object using the retrieved data
         user = User(user_id=user_id, role=user_data['role'], username=user_data['username'], email=user_data['email'],
@@ -141,7 +142,7 @@ def login():
             email = data.get('email')
             services = data.get('services', [])
             company = data.get('company', {})
-            profile_picture = f"http://127.0.0.1:8000/{data['profile_picture']}"
+            profile_picture = f"{ROOT_URL}/{data['profile_picture']}"
 
             user = User(user_id=token, role=role, username=username, email=email, services=services, company=company,
                         profile_picture=profile_picture)
@@ -223,7 +224,7 @@ def profile():
     email = result["email"]
     company = result.get('company', {})
     role = result.get('role', '')
-    profile_picture = f"http://127.0.0.1:8000/{result['profile_picture']}"
+    profile_picture = f"{ROOT_URL}/{result['profile_picture']}"
 
     if form.validate_on_submit():
         # Update user information
@@ -317,7 +318,7 @@ def admin_login():
             role = response.json().get('role')
             username = response.json().get('username')
             email = response.json().get('email')
-            profile_picture = f"http://127.0.0.1:8000/{response.json()['profile_picture']}"
+            profile_picture = f"{ROOT_URL}/{response.json()['profile_picture']}"
             user = User(user_id=token, role=role, username=username, email=email, services=[], company={},profile_picture=profile_picture)
             login_user(user)
 
@@ -540,7 +541,10 @@ def company_register():
 
         if (response.status_code == 200):
             flash('Registration Successful', category='info')
-            return redirect(url_for('user_dashboard'))
+            if (current_user.role == 'user'):
+                return redirect(url_for('user_dashboard'))
+            else:
+                return redirect(url_for('list_of_companies'))
         else:
             flash('Registration unsuccessful.', category='error')
 
@@ -637,6 +641,7 @@ def admin_edit_company(company_id):
         # Update user information
         name = form.name.data
         location = form.location.data
+        print(location)
 
         response = api_calls.admin_edit_any_company(company_id=company_id,
                                                  name=name, location=location)

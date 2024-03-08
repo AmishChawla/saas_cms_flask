@@ -541,7 +541,7 @@ def admin_delete_company(company_id: int):
 
 def admin_get_any_company(company_id: int):
     try:
-        response = requests.get(constants.BASE_URL + f'/companies/update-company/{company_id}')
+        response = requests.get(constants.BASE_URL + f'/companies/{company_id}')
         if response.status_code == 200:
             return response.json()
     except requests.exceptions.HTTPError as errh:
@@ -558,7 +558,7 @@ def admin_edit_any_company(company_id, name, location):
 
     data = {
         "name": name,
-        "description": location
+        "location": location
     }
 
     try:
