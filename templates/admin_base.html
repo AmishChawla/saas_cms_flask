@@ -146,12 +146,7 @@
                 <span class="menu-title">List of Users</span>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('services') }}">
-                <i class="mdi mdi-shape-outline menu-icon" style="margin-left:0; margin-right:1.5vw;"></i>
-                  <span class="menu-title">Services</span>
-              </a>
-            </li>
+
               <li class="nav-item">
               <a class="nav-link" href="{{ url_for('list_of_companies') }}">
                   <i class="mdi mdi-city menu-icon" style="margin-left:0; margin-right:1.5vw;"></i>
@@ -179,7 +174,12 @@
                 <span class="menu-title">Settings</span>
               </a>
             </li>
-
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('services') }}">
+                <i class="mdi mdi-shape-outline menu-icon" style="margin-left:0; margin-right:1.5vw;"></i>
+                  <span class="menu-title">Services</span>
+              </a>
+            </li>
           </ul>
         </nav>
           {% endif %}
