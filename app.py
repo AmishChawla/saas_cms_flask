@@ -199,6 +199,13 @@ def admin_dashboard():
     return render_template('admin_dashboard.html', users=users)
 
 
+@app.route("/setting")
+@login_required
+def setting():
+
+    return render_template('setting.html')
+
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -384,9 +391,9 @@ def admin_logout():
     return redirect(url_for('admin_login'))
 
 
-@app.route("/profile/update_password/<role>", methods=['GET', 'POST'])
+@app.route("/profile/update_password/", methods=['GET', 'POST'])
 @login_required
-def user_password_update(role):
+def user_password_update():
     form = forms.UserPasswordUpdateForm()
 
     if form.validate_on_submit():
@@ -400,13 +407,13 @@ def user_password_update(role):
         print(response.status_code)
         if (response.status_code == 200):
             flash('Password Updated Successfully', category='info')
-            if (role == 'user'):
+            if (current_user.role == 'user'):
                 return redirect(url_for('profile'))
             else:
                 return redirect(url_for('admin_dashboard'))
         else:
             flash('Unsuccessful. Please check password.', category='error')
-    return render_template('user_password_update.html', form=form, role=role)
+    return render_template('user_password_update.html', form=form)
 
 
 @app.route("/forget-password", methods=['GET', 'POST'])

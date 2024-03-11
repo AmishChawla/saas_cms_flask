@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/static/assets/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="/static/assets/vendors/css/vendor.bundle.base.css">
 
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
 
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -46,18 +47,38 @@
         font-family: 'Roboto', sans-serif;
         }
 
+         .sidebar{
+            width: 13rem;
+          }
+
          .sidenav a:hover {
             background-color: #f1f1f1;
             color: white; /* Optional: Change the text color to white for better contrast */
             border-radius: 30px;
+            height:20px;
 
         }
           .sidenav a.active {
-             background-color: #dbf3ff; /* Change the background color to purple */
-             color: red !important; /* Change the text color to white for better contrast */
+             background-color: #D3E3FD /* Change the background color to purple */
+             color: white; /* Change the text color to white for better contrast */
              border-radius: 30px;
+             height:20px;
         }
 
+            .sidebar .nav .nav-item .nav-link{
+        padding:0rem;
+        margin-top:0;
+        height:30px;
+        margin-left:5px;
+        }
+
+        .sidebar .nav .nav-item{
+        padding: 0rem;
+        }
+
+            .sidebar .nav .nav-item .nav-link i.menu-icon:before {
+    padding-top:5px;
+}
 
       </style>
 
@@ -83,10 +104,10 @@
       <!-- partial:../../partials/_navbar.html -->
       <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-          <a class="navbar-brand brand-logo" href="{{ url_for('index')}}"><img src="/static/images/logo.png" alt="logo" style="width:20px" /><b>Resume Parser</b></a>
-          <a class="navbar-brand brand-logo-mini" href="{{ url_for('index')}}"><img src="/static/images/logo.png" alt="logo" /></a>
+          <a class="navbar-brand brand-logo" href="{{ url_for('index')}}" style="padding-right:20px;"><img src="/static/images/logo.png" alt="logo" style="width:20px;height:25px;"/><b style="margin-left:10px;">Resume Parser</b></a>
+          <a class="navbar-brand brand-logo-mini" style="padding-left:20px;" href="{{ url_for('index')}}"><img src="/static/images/logo.png" alt="logo" /></a>
         </div>
-        <div class="navbar-menu-wrapper d-flex align-items-stretch">
+        <div class="navbar-menu-wrapper d-flex align-items-stretch" style="padding:5px;">
             {% if request.endpoint != 'login' and request.endpoint != 'admin_login' and request.endpoint != 'register' %}
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                 <span class="mdi mdi-menu"></span>
@@ -110,51 +131,45 @@
 
 
           <ul class="navbar-nav navbar-nav-right">
-                {% if request.endpoint != 'login' and request.endpoint != 'admin_login' and request.endpoint != 'register' %}
-                    {% if current_user.is_authenticated %}
-                        <!-- Show user-related links when the user is authenticated -->
+        {% if request.endpoint not in ['login', 'admin_login', 'register'] %}
+            {% if current_user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="updatePasswordDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if current_user.profile_picture %}
+                            <img src="{{ current_user.profile_picture }}" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%;">
+                         {% else %}
+                            <img src="static/images/man.png" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%;">
+                        {% endif %}
+                        <span class="menu-title">{{ current_user.username }}</span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="updatePasswordDropdown" style="position:absolute;left:-50px">
+                        <li>
+                            <a class="dropdown-item" href="{{ url_for('profile') }}" onmouseover="this.style.color='blue'" onmouseout="this.style.color='grey'" style="display: flex; justify-content: space-between;">Edit Profile<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ url_for('user_password_update') }}" onmouseover="this.style.color='blue'" onmouseout="this.style.color='grey'" style="display: flex; justify-content: space-between;">Update Password <i class="mdi mdi-lock-reset menu-icon" style="margin-left:10px"></i></a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ url_for('logout') }}" onmouseover="this.style.color='blue'" onmouseout="this.style.color='grey'" style="display: flex; justify-content: space-between;">Logout <i class="mdi mdi-logout menu-icon" style="margin-left:10px"></i></a>
+                        </li>
+                    </ul>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('login') }}">
+                        <span class="menu-title">Login</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span class="menu-title">Sign Up</span>
+                    </a>
+                </li>
+            {% endif %}
+        {% endif %}
+    </ul>
 
 
-                           <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="updatePasswordDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="{{ current_user.profile_picture }}" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%">
-                                <span class="menu-title">{{ current_user.username }}</span>
-
-                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="updatePasswordDropdown" style="position:absolute;left:-50px">
-                             <li>
-                                <a class="dropdown-item" href="{{ url_for('profile') }}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Edit Profile<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('user_password_update',role=current_user.role)}}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Update Password <i class="mdi mdi-lock-reset menu-icon" style="margin-left:10px"></i></a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('logout') }}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Logout <i class="mdi mdi-logout menu-icon" style="margin-left:10px"></i></a>
-                            </li>
-                            </ul>
-                           </li>
-
-                    {% else %}
-
-                        <!-- Show login and signup links when the user is not authenticated -->
-
-                                <li class="nav-item">
-                                  <a class="nav-link" href="{{ url_for('login') }}">
-                                    <span class="menu-title">Login</span>
-                                  </a>
-                                </li>
-
-                                <li class="nav-item">
-                                  <a class="nav-link" href="#">
-                                    <span class="menu-title">SignUp</span>
-                                  </a>
-                                </li>
-                   {% endif %}
-
-
-
-                {% endif %}
-          </ul>
           <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
 
               <span class="mdi mdi-menu"></span>
@@ -167,7 +182,6 @@
           {% if request.endpoint != 'login' and request.endpoint != 'admin_login' and request.endpoint != 'register' %}
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
           <ul class="nav">
-
             <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'user_dashboard' %}active{% endif %}" href="{{ url_for('user_dashboard') }}">
                   <i class="mdi mdi-home menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'user_dashboard' %}#453bcc !important{% endif %};"></i>
@@ -187,12 +201,8 @@
                   <i class="mdi mdi-history menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'user_history' %}#453bcc !important{% endif %};"></i>
                 <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'user_history' %}#453bcc !important{% endif %};">History</span>
 
-
               </a>
             </li>
-
-
-
 
           </ul>
         </nav>
@@ -222,7 +232,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
 
     <!-- Your additional scripts go here -->
-
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <!-- container-scroller -->
     <!-- plugins:js -->

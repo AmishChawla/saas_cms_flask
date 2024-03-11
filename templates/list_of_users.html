@@ -7,9 +7,7 @@
 
 
 
-            <div class="page-header">
-              <h3 class="page-title"> User Table </h3>
-               </div>
+
             <div class="row">
 
 
@@ -32,10 +30,10 @@
                     <th><input type="checkbox" id="selectAllCheckbox"></th>
                     <th>Sr. No.</th>
                     <th>User ID</th>
-                    <th>Company Name</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Role</th>
+                    <th>Company Name</th>
                     <th>Creation Time</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -51,6 +49,13 @@
                 <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
                     U_{{ row.id }}
                 </td>
+                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}"> {{ row.username }} </a></td>
+
+                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
+                    {{ row.email }}
+                </td>
+
+                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> {{ row.role }} </td>
                 <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
                     {% if row["company"] %}
                         {{ row["company"][0]["name"] }}
@@ -58,13 +63,7 @@
                         Not Registered
                     {% endif %}
                 </td>
-                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}"> {{ row.username }} </a></td>
 
-                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
-                    {{ row.email }}
-                </td>
-
-                <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> {{ row.role }} </td>
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ row.created_datetime.split('T')[0] }}&nbsp; &nbsp;{{ row.created_datetime.split('T')[1][:8] }} </td>
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> {{ row.status }} </td>
                 <td>

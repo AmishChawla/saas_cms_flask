@@ -1,8 +1,4 @@
-{% if request.endpoint == 'user_history' %}
-    {% extends 'base.html' %}
-{% else %}
-    {% extends 'admin_base.html' %}
-{% endif %}
+{% extends 'admin_base.html' %}
 
 {% block title %}User History{% endblock %}
 
@@ -24,17 +20,17 @@
                                         <tr>
                                             <th> Sr. No. </th>
                                             <th> Upload Date </th>
-                                            <th> Upload Time </th>
+
                                             <th> CSV File </th>
                                             <th> XML File </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for data in result %}
+                                        {% for data in result|reverse %}
                                             <tr style="max-height: 100px; overflow-y: auto; ">
                                                 <td class="py-1">{{ loop.index }}</td>
-                                                <td class="py-1">{{ data.upload_datetime.split('T')[0] }}</td>
-                                                <td class="py-1">{{ data.upload_datetime.split('T')[1][:8]  }}</td>
+                                                <td class="py-1">{{ data.upload_datetime.split('T')[0] }} {{ data.upload_datetime.split('T')[1][:8]  }}</td>
+
                                                 <td><a href="data:application/csv;charset=utf-8,{{ data.csv_file }}" download="data.csv">Download CSV</a></td>
                                                 <td><a href="data:application/xml;charset=utf-8,{{ data.xml_file|e }}" download="data.xml">Download XML</a></td>
 
@@ -58,8 +54,6 @@
 <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 
-<script>new DataTable('#userHistoryTable', {
-     orderFixed: [1, 'desc']
-});</script>
+<script>new DataTable('#userHistoryTable');</script>
 
 {% endblock %}
