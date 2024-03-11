@@ -356,7 +356,7 @@ def get_companies():
 def get_company_details(company_id: int):
 
     try:
-        response = requests.get(constants.BASE_URL + f'/company/{company_id}')
+        response = requests.get(constants.BASE_URL + f'/companies/{company_id}')
         if response.status_code == 200:
             return response.json()
     except requests.exceptions.HTTPError as errh:

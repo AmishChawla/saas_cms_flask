@@ -522,40 +522,14 @@ def company_list():
     return render_template('company_list.html', companies=companies)
 
 
-@app.route('/company-details/<company_id>', methods=['GET', 'POST'])
+@app.route('/companies/<company_id>', methods=['GET', 'POST'])
 def company_details(company_id):
     result = api_calls.get_company_details(company_id=company_id)
 
     name = result["name"]
-    phone_no = result['phone_no']
-    email = result['email']
-    address = result['address']
-    description = result['description']
+    location = result["location"]
 
-    return render_template('company_details.html', company_id=company_id, name=name, phone_no=phone_no, email=email,
-                           address=address, description=description)
-
-
-@app.route("/company-register", methods=['GET', 'POST'])
-def company_register():
-    form = forms.CompanyRegisterForm()
-    print("outside")
-    if form.validate_on_submit():
-        name = form.name.data
-        location = form.location.data
-        response = api_calls.company_register(name, location, access_token=current_user.id)
-        print("inside")
-
-        if (response.status_code == 200):
-            flash('Registration Successful', category='info')
-            if (current_user.role == 'user'):
-                return redirect(url_for('user_dashboard'))
-            else:
-                return redirect(url_for('list_of_companies'))
-        else:
-            flash('Registration unsuccessful.', category='error')
-
-    return render_template('company_register.html', form=form)
+    return render_template('company_details.html', name=name, location= location)
 
 
 ################################################################ SERVICES ############################################################################################
@@ -618,14 +592,15 @@ def admin_edit_service(service_id):
 
     return render_template('admin_edit_service.html', description=description, name=name, form=form, service_id=service_id)
 
-##########################################################################COMPANIES###############################################################3
+########################################################################## COMPANIES ###############################################################3
 
 @app.route("/admin/list-of-companies", methods=['GET', 'POST'])
 @login_required
 def list_of_companies():
     response = api_calls.admin_get_all_companies()
     if (response.status_code == 200):
-        result=response.json()
+        result = response.json()
+        print(result)
     return render_template('list_of_companies.html', result=result)
 
 
@@ -635,6 +610,7 @@ def admin_delete_company(company_id):
     result = api_calls.admin_delete_company(company_id=company_id)
     if (result.status_code == 200):
         return redirect(url_for('list_of_companies'))
+
 
 @app.route("/admin/edit-company/<company_id>", methods=['GET', 'POST'])
 @login_required
@@ -661,6 +637,28 @@ def admin_edit_company(company_id):
     form.location.data = location
 
     return render_template('admin_edit_company.html', location=location, name=name, form=form, company_id=company_id)
+
+
+@app.route("/company-register", methods=['GET', 'POST'])
+def company_register():
+    form = forms.CompanyRegisterForm()
+    print("outside")
+    if form.validate_on_submit():
+        name = form.name.data
+        location = form.location.data
+        response = api_calls.company_register(name, location, access_token=current_user.id)
+        print("inside")
+
+        if (response.status_code == 200):
+            flash('Registration Successful', category='info')
+            if (current_user.role == 'user'):
+                return redirect(url_for('user_dashboard'))
+            else:
+                return redirect(url_for('list_of_companies'))
+        else:
+            flash('Registration unsuccessful.', category='error')
+
+    return render_template('company_register.html', form=form)
 
 
 
