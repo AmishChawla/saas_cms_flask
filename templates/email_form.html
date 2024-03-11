@@ -1,0 +1,66 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Edit Company{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0">
+                <!-- Add a card header "Register" -->
+                <div class="card-header bg-white text-black text-center">
+                    <h2>Email Functionality</h2>
+                </div>
+
+                <div class="card-body">
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <div class="alert alert-danger">
+                        <ul>
+                            {% for message in messages %}
+                            <li>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+
+                    <form method="post" action="{{ url_for('admin_email_setup') }}">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            <label for="smtp_server" class="form-label">SMTP Server:</label>
+                            {{ form.smtp_server(class="form-control", placeholder="SMTP Server", required=True) }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="smtp_port" class="form-label">SMTP Port:</label>
+                            {{ form.smtp_port(class="form-control", placeholder="SMTP Port", required=True) }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="smtp_username" class="form-label">SMTP Username:</label>
+                            {{ form.smtp_username(class="form-control", placeholder="SMTP Username", required=True) }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="smtp_password" class="form-label">SMTP Password:</label>
+                            {{ form.smtp_password(class="form-control", placeholder="SMTP Password", required=True) }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="sender_email" class="form-label">Sender Email:</label>
+                            {{ form.sender_email(class="form-control", placeholder="Sender Email", required=True) }}
+                        </div>
+
+                        <div class="mb-3 text-center">
+                            {{ form.submit(class="btn btn-dark btn-lg") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

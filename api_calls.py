@@ -573,3 +573,42 @@ def admin_edit_any_company(company_id, name, location):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
+
+def admin_get_email_setup(access_token: str):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        print("try")
+        response = requests.get(constants.BASE_URL + f'/smtp_settings/', headers=headers)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+def admin_update_email_setup(access_token: str, smtp_server, smtp_port, smtp_username, smtp_password, sender_email):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    data = {
+        "smtp_server": smtp_server,
+        "smtp_port": smtp_port,
+        "smtp_username,": smtp_username,
+        "smtp_password": smtp_password,
+        "sender_email": sender_email
+    }
+
+    try:
+        print("try")
+        response = requests.put(constants.BASE_URL + f'/admin/update-email-settings/', headers=headers, data=data)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")

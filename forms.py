@@ -1,4 +1,4 @@
-from wtforms import StringField, PasswordField, SubmitField, validators, SelectField
+from wtforms import StringField, IntegerField, PasswordField, SubmitField, validators, SelectField
 from flask_wtf import FlaskForm
 
 from flask_wtf.file import FileField, FileRequired, FileAllowed
@@ -154,4 +154,12 @@ class UserEditUserForm(FlaskForm):
     profile_picture = FileField('Profile Picture', render_kw={"id": "profile_picture_input", "style": "display: none;"})
     username = StringField('Username', validators=[validators.Length(min=4, max=25), validators.DataRequired()], render_kw={"readonly": True})
     email = StringField('Email', validators=[validators.Email(), validators.DataRequired()], render_kw={"readonly": True})
+    submit = SubmitField('Save')
+
+class EmailFunctionalityForm(FlaskForm):
+    smtp_server = StringField('SMTP Server')
+    smtp_port = IntegerField('SMTP Port')
+    smtp_username = StringField('SMTP Username')
+    smtp_password = StringField('SMTP Password')
+    sender_email = StringField('Sender Email')
     submit = SubmitField('Save')

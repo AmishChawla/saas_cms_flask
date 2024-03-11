@@ -691,6 +691,43 @@ def trash():
     return render_template('trash.html', result=users )
 
 
+@app.route("/admin/email-setup", methods=['GET', 'POST'])
+@login_required
+def admin_email_setup():
+    result = api_calls.admin_get_email_setup(access_token=current_user.id)
+    form = forms.EmailFunctionalityForm()
+
+    if result.status_code == 200:
+        email_details = result.json()
+        smtp_server = email_details.get("smtp_server")
+        smtp_port = email_details.get("smtp_port")
+        smtp_username = email_details.get("smtp_username")
+        smtp_password = email_details.get("smtp_password")
+        sender_email = email_details.get("sender_email")
+        if form.validate_on_submit():
+
+            new_smtp_server = form.smtp_server.data
+            new_smtp_port = form.smtp_port.data
+            new_smtp_username = form.smtp_username.data
+            new_smtp_password = form.smtp_password.data
+            new_sender_email = form.sender_email.data
+            # Ensure the file is included in the request
+            response = api_calls.admin_update_email_setup(access_token=current_user.id,
+                                                     smtp_server=new_smtp_server, smtp_port=new_smtp_port, smtp_username=new_smtp_username,
+                                                     smtp_password=new_smtp_password, sender_email=new_sender_email)
+            if response.status_code == 200:
+                return redirect(url_for('admin_email_setup'))
+
+
+        form.smtp_server.data = smtp_server
+        form.smtp_port.data = smtp_port
+        form.smtp_username.data = smtp_username
+        form.smtp_password.data = smtp_password
+        form.sender_email.data = sender_email
+
+    return render_template('email_form.html', form=form)
+
+
 
 if __name__ == '__main__':
     app.run()
