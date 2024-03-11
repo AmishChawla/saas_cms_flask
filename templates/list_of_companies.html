@@ -26,18 +26,20 @@
                                             <th> Company ID. </th>
                                             <th> Company </th>
                                             <th> Location </th>
+                                            <th> Created Date </th>
                                             <th> Action </th>
 
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for data in result %}
-                                            <tr style="max-height: 100px; overflow-y: auto; ">
+                                            <tr style="max-height: 100px; overflow-y: auto;" onclick="window.location.href='{{ url_for('company_details', company_id=data.id) }}'">
                                                 <td class="py-1">{{ loop.index }}</td>
                                                 <td class="py-1">{{ data.id }}</td>
                                                 <td class="py-1">{{ data.name }}</td>
                                                 <td class="py-1">{{ data.location }}</td>
-                                                 <td style="display: flex">
+                                                <td class="py-1">{{ data.created_at.split('T')[0] }}&nbsp; &nbsp;{{ data.created_at.split('T')[1][:8] }}</td>
+                                                <td style="display: flex">
     <a class="button button1" href="{{ url_for('admin_edit_company', company_id=data.id) }} ">Edit</a>
     <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}">Delete</button>
 

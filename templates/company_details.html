@@ -1,197 +1,97 @@
+{% extends 'admin_base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
+{% block title %}Companies{% endblock %}
 
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
-  <title>Resume Parser</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
-
-  <!-- Favicons -->
-  <link href="../static/assets/images/favicon.png" rel="icon">
-  <link href="../static/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-
-  <!-- Vendor CSS Files -->
-  <link href="../static/assets/vendor/aos/aos.css" rel="stylesheet">
-  <link href="../static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../static/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="../static/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="../static/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-  <link href="../static/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-  <link href="../static/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
-
-  <!-- Template Main CSS File -->
-  <link href="../static/assets/css/style1.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <!-- =======================================================
-  * Template Name: Arsha
-  * Updated: Jan 09 2024 with Bootstrap v5.3.2
-  * Template URL: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
-</head>
+{% block content %}
 
 <style>
-  .text-overlay {
-    position: absolute;
-    top: 50%;
-    left: 10%;
-    transform: translateY(-50%);
-    font-size: 24px;
-    color: white;
-
-    padding: 10px;
+.container {
+    position: relative; /* Add this to position the .text-overlay relative to the container */
+    height: 40vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
+.text-overlay {
+    position: absolute;
+    bottom: 10px; /* Adjust this value to position the text closer to or further from the bottom */
+    left: 10px; /* Adjust this value to position the text closer to or further from the left */
+    font-size: 24px;
+    color: white;
+    padding: 10px;
+    text-transform: capitalize; /* Ensures the first letter of each word is capitalized */
+}
+
+.about .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* Stack the content vertically */
+    height: 100%; /* Ensure it takes up the full height */
+}
+
+.group.list-group-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#hero {
+    position: relative;
+    top: -10px; /* Adjust this value as needed */
+}
+
+@media (max-width: 768px) {
+    .container {
+        height: 80vh; /* Adjust the height when the sidebar is closed */
+    }
+}
 </style>
 
-<body>
-
-  <!-- ======= Header ======= -->
-  <header id="header" class="fixed-top ">
-    <div class="container d-flex align-items-center">
-
-      <h1 class="logo me-auto"><a href="index.html"><img src="/static/images/logo.png" alt="Logo" height="30" class="d-inline-block align-top">
-                Resume Parser</a></h1>
-
-
-    </div>
-  </header><!-- End Header -->
-
-  <!-- ======= Hero Section ======= -->
-  <section id="hero" class="d-flex align-items-center" style="background-color:black">
-    <div class="container" style="width: 100%; margin: 0; padding: 0;">
-        <img class="group list-group-image" src="/static/images/company.jpg" style="width: 100vw; height: auto;opacity:0.5" />
-      <div class="text-overlay">
-        <h1>{{ name }}</h1>
-        <h3><i class="fa fa-map-marker-alt" style="color:red"></i> {{ address }}</h3>
-        <h4><i class="fa fa-phone" style="color:blue"></i> {{ phone_no }}</h4>
-        <a href="{{ url_for('register',name=name, company_id=company_id) }}" class="btn-get-started scrollto">Get Started</a>
-      </div>
+<!-- ======= Hero Section ======= -->
+<section id="hero" class="d-flex align-items-center" style="display:fit-content; background-color:black;">
+    <div class="container" style="height:40vh; margin: 0; padding: 0; overflow: hidden;">
+        <img class="group list-group-image" src="/static/images/company.jpg" style="opacity:0.5;" />
+        <div class="text-overlay">
+            <h1>{{ name }}</h1>
+            <h3><i class="fa fa-map-marker-alt" style="color:red"></i> {{ location }}</h3>
+        </div>
     </div>
 </section>
-
 <!-- End Hero -->
 
-  <main id="main">
-
-
-
-
+<main id="main">
+<br>
     <!-- ======= About Us Section ======= -->
     <section id="about" class="about">
-      <div class="container" data-aos="fade-up">
+        <div class="container" data-aos="fade-up">
 
-        <div class="section-title">
-          <h2>Description</h2>
+            <div class="section-title align-items-center" style="">
+                <h2>About Us</h2>
+            </div>
+
+            <div class="row content">
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque magnam minima molestias mollitia nemo.
+                    Ab ad asperiores autem consectetur cumque deleniti eligendi eos expedita iste itaque laudantium maiores nemo
+                    non nostrum qui quidem quis repudiandae rerum similique, soluta tempore, temporibus voluptate voluptatem. Ab
+                    ad aliquam architecto at blanditiis corporis distinctio doloremque earum eos eveniet in laboriosam maxime,
+                    modi nulla odio officia quis, repellat saepe sed tenetur ullam vel voluptatem voluptatum? Ab
+                    ad aliquid amet consectetur culpa cum dicta dolores earum esse excepturi, exercitationem hic id in incidunt
+                    laboriosam laudantium mollitia, nesciunt nisi nobis nulla odit officiis omnis perferendis perspiciatis
+                    praesentium quae quaerat quis quisquam quod recusandae repellendus repudiandae tempora vel vero voluptas
+                    voluptate voluptatem. Animi commodi cumque distinctio dolorem ea molestiae nostrum quidem quisquam. Atque
+                    cumque dolores error esse magnam nisi porro soluta vitae? Aliquam laudantium reiciendis similique sint
+                    voluptate! Accusantium deleniti, doloremque. Culpa est iusto minima quae reprehenderit, vitae. Ab aliquid at
+                    beatae consequatur debitis deleniti dolore eaque enim eos facilis fuga illo impedit inventore, ipsum, iusto
+                    libero minus nam neque nihil numquam obcaecati odio quaerat quidem suscipit tempore tenetur voluptate
+                    voluptates voluptatibus!</p>
+
+            </div>
+
         </div>
-
-        <div class="row content">
-          <p>{{ description }}</p>
-        </div>
-
-      </div>
     </section><!-- End About Us Section -->
 
+</main><!-- End #main -->
 
-
-    <!-- ======= Frequently Asked Questions Section ======= -->
-
-
-  </main><!-- End #main -->
-
-  <!-- ======= Footer ======= -->
-  <footer id="footer">
-
-    <div class="footer-top">
-      <div class="container">
-        <div class="row">
-
-          <div class="col-lg-3 col-md-6 footer-contact">
-            <h3>Resume Parser</h3>
-            <p>
-              A108 Adam Street <br>
-              New York, NY 535022<br>
-              United States <br><br>
-              <strong>Phone:</strong> +1 5589 55488 55<br>
-              <strong>Email:</strong> info@example.com<br>
-            </p>
-          </div>
-
-          <div class="col-lg-3 col-md-6 footer-links">
-            <h4>Useful Links</h4>
-            <ul>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Home</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">About us</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Services</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Terms of service</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Privacy policy</a></li>
-            </ul>
-          </div>
-
-          <div class="col-lg-3 col-md-6 footer-links">
-            <h4>Our Services</h4>
-            <ul>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Web Design</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Web Development</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Product Management</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Marketing</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Graphic Design</a></li>
-            </ul>
-          </div>
-
-          <div class="col-lg-3 col-md-6 footer-links">
-            <h4>Our Social Networks</h4>
-            <p>Cras fermentum odio eu feugiat lide par naso tierra videa magna derita valies</p>
-            <div class="social-links mt-3">
-              <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
-              <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
-              <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
-              <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
-              <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <div class="container footer-bottom clearfix">
-      <div class="copyright">
-        &copy; Copyright <strong><span>Resume Parser</span></strong>. All Rights Reserved
-      </div>
-      <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you purchased the pro version. -->
-        <!-- Licensing information: https://bootstrapmade.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/ -->
-
-      </div>
-    </div>
-  </footer><!-- End Footer -->
-
-  <div id="preloader"></div>
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
-  <!-- Vendor JS Files -->
-  <script src="../static/assets/vendor/aos/aos.js"></script>
-  <script src="../static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="../static/assets/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="../static/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-  <script src="../static/assets/vendor/swiper/swiper-bundle.min.js"></script>
-  <script src="../static/assets/vendor/waypoints/noframework.waypoints.js"></script>
-  <script src="../static/assets/vendor/php-email-form/validate.js"></script>
-
-  <!-- Template Main JS File -->
-  <script src="../static/assets/js/main.js"></script>
-
-</body>
-
-</html>
+{% endblock %}

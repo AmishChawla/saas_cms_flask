@@ -356,7 +356,7 @@ def get_companies():
 def get_company_details(company_id: int):
 
     try:
-        response = requests.get(constants.BASE_URL + f'/company/{company_id}')
+        response = requests.get(constants.BASE_URL + f'/companies/{company_id}')
         if response.status_code == 200:
             return response.json()
     except requests.exceptions.HTTPError as errh:
@@ -590,25 +590,31 @@ def admin_get_email_setup(access_token: str):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+import requests
+
 def admin_update_email_setup(access_token: str, smtp_server, smtp_port, smtp_username, smtp_password, sender_email):
     headers = {'Authorization': f'Bearer {access_token}'}
     data = {
         "smtp_server": smtp_server,
         "smtp_port": smtp_port,
-        "smtp_username,": smtp_username,
+        "smtp_username": smtp_username,
         "smtp_password": smtp_password,
         "sender_email": sender_email
     }
 
     try:
-        print("try")
-        response = requests.put(constants.BASE_URL + f'/admin/update-email-settings/', headers=headers, data=data)
+        response = requests.put(constants.BASE_URL + f'/admin/update-email-settings/', headers=headers, json=data)
+        response.raise_for_status() # Raises an HTTPError if the response was unsuccessful
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
+        raise # Re-raise the exception to be handled by the caller
     except requests.exceptions.ConnectionError as errc:
         print(f"Error Connecting: {errc}")
+        raise # Re-raise the exception to be handled by the caller
     except requests.exceptions.Timeout as errt:
         print(f"Timeout Error: {errt}")
+        raise # Re-raise the exception to be handled by the caller
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+        raise # Re-raise the exception to be handled by the caller
