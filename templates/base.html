@@ -47,18 +47,38 @@
         font-family: 'Roboto', sans-serif;
         }
 
+         .sidebar{
+            width: 13rem;
+          }
+
          .sidenav a:hover {
             background-color: #f1f1f1;
             color: white; /* Optional: Change the text color to white for better contrast */
             border-radius: 30px;
+            height:20px;
 
         }
           .sidenav a.active {
-             background-color: #dbf3ff; /* Change the background color to purple */
-             color: red !important; /* Change the text color to white for better contrast */
+             background-color: #D3E3FD /* Change the background color to purple */
+             color: white; /* Change the text color to white for better contrast */
              border-radius: 30px;
+             height:20px;
         }
 
+            .sidebar .nav .nav-item .nav-link{
+        padding:0rem;
+        margin-top:0;
+        height:30px;
+        margin-left:5px;
+        }
+
+        .sidebar .nav .nav-item{
+        padding: 0rem;
+        }
+
+            .sidebar .nav .nav-item .nav-link i.menu-icon:before {
+    padding-top:5px;
+}
 
       </style>
 
@@ -84,10 +104,10 @@
       <!-- partial:../../partials/_navbar.html -->
       <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-          <a class="navbar-brand brand-logo" href="{{ url_for('index')}}"><img src="/static/images/logo.png" alt="logo" style="width:20px" /><b>Resume Parser</b></a>
-          <a class="navbar-brand brand-logo-mini" href="{{ url_for('index')}}"><img src="/static/images/logo.png" alt="logo" /></a>
+          <a class="navbar-brand brand-logo" href="{{ url_for('index')}}" style="padding-right:20px;"><img src="/static/images/logo.png" alt="logo" style="width:20px;height:25px;"/><b style="margin-left:10px;">Resume Parser</b></a>
+          <a class="navbar-brand brand-logo-mini" style="padding-left:20px;" href="{{ url_for('index')}}"><img src="/static/images/logo.png" alt="logo" /></a>
         </div>
-        <div class="navbar-menu-wrapper d-flex align-items-stretch">
+        <div class="navbar-menu-wrapper d-flex align-items-stretch" style="padding:5px;">
             {% if request.endpoint != 'login' and request.endpoint != 'admin_login' and request.endpoint != 'register' %}
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                 <span class="mdi mdi-menu"></span>
@@ -181,13 +201,8 @@
                   <i class="mdi mdi-history menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'user_history' %}#453bcc !important{% endif %};"></i>
                 <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'user_history' %}#453bcc !important{% endif %};">History</span>
 
-
-
               </a>
             </li>
-
-
-
 
           </ul>
         </nav>

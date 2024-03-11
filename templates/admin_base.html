@@ -60,23 +60,45 @@
     display: inline-block;
 
 }
+
+.sidebar{
+    width: 13rem;
+}
+
  .sidenav a:hover {
             background-color: #f1f1f1;
             color: white; /* Optional: Change the text color to white for better contrast */
             border-radius: 30px;
+            height:20px;
 
         }
 
 .sidenav a.active {
- background-color: #dbf3ff; /* Change the background color to purple */
- color: white; /* Change the text color to white for better contrast */
+ background-color: #D3E3FD;
+ color: white;
  border-radius: 30px;
+ height:20px;
 }
 
 
-    </style>
-{% block styles %}{% endblock %}
 
+        .sidebar .nav .nav-item .nav-link{
+        padding:0rem;
+        margin-top:0;
+        height:30px;
+        margin-left:5px;
+        }
+
+        .sidebar .nav .nav-item{
+        padding: 0rem;
+        }
+
+
+        .sidebar .nav .nav-item .nav-link i.menu-icon:before {
+    padding-top:5px;
+}
+
+    </style>
 
 
       <link href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -95,10 +117,10 @@
       <!-- partial:../../partials/_navbar.html -->
       <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-          <a class="navbar-brand brand-logo" href="{{ url_for('index') }}"><img src="/static/images/logo.png" alt="logo" style="width:20px" /><b>Resume Parser</b></a>
-          <a class="navbar-brand brand-logo-mini" href="{{ url_for('index') }}"><img src="/static/images/logo.png" alt="logo" /></a>
+          <a class="navbar-brand brand-logo" href="{{ url_for('index') }}" style="padding-right:20px;"><img src="/static/images/logo.png" alt="logo" style="width:20px;height:25px;"/><b style="margin-left:10px;">Resume Parser</b></a>
+          <a class="navbar-brand brand-logo-mini" style="padding-left:20px;" href="{{ url_for('index') }}"><img src="/static/images/logo.png" alt="logo" /></a>
         </div>
-        <div class="navbar-menu-wrapper d-flex align-items-stretch">
+        <div class="navbar-menu-wrapper d-flex align-items-stretch" style="padding:5px;">
              {% if request.endpoint != 'admin_login' %}
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                 <span class="mdi mdi-menu"></span>
@@ -148,57 +170,55 @@
 
            <li class="nav-item sidenav">
  <a class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" href="{{ url_for('admin_dashboard') }}">
-      <i class="mdi mdi-home menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'admin_dashboard' %}#453bcc !important{% endif %};"></i>
-    <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'admin_dashboard' %}#453bcc !important{% endif %};">Dashboard</span>
+      <i class="mdi mdi-home menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'admin_dashboard' %}#202124 !important{% endif %};"></i>
+    <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'admin_dashboard' %}#202124 !important{% endif %};">Dashboard</span>
  </a>
 </li>
             <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'list_of_users' %}active{% endif %}" href="{{ url_for('list_of_users') }}">
-                  <i class="mdi mdi-account-multiple menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'list_of_users' %}#453bcc !important{% endif %};"></i>
-                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'list_of_users' %}#453bcc !important{% endif %};">List of Users</span>
+                  <i class="mdi mdi-account-multiple menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'list_of_users' %}#202124 !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'list_of_users' %}#202124 !important{% endif %};">List of Users</span>
               </a>
             </li>
 
               <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'list_of_companies' %}active{% endif %}" href="{{ url_for('list_of_companies') }}">
-                  <i class="mdi mdi-city menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'list_of_companies' %}#453bcc !important{% endif %};"></i>
-                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'list_of_companies' %}#453bcc !important{% endif %};">Companies</span>
+                  <i class="mdi mdi-city menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'list_of_companies' %}#202124 !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'list_of_companies' %}#202124 !important{% endif %};">Companies</span>
 
 
               </a>
             </li>
                           <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'resume_history' %}active{% endif %}" href="{{ url_for('resume_history') }}">
-                  <i class="mdi mdi-file-document-outline menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'resume_history' %}#453bcc !important{% endif %};"></i>
-                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'resume_history' %}#453bcc !important{% endif %};">Resume History</span>
+                  <i class="mdi mdi-file-document-outline menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'resume_history' %}#202124 !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'resume_history' %}#202124 !important{% endif %};">Resume History</span>
               </a>
             </li>
 
               <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'trash' %}active{% endif %}" href="{{ url_for('trash') }}">
-                   <i class="mdi mdi-trash-can menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'trash' %}#453bcc !important{% endif %};"></i>
-                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'trash' %}#453bcc !important{% endif %};">Trash</span>
+                   <i class="mdi mdi-trash-can menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'trash' %}#202124 !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'trash' %}#202124 !important{% endif %};">Trash</span>
               </a>
             </li>
 
               <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'setting' %}active{% endif %}" href="{{ url_for('setting') }}" >
-                  <i class="mdi mdi-cogs menu-icon" style="margin-left:5px; margin-right:5px;  color: {% if request.endpoint == 'setting' %}#453bcc !important{% endif %};"></i>
-                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'setting' %}#453bcc !important{% endif %};">Settings</span>
+                  <i class="mdi mdi-cogs menu-icon" style="margin-left:5px; margin-right:5px;  color: {% if request.endpoint == 'setting' %}#202124 !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'setting' %}#202124 !important{% endif %};">Settings</span>
               </a>
             </li>
              <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'services' %}active{% endif %}" href="{{ url_for('services') }}">
-                <i class="mdi mdi-shape-outline menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'services' %}#453bcc !important{% endif %};"></i>
-                  <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'services' %}#453bcc !important{% endif %};">Services</span>
+                <i class="mdi mdi-shape-outline menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'services' %}#202124 !important{% endif %};"></i>
+                  <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'services' %}#202124 !important{% endif %};">Services</span>
               </a>
             </li>
-               <li class="nav-item sidenav">
+              <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'admin_email_setup' %}active{% endif %}" href="{{ url_for('admin_email_setup') }}">
-                  <i class="mdi mdi-email menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'admin_get_email' %}#453bcc !important{% endif %};"></i>
-                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'admin_get_email' %}#453bcc !important{% endif %};">Email</span>
-
-
+                <i class="mdi mdi-email-outline menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'admin_email_setup' %}#202124 !important{% endif %};"></i>
+                  <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'admin_email_setup' %}#202124 !important{% endif %};">Email Setup</span>
               </a>
             </li>
           </ul>
