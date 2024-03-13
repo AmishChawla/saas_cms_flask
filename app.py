@@ -726,6 +726,5 @@ def admin_email_setup():
     return render_template('email_form.html', form=form)
 
 
-
 if __name__ == '__main__':
     app.run()

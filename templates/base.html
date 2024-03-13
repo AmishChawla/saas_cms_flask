@@ -179,7 +179,7 @@
       <!-- partial -->
       <div class="container-fluid page-body-wrapper">
         <!-- partial:../../partials/_sidebar.html -->
-          {% if request.endpoint != 'login' and request.endpoint != 'admin_login' and request.endpoint != 'register' %}
+          {% if current_user.is_authenticated %}
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
           <ul class="nav">
             <li class="nav-item sidenav">
