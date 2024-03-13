@@ -618,3 +618,46 @@ def admin_update_email_setup(access_token: str, smtp_server, smtp_port, smtp_use
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
         raise # Re-raise the exception to be handled by the caller
+
+
+def admin_assign_service(user_id, service_ids: list):
+
+    params = {
+        "user_id": user_id
+
+    }
+
+
+    try:
+        response = requests.post(constants.BASE_URL + f'/users/assign_services/', params=params, json=service_ids)
+        response.raise_for_status() # Raises an HTTPError if the response was unsuccessful
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+        raise # Re-raise the exception to be handled by the caller
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+        raise # Re-raise the exception to be handled by the caller
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+        raise # Re-raise the exception to be handled by the caller
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+        raise # Re-raise the exception to be handled by the caller
+
+
+def user_specific_services(user_id):
+
+    try:
+        print("try")
+        response = requests.get(constants.BASE_URL + f'users/{user_id}/services' )
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+

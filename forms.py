@@ -163,3 +163,7 @@ class EmailFunctionalityForm(FlaskForm):
     smtp_password = StringField('SMTP Password')
     sender_email = StringField('Sender Email')
     submit = SubmitField('Save')
+
+
+class ServiceForm(FlaskForm):
+    submit = SubmitField('Submit')

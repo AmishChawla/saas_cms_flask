@@ -51,9 +51,13 @@
                             <label for="status" class="form-label">Select status :</label>
                             {{ form.status(class="form-select", required=True) }}
                         </div>
+                              <div class="mb-3 text-center">
+                            {{ form.submit(class="btn btn-dark btn-lg") }}
+                        </div>
 
-
-
+ </form>
+                        <form method="post" action="{{ url_for('admin_edit_user_profile', user_id=user_id) }}">
+                        {{ form.hidden_tag() }}
 <div class="page-header"></div>
 {% if user_service %}
     <div class="row">
@@ -70,39 +74,17 @@
                                 <th>Sr. No.</th>
                                 <th>Service</th>
                                 <th>Description</th>
-                                <th>Action</th>
+
                             </tr>
                         </thead>
                         <tbody>
-                            {% for data in user_service %}
+                            {% for data in all_service %}
                                 <tr style="max-height: 100px; overflow-y: auto;">
-                                    <td><input type="checkbox" class="select-checkbox"></td>
+                                    <td><input type="checkbox" name="services" value="{{ data.service_id }}" class="select-checkbox"></td>
                                     <td class="py-1">{{ loop.index }}</td>
                                     <td class="py-1">{{ data.name }}</td>
                                     <td class="py-1">{{ data.description }}</td>
-                                    <td style="display: flex">
-                                        <a class="button button1" href="{{ url_for('admin_edit_service', service_id=data.service_id) }}">Edit</a>
-                                        <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.service_id }}">Delete</button>
 
-                                        <!-- Modal for delete button -->
-                                        <div class="modal fade" id="deleteModal_{{ data.service_id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel_{{ data.service_id }}" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="deleteModalLabel_{{ data.service_id }}">Delete Service</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        Are you sure?
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                        <a type="button" class="btn btn-danger" href="{{ url_for('admin_delete_service', service_id=data.service_id) }}">Delete</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -123,7 +105,7 @@
 
 
                         <div class="mb-3 text-center">
-                            {{ form.submit(class="btn btn-dark btn-lg") }}
+                            {{ service_form.submit(class="btn btn-dark btn-lg") }}
                         </div>
                     </form>
                     </div>
@@ -135,5 +117,24 @@
 <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 <script>new DataTable('#serviceTable');</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get the list of service IDs that are already associated with the user
+        var userServices = [
+            {% for service in user_services %}
+                "{{ service.service_id }}",
+            {% endfor %}
+        ];
+
+        // Iterate over each checkbox
+        var checkboxes = document.querySelectorAll('.select-checkbox');
+        checkboxes.forEach(function(checkbox) {
+            // Check if the service ID is in the userServices list
+            if (userServices.includes(checkbox.value)) {
+                checkbox.checked = true; // If yes, mark the checkbox as checked
+            }
+        });
+    });
+</script>
 
 {% endblock %}

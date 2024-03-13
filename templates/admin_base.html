@@ -215,12 +215,6 @@
                   <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'services' %}#202124 !important{% endif %};">Services</span>
               </a>
             </li>
-              <li class="nav-item sidenav">
-              <a class="nav-link {% if request.endpoint == 'admin_email_setup' %}active{% endif %}" href="{{ url_for('admin_email_setup') }}">
-                <i class="mdi mdi-email-outline menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'admin_email_setup' %}#202124 !important{% endif %};"></i>
-                  <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'admin_email_setup' %}#202124 !important{% endif %};">Email Setup</span>
-              </a>
-            </li>
           </ul>
         </nav>
           {% endif %}

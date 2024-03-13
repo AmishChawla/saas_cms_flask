@@ -472,9 +472,15 @@ def admin_edit_user_profile(user_id):
     role = result["role"]
     status = result["status"]
     service = api_calls.services()
-    if service.status_code == 200:
-        user_service = service.json()
 
+    if service.status_code == 200:
+        all_service = service.json()
+
+    user_services = []
+    user_service_response = api_calls.user_specific_services(user_id=user_id)
+    if user_service_response.status_code == 200:
+        user_services = user_service_response.json()
+        print(user_services)
 
     if form.validate_on_submit():
         # Update user information
@@ -484,16 +490,26 @@ def admin_edit_user_profile(user_id):
 
         response = api_calls.admin_edit_any_user(access_token=current_user.id, user_id=user_id,
                                                  username=new_username, role=new_role, status=new_status)
+
         print(response.status_code)
         if response.status_code == 200:
-            return redirect(url_for('admin_dashboard'))
+            return redirect(url_for('admin_edit_user_profile', user_id=user_id))
 
     # Prefill the form fields with user information
     form.username.data = username
     form.role.data = role
     form.status.data = status
 
-    return render_template('edit_form.html', status=status, role=role, username=username, form=form, user_id=user_id, user_service=user_service)
+    service_form = forms.ServiceForm()
+    if service_form.validate_on_submit():
+        selected_services = [int(service) for service in request.form.getlist('services')]
+        # Process the selected services here
+        response_service = api_calls.admin_assign_service(user_id=user_id,service_ids=selected_services)
+        if response_service.status_code == 200:
+            print("Selected Services:", selected_services)
+            return redirect(url_for('admin_edit_user_profile', user_id=user_id))
+
+    return render_template('edit_form.html', status=status, role=role, username=username, form=form, user_id=user_id, all_service=all_service, service_form=service_form, user_services=user_services)
 
 
 
