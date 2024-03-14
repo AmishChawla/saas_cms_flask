@@ -661,3 +661,94 @@ def user_specific_services(user_id):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+
+############################################################### PLANS ##############################################################################
+def get_all_plans():
+    try:
+        response = requests.get(constants.BASE_URL + '/plans/')
+        if response.status_code == 200:
+            result = response.json()
+            return result
+
+    except requests.exceptions.RequestException as e:
+        # Handle request errors
+        print(f"Error: {e}")
+
+
+def create_plan(plan_name, time_period, fees, num_resume_parse):
+    headers = {
+        'Content-Type': 'application/json',
+    }
+
+    data = {
+        "plan_type_name": plan_name,
+        "time_period": time_period,
+        "fees": fees,
+        "num_resume_parse": num_resume_parse
+    }
+
+    try:
+        response = requests.post(constants.BASE_URL + '/plans/create-plan', json=data, headers=headers)
+        if response.status_code == 200:
+            return response.json
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def delete_plan(plan_id: int):
+    try:
+        response = requests.delete(constants.BASE_URL + f'/plans/delete-plan/{plan_id}')
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def admin_get_any_plan(plan_id: int):
+    try:
+        response = requests.get(constants.BASE_URL + f'/plans/{plan_id}')
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def update_plan(plan_id: int, plan_name: str, time_period: str, fees: int, num_resume_parse: str):
+    data = {
+        "plan_type_name": plan_name,
+        "time_period": time_period,
+        "fees": fees,
+        "num_resume_parse": num_resume_parse
+    }
+    try:
+        print("try")
+        response = requests.put(constants.BASE_URL + f'/plans/update-plan/{plan_id}',  json=data)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+

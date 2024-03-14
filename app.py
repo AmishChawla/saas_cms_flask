@@ -683,7 +683,7 @@ def resume_history():
         result = response.json()
         return render_template('resume_history.html', result=result)
 
-
+####################################### trash ##########################################################################
 @app.route("/trash")
 @login_required
 def trash():
@@ -700,7 +700,7 @@ def trash():
 
     return render_template('trash.html', result=users )
 
-
+####################################### EMAIL SETUP ##########################################################################
 @app.route("/admin/email-setup", methods=['GET', 'POST'])
 @login_required
 def admin_email_setup():
@@ -738,5 +738,73 @@ def admin_email_setup():
     return render_template('email_form.html', form=form)
 
 
+################################################################ PLANS ########################################################################
+@app.route("/admin/settings/plans", methods=['GET', 'POST'])
+@login_required
+def list_of_plans():
+    result = api_calls.get_all_plans()
+    return render_template('admin_plan_page.html', result=result)
+
+
+@app.route('/admin/settings/add-plan', methods=['GET', 'POST'])
+def add_plan():
+    form = forms.AddPlan()
+    if form.validate_on_submit():
+        name = form.name.data
+        duration = form.duration.data
+        fees = form.fees.data
+        num_resume_parsing = 'unlimited' if form.unlimited_resume_parsing.data else form.num_resume_parsing.data
+        result = api_calls.create_plan(plan_name=name, time_period=duration, fees=fees, num_resume_parse=num_resume_parsing)
+        if result:
+            return redirect(url_for('list_of_plans'))
+
+    return render_template('add_plan.html', form=form)
+
+
+@app.route("/admin/settings/update-plan/<plan_id>", methods=['GET', 'POST'])
+@login_required
+def update_plan(plan_id):
+    form = forms.AddPlan()
+    result = api_calls.admin_get_any_plan(plan_id)
+    name = result["plan_type_name"]
+    duration = result["time_period"]
+    fees = result["fees"]
+    num_resume_parse = result["num_resume_parse"]
+
+    if form.validate_on_submit():
+        # Update user information
+        name = form.name.data
+        duration = form.duration.data
+        fees = form.fees.data
+        num_resume_parsing = 'unlimited' if form.unlimited_resume_parsing.data else form.num_resume_parsing.data
+
+        result = api_calls.update_plan(plan_id=plan_id, plan_name=name, time_period=duration,fees=fees, num_resume_parse=num_resume_parsing)
+        if result:
+            return redirect(url_for('list_of_plans'))
+
+    # Prefill the form fields with user information
+    form.name.data = name
+    form.duration.data = duration
+    form.fees.data = fees
+    if num_resume_parse == 'unlimited':
+        form.unlimited_resume_parsing.data = True
+    else:
+        form.num_resume_parseing.data = num_resume_parse
+
+    return render_template('update_plan.html', form=form, plan_id=plan_id)
+
+
+@app.route("/admin/settings/plans/delete-plan/<plan_id>", methods=['GET', 'POST'])
+@login_required
+def delete_plan(plan_id):
+    result = api_calls.delete_plan(plan_id=plan_id)
+    if result:
+        return redirect(url_for('list_of_plans'))
+
+
+
+
 if __name__ == '__main__':
     app.run()
+
+

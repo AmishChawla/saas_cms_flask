@@ -1,0 +1,63 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Add Service{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card border-0">
+                    <!-- Add a card header "Register" -->
+                    <div class="card-header bg-white text-black text-center">
+                        <h2>Add Plan</h2>
+                    </div>
+
+                    <div class="card-body">
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        {% for message in messages %}
+                                            <li>{{ message }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+
+                        <form method="post" action="{{ url_for('add_plan') }}">
+                            {{ form.hidden_tag() }}
+
+                            <div class="mb-3">
+                                <label for="name" class="form-label visually-hidden">Service name:</label>
+                                {{ form.name(class="form-control", placeholder="Name", required=True) }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.duration(class="form-control", placeholder="Duration (Months)", required=True) }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.fees(class="form-control",placeholder="Price in $", required=True) }}
+                            </div>
+
+
+                            <div class="mb-3">
+                                {{ form.num_resume_parsing(class="form-control", placeholder="Resume Parsings Allowed (Number)",) }}
+                                    {{ form.unlimited_resume_parsing() }} {{ form.unlimited_resume_parsing.label }}
+                            </div>
+
+                            <div class="mb-3">
+
+                            </div>
+
+                            <div class="mb-3 text-center">
+                                {{ form.submit(class="btn btn-dark btn-lg") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

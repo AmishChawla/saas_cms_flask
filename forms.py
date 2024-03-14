@@ -1,9 +1,10 @@
-from wtforms import StringField, IntegerField, PasswordField, SubmitField, validators, SelectField
+from wtforms import StringField, IntegerField, PasswordField, SubmitField, validators, SelectField, BooleanField
 from flask_wtf import FlaskForm
 
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 
 import email_validator
+from wtforms.validators import DataRequired
 
 
 class UploadForm(FlaskForm):
@@ -167,3 +168,12 @@ class EmailFunctionalityForm(FlaskForm):
 
 class ServiceForm(FlaskForm):
     submit = SubmitField('Save')
+
+
+class AddPlan(FlaskForm):
+    name = StringField('Plan Name', validators=[validators.DataRequired()])
+    duration = StringField('Duration (Months)', validators=[validators.DataRequired()])
+    fees = IntegerField('Fees', validators=[validators.DataRequired()])
+    unlimited_resume_parsing = BooleanField('Unlimited')
+    num_resume_parsing = StringField('Number of Resume Parsings')
+    submit = SubmitField('Add Plan')
