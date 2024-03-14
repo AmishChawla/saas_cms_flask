@@ -59,7 +59,7 @@
                         <form method="post" action="{{ url_for('admin_edit_user_profile', user_id=user_id) }}">
                         {{ form.hidden_tag() }}
 <div class="page-header"></div>
-{% if user_service %}
+{% if all_service %}
     <div class="row">
         <div class="col-lg-12 grid-margin stretch-card">
             <div class="card" style="overflow-x:auto;">
@@ -120,11 +120,16 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Get the list of service IDs that are already associated with the user
-        var userServices = [
-            {% for service in user_services %}
-                "{{ service.service_id }}",
-            {% endfor %}
-        ];
+        var userServices = [];
+        {% if user_services %}
+            userServices = [
+                {% for service in user_services %}
+                    "{{ service.service_id }}",
+                {% endfor %}
+            ];
+            // Log the userServices array to the console for debugging
+            console.log(userServices);
+        {% endif %}
 
         // Iterate over each checkbox
         var checkboxes = document.querySelectorAll('.select-checkbox');
@@ -136,5 +141,6 @@
         });
     });
 </script>
+
 
 {% endblock %}

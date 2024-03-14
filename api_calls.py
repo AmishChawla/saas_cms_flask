@@ -650,7 +650,7 @@ def user_specific_services(user_id):
 
     try:
         print("try")
-        response = requests.get(constants.BASE_URL + f'users/{user_id}/services' )
+        response = requests.get(constants.BASE_URL + f'/users/{user_id}/services')
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")

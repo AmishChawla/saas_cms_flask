@@ -166,4 +166,4 @@ class EmailFunctionalityForm(FlaskForm):
 
 
 class ServiceForm(FlaskForm):
-    submit = SubmitField('Submit')
+    submit = SubmitField('Save')

@@ -50,7 +50,11 @@
           {% if current_user.is_authenticated %}
               <li class="nav-link dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="updatePasswordDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="/static/images/man.png" alt="profile" style="width: 25px; height: 25px; margin-right:10px;">
+                        {% if current_user.profile_picture %}
+                            <img src="{{ current_user.profile_picture }}" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%;">
+                         {% else %}
+                            <img src="/static/images/man.png" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%;">
+                        {% endif %}
                         <span class="menu-title">{{ current_user.username }}</span>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="updatePasswordDropdown" style="position:absolute;left:-50px">
