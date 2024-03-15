@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}View Plan{% endblock %}
+
+{% block content %}
+<style>
+    .card {
+      border:none;
+      padding: 10px 20px;
+    }
+
+    .card::after {
+      position: absolute;
+      z-index: -1;
+      opacity: 0;
+      -webkit-transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+      transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .card:hover {
+      transform: scale(1.02, 1.02);
+      -webkit-transform: scale(1.02, 1.02);
+      backface-visibility: hidden;
+      will-change: transform;
+      box-shadow: 0 1rem 2rem rgba(0,0,0,.5) !important;
+    }
+
+    .card:hover::after {
+      opacity: 1;
+    }
+
+    .card:hover .btn-outline-primary{
+      color:white;
+      background:#007bff;
+    }
+</style>
+
+<div class="container-fluid" style="background:#f1f1f1;">
+    <div class="container p-5">
+      <div class="row">
+        {% for plan in result %}
+          <div class="col-lg-4 col-md-12 mb-4">
+            <div class="card h-100 shadow-lg">
+              <div class="card-body">
+                <div class="text-center p-1">
+                 <h5 class="card-title">{{ plan.plan_type_name }}</h5>
+
+                    <span class="h2">${{ plan.fees }}</span>
+{% if plan.time_period == "1" %}
+    /Month
+{% elif plan.time_period == "12" %}
+    /Year
+{% else %}
+    /{{ plan.time_period }} Month
+{% endif %}
+
+                 <br><br>
+                    <p class="card-text">{{ plan.num_resume_parse }} Resume Parsing</p>
+                </div>
+
+              </div>
+              <ul class="list-group list-group-flush">
+                  {{ plan.plan_details | safe }}
+              </ul>
+              <div class="card-body text-center">
+                <button class="btn btn-outline-primary btn-lg" style="border-radius:30px;">Buy</button>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+</div>
+
+<!-- Option 1: Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+
+{% endblock %}
