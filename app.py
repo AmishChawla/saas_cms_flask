@@ -814,8 +814,7 @@ def delete_plan(plan_id):
         return redirect(url_for('list_of_plans'))
 
 
-@app.route("/plans", methods=['GET', 'POST'])
-@login_required
+@app.route("/pricing", methods=['GET', 'POST'])
 def user_view_plan():
     result = api_calls.get_all_plans()
     return render_template('user_view_plan.html', result=result)
