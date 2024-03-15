@@ -1,10 +1,11 @@
-from wtforms import StringField, IntegerField, PasswordField, SubmitField, validators, SelectField, BooleanField
+from wtforms import StringField, IntegerField, PasswordField, SubmitField, validators, SelectField, BooleanField, \
+    TextAreaField
 from flask_wtf import FlaskForm
 
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 
 import email_validator
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 
 
 class UploadForm(FlaskForm):
@@ -173,7 +174,9 @@ class ServiceForm(FlaskForm):
 class AddPlan(FlaskForm):
     name = StringField('Plan Name', validators=[validators.DataRequired()])
     duration = StringField('Duration (Months)', validators=[validators.DataRequired()])
-    fees = IntegerField('Fees', validators=[validators.DataRequired()])
+    fees = IntegerField('Fees', validators=[Optional()])
+    is_free =  BooleanField('Free')
     unlimited_resume_parsing = BooleanField('Unlimited')
-    num_resume_parsing = StringField('Number of Resume Parsings')
+    num_resume_parsing = StringField('Number of Resume Parsings', validators=[Optional()])
+    plan_details = TextAreaField('Plan Details', render_kw={'rows': 30, 'cols': 30, 'placeholder': 'Enter plan details here...'})
     submit = SubmitField('Add Plan')

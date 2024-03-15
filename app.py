@@ -749,14 +749,19 @@ def list_of_plans():
 @app.route('/admin/settings/add-plan', methods=['GET', 'POST'])
 def add_plan():
     form = forms.AddPlan()
+    print("outside validate on submit")
     if form.validate_on_submit():
         name = form.name.data
         duration = form.duration.data
-        fees = form.fees.data
+        fees = 0 if form.is_free.data else form.fees.data
         num_resume_parsing = 'unlimited' if form.unlimited_resume_parsing.data else form.num_resume_parsing.data
-        result = api_calls.create_plan(plan_name=name, time_period=duration, fees=fees, num_resume_parse=num_resume_parsing)
+        plan_details = form.plan_details.data
+        print("sending request to add plan")
+        result = api_calls.create_plan(plan_name=name, time_period=duration, fees=fees, num_resume_parse=num_resume_parsing, plan_details=plan_details)
         if result:
             return redirect(url_for('list_of_plans'))
+    else:
+        print(form.errors)
 
     return render_template('add_plan.html', form=form)
 
@@ -770,26 +775,33 @@ def update_plan(plan_id):
     duration = result["time_period"]
     fees = result["fees"]
     num_resume_parse = result["num_resume_parse"]
+    plan_details = result["plan_details"]
 
     if form.validate_on_submit():
         # Update user information
         name = form.name.data
         duration = form.duration.data
-        fees = form.fees.data
+        fees = 0 if form.is_free.data else form.fees.data
         num_resume_parsing = 'unlimited' if form.unlimited_resume_parsing.data else form.num_resume_parsing.data
-
-        result = api_calls.update_plan(plan_id=plan_id, plan_name=name, time_period=duration,fees=fees, num_resume_parse=num_resume_parsing)
+        plan_details = form.plan_details.data
+        result = api_calls.update_plan(plan_id=plan_id, plan_name=name, time_period=duration, fees=fees, num_resume_parse=num_resume_parsing, plan_details=plan_details)
         if result:
             return redirect(url_for('list_of_plans'))
+    else:
+        print(form.errors)
 
     # Prefill the form fields with user information
     form.name.data = name
     form.duration.data = duration
-    form.fees.data = fees
+    form.plan_details.data = plan_details
+    if fees == 0:
+        form.is_free.data = True
+    else:
+        form.fees.data = fees
     if num_resume_parse == 'unlimited':
         form.unlimited_resume_parsing.data = True
     else:
-        form.num_resume_parseing.data = num_resume_parse
+        form.num_resume_parsing.data = num_resume_parse
 
     return render_template('update_plan.html', form=form, plan_id=plan_id)
 

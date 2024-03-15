@@ -5,7 +5,6 @@
 {% block content %}
 <link href="https://cdn.datatables.net/2.0.0/css/dataTables.dataTables.css" rel="stylesheet">
             <div class="page-header"></div>
-            {% if result %}
                 <div class="row">
                     <div class="col-lg-12 grid-margin stretch-card">
                         <div class="card" style="overflow-x:auto;">
@@ -19,6 +18,8 @@
                           </div>
                                 <br>
                                 <br>
+                                {% if result %}
+
                                 <table id="plansTable" class="display" style="width:100%; ">
                                     <thead>
                                         <tr>
