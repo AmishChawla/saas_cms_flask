@@ -1,6 +1,6 @@
 {% extends 'admin_base.html' %}
 
-{% block title %}Add Service{% endblock %}
+{% block title %}Add Plan{% endblock %}
 
 {% block content %}
     <div class="container mt-5">
@@ -29,7 +29,6 @@
                             {{ form.hidden_tag() }}
 
                             <div class="mb-3">
-                                <label for="name" class="form-label visually-hidden">Service name:</label>
                                 {{ form.name(class="form-control", placeholder="Name", required=True) }}
                             </div>
 
@@ -38,7 +37,8 @@
                             </div>
 
                             <div class="mb-3">
-                                {{ form.fees(class="form-control",placeholder="Price in $", required=True) }}
+                                {{ form.fees(class="form-control",placeholder="Price in $") }}
+                                {{ form.is_free() }} {{ form.is_free.label }}
                             </div>
 
 
@@ -48,7 +48,8 @@
                             </div>
 
                             <div class="mb-3">
-
+                                {{ form.plan_details.label }}
+                                {{ form.plan_details(class="ckeditor", placeholder="Write details about the plan.") }}
                             </div>
 
                             <div class="mb-3 text-center">
@@ -60,4 +61,10 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.ckeditor.com/4.16.2/standard-all/ckeditor.js"></script>
+
+<script>
+    CKEDITOR.replace('plan_details');
+</script>
+
 {% endblock %}

@@ -675,7 +675,8 @@ def get_all_plans():
         print(f"Error: {e}")
 
 
-def create_plan(plan_name, time_period, fees, num_resume_parse):
+def create_plan(plan_name, time_period, fees, num_resume_parse, plan_details):
+    print("inside api call")
     headers = {
         'Content-Type': 'application/json',
     }
@@ -684,12 +685,14 @@ def create_plan(plan_name, time_period, fees, num_resume_parse):
         "plan_type_name": plan_name,
         "time_period": time_period,
         "fees": fees,
-        "num_resume_parse": num_resume_parse
+        "num_resume_parse": num_resume_parse,
+        "plan_details": plan_details
     }
 
     try:
         response = requests.post(constants.BASE_URL + '/plans/create-plan', json=data, headers=headers)
         if response.status_code == 200:
+            print("successful")
             return response.json
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
@@ -731,12 +734,13 @@ def admin_get_any_plan(plan_id: int):
         print(f"An unexpected error occurred: {err}")
 
 
-def update_plan(plan_id: int, plan_name: str, time_period: str, fees: int, num_resume_parse: str):
+def update_plan(plan_id: int, plan_name: str, time_period: str, fees: int, num_resume_parse: str, plan_details: str):
     data = {
         "plan_type_name": plan_name,
         "time_period": time_period,
         "fees": fees,
-        "num_resume_parse": num_resume_parse
+        "num_resume_parse": num_resume_parse,
+        "plan_details": plan_details
     }
     try:
         print("try")
