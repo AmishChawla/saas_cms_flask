@@ -83,7 +83,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <a type="button" class="btn btn-danger" href="{{ url_for('admin_delete_user', user_id=row.id) }}">Delete</a>
+                    <a type="button" class="btn btn-danger" href="{{ url_for('admin_trash_user', user_id=row.id) }}">Move to Trash</a>
                 </div>
             </div>
         </div>

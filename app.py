@@ -4,6 +4,8 @@ import os
 from io import StringIO, BytesIO
 import csv
 import ast
+
+import stripe as stripe
 from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from jinja2 import Environment, FileSystemLoader
@@ -178,6 +180,7 @@ def register():
 
     return render_template('register.html', form=form)
 
+
 @app.route("/user-dashboard")
 @login_required
 def user_dashboard():
@@ -232,6 +235,8 @@ def profile():
     company = result.get('company', {})
     role = result.get('role', '')
     profile_picture = f"{ROOT_URL}/{result['profile_picture']}"
+    current_plans = result.get('current_plans', [])
+    print(current_plans)
 
     if form.validate_on_submit():
         # Update user information
@@ -256,7 +261,7 @@ def profile():
     form.username.data = username
     form.email.data = email
 
-    return render_template('profile.html', username=username, form=form, company=company, role=role, profile_picture=profile_picture)
+    return render_template('profile.html', username=username, form=form, company=company, role=role, profile_picture=profile_picture, current_plans=current_plans)
 
 
 
@@ -359,13 +364,29 @@ def add_user():
     return render_template('admin_add_user.html', form=form)
 
 
-@app.route("/admin/delete-user/<user_id>", methods=['GET', 'POST'])
+@app.route("/admin/trash-user/<user_id>", methods=['GET', 'POST'])
 @login_required
-def admin_delete_user(user_id):
-    result = api_calls.admin_delete_user(access_token=current_user.id, user_id=user_id)
+def admin_trash_user(user_id):
+    result = api_calls.admin_trash_user(access_token=current_user.id, user_id=user_id)
     if (result.status_code == 200):
         print(result)
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('list_of_users'))
+
+@app.route("/admin/delete-user/<user_id>", methods=['GET', 'POST'])
+@login_required
+def admin_delete_user_permanently(user_id):
+    result = api_calls.admin_delete_user_permanently(access_token=current_user.id, user_id=user_id)
+    if (result.status_code == 200):
+        print(result)
+        return redirect(url_for('list_of_users'))
+
+@app.route("/admin/restore-user/<user_id>", methods=['GET', 'POST'])
+@login_required
+def admin_restore_user(user_id):
+    result = api_calls.admin_restore_user(access_token=current_user.id, user_id=user_id)
+    if (result.status_code == 200):
+        print(result)
+        return redirect(url_for('list_of_users'))
 
 
 @app.route("/admin/view-user-profile/<user_id>", methods=['GET', 'POST'])
@@ -688,7 +709,7 @@ def resume_history():
 @login_required
 def trash():
 
-    response = api_calls.trash(
+    response = api_calls.get_trash_users(
         current_user.id,
     )
 
@@ -817,9 +838,54 @@ def delete_plan(plan_id):
 @app.route("/pricing", methods=['GET', 'POST'])
 def user_view_plan():
     result = api_calls.get_all_plans()
-    return render_template('user_view_plan.html', result=result)
+    return render_template('pricing.html', result=result)
+
+############################################################ SUBSCRIPTION #############################################################
 
 
+@app.route('/payment/<plan_id>', methods=['GET', 'POST'])
+@login_required
+def payment(plan_id):
+    return render_template('payment.html', plan_id=plan_id)
+
+
+@app.route('/create-subscription/<plan_id>', methods=['GET','POST'])
+@login_required
+def create_subscription(plan_id):
+    stripe_token = request.form.get('stripeToken')
+    result = api_calls.start_subscription(plan_id=plan_id, stripe_token=stripe_token, access_token=current_user.id)
+
+    if result:
+        return render_template('payment_success.html')
+    else:
+        return render_template('payment_failure.html')
+
+
+@app.route('/cancel-subscription/<subscription_id>', methods=['GET','POST'])
+@login_required
+def cancel_subscription(subscription_id):
+    try:
+        result = api_calls.cancel_subscription(subscription_id=subscription_id)
+        if result:
+            return redirect(url_for('profile'))
+
+    except Exception as e:
+        print(e)
+
+
+
+
+@app.route('/resume-subscription/<subscription_id>', methods=['GET','POST'])
+@login_required
+def resume_subscription(subscription_id):
+    try:
+        result = api_calls.resume_subscription(subscription_id=subscription_id)
+        if result:
+
+            return redirect(url_for('profile'))
+
+    except Exception as e:
+        print(e)
 
 if __name__ == '__main__':
     app.run()

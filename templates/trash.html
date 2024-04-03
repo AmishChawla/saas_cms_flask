@@ -52,7 +52,7 @@
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ row.created_datetime.split('T')[0] }}&nbsp; &nbsp;{{ row.created_datetime.split('T')[1][:8] }} </td>
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> {{ row.status }} </td>
                 <td>
-    <a class="button button1" href="#">Restore</a>
+    <a class="button button1" href="{{ url_for('admin_restore_user', user_id=row.id) }}">Restore</a>
     <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ row.id }}">Delete</button>
 
     <!-- Modal for delete button -->
@@ -68,7 +68,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <a type="button" class="btn btn-danger" href="{{ url_for('admin_delete_user', user_id=row.id) }}">Delete</a>
+                    <a type="button" class="btn btn-danger" href="{{ url_for('admin_delete_user_permanently', user_id=row.id) }}">Delete</a>
                 </div>
             </div>
         </div>

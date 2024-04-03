@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment{% endblock %}
+
+{% block content %}
+
+    <style>
+        /* Custom styling for the payment form */
+        #payment-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Styles for the card element container */
+        #card-element {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        /* Styles for the form group */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        /* Styles for the form labels */
+        label {
+            font-weight: bold;
+        }
+
+        /* Styles for the form errors */
+        #card-errors {
+            color: #dc3545;
+            margin-top: 4px;
+        }
+
+        /* Styles for the submit button */
+        #submit {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #submit:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="payment-container">
+    <h1>Checkout</h1>
+    <form id="payment-form" action="{{ url_for('create_subscription', plan_id=plan_id) }}" method="post">
+        <div class="form-group">
+            <label for="card-element">
+                Credit or debit card
+            </label>
+            <div id="card-element">
+                <!-- A Stripe Element will be inserted here. -->
+            </div>
+
+            <!-- Used to display form errors. -->
+            <div id="card-errors" role="alert"></div>
+        </div>
+
+        <button id="submit">
+            Submit Payment
+        </button>
+    </form>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+        var stripe = Stripe('pk_test_51MkAgRFGpYP2fiL4X5B7RDyjlOQDMpGYXpZQMGz5OZlbuGDCpQJIU0MEeKl64PtMgeHPejkILkxBs4teNupWd0Js00ZOYcSQti');
+        var elements = stripe.elements();
+
+        // Create an instance of the card Element.
+        var card = elements.create('card');
+
+        // Add an instance of the card Element into the `card-element` div.
+        card.mount('#card-element');
+
+        // Handle real-time validation errors from the card Element.
+        card.addEventListener('change', function(event) {
+            var displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        // Directly access the form element
+        var form = document.querySelector('#payment-form');
+        console.log(form); // This should log the form element to the console
+
+        // Handle form submission
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            console.log('Form submission event triggered');
+
+            stripe.createToken(card).then(function(result) {
+                if (result.error) {
+                    // Inform the user if there was an error.
+                    var errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                } else {
+                    // Send the token to your server.
+                    stripeTokenHandler(result.token);
+                }
+            });
+        });
+
+        function stripeTokenHandler(token) {
+    // Insert the token ID into the form so it gets submitted to the server.
+    var form = document.getElementById('payment-form');
+    var newForm = document.createElement('form');
+    newForm.id = 'new-payment-form';
+    newForm.method = 'post';
+    // Set the URL for the form submission
+    // Replace 'your_action_url' with the actual URL
+    newForm.action = '{{ url_for('create_subscription', plan_id=plan_id) }}';
+    var hiddenInput = document.createElement('input');
+    hiddenInput.setAttribute('type', 'hidden');
+    hiddenInput.setAttribute('name', 'stripeToken');
+    hiddenInput.setAttribute('value', token.id);
+    newForm.appendChild(hiddenInput);
+
+    document.body.appendChild(newForm);
+
+// Submit the form
+    newForm.submit();
+}
+    });
+</script>
+
+    {% endblock %}

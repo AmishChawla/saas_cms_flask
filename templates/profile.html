@@ -9,9 +9,12 @@
 
 {% block content %}
 <style>
-    .custom-file-upload {
-    position: relative;
-    display: inline-block;
+.capitalize {
+    text-transform: capitalize;
+}
+.custom-file-upload {
+position: relative;
+display: inline-block;
 }
 
 .custom-file-upload-label {
@@ -25,6 +28,19 @@
 
 .custom-file-upload-label:hover {
     background-color: #45a049; /* Change the background color on hover */
+}
+.plan-details {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+.plan-details h5 {
+    margin-bottom: 15px;
+}
+.plan-details p {
+    margin-bottom: 10px;
 }
 </style>
 <div class="container mt-5">
@@ -98,10 +114,40 @@
                     <a href="{{ url_for('user_password_update',role=role)}}">Update Password</a>
                 </div>
 
+                <div class="mb-3">
+                    <h3 class="mb-3">Current Plans</h3>
+                    <div class="row" id="plansContainer">
+                         {% for plan in current_plans %}
+                    <div class="col-md-8 mb-4"> <!-- Adjusted col-md-8 instead of col-md-6 -->
+                        <div class="card border-0 shadow">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ plan.plan_name }}</h5>
+                                <p class="card-text">
+                                    <strong>Status:</strong> <span class="capitalize"> {{ plan.status }}</span><br>
+                                    {% if plan.cancel_at_period_end %}
+                                        <div class="alert alert-warning" role="alert">
+                                                Subscription ends after this billing cycle
+                                        </div>
+                                    {% endif %}
+                                    <strong>Next Billing Date:</strong> {{ plan.next_billing_date }}
+                                </p>
+                                {% if plan.cancel_at_period_end %}
+                                    <a href="{{ url_for('resume_subscription', subscription_id = plan.stripe_subscription_id) }}" class="btn btn-info">Resume Subscription</a>
+                                {% else %}
+                                    <a href="{{ url_for('cancel_subscription', subscription_id = plan.stripe_subscription_id) }}" class="btn btn-danger">Cancel Subscription</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+
 <script>
     // Add JavaScript to handle edit button clicks for username field
     document.getElementById('editUsername').addEventListener('click', function() {

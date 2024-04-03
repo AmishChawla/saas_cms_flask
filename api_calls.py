@@ -169,7 +169,41 @@ def add_user(username, email, password, role, access_token: str):
         print(f"An unexpected error occurred: {err}")
 
 
-def admin_delete_user(access_token: str, user_id: int):
+def admin_trash_user(access_token: str, user_id: int):
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    try:
+        response = requests.delete(constants.BASE_URL + f'/admin/trash-user/{user_id}', headers=headers)
+        print(response.text)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def admin_restore_user(access_token: str, user_id: int):
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    try:
+        response = requests.put(constants.BASE_URL + f'/admin/restore-user/{user_id}', headers=headers)
+        print(response.text)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def admin_delete_user_permanently(access_token: str, user_id: int):
     headers = {'Authorization': f'Bearer {access_token}'}
 
     try:
@@ -184,6 +218,8 @@ def admin_delete_user(access_token: str, user_id: int):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
+
 
 
 def admin_get_any_user(access_token: str, user_id: int):
@@ -510,10 +546,10 @@ def admin_get_all_companies():
 
 
 
-def trash(access_token: str):
+def get_trash_users(access_token: str):
     headers = {'Authorization': f'Bearer {access_token}'}
     try:
-        response = requests.get(constants.BASE_URL + '/admin/deleted-users', headers=headers)
+        response = requests.get(constants.BASE_URL + '/admin/trash-users', headers=headers)
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:
@@ -755,4 +791,58 @@ def update_plan(plan_id: int, plan_name: str, time_period: str, fees: int, num_r
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+##################################################### SUBSCRIPTION #################################################################
 
+def start_subscription(plan_id, stripe_token, access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    data = {
+        "plan_id": plan_id,
+        "stripe_token": stripe_token,
+    }
+    try:
+        print("try")
+        response = requests.post(constants.BASE_URL + f'/subscriptions/create-subscription',  params=data, headers=headers)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def cancel_subscription(subscription_id):
+
+    try:
+        print("try")
+        response = requests.post(constants.BASE_URL + f'/subscriptions/{subscription_id}/cancel')
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def resume_subscription(subscription_id):
+    try:
+        print("try")
+        response = requests.post(constants.BASE_URL + f'/subscriptions/{subscription_id}/resume')
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
