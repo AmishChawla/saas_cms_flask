@@ -1,7 +1,7 @@
 
-{% extends 'base.html' %}
+{% extends 'admin_base.html' %}
 
-{% block title %}Order History{% endblock %}
+{% block title %}Orders{% endblock %}
 
 {% block content %}
 <link href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" rel="stylesheet">
@@ -20,6 +20,7 @@
                                     <thead>
                                         <tr>
                                             <th> Sr. No. </th>
+                                            <th> User </th>
                                             <th> Plan </th>
                                             <th> Price </th>
                                             <th> Status </th>
@@ -32,6 +33,7 @@
                                         {% for data in purchase_data | reverse %}
                                             <tr>
                                                 <td class="py-1">{{ loop.index }}</td>
+                                                <td class="py-1">{{ data.user.username }}</td>
                                                 <td class="py-1">{{ data.plan.plan_type_name }}</td>
                                                 <td class="py-1">{{ data.plan.fees }}</td>
                                                 <td class="py-1">{{ data.status }}</td>

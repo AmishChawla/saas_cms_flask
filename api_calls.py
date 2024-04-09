@@ -864,3 +864,22 @@ def purchase_history(access_token):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
+
+def get_all_subscriptions(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    try:
+        print("try")
+        response = requests.get(constants.BASE_URL + f'/subscriptions/all-subscriptions', headers=headers)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+

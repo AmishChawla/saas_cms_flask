@@ -894,6 +894,14 @@ def get_purchase_history():
 
     return render_template('purchase_history.html', purchase_data=purchase_data)
 
+@app.route('/all-subscriptions', methods=['GET'])
+@login_required
+def get_all_subscriptions():
+    access_token = current_user.id
+    purchase_data = api_calls.get_all_subscriptions(access_token)
+
+    return render_template('all_subscription.html', purchase_data=purchase_data)
+
 
 if __name__ == '__main__':
     app.run()
