@@ -206,9 +206,9 @@
               </a>
             </li>
               <li class="nav-item sidenav">
-              <a class="nav-link {% if request.endpoint == 'user_view_plan' %}active{% endif %}" href="{{ url_for('user_view_plan') }}">
+              <a class="nav-link {% if request.endpoint == 'get_purchase_history' %}active{% endif %}" href="{{ url_for('get_purchase_history') }}">
                   <i class="mdi mdi-file-document-outline menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'user_view_plan' %}#202124 !important{% endif %};"></i>
-                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'user_view_plan' %}#202124 !important{% endif %};">Pricing</span>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'user_view_plan' %}#202124 !important{% endif %};">Purchase History</span>
 
               </a>
             </li>

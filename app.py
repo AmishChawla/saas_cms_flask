@@ -873,8 +873,6 @@ def cancel_subscription(subscription_id):
         print(e)
 
 
-
-
 @app.route('/resume-subscription/<subscription_id>', methods=['GET','POST'])
 @login_required
 def resume_subscription(subscription_id):
@@ -886,6 +884,16 @@ def resume_subscription(subscription_id):
 
     except Exception as e:
         print(e)
+
+
+@app.route('/purchase_history', methods=['GET'])
+@login_required
+def get_purchase_history():
+    access_token = current_user.id
+    purchase_data = api_calls.purchase_history(access_token)
+
+    return render_template('purchase_history.html', purchase_data=purchase_data)
+
 
 if __name__ == '__main__':
     app.run()

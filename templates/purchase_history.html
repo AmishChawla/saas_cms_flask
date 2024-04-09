@@ -1,0 +1,80 @@
+<!-- profile.html -->
+
+{% extends 'base.html' %}
+
+
+{% block title %}Purchase History{% endblock %}
+
+{% block content %}
+    <style>
+        #purchase-history .card {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        #purchase-history .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        #purchase-history .status-container {
+            display: inline-block;
+            padding: 5px 5px 5px 5px;
+            border-radius: 5px;
+            font-weight: bold;
+            width: 3.5rem;
+            height: 2.2rem;
+        }
+        #purchase-history .active {
+            background-color: green;
+            color: white;
+        }
+        #purchase-history .inactive {
+            background-color: red;
+            color: white;
+        }
+    </style>
+<div id="purchase-history">
+    <h4>Purchase History</h4>
+    {% if not purchase_data %}
+        <p style="text-align: center;">No Purchases yet</p>
+    {% else %}
+        {% for purchase in purchase_data %}
+        <div class="card">
+            <div class="card-header">
+                <h3>{{ purchase.plan.plan_type_name }}</h3>
+                <p>Price: ${{ purchase.plan.fees }}</p>
+            </div>
+            <p><strong>Start Date:</strong> <span class="start-date">{{ purchase.created_at }}</span></p>
+            {% if purchase.status == "active" %}
+            <div class="status-container active">
+                <p class="status">Active</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var startDates = document.querySelectorAll('.start-date');
+            startDates.forEach(function(dateElement) {
+                var date = new Date(dateElement.textContent);
+                var formattedDate = date.getDate() + ' ' + monthNames[date.getMonth()] + ' ' + date.getFullYear();
+                dateElement.textContent = formattedDate;
+            });
+        });
+
+        var monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+</script>
+
+{% endblock %}
+
+
