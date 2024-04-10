@@ -56,7 +56,16 @@
 
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
-<script>new DataTable('#subscriptionTable');</script>
+<script>
+    $(document).ready(function() {
+        var table = $('#subscriptionTable').DataTable({
+            "columnDefs": [
+                { "type": "date-eu", targets: [5] } // specify the column containing date-time data
+            ],
+            "order": [[5, 'desc']] // sorting by the 6th column (date of purchase) in descending order
+        });
+    });
+</script>
 {% endblock %}
 
 
