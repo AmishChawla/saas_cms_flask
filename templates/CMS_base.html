@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Admin Dashboard</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="/static/assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="/static/assets/vendors/css/vendor.bundle.base.css">
+
+
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <!-- endinject -->
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="/static/assets/css/style.css">
+
+    <!-- End layout styles -->
+    <link rel="shortcut icon" href="/static/assets/images/favicon.ico" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+    <link href="/static/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <style>
+      .button {
+        border: none;
+        border-radius : 10px;
+        color: white;
+        padding: 10px 15px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+        margin: 4px 2px;
+        cursor: pointer;
+      }
+
+      .button1 {background-color: #04AA6D;} /* Green */
+      .button2 {background-color: red;}
+      .btn-info {
+      border-radius : 10px;
+      }
+      .btn-info i {
+      margin-left: 5px;
+      }
+
+
+
+/* Style for the custom select container */
+.custom-select {
+    position: relative;
+    display: inline-block;
+
+}
+
+.sidebar{
+    width: 13rem;
+}
+
+ .sidenav a:hover {
+            background-color: #f1f1f1;
+            color: white; /* Optional: Change the text color to white for better contrast */
+            border-radius: 30px;
+            height:20px;
+
+        }
+
+.sidenav a.active {
+ background-color: #D3E3FD;
+ color: white;
+ border-radius: 30px;
+ height:20px;
+}
+
+
+
+        .sidebar .nav .nav-item .nav-link{
+        padding:0rem;
+        margin-top:0;
+        height:30px;
+        margin-left:5px;
+        }
+
+        .sidebar .nav .nav-item{
+        padding: 0rem;
+        }
+
+
+        .sidebar .nav .nav-item .nav-link i.menu-icon:before {
+    padding-top:5px;
+}
+
+    </style>
+
+
+      <link href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" rel="stylesheet">
+      <link href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.dataTables.min.css" rel="stylesheet">
+      <link href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css" rel="stylesheet">
+      <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css" rel="stylesheet">
+
+
+    <link href="/static/assets/images/favicon.png" rel="icon">
+  <link href="/static/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+  </head>
+  <body>
+    <div class="container-scroller">
+      <!-- partial:../../partials/_navbar.html -->
+      <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+        <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+          <a class="navbar-brand brand-logo" href="{{ url_for('index') }}" style="padding-right:20px;"><img src="/static/images/logo.png" alt="logo" style="width:20px;height:25px;"/><b style="margin-left:10px;">Resume Parser</b></a>
+          <a class="navbar-brand brand-logo-mini" style="padding-left:20px;" href="{{ url_for('index') }}"><img src="/static/images/logo.png" alt="logo" /></a>
+        </div>
+        <div class="navbar-menu-wrapper d-flex align-items-stretch" style="padding:5px;">
+             {% if request.endpoint != 'admin_login' %}
+                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                <span class="mdi mdi-menu"></span>
+                </button>
+
+
+          <ul class="navbar-nav navbar-nav-right">
+
+         <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="updatePasswordDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if current_user.profile_picture %}
+                 <img src="{{ current_user.profile_picture }}" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%;">
+            {% else %}
+                <img src="static/images/man.png" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%;">
+            {% endif %}
+        <span class="menu-title">{{ current_user.username }}</span>
+
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="updatePasswordDropdown" style="position:absolute;left:-50px" >
+         <li>
+            <a class="dropdown-item" href="{{ url_for('profile') }}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Edit Profile<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="{{ url_for('user_password_update')}}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Update Password <i class="mdi mdi-lock-reset menu-icon" style="margin-left:10px"></i></a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="{{ url_for('admin_logout') }}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Logout <i class="mdi mdi-logout menu-icon" style="margin-left:10px"></i></a>
+        </li>
+    </ul>
+</li>
+
+
+
+          </ul>
+          <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+            <span class="mdi mdi-menu"></span>
+          </button>
+            {% endif %}
+        </div>
+      </nav>
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        <!-- partial:../../partials/_sidebar.html -->
+          {% if request.endpoint != 'admin_login' %}
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+          <ul class="nav">
+
+           <li class="nav-item sidenav">
+ <a class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" href="{{ url_for('admin_dashboard') }}">
+      <i class="mdi mdi-home menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'admin_dashboard' %}#202124 !important{% endif %};"></i>
+    <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'admin_dashboard' %}#202124 !important{% endif %};">Dashboard</span>
+ </a>
+</li>
+            <li class="nav-item sidenav dropdown">
+        <a class="nav-link dropdown-toggle {% if request.endpoint == 'all_post' %}active{% endif %}" href="#" id="postsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="mdi mdi-post menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'all_post' %}#202124 !important{% endif %};"></i>
+            <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'all_post' %}#202124 !important{% endif %};">Posts</span>
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="postsDropdown">
+            <li><a class="dropdown-item" href="#">Option 1</a></li>
+            <li><a class="dropdown-item" href="#">Option 2</a></li>
+            <li><a class="dropdown-item" href="#">Option 3</a></li>
+        </ul>
+    </li>
+              <li class="nav-item sidenav">
+              <a class="nav-link {% if request.endpoint == 'media' %}active{% endif %}" href="{{ url_for('media') }}">
+                  <i class="mdi mdi-folder-multiple-image menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'media' %}#202124 !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw;color: {% if request.endpoint == 'media' %}#202124 !important{% endif %};">Media</span>
+              </a>
+            </li>
+                   <li class="nav-item sidenav">
+              <a class="nav-link" href="#">
+                  <i class="mdi mdi-content-copy menu-icon" style="margin-left:5px; margin-right:5px;"></i>
+                <span class="menu-title" style="margin-left:1.5vw;">Pages</span>
+              </a>
+            </li>
+             <li class="nav-item sidenav">
+              <a class="nav-link {% if request.endpoint == 'comment' %}active{% endif %}" href="{{ url_for('comment') }}">
+                  <i class="mdi mdi-comment-outline menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'comment' %}#202124 !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'comment' %}#202124 !important{% endif %};">Comments</span>
+              </a>
+            </li>
+
+              <li class="nav-item sidenav">
+              <a class="nav-link" href="#">
+                  <i class="mdi mdi-list-box menu-icon" style="margin-left:5px; margin-right:5px;"></i>
+                <span class="menu-title" style="margin-left:1.5vw;">Feedback</span>
+              </a>
+            </li>
+
+          </ul>
+        </nav>
+          {% endif %}
+        <!-- partial -->
+        <div class="main-panel" style="{% if request.endpoint == 'admin_login' %} width: 100%;  {% endif %}">
+          <div class="content-wrapper" style="background-color: #ffffff">
+
+            {% block content %} {% endblock %}
+          </div>
+          <!-- content-wrapper ends -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+
+
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/searchpanes/2.2.0/js/dataTables.searchPanes.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script>
+
+$(document).ready(function() {
+  $('#userTable').DataTable({
+    searchPanes: {
+      panes: [
+        {
+          header: 'Custom',
+          options: [
+            {
+              label: 'Last Week',
+              value: function(rowData, rowIdx) {
+                var currentDate = new Date();
+                var lastWeekDate = new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000);
+                var creationDateTime = parseDateTime(rowData[6]);
+                console.log(creationDateTime);
+                return creationDateTime >= lastWeekDate && creationDateTime <= currentDate;
+              },
+              className: 'last-week'
+            },
+            {
+              label: 'Last Month',
+              value: function(rowData, rowIdx) {
+                var currentDate = new Date();
+                var lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, currentDate.getDate());
+                var creationDateTime = parseDateTime(rowData[6]);
+                console.log(creationDateTime);
+                return creationDateTime >= lastMonthDate && creationDateTime <= currentDate;
+              },
+              className: 'last-month'
+            },
+            {
+              label: 'Last Year',
+              value: function(rowData, rowIdx) {
+                var currentDate = new Date();
+                var lastYearDate = new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate());
+                var creationDateTime = parseDateTime(rowData[6]);
+                console.log(creationDateTime);
+                return creationDateTime >= lastYearDate && creationDateTime <= currentDate;
+              },
+              className: 'last-year'
+            }
+          ],
+          dtOpts: {
+            searching: false,
+            order: [[1, 'desc']]
+          }
+        }
+      ]
+    },
+    dom: 'Plfrtip'
+  });
+
+  // Trigger click event on the "Collapse All" button
+  $('.dtsp-collapseAll').click();
+});
+
+function parseDateTime(dateTimeString) {
+    // Remove non-breaking spaces
+    dateTimeString = dateTimeString.replace(/&nbsp;/g, ' ');
+
+    // Split date and time parts
+    var parts = dateTimeString.split(' ');
+
+    var dateParts = parts[0].split('-');
+    var year = parseInt(dateParts[0], 10);
+    var month = parseInt(dateParts[1], 10) - 1; // Month is zero-indexed
+    var day = parseInt(dateParts[2], 10);
+
+    var hours, minutes, seconds;
+
+    if (parts[1]) {
+        var timeParts = parts[1].split(':');
+        hours = parseInt(timeParts[0], 10);
+        minutes = parseInt(timeParts[1], 10);
+        seconds = parseInt(timeParts[2], 10);
+    } else {
+        // Set default values for time components
+        hours = 0;
+        minutes = 0;
+        seconds = 0;
+    }
+
+    // Create a Date object
+    return new Date(year, month, day, hours, minutes, seconds);
+}
+
+function redirectToPage(pageUrl) {
+    console.log(pageUrl);
+    window.location.href = pageUrl;
+}
+</script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/assets/js/off-canvas.js"></script>
+    <script src="/static/assets/js/hoverable-collapse.js"></script>
+    <script src="/static/assets/js/misc.js"></script>
+    <script>
+    // jQuery script to handle select all checkbox
+    $(document).ready(function () {
+        $('#selectAllCheckbox').click(function () {
+            $('.select-checkbox').prop('checked', $(this).prop('checked'));
+        });
+    });
+</script>
+
+
+  </body>
+
+<footer id="footer" class="py-5 bg-light" style="margin-top: 25vh;width:100%">
+
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-lg-3 col-md-6 footer-contact">
+            <h3>Resume Parser</h3>
+            <p>
+              Shalimar Bagh  <br>
+               New Delhi 110088<br>
+              India <br><br>
+              <strong>Phone:</strong> 9810484755<br>
+              <strong>Email:</strong> info@aynsoft.com<br>
+            </p>
+          </div>
+
+          <div class="col-lg-3 col-md-6 footer-links">
+        <h5>Section</h5>
+        <ul class="nav flex-column">
+          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Home</a></li>
+          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Features</a></li>
+          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Pricing</a></li>
+          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">FAQs</a></li>
+          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">About</a></li>
+        </ul>
+      </div>
+
+         <div class="col-lg-3 col-md-6 footer-links">
+        <h5>Section</h5>
+        <ul class="nav flex-column">
+          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Home</a></li>
+          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Features</a></li>
+          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Pricing</a></li>
+          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">FAQs</a></li>
+          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">About</a></li>
+        </ul>
+      </div>
+
+          <div class="col-lg-3 col-md-6 footer-links">
+            <h4>Our Social Networks</h4>
+            <p>Cras fermentum odio eu feugiat lide par naso tierra videa magna derita valies</p>
+            <div class="social-links mt-3">
+              <a href="#" class="twitter"><i class="bx bxl-twitter bx-md"></i></a>
+              <a href="#" class="facebook"><i class="bx bxl-facebook bx-md"></i></a>
+              <a href="#" class="instagram"><i class="bx bxl-instagram bx-md"></i></a>
+              <a href="#" class="google-plus"><i class="bx bxl-skype bx-md"></i></a>
+              <a href="#" class="linkedin"><i class="bx bxl-linkedin bx-md"></i></a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+  </footer>
+</html>

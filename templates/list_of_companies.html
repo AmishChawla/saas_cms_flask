@@ -13,7 +13,7 @@
  <div style="display: flex; justify-content: space-between;">
                                 <h4 class="card-title">Companies</h4>
 
-                                      <a class="btn btn-info" href="{{ url_for('company_register') }}">
+                                      <a class="btn btn-info" href="{{ url_for('company_register') }}" style="padding: 6px 30px 6px 30px;">
                 <span class="menu-title">Add Company</span>
               </a>
                           </div>
@@ -36,7 +36,7 @@
                                             <tr style="max-height: 100px; overflow-y: auto;" onclick="window.location.href='{{ url_for('company_details', company_id=data.id) }}'">
                                                 <td class="py-1">{{ loop.index }}</td>
                                                 <td class="py-1">{{ data.id }}</td>
-                                                <td class="py-1">{{ data.name }}</td>
+                                                <td class="py-1"> <a href="#"> {{ data.name }} </a> </td>
                                                 <td class="py-1">{{ data.location }}</td>
                                                 <td class="py-1">{{ data.created_at.split('T')[0] }}&nbsp; &nbsp;{{ data.created_at.split('T')[1][:8] }}</td>
                                                 <td style="display: flex">

@@ -819,7 +819,23 @@ def user_view_plan():
     result = api_calls.get_all_plans()
     return render_template('user_view_plan.html', result=result)
 
+@app.route('/admin/posts')
+@login_required
+def all_post():
 
+    return render_template('all_posts.html', result=result)
+
+@app.route('/admin/media')
+@login_required
+def media():
+
+    return render_template('media.html', result=result)
+
+@app.route('/admin/comment')
+@login_required
+def comment():
+
+    return render_template('comments.html', result=result)
 
 if __name__ == '__main__':
     app.run()

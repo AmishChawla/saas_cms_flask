@@ -17,7 +17,7 @@
                       <div style="display:flex; justify-content:space-between;">
                     <h4 class="card-title">User Details</h4>
                       <div style="display: flex; justify-content: space-between;">
-                                      <a class="btn btn-info" href="{{ url_for('add_user') }}">
+                                      <a class="btn btn-info" href="{{ url_for('add_user') }}" style="padding: 6px 30px 6px 30px;">
                 <span class="menu-title">Add user</span>
               </a>
                           </div>
@@ -58,10 +58,12 @@
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> {{ row.role }} </td>
                 <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
                     {% if row["company"] %}
-                        {{ row["company"][0]["name"] }}
-                    {% else %}
+                       <a href="{{ url_for('company_details', company_id=row['company'][0]['id']) }}"> {{ row["company"][0]["name"] }}
+                    </a>
+                           {% else %}
                         Not Registered
                     {% endif %}
+
                 </td>
 
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ row.created_datetime.split('T')[0] }}&nbsp; &nbsp;{{ row.created_datetime.split('T')[1][:8] }} </td>
