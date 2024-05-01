@@ -6,18 +6,22 @@ import csv
 import ast
 
 import stripe as stripe
-from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file
+from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file, jsonify
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from jinja2 import Environment, FileSystemLoader
 from werkzeug.utils import secure_filename
+
+import constants
 import forms
 import api_calls
 from constants import ROOT_URL
+import google.generativeai as genai
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+
 
 uploads_folder = 'uploads'
 ########################################################################################################################
@@ -33,6 +37,9 @@ uploads_folder = 'uploads'
 #########################################################################################################################
 password_reset_token = ""
 
+####################### GEMINI MODEL CONFIG #########################
+genai.configure(api_key=constants.GEMINI_APIKEY)
+model = genai.GenerativeModel('gemini-pro')
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -901,6 +908,33 @@ def get_all_subscriptions():
     purchase_data = api_calls.get_all_subscriptions(access_token)
 
     return render_template('all_subscription.html', purchase_data=purchase_data)
+
+
+################################################ CHATBOT #########################################################
+
+@app.route('/chatbot')
+def chatbot():
+    return render_template('chatbot.html')
+
+
+# @app.route('/send_message', methods=['POST'])
+# def send_message():
+#     user_input = request.form['user_input']
+#     print(user_input)
+#     bot_response = model.generate_content(user_input)
+#     print(bot_response.text)
+#     return redirect(url_for('chatbot', bot_response=bot_response.text))
+
+@app.route('/send_message', methods=['POST'])
+def send_message():
+    user_input = request.form['user_input']
+    print(user_input)
+    bot_response = model.generate_content(user_input)
+    print(bot_response.text)
+    # Process user input here or send it to your chatbot backend
+    # For simplicity, let's just respond with a dummy message
+
+    return jsonify({'bot_response': bot_response.text})
 
 
 if __name__ == '__main__':

@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% block title %}Chat{% endblock %}
+{% block content %}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  .chat-container {
+      max-width: 1000px;
+      margin: 50px auto;
+      border-radius: 5px;
+      overflow: hidden;
+
+    }
+  .chat-header {
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px;
+      font-size: 18px;
+    }
+  .chat-body {
+      padding: 10px;
+      height: 400px;
+      max-height: 800px;
+      overflow-y: scroll;
+      font-size: 14px;
+    }
+  .message {
+      margin-bottom: 10px;
+    }
+  .message-bot {
+      background-color: #e9ecef;
+      border-radius: 10px;
+      padding: 5px 10px;
+      font-size: 14px;
+    }
+  .message-user {
+      background-color: #254657;
+      color: #fff;
+      border-radius: 10px;
+      padding: 5px 10px;
+      text-align: right;
+      font-size: 14px;
+    }
+  .input-container {
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-top: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+    }
+  .input-container input[type="text"] {
+      flex-grow: 1;
+      border-radius: 20px;
+      padding: 10px;
+      border: none;
+      outline: none;
+      font-size: 14px;
+    }
+  .input-container button {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background-color: #254657;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+      border: 2px solid #254657;
+      transition: background-color 0.3s ease;
+    }
+  .input-container button:hover {
+      background-color: #254657;
+    }
+    @media (max-width: 768px) {
+    .chat-container {
+        max-width: 100%;
+      }
+    .chat-header,.chat-body,.message-bot,.message-user,.input-container input[type="text"],.input-container button {
+        font-size: 12px;
+      }
+    }
+</style>
+</head>
+<body>
+ <div class="page-header"></div>
+                <div class="row">
+                    <div class="col-lg-12 grid-margin stretch-card">
+                        <div class="card" style="overflow-x:auto;">
+                            <div class="card-body" style="padding: 2rem;">
+ <div style="display: flex; justify-content: space-between;">
+                                  <h4 class="card-title">Chat</h4>
+     <div class="container">
+
+     <div class="chat-container">
+
+      <div class="chat-body" id="chat-body">
+        <div class="message message-bot">
+          Hello! How can I assist you today?
+        </div>
+      </div>
+      <div class="input-container">
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button onclick="sendMessage()">&#10148;</button>
+      </div>
+         </div>
+                            </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+      </div>
+
+  <script>
+function sendMessage() {
+  var userInput = document.getElementById("user-input").value;
+  if (userInput.trim() === "") return;
+  var chatBody = document.getElementById("chat-body");
+  var userMessageDiv = document.createElement("div");
+  userMessageDiv.classList.add("message", "message-user");
+  userMessageDiv.innerText = userInput;
+  chatBody.appendChild(userMessageDiv);
+  // Send user input to server using AJAX
+  fetch('/send_message', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: 'user_input=' + userInput
+  })
+ .then(response => response.json())
+ .then(data => {
+    // Convert Markdown to HTML using marked
+    var botMessageDiv = document.createElement("div");
+    botMessageDiv.classList.add("message", "message-bot");
+    botMessageDiv.innerHTML = data.bot_response; // Convert Markdown to HTML
+    chatBody.appendChild(botMessageDiv);
+    chatBody.scrollTop = chatBody.scrollHeight;
+  });
+  document.getElementById("user-input").value = "";
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+     document.getElementById("user-input").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault(); // Prevent form submission if this is inside a form
+        sendMessage();
+      }
+    });
+  </script>
+
+{% endblock %}
+
