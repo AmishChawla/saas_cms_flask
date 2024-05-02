@@ -36,45 +36,68 @@
     <div class="loader-spinner"></div>
 </div>
 
-    <div class="container mt-5">
-        <h1 class="mb-4">Upload Resume Files</h1>
+<div class="container mt-5">
+    <h1 class="mb-4">Upload Resume Files</h1>
 
-        <form method="POST" action="{{ url_for('upload_pdf') }}" enctype="multipart/form-data">
-    {{ form.hidden_tag() }}
+    <form method="POST" action="{{ url_for('upload_pdf') }}" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
 
-            <div class="mb-3">
-                <label for="files" class="form-label">Select PDF Files:</label>
-                {{ form.files.label }}
-                <input type="file" class="form-control" name="files" multiple>
-                            {% if form.errors %}
-            <div class="text-danger">{{ form.errors['files'][0] }}</div>
+        <div class="mb-3">
+            <label for="files" class="form-label">Select PDF Files:</label>
+            {{ form.files.label }}
+            <input type="file" class="form-control" name="files" multiple>
+            {% if form.errors %}
+                <div class="text-danger">{{ form.errors['files'][0] }}</div>
             {% endif %}
-            </div>
-            <button type="submit" class="btn btn-dark">Upload</button>
-        </form>
+        </div>
+        <button type="submit" class="btn btn-dark">Upload</button>
+    </form>
 
-    </div>
+    {% if form.files.data %}
+        <div class="mt-4">
+            <h5>Uploaded Files:</h5>
+            <ul>
+                {% for file in form.files.data %}
+                    <li>{{ file.filename }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</div>
 <br>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        var form = document.querySelector('form');
-        var loader = document.getElementById('loader');
+        var fileInput = document.querySelector('input[type="file"]');
+        var fileNamesContainer = document.createElement('div');
+        fileNamesContainer.id = 'file-names-container';
+        fileNamesContainer.style.marginTop = '20px';
 
-        form.addEventListener('submit', function (event) {
-            // Show the loader when the form is submitted
-            loader.style.display = 'flex';
+        fileInput.addEventListener('change', function () {
+            // Clear any previous file names
+            fileNamesContainer.innerHTML = '';
 
-            // Optionally, you can disable the submit button to prevent multiple submissions
-            // form.querySelector('button[type="submit"]').setAttribute('disabled', 'disabled');
+            // Read and display the names of the selected files
+            var files = fileInput.files;
+            for (var i = 0; i < files.length; i++) {
+                var listItem = document.createElement('li');
+                listItem.textContent = files[i].name;
+                fileNamesContainer.appendChild(listItem);
+            }
+
+            // Append the file names container to the form
+            var form = fileInput.closest('form');
+            form.parentNode.insertBefore(fileNamesContainer, form.nextSibling);
         });
 
         // You can use this code to hide the loader when the page is successfully redirected
         // Assuming you're redirecting using window.location.href or a similar method
+        var loader = document.getElementById('loader');
         window.addEventListener('load', function () {
             loader.style.display = 'none';
         });
     });
 </script>
+
 
 
 {% endblock %}

@@ -98,6 +98,8 @@
     padding-top:5px;
 }
 
+
+
     </style>
 
 
@@ -176,12 +178,12 @@
 </li>
             <li class="nav-item sidenav dropdown">
         <a class="nav-link dropdown-toggle {% if request.endpoint == 'all_post' %}active{% endif %}" href="#" id="postsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="mdi mdi-post menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'all_post' %}#202124 !important{% endif %};"></i>
+            <i class="mdi mdi-pin menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'all_post' %}#202124 !important{% endif %};"></i>
             <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'all_post' %}#202124 !important{% endif %};">Posts</span>
         </a>
         <ul class="dropdown-menu" aria-labelledby="postsDropdown">
-            <li><a class="dropdown-item" href="#">Option 1</a></li>
-            <li><a class="dropdown-item" href="#">Option 2</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('all_post') }}">All Posts</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('view_post') }}">View Posts</a></li>
             <li><a class="dropdown-item" href="#">Option 3</a></li>
         </ul>
     </li>
@@ -206,7 +208,7 @@
 
               <li class="nav-item sidenav">
               <a class="nav-link" href="#">
-                  <i class="mdi mdi-list-box menu-icon" style="margin-left:5px; margin-right:5px;"></i>
+                  <i class="mdi mdi-view-list menu-icon" style="margin-left:5px; margin-right:5px;"></i>
                 <span class="menu-title" style="margin-left:1.5vw;">Feedback</span>
               </a>
             </li>
@@ -327,6 +329,7 @@ function redirectToPage(pageUrl) {
     console.log(pageUrl);
     window.location.href = pageUrl;
 }
+
 </script>
 
 

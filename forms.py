@@ -180,3 +180,9 @@ class AddPlan(FlaskForm):
     num_resume_parsing = StringField('Number of Resume Parsings', validators=[Optional()])
     plan_details = TextAreaField('Plan Details', render_kw={'rows': 30, 'cols': 30, 'placeholder': 'Enter plan details here...'})
     submit = SubmitField('Add Plan')
+
+
+class AddPost(FlaskForm):
+    title = StringField('Post title', validators=[validators.DataRequired()])
+    content = TextAreaField('Content', render_kw={'rows': 30, 'cols': 30, 'placeholder': 'Enter Content here...'})
+    submit = SubmitField('Add Post')

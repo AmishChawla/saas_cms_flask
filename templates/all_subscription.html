@@ -1,0 +1,71 @@
+
+{% extends 'admin_base.html' %}
+
+{% block title %}Orders{% endblock %}
+
+{% block content %}
+<link href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" rel="stylesheet">
+            <div class="page-header"></div>
+            {% if purchase_data %}
+                <div class="row">
+                    <div class="col-lg-12 grid-margin stretch-card">
+                        <div class="card" style="overflow-x:auto;">
+                            <div class="card-body" style="padding: 2rem;">
+ <div style="display: flex; justify-content: space-between;">
+                                <h4 class="card-title">Order History</h4>
+                          </div>
+                                <br>
+                                <br>
+                                <table id="subscriptionTable" class="display" style="width:100%; ">
+                                    <thead>
+                                        <tr>
+                                            <th> Sr. No. </th>
+                                            <th> User </th>
+                                            <th> Plan </th>
+                                            <th> Price </th>
+                                            <th> Status </th>
+                                            <th> Date of Purchase </th>
+
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for data in purchase_data | reverse %}
+                                            <tr>
+                                                <td class="py-1">{{ loop.index }}</td>
+                                                <td class="py-1">{{ data.user.username }}</td>
+                                                <td class="py-1">{{ data.plan.plan_type_name }}</td>
+                                                <td class="py-1">{{ data.plan.fees }}</td>
+                                                <td class="py-1">{{ data.status }}</td>
+                                                <td class="py-1">{{ data.created_at.split('T')[0] }}&nbsp; &nbsp;{{ data.created_at.split('T')[1][:8] }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <br>
+            {% else %}
+                <div class="d-flex justify-content-center align-items-center" style="height: 50vh;">
+                    <p>No Orders yet</p>
+                </div>
+            {% endif %}
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+<script>
+    $(document).ready(function() {
+        var table = $('#subscriptionTable').DataTable({
+            "columnDefs": [
+                { "type": "date-eu", targets: [5] } // specify the column containing date-time data
+            ],
+            "order": [[5, 'desc']] // sorting by the 6th column (date of purchase) in descending order
+        });
+    });
+</script>
+{% endblock %}
+
+
