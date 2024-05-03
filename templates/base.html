@@ -212,6 +212,13 @@
 
               </a>
             </li>
+              <li class="nav-item sidenav">
+              <a class="nav-link {% if request.endpoint == 'chatbot' %}active{% endif %}" href="{{ url_for('chatbot') }}">
+                  <i class="mdi mdi-chat menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'chatbot' %}#202124 !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'chatbot' %}#202124 !important{% endif %};">Chat</span>
+
+              </a>
+            </li>
 
           </ul>
         </nav>
