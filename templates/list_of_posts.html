@@ -11,7 +11,7 @@
                     <!-- Post preview-->
                     {% for data in result %}
                     <div class="post-preview">
-                        <a href="#">
+                        <a href="{{ url_for('get_post', post_id=data.id) }}">
                             <h3 class="post-title">{{ data.title }}</h3>
 
                         </a>

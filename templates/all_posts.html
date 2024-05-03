@@ -20,9 +20,8 @@
               <tr>
                 <th>Sr. No.</th>
                 <th>Post ID</th>
-                <th>User Id</th>
+                <th>Author</th>
                 <th>Title</th>
-                <th>Content</th>
                 <th>Created Date</th>
                 <th>Action</th>
               </tr>
@@ -32,12 +31,11 @@
               <tr style="max-height: 100px; overflow-y: auto;">
                 <td class="py-1">{{ loop.index }}</td>
                 <td class="py-1">{{ data.id }}</td>
-                <td class="py-1">{{ data.user_id }}</td>
-                <td class="py-1"><a href="#">{{ data.title }}</a></td>
-                <td class="py-1">{{ data.content }}</td>
+                <td class="py-1">{{ data.author_name }}</td>
+                <td class="py-1"><a href="{{ url_for('get_post', post_id=data.id) }}">{{ data.title }}</a></td>
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
-                  <a class="button btn-info" href="#"><i class="mdi mdi-comment-outline menu-icon"></i></a>
+
                   <a class="button button1" href="#">Edit</a>
                   <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}">Delete</button>
 
