@@ -4,7 +4,7 @@
     {% extends 'admin_base.html' %}
 {% endif %}
 
-{% block title %}Register Company{% endblock %}
+{% block title %}Add Post{% endblock %}
 
 {% block content %}
     <div class="container mt-5">
@@ -13,7 +13,7 @@
                 <div class="card border-0">
                     <!-- Add a card header "Register" -->
                     <div class="card-header bg-white text-black text-center">
-                        <h2>Register Company</h2>
+                        <h2>Edit Post</h2>
                     </div>
 
                     <div class="card-body">
@@ -29,19 +29,21 @@
                             {% endif %}
                         {% endwith %}
 
-                        <form method="post" action="{{ url_for('company_register') }}">
+                        <form method="post" action="{{ url_for('admin_edit_post', post_id=post_id) }}">
                             {{ form.hidden_tag() }}
 
                             <div class="mb-3">
-                                <label for="name" class="form-label visually-hidden">Company Name:</label>
-                                {{ form.name(class="form-control", placeholder="Company Name", required=True) }}
+                                {{ form.title(class="form-control", placeholder="Title", required=True) }}
                             </div>
+
+<!--                            <div class="mb-3">-->
+<!--                                {{ form.content(class="form-control", placeholder="Content", required=True) }}-->
+<!--                            </div>-->
 
                             <div class="mb-3">
-                                <label for="email" class="form-label visually-hidden">Location:</label>
-                                {{ form.location(class="form-control", placeholder="Location", required=True) }}
+                                {{ form.content.label }}
+                                {{ form.content(class="ckeditor", placeholder="Write details about the post.") }}
                             </div>
-
 
                             <div class="mb-3 text-center">
                                 {{ form.submit(class="btn btn-dark btn-lg") }}
@@ -52,4 +54,10 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.ckeditor.com/4.16.2/standard-all/ckeditor.js"></script>
+
+<script>
+    CKEDITOR.replace('plan_details');
+</script>
+
 {% endblock %}

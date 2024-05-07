@@ -1,6 +1,10 @@
-{% extends 'CMS_base.html' %}
+{% if current_user.role == "user" %}
+    {% extends 'base.html' %}
+{% else %}
+    {% extends 'admin_base.html' %}
+{% endif %}
 
-{% block title %}List of users{% endblock %}
+{% block title %}List of posts{% endblock %}
 
 {% block content %}
         <!-- Page Header-->

@@ -209,6 +209,44 @@
                 <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'setting' %}#202124 !important{% endif %};">Settings</span>
               </a>
             </li>
+
+              <li class="nav-item sidenav">
+    <a class="nav-link {% if request.endpoint == 'all_post' or request.endpoint == 'media' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' %}active{% endif %}" href="{{ url_for('all_post') }}">
+        <i class="mdi mdi-table-of-contents menu-icon" style="margin-left:5px; margin-right:5px;  color: {% if request.endpoint == 'all_post' or request.endpoint == 'media' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' %}#202124 !important{% endif %};"></i>
+        <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'all_post' or request.endpoint == 'media' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' %}#202124 !important{% endif %};">CMS</span>
+    </a>
+</li>
+
+
+              {% if request.endpoint == 'all_post' or request.endpoint == 'view_post' or request.endpoint == 'get_post' or request.endpoint == 'media' %}
+              <li class="nav-item sidenav">
+              <a class="nav-link" style="background-color: {% if request.endpoint == 'all_post' %}#E7F2FA !important{% endif %}; border-radius: 20px;" href="{{ url_for('all_post') }}">
+                   <i class="mdi mdi-pin menu-icon" style="margin-left:5px; margin-right:5px;  color: {% if request.endpoint == 'all_post' or request.endpoint == 'view_post' or request.endpoint == 'get_post' %}#202124 !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw;  color: {% if request.endpoint == 'all_post'  or request.endpoint == 'view_post' or request.endpoint == 'get_post' %}#202124 !important{% endif %};">Posts</span>
+              </a>
+            </li>
+              {% if request.endpoint == 'all_post'  or request.endpoint == 'view_post'  or request.endpoint == 'get_post' %}
+              <li class="nav-item sidenav">
+              <a class="nav-link"  style="background-color: {% if request.endpoint == 'view_post'  or request.endpoint == 'get_post' %}#E7F2FA !important{% endif %}; border-radius: 20px;" href="{{ url_for('view_post') }}">
+                   <i class="mdi mdi-pin menu-icon" style="margin-left:5px; margin-right:5px;  color: {% if request.endpoint == 'all_post' or request.endpoint == 'view_post' or request.endpoint == 'get_post' %}#202124 !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'all_post' or request.endpoint == 'view_post' or request.endpoint == 'get_post' %}#202124 !important{% endif %};">View Posts</span>
+              </a>
+            </li>
+                {% endif %}
+              <li class="nav-item sidenav">
+              <a class="nav-link" style="background-color: {% if request.endpoint == 'media' %}#E7F2FA !important{% endif %}; border-radius: 20px;" href="{{ url_for('media') }}">
+                  <i class="mdi mdi-folder-multiple-image menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'media' %}#202124 !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw;color: {% if request.endpoint == 'media' %}#202124 !important{% endif %};">Media</span>
+              </a>
+            </li>
+                   <li class="nav-item sidenav">
+              <a class="nav-link"  href="#">
+                  <i class="mdi mdi-content-copy menu-icon" style="margin-left:5px; margin-right:5px;"></i>
+                <span class="menu-title" style="margin-left:1.5vw;">Pages</span>
+              </a>
+            </li>
+              {% endif %}
+
              <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'services' %}active{% endif %}" href="{{ url_for('services') }}">
                 <i class="mdi mdi-shape-outline menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'services' %}#202124 !important{% endif %};"></i>
@@ -238,6 +276,7 @@
     </div>
     <!-- container-scroller -->
     <!-- plugins:js -->
+
 
 
 

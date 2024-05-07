@@ -186,3 +186,9 @@ class AddPost(FlaskForm):
     title = StringField('Post title', validators=[validators.DataRequired()])
     content = TextAreaField('Content', render_kw={'rows': 30, 'cols': 30, 'placeholder': 'Enter Content here...'})
     submit = SubmitField('Add Post')
+
+
+class AdminUpdatePost(FlaskForm):
+    title = StringField('Post title', validators=[validators.DataRequired()])
+    content = TextAreaField('Content', render_kw={'rows': 30, 'cols': 30, 'placeholder': 'Enter Content here...'})
+    submit = SubmitField('Update Post')

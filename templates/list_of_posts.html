@@ -1,11 +1,22 @@
-{% extends 'CMS_base.html' %}
+{% if current_user.role == "user" %}
+    {% extends 'base.html' %}
+{% else %}
+    {% extends 'admin_base.html' %}
+{% endif %}
 
-{% block title %}List of users{% endblock %}
+{% block title %}List of posts{% endblock %}
 
 {% block content %}
         <!-- Main Content-->
         <div class="container px-4 px-lg-5">
-            <h2>Posts</h2>
+            {% if current_user.role == "user" %}
+            <div style="display: flex; justify-content: space-between;">
+                <h2>Posts</h2>
+                <a class="btn btn-info" href="{{ url_for('add_post')}}" style="padding: 6px 30px 6px 30px;">
+                <span class="menu-title">Add new post</span>
+              </a>
+                          </div>
+            {% endif %}
             <div class="row gx-4 gx-lg-5 justify-content-center">
                 <div class="col-md-10 col-lg-8 col-xl-7">
                     <!-- Post preview-->

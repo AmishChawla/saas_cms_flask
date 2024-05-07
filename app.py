@@ -866,7 +866,7 @@ def admin_delete_post(post_id):
     if result.status_code == 200:
         return redirect(url_for('all_post'))
 
-@app.route('/admin/plans/add-post', methods=['GET', 'POST'])
+@app.route('/posts/add-post', methods=['GET', 'POST'])
 def add_post():
     form = forms.AddPost()
     if form.validate_on_submit():
@@ -876,14 +876,45 @@ def add_post():
         result = api_calls.create_post(title=title, content=content, access_token=current_user.id)
         if result:
             print("Post created successfully")
-            return redirect(url_for('all_post'))
+            if current_user.role == 'user':
+                return redirect(url_for('view_post'))
+            else:
+                return redirect(url_for('all_post'))
+        else:
+            print("Failed to create post")
+    else:
+        print("Form validation failed")
+        print(form.errors)
+    if current_user.role == 'user':
+        for service in current_user.services:
+            if isinstance(service, dict) and service.get('name') == 'CMS':
+                return render_template('add_post.html', form=form)
+        return redirect(url_for('user_view_plan'))
+    else:
+        return render_template('add_post.html', form=form)
+
+
+@app.route('/posts/edit-post/<post_id>', methods=['GET', 'POST'])
+def admin_edit_post(post_id):
+    form = forms.AdminUpdatePost()
+    if form.validate_on_submit():
+        title = form.title.data
+        content = form.content.data
+        print(form.content.data)
+        result = api_calls.admin_update_post(post_id=post_id, title=title, content=content, access_token=current_user.id)
+        if result:
+            print("Post created successfully")
+            if current_user.role == 'user':
+                return redirect(url_for('view_post'))
+            else:
+                return redirect(url_for('all_post'))
         else:
             print("Failed to create post")
     else:
         print("Form validation failed")
         print(form.errors)
 
-    return render_template('add_post.html', form=form)
+    return render_template('edit_post_form.html', form=form, post_id=post_id)
 
 ############################################################ SUBSCRIPTION #############################################################
 @app.route('/payment/<plan_id>', methods=['GET', 'POST'])
