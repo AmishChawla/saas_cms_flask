@@ -1,4 +1,4 @@
-{% extends 'CMS_base.html' %}
+{% extends 'admin_base.html' %}
 
 {% block title %}List of users{% endblock %}
 
@@ -36,7 +36,7 @@
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 
-                  <a class="button button1" href="#">Edit</a>
+                  <a class="button button1" href="{{ url_for('admin_edit_post', post_id=data.id) }}">Edit</a>
                   <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}">Delete</button>
 
                   <!-- Modal for delete button -->

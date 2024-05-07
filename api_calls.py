@@ -939,6 +939,29 @@ def create_post(title, content, access_token):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+
+
+def admin_update_post(post_id, title, content, access_token):
+    print('trying3')
+    headers = {'Authorization': f'Bearer {access_token}'}
+    params = {
+        "title": title,
+        "content": content,
+
+        }
+    try:
+        response = requests.put(constants.BASE_URL+f'/posts/update-post/{post_id}', json=params, headers=headers)
+        print(response.text)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
 def get_post(post_id: int):
 
     try:
