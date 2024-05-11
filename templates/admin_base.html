@@ -165,6 +165,7 @@
       <div class="container-fluid page-body-wrapper">
         <!-- partial:../../partials/_sidebar.html -->
           {% if request.endpoint != 'admin_login' %}
+          {% if current_user.is_authenticated %}
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
           <ul class="nav">
 
@@ -254,6 +255,7 @@
             </li>
           </ul>
         </nav>
+          {% endif %}
           {% endif %}
         <!-- partial -->
         <div class="main-panel" style="{% if request.endpoint == 'admin_login' %} width: 100%;  {% endif %}">

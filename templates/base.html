@@ -111,9 +111,11 @@
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-stretch" style="padding:5px;">
             {% if request.endpoint != 'login' and request.endpoint != 'admin_login' and request.endpoint != 'register' %}
+            {% if current_user.is_authenticated %}
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                 <span class="mdi mdi-menu"></span>
                 </button>
+            {% endif %}
             {% endif %}
 
      <ul class="navbar-nav navbar-nav-left">

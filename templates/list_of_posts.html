@@ -1,7 +1,7 @@
-{% if current_user.role == "user" %}
-    {% extends 'base.html' %}
-{% else %}
+{% if current_user.role == "admin" %}
     {% extends 'admin_base.html' %}
+{% else %}
+    {% extends 'base.html' %}
 {% endif %}
 
 {% block title %}List of posts{% endblock %}
