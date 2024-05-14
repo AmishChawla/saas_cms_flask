@@ -858,6 +858,17 @@ def all_post():
 
     return render_template('all_posts.html', result=result)
 
+
+@app.route('/user/all-posts')
+@login_required
+def user_all_post():
+    result = api_calls.get_user_all_posts(access_token=current_user.id)
+    if result is None:
+        result = []  # Set result to an empty list
+    print(result)
+
+    return render_template('user_all_post.html', result=result)
+
 @app.route("/admin/delete-posts/<post_id>", methods=['GET', 'POST'])
 @login_required
 def admin_delete_post(post_id):
@@ -865,6 +876,15 @@ def admin_delete_post(post_id):
     print(result.status_code)
     if result.status_code == 200:
         return redirect(url_for('all_post'))
+
+
+@app.route("/user/delete-posts/<post_id>", methods=['GET', 'POST'])
+@login_required
+def user_delete_post(post_id):
+    result = api_calls.admin_delete_post(post_id=post_id, access_token=current_user.id)
+    print(result.status_code)
+    if result.status_code == 200:
+        return redirect(url_for('user_all_post'))
 
 @app.route('/posts/add-post', methods=['GET', 'POST'])
 def add_post():

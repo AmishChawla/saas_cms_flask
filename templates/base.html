@@ -39,6 +39,30 @@
 
 
       <style>
+
+          .button {
+        border: none;
+        border-radius : 10px;
+        color: white;
+        padding: 10px 15px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+        margin: 4px 2px;
+        cursor: pointer;
+      }
+
+      .button1 {background-color: #04AA6D;} /* Green */
+      .button2 {background-color: red;}
+      .btn-info {
+      border-radius : 10px;
+      }
+      .btn-info i {
+      margin-left: 5px;
+      }
+
+
         .navbar-brand {
         font-family: 'Roboto', sans-serif;
         font-weight: 700;
@@ -200,10 +224,11 @@
 
               </a>
             </li>
-            <li class="nav-item sidenav">
-    <a class="nav-link {% if request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' %}active{% endif %}" href="{{ url_for('view_post') }}">
-        <i class="mdi mdi-pin menu-icon" style="margin-left:5px; margin-right:5px;  color: {% if request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' %}#202124 !important{% endif %};"></i>
-        <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' %}#202124 !important{% endif %};">Posts</span>
+
+              <li class="nav-item sidenav">
+    <a class="nav-link {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' %}active{% endif %}" href="{{ url_for('user_all_post') }}">
+        <i class="mdi mdi-pin menu-icon" style="margin-left:5px; margin-right:5px;  color: {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' %}#202124 !important{% endif %};"></i>
+        <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' %}#202124 !important{% endif %};">CMS</span>
     </a>
 </li>
 
