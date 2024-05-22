@@ -8,16 +8,13 @@
       <div class="card">
         <div class="card-body" style="overflow-x: auto;">
           <div style="display:flex; justify-content:space-between;">
-            <h4 class="card-title">Posts</h4>
+            <h4 class="card-title">Categories</h4>
             <div style="display: flex; justify-content: space-between;">
               <a class="btn btn-info" href="{{ url_for('add_category')}}" style="padding: 6px 30px 6px 30px;">
                 <span class="menu-title">Add new category</span>
               </a>
-              <a class="btn btn-success" href="{{ url_for('user_all_category')}}" style="padding: 6px 30px 6px 30px; border-radius:10px; margin-left:10px;">
-                <span class="menu-title">View category</span>
-              </a>
-              <a class="btn btn-info" href="{{ url_for('add_post')}}" style="padding: 6px 30px 6px 30px;margin-left:10px;">
-                <span class="menu-title">Add new post</span>
+              <a class="btn btn-info" href="{{ url_for('add_subcategory') }}" style="padding: 6px 30px 6px 30px;margin-left:10px;">
+                <span class="menu-title">Add new subcategory</span>
               </a>
             </div>
           </div>
@@ -25,8 +22,7 @@
             <thead>
               <tr>
                 <th>Sr. No.</th>
-                <th>Author</th>
-                <th>Title</th>
+                <th>Category</th>
                 <th>Created Date</th>
                 <th>Action</th>
               </tr>
@@ -35,12 +31,11 @@
               {% for data in result %}
               <tr style="max-height: 100px; overflow-y: auto;">
                 <td class="py-1">{{ loop.index }}</td>
-                <td class="py-1">{{ data.author_name }}</td>
-                <td class="py-1"><a href="{{ url_for('get_post', post_id=data.id) }}">{{ data.title }}</a></td>
+                <td class="py-1"><a href="{{ url_for('user_all_subcategory', category_id=data.id) }}">{{ data.category }}</a></td>
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 
-                  <a class="button button1" href="{{ url_for('admin_edit_post', post_id=data.id) }}">Edit</a>
+                  <a class="button button1" href="{{ url_for('update_category', category_id=data.id) }}">Edit</a>
                   <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}">Delete</button>
 
                   <!-- Modal for delete button -->
@@ -56,7 +51,7 @@
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                          <a type="button" class="btn btn-danger" href="{{ url_for('user_delete_post', post_id=data.id) }}">Delete</a>
+                          <a type="button" class="btn btn-danger" href="{{ url_for('user_delete_category', category_id=data.id) }}">Delete</a>
                         </div>
                       </div>
                     </div>

@@ -869,13 +869,19 @@ def user_all_post():
 
     return render_template('user_all_post.html', result=result)
 
+
 @app.route("/admin/delete-posts/<post_id>", methods=['GET', 'POST'])
 @login_required
 def admin_delete_post(post_id):
     result = api_calls.admin_delete_post(post_id=post_id, access_token=current_user.id)
+
+    # Print the status code for debugging purposes
     print(result.status_code)
+
     if result.status_code == 200:
+        flash('Post deleted successfully', category='info')
         return redirect(url_for('all_post'))
+
 
 
 @app.route("/user/delete-posts/<post_id>", methods=['GET', 'POST'])
@@ -886,14 +892,30 @@ def user_delete_post(post_id):
     if result.status_code == 200:
         return redirect(url_for('user_all_post'))
 
+
 @app.route('/posts/add-post', methods=['GET', 'POST'])
 def add_post():
     form = forms.AddPost()
+
+    # Fetch categories and format them for the form choices
+    categories = api_calls.get_all_categories()
+    category_choices = [(category['id'], category['category']) for category in categories]
+    form.category.choices = category_choices
+
     if form.validate_on_submit():
         title = form.title.data
         content = form.content.data
-        print(form.content.data)
-        result = api_calls.create_post(title=title, content=content, access_token=current_user.id)
+        category_id = form.category.data  # Get the selected category ID from the form
+
+        print(content)
+
+        result = api_calls.create_post(
+            title=title,
+            content=content,
+            category_id=category_id,  # Pass the correct category ID
+            access_token=current_user.id
+        )
+
         if result:
             print("Post created successfully")
             if current_user.role == 'user':
@@ -905,14 +927,133 @@ def add_post():
     else:
         print("Form validation failed")
         print(form.errors)
+
     if current_user.role == 'user':
         for service in current_user.services:
             if isinstance(service, dict) and service.get('name') == 'CMS':
-                return render_template('add_post.html', form=form)
+                return render_template('add_post.html', form=form, categories=category_choices)
         return redirect(url_for('user_view_plan'))
     else:
-        return render_template('add_post.html', form=form)
+        return render_template('add_post.html', form=form, categories=category_choices)
 
+
+@app.route("/user/add-category", methods=['GET', 'POST'])
+@login_required
+def add_category():
+    form = forms.AddCategory()
+    if form.validate_on_submit():
+        category = form.category.data
+        response = api_calls.add_category(category, access_token=current_user.id)
+        print(response.status_code)
+        if (response.status_code == 200):
+            flash('Category added Successful', category='info')
+            return redirect(url_for('user_all_category'))
+        else:
+            flash('Some problem occured', category='error')
+
+    return render_template('user_add_category.html', form=form)
+
+
+@app.route("/user/update-category/<category_id>", methods=['GET', 'POST'])
+@login_required
+def update_category(category_id):
+    form = forms.AddCategory()
+    if form.validate_on_submit():
+        category = form.category.data
+        response = api_calls.update_category(category_id, category, access_token=current_user.id)
+        print(response.status_code)
+        if (response.status_code == 200):
+            flash('Category updated Successful', category='info')
+            return redirect(url_for('user_all_category'))
+        else:
+            flash('Some problem occured', category='error')
+
+    return render_template('update_user_category.html', form=form, category_id=category_id)
+
+@app.route('/user/all-categories')
+@login_required
+def user_all_category():
+    result = api_calls.get_user_all_categories(access_token=current_user.id)
+    if result is None:
+        result = []  # Set result to an empty list
+    print(result)
+
+    return render_template('view_user_category.html', result=result)
+
+
+@app.route('/user/all-subcategories/<category_id>')
+@login_required
+def user_all_subcategory(category_id):
+    result = api_calls.get_subcategories_by_category(category_id=category_id)
+    if result is None:
+        result = []  # Set result to an empty list
+    print(result)
+
+    return render_template('view_user_subcategory.html', result=result)
+
+@app.route("/users/delete-category/<category_id>", methods=['GET', 'POST'])
+@login_required
+def user_delete_category(category_id):
+    result = api_calls.user_delete_category(category_id=category_id, access_token=current_user.id)
+    print(result.status_code)
+    if result.status_code == 200:
+        return redirect(url_for('user_all_category'))
+
+@app.route('/subcategories/<int:category_id>')
+def get_subcategories(category_id):
+    # Fetch subcategories based on the category_id
+    subcategories = api_calls.get_subcategories_by_category(category_id)
+    return jsonify({'subcategories': subcategories})
+
+
+@app.route("/user/add-subcategory", methods=['GET', 'POST'])
+@login_required
+def add_subcategory():
+    form = forms.AddSubcategory()
+    categories = api_calls.get_all_categories()
+    category_choices = [(category['id'], category['category']) for category in categories]
+    form.category.choices = category_choices
+    if form.validate_on_submit():
+        subcategory = form.subcategory.data
+        category_id = form.category.data
+        response = api_calls.add_subcategory(subcategory, category_id, access_token=current_user.id)
+        print(response.status_code)
+        if (response.status_code == 200):
+            flash('Subcategory added Successful', category='info')
+            return redirect(url_for('user_all_category'))
+        else:
+            flash('Some problem occured', category='error')
+
+    return render_template('user_add_subcategory.html', form=form, categories=category_choices)
+
+
+@app.route("/user/update-subcategory/<subcategory_id>", methods=['GET', 'POST'])
+@login_required
+def update_subcategory(subcategory_id):
+    form = forms.AddSubcategory()  # Assuming you have a form for subcategory
+    categories = api_calls.get_all_categories()
+    category_choices = [(category['id'], category['category']) for category in categories]
+    form.category.choices = category_choices
+    if form.validate_on_submit():
+        subcategory = form.subcategory.data
+        category_id = form.category.data
+        response = api_calls.update_subcategory(subcategory_id, subcategory, category_id, access_token=current_user.id)
+        print(response.status_code)
+        if (response.status_code == 200):
+            flash('Subcategory added Successful', category='info')
+            return redirect(url_for('user_all_category'))
+        else:
+            flash('Some problem occured', category='error')
+
+    return render_template('update_user_subcategory.html', form=form, subcategory_id=subcategory_id, categories=category_choices)
+
+@app.route("/users/delete-subcategory/<subcategory_id>", methods=['GET', 'POST'])
+@login_required
+def user_delete_subcategory(subcategory_id):
+    result = api_calls.user_delete_subcategory(subcategory_id=subcategory_id, access_token=current_user.id)
+    print(result.status_code)
+    if result.status_code == 200:
+        return redirect(url_for('user_all_category'))
 
 @app.route('/posts/edit-post/<post_id>', methods=['GET', 'POST'])
 def admin_edit_post(post_id):
