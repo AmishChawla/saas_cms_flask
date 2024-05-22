@@ -1058,6 +1058,15 @@ def send_message():
     return jsonify({'bot_response': bot_response.text})
 
 
+###################################form builder################
+
+@app.route('/formbuilder')
+@login_required
+def formbuilder():
+    return render_template('formbuilder.html')
+
+
+
 
 if __name__ == '__main__':
     app.run()

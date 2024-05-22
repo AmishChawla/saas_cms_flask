@@ -1,0 +1,422 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Form Builder{% endblock %}
+
+{% block content %}
+<style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #form-builder {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        #fields-container {
+            width: 60%;
+            border: 1px solid #ccc;
+            padding: 30px;
+
+        }
+
+        #fields-list {
+            width: 21%;
+            border: none;
+            /* border: 1px solid #ccc; */
+            padding: 21px;
+            /* border-radius: 5px; */
+            /* background-color: #D3E3FD; */
+        }
+
+        button {
+            width:20vw;
+            display: block;
+            height: 5vh;
+            border: none;
+            margin-bottom: 5px;
+
+            border-radius: 10px;
+            /* background-color: #D3E3FD; */
+        }
+
+        .field {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .delete-icon,
+        .edit-icon {
+            position: absolute;
+            top: 5px;
+            cursor: pointer;
+        }
+
+        .delete-icon {
+            right: 30px;
+        }
+
+        .edit-icon {
+            right: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea,
+        select,
+        input[type="date"],
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+
+        .form-check {
+            margin-bottom: 10px;
+        }
+    </style>
+
+
+<div id="form-builder">
+        <div id="fields-list">
+            <button id="add-text">Add Text Field</button>
+            <button id="add-paragraph">Add Paragraph Field</button>
+            <button id="add-number">Add Number Field</button>
+            <button id="add-checkbox">Add Checkbox Field</button>
+            <button id="add-radio">Add Radio Field</button>
+            <button id="add-dropdown">Add Dropdown Field</button>
+            <button id="add-email">Add Email Field</button>
+            <button id="add-mobile">Add Mobile Number Field</button>
+            <button id="add-date">Add Date Picker</button>
+            <button id="add-photo">Add Photo Upload</button>
+            <button id="add-document">Add Document Upload</button>
+        </div>
+        <div id="fields-container">
+            <!-- Fields will be added here dynamically -->
+        </div>
+    </div>
+
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const addTextButton = document.getElementById('add-text');
+            const addParagraphButton = document.getElementById('add-paragraph');
+            const addNumberButton = document.getElementById('add-number');
+            const addCheckboxButton = document.getElementById('add-checkbox');
+            const addRadioButton = document.getElementById('add-radio');
+            const addDropdownButton = document.getElementById('add-dropdown');
+            const addEmailButton = document.getElementById('add-email');
+            const addMobileButton = document.getElementById('add-mobile');
+            const addDatePickerButton = document.getElementById('add-date');
+            const addPhotoButton = document.getElementById('add-photo');
+            const addDocumentButton = document.getElementById('add-document');
+            const fieldsContainer = document.getElementById('fields-container');
+
+            // Make buttons draggable
+            const buttons = document.querySelectorAll('#fields-list button');
+            buttons.forEach(button => {
+                button.setAttribute('draggable', 'true');
+                button.addEventListener('dragstart', function (event) {
+                    event.dataTransfer.setData('text/plain', event.target.id);
+                });
+            });
+
+            // Make fields container a drop zone
+            fieldsContainer.addEventListener('dragover', function (event) {
+                event.preventDefault(); // Necessary to allow dropping
+            });
+
+            fieldsContainer.addEventListener('drop', function (event) {
+                event.preventDefault(); // Necessary to allow dropping
+                const buttonId = event.dataTransfer.getData('text/plain');
+                let type;
+                switch (buttonId) {
+                    case 'add-text':
+                        type = 'text';
+                        break;
+                    case 'add-paragraph':
+                        type = 'textarea';
+                        break;
+                    case 'add-number':
+                        type = 'number';
+                        break;
+                    case 'add-checkbox':
+                        type = 'checkbox';
+                        break;
+                    case 'add-radio':
+                        type = 'radio';
+                        break;
+                    case 'add-dropdown':
+                        type = 'select';
+                        break;
+                    case 'add-email':
+                        type = 'email';
+                        break;
+                    case 'add-mobile':
+                        type = 'tel';
+                        break;
+                    case 'add-date':
+                        type = 'date';
+                        break;
+                    case 'add-photo':
+                        type = 'file';
+                        accept = 'image/*';
+                        break;
+                    case 'add-document':
+                        type = 'file';
+                        accept = '.pdf, .doc, .docx';
+                        break;
+                }
+
+                if (type === 'text' || type === 'textarea' || type === 'number' || type === 'email' || type === 'tel' || type === 'date' || type === 'file') {
+                    const customLabel = prompt('Enter label name:');
+                    addField(type, customLabel);
+                } else if (type === 'checkbox') {
+                    addCheckboxField();
+                } else if (type === 'radio') {
+                    addRadioField();
+                } else if (type === 'select') {
+                    addDropdownField();
+                }
+            });
+
+            function addField(type, customLabel) {
+                const field = document.createElement('div');
+                field.classList.add('field');
+
+                switch (type) {
+                    case 'text':
+                        field.innerHTML = `
+                            <label>${customLabel || 'Text'}</label>
+                            <input type="text" placeholder="${customLabel || 'Text field'}">
+                        `;
+                        break;
+                    case 'textarea':
+                        field.innerHTML = `
+                            <label>${customLabel || 'Paragraph'}</label>
+                            <br>
+                            <textarea placeholder="${customLabel || 'Paragraph field'}"></textarea>
+                        `;
+                        break;
+                    case 'number':
+                        field.innerHTML = `
+                            <label>${customLabel || 'Number'}</label>
+                            <input type="number" placeholder="${customLabel || 'Number field'}">
+                        `;
+                        break;
+                    case 'email':
+                        field.innerHTML = `
+                            <label>${customLabel || 'Email'}</label>
+                            <input type="email" placeholder="${customLabel || 'Email field'}">
+                        `;
+                        break;
+                    case 'tel':
+                        field.innerHTML = `
+                            <label>${customLabel || 'Mobile Number'}</label>
+                            <input type="tel" placeholder="${customLabel || 'Mobile Number field'}">
+                        `;
+                        break;
+                    case 'date':
+                        field.innerHTML = `
+                            <label>${customLabel || 'Date'}</label>
+                            <input type="date">
+                        `;
+                        break;
+                    case 'file':
+                        field.innerHTML = `
+                            <label>${customLabel || 'File Upload'}</label>
+                            <input type="file" accept="${accept}">
+                        `;
+                        break;
+                }
+
+                addIcons(field);
+
+                fieldsContainer.appendChild(field);
+            }
+
+            function addCheckboxField() {
+                const checkboxLabel = prompt('Enter label for checkbox:');
+                const defaultCheckboxLabel = prompt('Enter label for default checkbox:');
+                const checkedCheckboxLabel = prompt('Enter label for checked checkbox:');
+
+                const field = document.createElement('div');
+                field.classList.add('field');
+
+                field.innerHTML = `
+                    <label>${checkboxLabel || 'Check box'}</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                        <label class="form-check-label" for="flexCheckDefault">
+                            <span>${defaultCheckboxLabel || 'Default checkbox'}</span>
+                            <span class="edit-icon" onclick="editCheckboxLabel(this.previousElementSibling)">✏️</span>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                        <label class="form-check-label" for="flexCheckChecked">
+                            <span>${checkedCheckboxLabel || 'Checked checkbox'}</span>
+                            <span class="edit-icon" onclick="editCheckboxLabel(this.previousElementSibling)">✏️</span>
+                        </label>
+                    </div>
+                `;
+
+                addIcons(field);
+
+                fieldsContainer.appendChild(field);
+            }
+
+            function editCheckboxLabel(labelElement) {
+                const newLabel = prompt('Enter new label:', labelElement.textContent.trim());
+                if (newLabel !== null) {
+                    labelElement.textContent = newLabel;
+                }
+            }
+
+            function addRadioField() {
+                const radioLabel = prompt('Enter label for radio buttons:');
+                const defaultRadioLabel = prompt('Enter label for default radio button:');
+                const checkedRadioLabel = prompt('Enter label for checked radio button:');
+
+                const field = document.createElement('div');
+                field.classList.add('field');
+
+                field.innerHTML = `
+                    <label>${radioLabel || 'Radio'}</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                        <label class="form-check-label" for="flexRadioDefault1">
+                            ${defaultRadioLabel || 'Default radio'}
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            ${checkedRadioLabel || 'Checked radio'}
+                        </label>
+                    </div>
+                `;
+
+                addIcons(field);
+
+                fieldsContainer.appendChild(field);
+            }
+
+            function addDropdownField() {
+                const selectLabel = prompt('Enter label for select dropdown:');
+                const customOption1Label = prompt('Enter label for option 1:');
+                const customOption2Label = prompt('Enter label for option 2:');
+                const customOption3Label = prompt('Enter label for option 3:');
+                const customOption4Label = prompt('Enter label for option 4:');
+                const customOption5Label = prompt('Enter label for option 5:');
+
+                const field = document.createElement('div');
+                field.classList.add('field');
+
+                field.innerHTML = `
+                    <label for="fruits">${selectLabel || 'Choose a fruit:'}</label>
+                    <select id="fruits" name="fruits">
+                        <option value="apple">${customOption1Label || 'Apple'}</option>
+                        <option value="banana">${customOption2Label || 'Banana'}</option>
+                        <option value="cherry">${customOption3Label || 'Cherry'}</option>
+                        <option value="date">${customOption4Label || 'Date'}</option>
+                        <option value="elderberry">${customOption5Label || 'Elderberry'}</option>
+                    </select>
+                `;
+
+                addIcons(field);
+
+                fieldsContainer.appendChild(field);
+            }
+
+            function addIcons(field) {
+                // Add delete icon
+                const deleteIcon = document.createElement('span');
+                deleteIcon.classList.add('delete-icon');
+                deleteIcon.innerHTML = '&#10006;';
+                deleteIcon.addEventListener('click', function () {
+                    field.remove();
+                });
+                field.appendChild(deleteIcon);
+
+                // Add edit icon
+                const editIcon = document.createElement('span');
+                editIcon.classList.add('edit-icon');
+                editIcon.innerHTML = '&#9998;';
+                editIcon.addEventListener('click', function () {
+                    const labelElement = field.querySelector('label');
+                    const newLabel = prompt('Enter new label:', labelElement.textContent);
+                    if (newLabel !== null) {
+                        labelElement.textContent = newLabel;
+                        const inputElement = field.querySelector('input, textarea');
+                        if (inputElement) {
+                            inputElement.placeholder = newLabel; // Update input placeholder
+                        } else {
+                            const selectElement = field.querySelector('select');
+                            if (selectElement) {
+                                selectElement.previousElementSibling.textContent = newLabel; // Update select label
+                            }
+                        }
+                    }
+                });
+                field.appendChild(editIcon);
+            }
+
+            // Existing click event listeners for buttons
+            addTextButton.addEventListener('click', function () {
+                const customLabel = prompt('Enter label name:');
+                addField('text', customLabel);
+            });
+
+            addParagraphButton.addEventListener('click', function () {
+                const customLabel = prompt('Enter label name:');
+                addField('textarea', customLabel);
+            });
+
+            addNumberButton.addEventListener('click', function () {
+                const customLabel = prompt('Enter label name:');
+                addField('number', customLabel);
+            });
+
+            addCheckboxButton.addEventListener('click', function () {
+                addCheckboxField();
+            });
+
+            addRadioButton.addEventListener('click', function () {
+                addRadioField();
+            });
+
+            addDropdownButton.addEventListener('click', function () {
+                addDropdownField();
+            });
+
+            addEmailButton.addEventListener('click', function () {
+                const customLabel = prompt('Enter label name:');
+                addField('email', customLabel);
+            });
+
+            addMobileButton.addEventListener('click', function () {
+                const customLabel = prompt('Enter label name:');
+                addField('tel', customLabel);
+            });
+
+            addDatePickerButton.addEventListener('click', function () {
+                const customLabel = prompt('Enter label name:');
+                addField('date', customLabel);
+            });
+
+            addPhotoButton.addEventListener('click', function () {
+                const customLabel = prompt('Enter label name:');
+                addField('file', customLabel, 'image/*');
+            });
+
+            addDocumentButton.addEventListener('click', function () {
+                const customLabel = prompt('Enter label name:');
+                addField('file', customLabel, '.pdf, .doc, .docx');
+            });
+        });
+    </script>
+
+{% endblock %}
