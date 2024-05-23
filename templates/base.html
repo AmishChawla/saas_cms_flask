@@ -55,6 +55,7 @@
 
       .button1 {background-color: #04AA6D;} /* Green */
       .button2 {background-color: red;}
+
       .btn-info {
       border-radius : 10px;
       }
@@ -250,6 +251,13 @@
               <a class="nav-link {% if request.endpoint == 'chatbot' %}active{% endif %}" href="{{ url_for('chatbot') }}">
                   <i class="mdi mdi-chat menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'chatbot' %}#202124 !important{% endif %};"></i>
                 <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'chatbot' %}#202124 !important{% endif %};">Chat</span>
+
+              </a>
+            </li>
+              <li class="nav-item sidenav">
+              <a class="nav-link {% if request.endpoint == 'list_of_email_templates' %}active{% endif %}" href="{{ url_for('list_of_email_templates') }}">
+                  <i class="mdi mdi-chat menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'list_of_email_templates' %}#202124 !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'list_of_email_templates' %}#202124 !important{% endif %};">Email Templates</span>
 
               </a>
             </li>
