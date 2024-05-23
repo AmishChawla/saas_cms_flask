@@ -11,7 +11,6 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card border-0">
-                    <!-- Add a card header "Register" -->
                     <div class="card-header bg-white text-black text-center">
                         <h2>Add Post</h2>
                     </div>
@@ -36,13 +35,21 @@
                                 {{ form.title(class="form-control", placeholder="Title", required=True) }}
                             </div>
 
-<!--                            <div class="mb-3">-->
-<!--                                {{ form.content(class="form-control", placeholder="Content", required=True) }}-->
-<!--                            </div>-->
+                            <div class="mb-3">
+                                {{ form.category.label }}
+                                {{ form.category(class="form-control", placeholder="Title", id="category", required=True) }}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="subcategory">Subcategory</label>
+                                <select id="subcategory" name="subcategory" class="form-control" required>
+                                    <option value="">Select a subcategory</option>
+                                </select>
+                            </div>
 
                             <div class="mb-3">
                                 {{ form.content.label }}
-                                {{ form.content(class="ckeditor", placeholder="Write details about the post.") }}
+                                {{ form.content(class="form-control", id="content", placeholder="Write details about the post.") }}
                             </div>
 
                             <div class="mb-3 text-center">
@@ -54,10 +61,42 @@
             </div>
         </div>
     </div>
+
     <script src="https://cdn.ckeditor.com/4.16.2/standard-all/ckeditor.js"></script>
 
-<script>
-    CKEDITOR.replace('plan_details');
-</script>
+    <script>
+        // Replace the CKEditor instance with the correct ID
+        CKEDITOR.replace('content');
 
+        // JavaScript to handle dynamic subcategory population
+        document.addEventListener('DOMContentLoaded', function () {
+            const categoryElement = document.getElementById('category');
+            const subcategoryElement = document.getElementById('subcategory');
+
+            categoryElement.addEventListener('change', function () {
+                const selectedCategoryId = this.value;
+
+                if (selectedCategoryId) {
+                    fetch(`/subcategories/${selectedCategoryId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Fetched subcategories:', data); // Debugging line
+                            // Clear existing subcategory options
+                            subcategoryElement.innerHTML = '<option value="">Select a subcategory</option>';
+
+                            // Populate new subcategory options
+                            data.subcategories.forEach(subcategory => {
+                                const option = document.createElement('option');
+                                option.value = subcategory.id;
+                                option.textContent = subcategory.subcategory;
+                                subcategoryElement.appendChild(option);
+                            });
+                        })
+                        .catch(error => console.error('Error fetching subcategories:', error));
+                } else {
+                    subcategoryElement.innerHTML = '<option value="">Select a subcategory</option>';
+                }
+            });
+        });
+    </script>
 {% endblock %}
