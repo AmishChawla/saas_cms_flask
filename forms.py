@@ -184,9 +184,19 @@ class AddPlan(FlaskForm):
 
 class AddPost(FlaskForm):
     title = StringField('Post title', validators=[validators.DataRequired()])
+    category = SelectField('Category', coerce=int, validators=[DataRequired()], default='Select Category')
     content = TextAreaField('Content', render_kw={'rows': 30, 'cols': 30, 'placeholder': 'Enter Content here...'})
     submit = SubmitField('Add Post')
 
+class AddCategory(FlaskForm):
+    category = StringField('Category title', validators=[validators.DataRequired()])
+    submit = SubmitField('Add Category')
+
+
+class AddSubcategory(FlaskForm):
+    subcategory = StringField('Subcategory title', validators=[validators.DataRequired()])
+    category = SelectField('Category', coerce=int, validators=[DataRequired()], default='Select Category')
+    submit = SubmitField('Add Subcategory')
 
 class AdminUpdatePost(FlaskForm):
     title = StringField('Post title', validators=[validators.DataRequired()])
