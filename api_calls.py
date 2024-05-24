@@ -1268,3 +1268,29 @@ def delete_template(access_token, template_id):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
+
+def send_email(access_token: str, to, subject, body):
+    print("trying")
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    data = {
+        "to": to,
+        "subject": subject,
+        "body": body
+    }
+
+    try:
+        print("try")
+        response = requests.post(constants.BASE_URL + f'/email-templates/send-mail', headers=headers, json=data)
+        if response.status_code == 200:
+            result = response.json()
+            return result
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")

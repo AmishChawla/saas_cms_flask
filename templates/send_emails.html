@@ -1,0 +1,60 @@
+{% if current_user.role == "user" %}
+    {% extends 'base.html' %}
+{% else %}
+    {% extends 'admin_base.html' %}
+{% endif %}
+
+{% block title %}Mail{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card border-0">
+                    <!-- Add a card header "Register" -->
+                    <div class="card-header bg-white text-black text-center">
+                        <h2>Mail To</h2>
+                    </div>
+
+                    <div class="card-body">
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        {% for message in messages %}
+                                            <li>{{ message }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+
+                        <form method="post" action="#{{ url_for('send_mails', template_id=template_id) }}">
+                            {{ form.hidden_tag() }}
+
+                            <div class="mb-3">
+                                {{form.to.label}}
+                                {{ form.to(class="form-control", placeholder="To", required=True) }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{form.subject.label}}
+                                {{ form.subject(class="form-control", placeholder="Subject", required=True) }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{form.content.label}}
+                                {{ form.content(class="form-control", placeholder="Write details about the email.") }}
+                            </div>
+
+                            <div class="mb-3 text-center">
+                                {{ form.submit(class="btn btn-dark btn-lg") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -255,9 +255,9 @@
               </a>
             </li>
               <li class="nav-item sidenav">
-              <a class="nav-link {% if request.endpoint == 'list_of_email_templates' %}active{% endif %}" href="{{ url_for('list_of_email_templates') }}">
-                  <i class="mdi mdi-chat menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'list_of_email_templates' %}#202124 !important{% endif %};"></i>
-                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'list_of_email_templates' %}#202124 !important{% endif %};">Email Templates</span>
+              <a class="nav-link {% if request.endpoint == 'email_settings' %}active{% endif %}" href="{{ url_for('email_settings') }}">
+                  <i class="mdi mdi-email-outline menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'email_settings' %}#202124 !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'email_settings' %}#202124 !important{% endif %};">Email Settings</span>
 
               </a>
             </li>

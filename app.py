@@ -1265,8 +1265,37 @@ def delete_email_template(template_id):
     return redirect(url_for('list_of_email_templates'))
 
 
+############################## Sending Email #####################################################
+
+@app.route("/email-templates/<template_id>/send-mail", methods=['GET', 'POST'])
+@login_required
+def send_mails(template_id):
+    form = forms.SendEmail()
+    result = api_calls.get_email_template_by_id(template_id=template_id, access_token=current_user.id)
+    subject = result["subject"]
+    body = result["body"]
+
+    if form.validate_on_submit():
+        # Update user information
+        to = form.to.data
+        subject = form.subject.data
+        body = form.content.data
+
+        result = api_calls.send_email(to=to, subject=subject, body=body, access_token=current_user.id)
+        return redirect(url_for('list_of_email_templates'))
+
+    # Prefill the form fields with user information
+
+    form.subject.data = subject
+    form.content.data = body
+
+    return render_template('send_emails.html', subject=subject, form=form, body=body, template_id=template_id)
 
 
+@app.route("/email-settings", methods=['GET', 'POST'])
+@login_required
+def email_settings():
+    return render_template('user_email_dashboard.html')
 
 
 
