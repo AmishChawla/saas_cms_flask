@@ -32,9 +32,9 @@
                                     </thead>
                                     <tbody>
                                         {% for data in result %}
-                                            <tr style="max-height: 100px; overflow-y: auto;" onclick="window.location.href='#{{ url_for('company_details', company_id=data.id) }}'">
+                                            <tr style="max-height: 100px; overflow-y: auto;" onclick="window.location.href='{{ url_for('send_mails', template_id=data.id) }}'">
                                                 <td class="py-1">{{ loop.index }}</td>
-                                                <td class="py-1"> <a href="#"> {{ data.name }} </a> </td>
+                                                <td class="py-1"> <a href="{{ url_for('send_mails', template_id=data.id) }}"> {{ data.name }} </a> </td>
                                                 <td class="py-1">{{ data.subject }}</td>
                                                 <td class="py-1">{{ data.body }}</td>
                                                 <td style="display: flex">

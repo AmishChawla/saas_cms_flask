@@ -216,3 +216,10 @@ class UpdateEmailTemplate(FlaskForm):
     subject = StringField('Subject', validators=[validators.DataRequired()])
     content = TextAreaField('Write Email here ...', render_kw={'rows': 10, 'cols': 30, 'placeholder': 'Enter Content here...'})
     submit = SubmitField('Update Template')
+
+
+class SendEmail(FlaskForm):
+    to = StringField('To', validators=[validators.DataRequired()])
+    subject = StringField('Subject', validators=[validators.DataRequired()])
+    content = TextAreaField('Content', render_kw={'rows': 10, 'cols': 30, 'placeholder': 'Enter Content here...'})
+    submit = SubmitField('Send Mail')

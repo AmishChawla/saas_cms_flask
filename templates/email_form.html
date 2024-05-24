@@ -1,4 +1,8 @@
-{% extends 'admin_base.html' %}
+{% if current_user.role == "user" %}
+    {% extends 'base.html' %}
+{% else %}
+    {% extends 'admin_base.html' %}
+{% endif %}
 
 {% block title %}Email Config{% endblock %}
 
