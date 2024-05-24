@@ -11,9 +11,7 @@
         #form-builder {
             display: flex;
             justify-content: space-between;
-            padding: 10px;
-            padding-left: 3vw;
-            margin-top:0px;
+            padding: 20px;
         }
 
         #fields-container {
@@ -36,7 +34,6 @@
             margin-bottom: 5px;
             border-radius: 10px;
             cursor: pointer;
-            padding-left: 2vw;
         }
 
         button img {
@@ -189,7 +186,8 @@
         <!-- Fields will be added here dynamically -->
     </div>
 </div>
-<button id="submit-form" style="margin-left: 43vw; padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; display: block;">Submit</button>
+<button id="submit-form" style="margin: 20px auto; padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; display: block;">Submit</button>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -319,7 +317,7 @@
                 case 'textarea':
                     field.innerHTML = `
                         <label>${customLabel || 'Paragraph'}</label>
-                        <textarea placeholder="${customLabel || 'Paragraph field'}"></textarea>
+                        <textarea></textarea>
                     `;
                     break;
                 case 'email':
@@ -354,30 +352,38 @@
         }
 
         function addCheckboxField(numCheckboxes) {
-            const checkboxLabel = prompt('Enter label for checkboxes:');
-            const field = document.createElement('div');
-            field.classList.add('field');
+    const checkboxLabel = prompt('Enter label for checkboxes:');
+    const field = document.createElement('div');
+    field.classList.add('field');
 
-            field.innerHTML = `<label>${checkboxLabel || 'Checkbox'}</label>`;
+    field.innerHTML = `<label>${checkboxLabel || 'Checkbox'}</label>`;
 
-            for (let i = 0; i < numCheckboxes; i++) {
-                const checkboxOptionLabel = prompt(`Enter label for checkbox option ${i + 1}:`);
-                const checkboxOption = document.createElement('div');
-                checkboxOption.classList.add('form-check');
-                checkboxOption.innerHTML = `
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheck${i}">
-                    <label class="form-check-label" for="flexCheck${i}">
-                        <span>${checkboxOptionLabel || 'Checkbox option'}</span>
-                        <span class="edit-option" onclick="editOptionLabel(this)">Edit</span>
-                    </label>
-                `;
-                field.appendChild(checkboxOption);
-            }
+    for (let i = 0; i < numCheckboxes; i++) {
+        const checkboxOptionLabel = prompt(`Enter label for checkbox option ${i + 1}:`);
+        const checkboxOption = document.createElement('div');
+        checkboxOption.classList.add('form-check');
+        checkboxOption.innerHTML = `
+            <input class="form-check-input" type="checkbox" value="" id="flexCheck${i}">
+            <label class="form-check-label" for="flexCheck${i}">
+                <span>${checkboxOptionLabel || 'Checkbox option'}</span>
+                <span class="edit-option" onclick="editOptionLabel(this)">Edit</span>
+                <span class="delete-option" onclick="deleteOption(this)">Delete</span> <!-- Delete icon added here -->
+            </label>
+        `;
+        field.appendChild(checkboxOption);
+    }
 
-            addIcons(field);
+    addIcons(field); // Ensure icons are added to each checkbox option
 
-            fieldsContainer.appendChild(field);
-        }
+    fieldsContainer.appendChild(field);
+}
+
+// Function to handle deletion of an option
+window.deleteOption = function (deleteIcon) {
+    const optionDiv = deleteIcon.parentElement;
+    optionDiv.remove(); // Removes the option div containing the checkbox and labels
+};
+
 
         function addRadioField(numRadios) {
             const radioLabel = prompt('Enter label for radio buttons:');
@@ -395,6 +401,7 @@
                     <label class="form-check-label" for="flexRadio${i}">
                         <span>${radioOptionLabel || 'Radio option'}</span>
                         <span class="edit-option" onclick="editOptionLabel(this)">Edit</span>
+                        <span class="delete-option" onclick="deleteOption(this)">Delete</span> <!-- Delete icon added here -->
                     </label>
                 `;
                 field.appendChild(radioOption);
@@ -473,7 +480,7 @@
 
             field.innerHTML = `
                 <label>Address</label>
-                <input type="text" placeholder="Street Address">
+                <input type="text" placeholder="Street Address 1">
                 <input type="text" placeholder="Street Address 2" style="margin-top: 10px;">
                 <input type="text" placeholder="City" style="margin-top: 10px;">
                 <input type="text" placeholder="State" style="margin-top: 10px;">
@@ -486,11 +493,27 @@
         }
 
         function addPageDivider() {
-            const field = document.createElement('div');
-            field.classList.add('page-divider');
+    const field = document.createElement('div');
+    field.classList.add('field', 'page-divider'); // Added 'field' class for consistency
 
-            fieldsContainer.appendChild(field);
-        }
+    // Create delete icon
+    const deleteIcon = document.createElement('span');
+    deleteIcon.classList.add('delete-icon');
+    deleteIcon.innerHTML = '&#10006;';
+    deleteIcon.addEventListener('click', function () {
+        field.remove(); // Remove the entire field including the divider and delete icon
+    });
+
+    // Append delete icon to the field
+    field.appendChild(deleteIcon);
+
+    // Append the divider itself to the field
+    const divider = document.createElement('hr');
+    field.appendChild(divider);
+
+    fieldsContainer.appendChild(field);
+}
+
 
         function addIcons(field) {
             // Add delete icon
@@ -503,37 +526,36 @@
             field.appendChild(deleteIcon);
 
             // Add edit icon
-            const editIcon = document.createElement('span');
-            editIcon.classList.add('edit-icon');
-            editIcon.innerHTML = '&#9998;';
-            editIcon.addEventListener('click', function () {
-                const labelElement = field.querySelector('label');
-                if (labelElement) {
-                    const newLabel = prompt('Enter new label:', labelElement.textContent);
-                    if (newLabel !== null) {
-                        labelElement.textContent = newLabel;
-                        const inputElements = field.querySelectorAll('input[type="text"]');
-                        if (inputElements.length > 0) {
-                            inputElements[0].placeholder = "First Name"; // Update first name placeholder
-                            if (inputElements.length > 1) {
-                                inputElements[1].placeholder = "Last Name"; // Update last name placeholder
-                            }
-                        } else {
-                            const selectElement = field.querySelector('select');
-                            if (selectElement) {
-                                selectElement.previousElementSibling.textContent = newLabel; // Update select label
-                            }
-                        }
-                    }
-                } else {
-                    const headingElement = field.querySelector('h3');
-                    const newHeading = prompt('Enter new heading:', headingElement.textContent);
-                    if (newHeading !== null) {
-                        headingElement.textContent = newHeading;
-                    }
-                }
-            });
-            field.appendChild(editIcon);
+const editIcon = document.createElement('span');
+editIcon.classList.add('edit-icon');
+editIcon.innerHTML = '&#9998;';
+editIcon.addEventListener('click', function () {
+    const field = this.parentElement;
+    const labelElement = field.querySelector('label');
+    if (labelElement) {
+        const newLabel = prompt('Enter new label:', labelElement.textContent);
+        if (newLabel!== null) {
+            labelElement.textContent = newLabel;
+            // Check if the field is a "Full Name" field
+            if (field.querySelector('input[type="text"]').length === 2) { // Assuming there are exactly two text inputs for full name
+                // Update placeholders for "Full Name" field
+                field.querySelectorAll('input[type="text"]').forEach((input, index) => {
+                    input.placeholder = index === 0? "First Name" : "Last Name";
+                });
+            } else {
+                // Handle other types of fields as needed
+            }
+        }
+    } else {
+        const headingElement = field.querySelector('h3');
+        const newHeading = prompt('Enter new heading:', headingElement.textContent);
+        if (newHeading!== null) {
+            headingElement.textContent = newHeading;
+        }
+    }
+});
+field.appendChild(editIcon);
+
         }
 
         window.editOptionLabel = function (optionEditIcon) {
@@ -553,5 +575,4 @@
         };
     });
 </script>
-
 {% endblock %}
