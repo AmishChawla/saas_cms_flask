@@ -27,6 +27,8 @@
                 <th>Sr. No.</th>
                 <th>Author</th>
                 <th>Title</th>
+                <th>Category</th>
+                <th>Subcategory</th>
                 <th>Created Date</th>
                 <th>Action</th>
               </tr>
@@ -37,6 +39,8 @@
                 <td class="py-1">{{ loop.index }}</td>
                 <td class="py-1">{{ data.author_name }}</td>
                 <td class="py-1"><a href="{{ url_for('get_post', post_id=data.id) }}">{{ data.title }}</a></td>
+                <td class="py-1">{{ data.category.category }}</td>
+                <td class="py-1">{{ data.subcategory.subcategory }}</td>
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 

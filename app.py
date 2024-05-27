@@ -865,7 +865,8 @@ def user_all_post():
     result = api_calls.get_user_all_posts(access_token=current_user.id)
     if result is None:
         result = []  # Set result to an empty list
-    print(result)
+
+
 
     return render_template('user_all_post.html', result=result)
 
@@ -898,35 +899,60 @@ def add_post():
     form = forms.AddPost()
 
     # Fetch categories and format them for the form choices
-    categories = api_calls.get_all_categories()
-    category_choices = [(category['id'], category['category']) for category in categories]
+    try:
+        categories = api_calls.get_user_all_categories(access_token=current_user.id)
+        category_choices = [(category['id'], category['category']) for category in categories]
+        if not category_choices:
+            category_choices = [('', 'Select Category')]
+    except Exception as e:
+        print(f"Error fetching categories: {e}")
+        category_choices = [('', 'Select Category')]
+
     form.category.choices = category_choices
+
+    if form.category.data:
+        # Fetch subcategories based on the selected category
+        try:
+            subcategories = api_calls.get_subcategories_by_category(form.category.data)
+            subcategory_choices = [(subcategory['id'], subcategory['subcategory']) for subcategory in subcategories]
+            if not subcategory_choices:
+                subcategory_choices = [('', 'Select Subcategory')]
+        except Exception as e:
+            print(f"Error fetching subcategories: {e}")
+            subcategory_choices = [('', 'Select Subcategory')]
+        form.subcategory.choices = subcategory_choices
 
     if form.validate_on_submit():
         title = form.title.data
         content = form.content.data
-        category_id = form.category.data  # Get the selected category ID from the form
+        category = form.category.data
+        subcategory = form.subcategory.data
 
         print(content)
 
-        result = api_calls.create_post(
-            title=title,
-            content=content,
-            category_id=category_id,  # Pass the correct category ID
-            access_token=current_user.id
-        )
+        try:
+            result = api_calls.create_post(
+                title=title,
+                content=content,
+                category_id=category,
+                subcategory_id=subcategory,
+                access_token=current_user.id
+            )
 
-        if result:
-            print("Post created successfully")
-            if current_user.role == 'user':
-                return redirect(url_for('view_post'))
+            if result:
+                flash("Post created successfully", "success")
+                if current_user.role == 'user':
+                    return redirect(url_for('view_post'))
+                else:
+                    return redirect(url_for('all_post'))
             else:
-                return redirect(url_for('all_post'))
-        else:
-            print("Failed to create post")
+                flash("Failed to create post", "danger")
+        except Exception as e:
+            flash(f"Error creating post: {e}", "danger")
     else:
-        print("Form validation failed")
-        print(form.errors)
+        if request.method == 'POST':
+            flash("Form validation failed", "danger")
+            print(form.errors)
 
     if current_user.role == 'user':
         for service in current_user.services:
@@ -1010,7 +1036,7 @@ def get_subcategories(category_id):
 @login_required
 def add_subcategory():
     form = forms.AddSubcategory()
-    categories = api_calls.get_all_categories()
+    categories = api_calls.get_user_all_categories(access_token=current_user.id)
     category_choices = [(category['id'], category['category']) for category in categories]
     form.category.choices = category_choices
     if form.validate_on_submit():
@@ -1061,8 +1087,16 @@ def admin_edit_post(post_id):
     if form.validate_on_submit():
         title = form.title.data
         content = form.content.data
-        print(form.content.data)
-        result = api_calls.admin_update_post(post_id=post_id, title=title, content=content, access_token=current_user.id)
+        category_id = form.category.data
+        subcategory_id = form.subcategory.data
+        result = api_calls.admin_update_post(
+            post_id=post_id,
+            title=title,
+            content=content,
+            category_id=category_id,
+            subcategory_id=subcategory_id,
+            access_token=current_user.id
+        )
         if result:
             print("Post created successfully")
             if current_user.role == 'user':

@@ -37,14 +37,12 @@
 
                             <div class="mb-3">
                                 {{ form.category.label }}
-                                {{ form.category(class="form-control", placeholder="Title", id="category", required=True) }}
+                                {{ form.category(class="form-control", id="category", required=True) }}
                             </div>
 
                             <div class="mb-3">
-                                <label for="subcategory">Subcategory</label>
-                                <select id="subcategory" name="subcategory" class="form-control" required>
-                                    <option value="">Select a subcategory</option>
-                                </select>
+                                {{ form.subcategory.label }}
+                                {{ form.subcategory(class="form-control", id="subcategory", required=True) }}
                             </div>
 
                             <div class="mb-3">
@@ -68,35 +66,34 @@
         // Replace the CKEditor instance with the correct ID
         CKEDITOR.replace('content');
 
-        // JavaScript to handle dynamic subcategory population
-        document.addEventListener('DOMContentLoaded', function () {
-            const categoryElement = document.getElementById('category');
-            const subcategoryElement = document.getElementById('subcategory');
+document.addEventListener('DOMContentLoaded', function () {
+        const categoryElement = document.getElementById('category');
+        const subcategoryElement = document.getElementById('subcategory');
 
-            categoryElement.addEventListener('change', function () {
-                const selectedCategoryId = this.value;
+        categoryElement.addEventListener('change', function () {
+            const selectedCategoryId = this.value;
 
-                if (selectedCategoryId) {
-                    fetch(`/subcategories/${selectedCategoryId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log('Fetched subcategories:', data); // Debugging line
-                            // Clear existing subcategory options
-                            subcategoryElement.innerHTML = '<option value="">Select a subcategory</option>';
+            if (selectedCategoryId) {
+                fetch(`/subcategories/${selectedCategoryId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Fetched subcategories:', data); // Debugging line
+                        // Clear existing subcategory options
+                        subcategoryElement.innerHTML = '<option value="">Select a subcategory</option>';
 
-                            // Populate new subcategory options
-                            data.subcategories.forEach(subcategory => {
-                                const option = document.createElement('option');
-                                option.value = subcategory.id;
-                                option.textContent = subcategory.subcategory;
-                                subcategoryElement.appendChild(option);
-                            });
-                        })
-                        .catch(error => console.error('Error fetching subcategories:', error));
-                } else {
-                    subcategoryElement.innerHTML = '<option value="">Select a subcategory</option>';
-                }
-            });
+                        // Populate new subcategory options
+                        data.subcategories.forEach(subcategory => {
+                            const option = document.createElement('option');
+                            option.value = subcategory.id;
+                            option.textContent = subcategory.subcategory;
+                            subcategoryElement.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching subcategories:', error));
+            } else {
+                subcategoryElement.innerHTML = '<option value="">Select a subcategory</option>';
+            }
         });
+    });
     </script>
 {% endblock %}

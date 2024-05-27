@@ -939,12 +939,14 @@ def admin_delete_post(post_id, access_token):
         print(f"An unexpected error occurred: {err}")
 
 
-def create_post(title, content, access_token):
+def create_post(title, content, category_id, subcategory_id, access_token):
     print('trying3')
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
         "title": title,
         "content": content,
+        "category_id": category_id,
+        "subcategory_id": subcategory_id
 
         }
     try:
@@ -962,13 +964,14 @@ def create_post(title, content, access_token):
 
 
 
-def admin_update_post(post_id, title, content, access_token):
+def admin_update_post(post_id, title, content, category_id, subcategory_id, access_token):
     print('trying3')
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
         "title": title,
         "content": content,
-
+        "category_id": category_id,
+        "subcategory_id": subcategory_id
         }
     try:
         response = requests.put(constants.BASE_URL+f'/posts/update-post/{post_id}', json=params, headers=headers)
@@ -1153,6 +1156,34 @@ def user_delete_subcategory(subcategory_id, access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
     try:
         response = requests.delete(constants.BASE_URL + f'/user/delete_subcategory/{subcategory_id}', headers=headers)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def get_category_name(category_id):
+    try:
+        response = requests.delete(constants.BASE_URL + f'/category/{category_id}')
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def get_subcategory_name(subcategory_id):
+    try:
+        response = requests.delete(constants.BASE_URL + f'/subcategory/{subcategory_id}')
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
