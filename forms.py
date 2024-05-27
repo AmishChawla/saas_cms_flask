@@ -205,3 +205,24 @@ class AdminUpdatePost(FlaskForm):
     subcategory = SelectField('Subcategory', validators=[DataRequired()], choices=[('', 'Select a subcategory')])
     content = TextAreaField('Content', render_kw={'rows': 30, 'cols': 30, 'placeholder': 'Enter Content here...'})
     submit = SubmitField('Update Post')
+
+
+class CreateEmailTemplate(FlaskForm):
+    name = StringField('Name', validators=[validators.DataRequired()])
+    subject = StringField('Subject', validators=[validators.DataRequired()])
+    content = TextAreaField('Write Email here ...', render_kw={'rows': 10, 'cols': 30, 'placeholder': 'Enter Content here...'})
+    submit = SubmitField('Create Template')
+
+
+class UpdateEmailTemplate(FlaskForm):
+    name = StringField('Name', validators=[validators.DataRequired()])
+    subject = StringField('Subject', validators=[validators.DataRequired()])
+    content = TextAreaField('Write Email here ...', render_kw={'rows': 10, 'cols': 30, 'placeholder': 'Enter Content here...'})
+    submit = SubmitField('Update Template')
+
+
+class SendEmail(FlaskForm):
+    to = StringField('To', validators=[validators.DataRequired()])
+    subject = StringField('Subject', validators=[validators.DataRequired()])
+    content = TextAreaField('Content', render_kw={'rows': 10, 'cols': 30, 'placeholder': 'Enter Content here...'})
+    submit = SubmitField('Send Mail')
