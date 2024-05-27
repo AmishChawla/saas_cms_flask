@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Email Dashboard{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <a href="{{ url_for('admin_email_setup') }}" class="btn btn-custom w-100 d-flex align-items-center justify-content-between" style="border: 1px solid #d6d6c2; border-radius: 10px;" role="button">
+                <i class="mdi mdi-email" style="margin-right: 10px;margin-top: 2px;"></i>
+                Email Config
+                <i class="mdi mdi-chevron-right" style="margin-left: auto;"></i>
+            </a>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-12">
+            <a href="{{ url_for('list_of_email_templates') }}" class="btn btn-custom w-100 d-flex align-items-center justify-content-between" style="border: 1px solid #d6d6c2; border-radius: 10px;" role="button">
+                <i class="mdi mdi-email" style="margin-right: 10px;margin-top: 2px;"></i>
+                Email Templates
+                <i class="mdi mdi-chevron-right" style="margin-left: auto;"></i>
+            </a>
+        </div>
+    </div>
+     <br>
+
+</div>
+{% endblock %}

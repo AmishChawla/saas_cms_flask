@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Email Templates{% endblock %}
+
+{% block content %}
+<link href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" rel="stylesheet">
+            <div class="page-header"></div>
+            {% if result %}
+                <div class="row">
+                    <div class="col-lg-12 grid-margin stretch-card">
+                        <div class="card" style="overflow-x:auto;">
+                            <div class="card-body" style="padding: 2rem;">
+ <div style="display: flex; justify-content: space-between;">
+                                <h4 class="card-title">Templates</h4>
+
+                                      <a class="btn btn-info" href="{{ url_for('create_template') }}" style="padding: 6px 30px 6px 30px;">
+                <span class="menu-title">Create Template</span>
+              </a>
+                          </div>
+                                <br>
+                                <br>
+                                <table id="templateTable" class="display" style="width:100%; ">
+                                    <thead>
+                                        <tr>
+                                            <th> Sr. No. </th>
+                                            <th> Template </th>
+                                            <th> Subject </th>
+                                            <th> Body </th>
+                                            <th> Action </th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for data in result %}
+                                            <tr style="max-height: 100px; overflow-y: auto;" onclick="window.location.href='{{ url_for('send_mails', template_id=data.id) }}'">
+                                                <td class="py-1">{{ loop.index }}</td>
+                                                <td class="py-1"> <a href="{{ url_for('send_mails', template_id=data.id) }}"> {{ data.name }} </a> </td>
+                                                <td class="py-1">{{ data.subject }}</td>
+                                                <td class="py-1">{{ data.body }}</td>
+                                                <td style="display: flex">
+    <a class="button button1" href="{{ url_for('update_email_template', template_id=data.id) }} ">Edit</a>
+    <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}">Delete</button>
+
+    <!-- Modal for delete button -->
+    <div class="modal fade" id="deleteModal_{{ data.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel_{{ data.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="deleteModalLabel_{{ data.id }}">Delete Template</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a type="button" class="btn btn-danger" href="{{ url_for('delete_email_template', template_id=data.id) }}">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</td>
+
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <br>
+            {% else %}
+                <div class="d-flex justify-content-center align-items-center" style="height: 50vh;">
+                    <p>No Templates</p>
+                </div>
+            {% endif %}
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+<script>new DataTable('#templateTable');</script>
+{% endblock %}

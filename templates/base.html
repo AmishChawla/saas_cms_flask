@@ -55,6 +55,7 @@
 
       .button1 {background-color: #04AA6D;} /* Green */
       .button2 {background-color: red;}
+
       .btn-info {
       border-radius : 10px;
       }
@@ -232,16 +233,19 @@
     </a>
 </li>
 
-  <li class="nav-item sidenav">
-              <a class="nav-link {% if request.endpoint == 'user_history' %}active{% endif %}" href="{{ url_for('user_history') }}">
-                  <i class="mdi mdi-history menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'user_history' %}#202124 !important{% endif %};"></i>
-                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'user_history' %}#202124 !important{% endif %};">History</span>
 
-              </a>
-            </li>
+
+<!--              <li class="nav-item sidenav">-->
+<!--              <a class="nav-link {% if request.endpoint == 'formbuilder' %}active{% endif %}" href="{{ url_for('formbuilder') }}">-->
+<!--                  <i class="mdi mdi-file-document-edit-outline menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'formbuilder' %}#202124 !important{% endif %};"></i>-->
+<!--                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'formbuilder' %}#202124 !important{% endif %};">Form builder</span>-->
+
+<!--              </a>-->
+<!--            </li>-->
+
               <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'get_purchase_history' %}active{% endif %}" href="{{ url_for('get_purchase_history') }}">
-                  <i class="mdi mdi-file-document-outline menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'get_purchase_history' %}#202124 !important{% endif %};"></i>
+                  <i class="mdi mdi-history menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'get_purchase_history' %}#202124 !important{% endif %};"></i>
                 <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'get_purchase_history' %}#202124 !important{% endif %};">Order History</span>
 
               </a>
@@ -250,6 +254,13 @@
               <a class="nav-link {% if request.endpoint == 'chatbot' %}active{% endif %}" href="{{ url_for('chatbot') }}">
                   <i class="mdi mdi-chat menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'chatbot' %}#202124 !important{% endif %};"></i>
                 <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'chatbot' %}#202124 !important{% endif %};">Chat</span>
+
+              </a>
+            </li>
+              <li class="nav-item sidenav">
+              <a class="nav-link {% if request.endpoint == 'email_settings' %}active{% endif %}" href="{{ url_for('email_settings') }}">
+                  <i class="mdi mdi-email-outline menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'email_settings' %}#202124 !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'email_settings' %}#202124 !important{% endif %};">Email Settings</span>
 
               </a>
             </li>

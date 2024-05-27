@@ -1167,10 +1167,11 @@ def user_delete_subcategory(subcategory_id, access_token):
         print(f"An unexpected error occurred: {err}")
 
 
+
 def get_category_name(category_id):
     try:
         response = requests.delete(constants.BASE_URL + f'/category/{category_id}')
-        return response
+        return response.json
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except requests.exceptions.ConnectionError as errc:
@@ -1179,12 +1180,32 @@ def get_category_name(category_id):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
+def get_all_email_templates(access_token):
+    print("trying")
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        print("try")
+        response = requests.get(constants.BASE_URL + '/email-templates/all', headers=headers)
+        if response.status_code == 200:
+            result = response.json()
+            return result
+
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
 
 
 def get_subcategory_name(subcategory_id):
     try:
         response = requests.delete(constants.BASE_URL + f'/subcategory/{subcategory_id}')
-        return response
+        return response.json
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except requests.exceptions.ConnectionError as errc:
@@ -1193,3 +1214,120 @@ def get_subcategory_name(subcategory_id):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
+def create_template(name, subject, body, access_token):
+    print('trying3')
+    headers = {'Authorization': f'Bearer {access_token}'}
+    params = {
+        "name": name,
+        "subject": subject,
+        "body": body
+        }
+    try:
+        response = requests.post(constants.BASE_URL+f'/email-templates/create-template', json=params, headers=headers)
+        if response.status_code == 200:
+            result = response.json()
+            return result
+
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+
+        print(f"An unexpected error occurred: {err}")
+
+        print(f"An unexpected error occurred: {err}")
+
+
+def edit_eamil_template(access_token: str, name, subject, body, template_id):
+    print("trying")
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    data = {
+        "name": name,
+        "subject": subject,
+        "body": body
+    }
+
+    try:
+        print("try")
+        response = requests.put(constants.BASE_URL + f'/email-templates/update-template/{template_id}', headers=headers, json=data)
+        if response.status_code == 200:
+            result = response.json()
+            return result
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def get_email_template_by_id(access_token, template_id):
+    print("trying")
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        print("try")
+        response = requests.get(constants.BASE_URL + f'/email-templates/{template_id}', headers=headers)
+        if response.status_code == 200:
+            result = response.json()
+            return result
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def delete_template(access_token, template_id):
+    print("trying")
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        print("try")
+        response = requests.delete(constants.BASE_URL + f'/email-templates/delete-template/{template_id}', headers=headers)
+        if response.status_code == 200:
+            result = response.json()
+            return result
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def send_email(access_token: str, to, subject, body):
+    print("trying")
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    data = {
+        "to": to,
+        "subject": subject,
+        "body": body
+    }
+
+    try:
+        print("try")
+        response = requests.post(constants.BASE_URL + f'/email-templates/send-mail', headers=headers, json=data)
+        if response.status_code == 200:
+            result = response.json()
+            return result
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+

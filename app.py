@@ -1233,6 +1233,105 @@ def send_message():
     return jsonify({'bot_response': bot_response.text})
 
 
+###################################form builder################
+
+@app.route('/formbuilder')
+@login_required
+def formbuilder():
+    return render_template('formbuilder.html')
+
+
+############################################# Email Templates ################################
+
+@app.route("/email-templates/all", methods=['GET', 'POST'])
+@login_required
+def list_of_email_templates():
+    result = api_calls.get_all_email_templates(access_token=current_user.id)
+    return render_template('list_of_email_templates.html', result=result)
+
+
+@app.route("/email-templates/create-template", methods=['GET', 'POST'])
+def create_template():
+    form = forms.CreateEmailTemplate()
+    print("outside")
+    if form.validate_on_submit():
+        name = form.name.data
+        subject = form.subject.data
+        body = form.content.data
+        result = api_calls.create_template(name, subject, body, access_token=current_user.id)
+        print("inside")
+        return redirect(url_for('list_of_email_templates'))
+
+    return render_template('create_email_template.html', form=form)
+
+
+@app.route("/email-templates/update-template/<template_id>", methods=['GET', 'POST'])
+@login_required
+def update_email_template(template_id):
+    form = forms.UpdateEmailTemplate()
+    result = api_calls.get_email_template_by_id(template_id=template_id, access_token=current_user.id)
+    name = result["name"]
+    subject = result["subject"]
+    body = result["body"]
+
+    if form.validate_on_submit():
+        # Update user information
+        name = form.name.data
+        subject = form.subject.data
+        body = form.content.data
+
+        result = api_calls.edit_eamil_template(template_id=template_id,
+                                                 name=name, subject=subject, body=body, access_token=current_user.id)
+        return redirect(url_for('list_of_email_templates'))
+
+    # Prefill the form fields with user information
+    form.name.data = name
+    form.subject.data = subject
+    form.content.data = body
+
+    return render_template('update_email_template.html', subject=subject, name=name, form=form, body=body, template_id=template_id)
+
+
+@app.route("/email-templates/delete-template/<template_id>", methods=['GET', 'POST'])
+@login_required
+def delete_email_template(template_id):
+    result = api_calls.delete_template(template_id=template_id, access_token=current_user.id)
+    return redirect(url_for('list_of_email_templates'))
+
+
+############################## Sending Email #####################################################
+
+@app.route("/email-templates/<template_id>/send-mail", methods=['GET', 'POST'])
+@login_required
+def send_mails(template_id):
+    form = forms.SendEmail()
+    result = api_calls.get_email_template_by_id(template_id=template_id, access_token=current_user.id)
+    subject = result["subject"]
+    body = result["body"]
+
+    if form.validate_on_submit():
+        # Update user information
+        to = form.to.data
+        subject = form.subject.data
+        body = form.content.data
+
+        result = api_calls.send_email(to=to, subject=subject, body=body, access_token=current_user.id)
+        return redirect(url_for('list_of_email_templates'))
+
+    # Prefill the form fields with user information
+
+    form.subject.data = subject
+    form.content.data = body
+
+    return render_template('send_emails.html', subject=subject, form=form, body=body, template_id=template_id)
+
+
+@app.route("/email-settings", methods=['GET', 'POST'])
+@login_required
+def email_settings():
+    return render_template('user_email_dashboard.html')
+
+
 
 if __name__ == '__main__':
     app.run()
