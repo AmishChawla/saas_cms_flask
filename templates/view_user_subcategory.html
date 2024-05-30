@@ -3,6 +3,7 @@
 {% block title %}User's all posts{% endblock %}
 
 {% block content %}
+<link href="https://cdn.datatables.net/2.0.0/css/dataTables.dataTables.css" rel="stylesheet">
   <div class="row">
     <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
       <div class="card">
@@ -15,7 +16,7 @@
               </a>
             </div>
           </div>
-          <table id="serviceTable" class="display" style="width:100%;">
+          <table id="usersubcategoryTable" class="display" style="width:100%;">
             <thead>
               <tr>
                 <th>Sr. No.</th>
@@ -62,4 +63,7 @@
       </div>
     </div>
   </div>
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script>new DataTable('#usersubcategoryTable');</script>
 {% endblock %}

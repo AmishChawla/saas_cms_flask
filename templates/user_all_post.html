@@ -3,6 +3,7 @@
 {% block title %}User's all posts{% endblock %}
 
 {% block content %}
+<link href="https://cdn.datatables.net/2.0.0/css/dataTables.dataTables.css" rel="stylesheet">
   <div class="row">
     <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
       <div class="card">
@@ -21,7 +22,7 @@
               </a>
             </div>
           </div>
-          <table id="serviceTable" class="display" style="width:100%;">
+          <table id="userpostTable" class="display" style="width:100%;">
             <thead>
               <tr>
                 <th>Sr. No.</th>
@@ -34,11 +35,16 @@
               </tr>
             </thead>
             <tbody>
-              {% for data in result %}
+              {% for data in result | reverse %}
               <tr style="max-height: 100px; overflow-y: auto;">
                 <td class="py-1">{{ loop.index }}</td>
                 <td class="py-1">{{ data.author_name }}</td>
-                <td class="py-1"><a href="{{ url_for('get_post', post_id=data.id) }}">{{ data.title }}</a></td>
+                <td class="py-1"><form action="{{ url_for('get_post', post_title=data.title | lower | replace(' ', '')) }}" method="POST" style="display:inline;">
+        <input type="hidden" name="post_id" value="{{ data.id }}">
+        <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left; color: blue;">
+            {{ data.title }}
+        </button>
+    </form></td>
                 <td class="py-1">{{ data.category.category }}</td>
                 <td class="py-1">{{ data.subcategory.subcategory }}</td>
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
@@ -74,4 +80,8 @@
       </div>
     </div>
   </div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script>new DataTable('#userpostTable');</script>
 {% endblock %}

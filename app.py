@@ -1084,6 +1084,28 @@ def user_delete_subcategory(subcategory_id):
 @app.route('/posts/edit-post/<post_id>', methods=['GET', 'POST'])
 def admin_edit_post(post_id):
     form = forms.AdminUpdatePost()
+    try:
+        categories = api_calls.get_user_all_categories(access_token=current_user.id)
+        category_choices = [(category['id'], category['category']) for category in categories]
+        if not category_choices:
+            category_choices = [('', 'Select Category')]
+    except Exception as e:
+        print(f"Error fetching categories: {e}")
+        category_choices = [('', 'Select Category')]
+
+    form.category.choices = category_choices
+
+    if form.category.data:
+        # Fetch subcategories based on the selected category
+        try:
+            subcategories = api_calls.get_subcategories_by_category(form.category.data)
+            subcategory_choices = [(subcategory['id'], subcategory['subcategory']) for subcategory in subcategories]
+            if not subcategory_choices:
+                subcategory_choices = [('', 'Select Subcategory')]
+        except Exception as e:
+            print(f"Error fetching subcategories: {e}")
+            subcategory_choices = [('', 'Select Subcategory')]
+        form.subcategory.choices = subcategory_choices
     if form.validate_on_submit():
         title = form.title.data
         content = form.content.data
@@ -1197,8 +1219,9 @@ def view_post():
 
     return render_template('list_of_posts.html', result=result)
 
-@app.route('/posts/<post_id>', methods=['GET', 'POST'])
-def get_post(post_id):
+@app.route('/posts/<post_title>', methods=['GET', 'POST'])
+def get_post(post_title):
+    post_id = request.form['post_id']
     result = api_calls.get_post(post_id=post_id)
     title = result["title"]
     content = result["content"]
