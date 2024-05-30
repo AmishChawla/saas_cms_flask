@@ -1,4 +1,8 @@
-{% extends 'admin_base.html' %}
+{% if current_user.role == "admin" %}
+    {% extends 'admin_base.html' %}
+{% else %}
+    {% extends 'base.html' %}
+{% endif %}
 
 {% block title %}Form Builder{% endblock %}
 
@@ -20,14 +24,17 @@
             border: 1px solid #ccc;
             padding: 30px;
             margin-right: 45px;
+
         }
+
+
 
         #fields-list {
             width: 21%;
             padding: 21px;
         }
 
-        button {
+        .input-button {
             width: 20vw;
             display: flex;
             align-items: center;
@@ -39,7 +46,7 @@
             cursor: pointer;
         }
 
-        button img {
+        .input-button img {
             width: 20px;
             height: 20px;
             margin-right: 10px;
@@ -140,75 +147,75 @@
 <div id="form-builder">
     <div id="fields-list">
         <h6>Basic</h6>
-        <button id="add-heading">
+        <button class="input-button" id="add-heading">
             <img src="https://img.icons8.com/?size=100&id=jESBzuZ8vA5l&format=png&color=000000" alt="Heading">
             Add Heading
         </button>
-        <button id="add-full-name">
+        <button class="input-button" id="add-full-name">
             <img src="https://img.icons8.com/material-outlined/24/000000/name.png" alt="Full Name">
             Add Full Name
         </button>
-          <button id="add-address">
+          <button class="input-button" id="add-address">
             <img src="https://img.icons8.com/material-outlined/24/000000/address.png" alt="Address">
             Add Address
         </button>
-        <button id="add-email">
+        <button class="input-button" id="add-email">
             <img src="https://img.icons8.com/material-outlined/24/000000/email.png" alt="Email Field">
             Add Email Field
         </button>
 
-        <button id="add-mobile">
+        <button class="input-button" id="add-mobile">
             <img src="https://img.icons8.com/material-outlined/24/000000/phone.png" alt="Mobile Number Field">
             Add Mobile Number Field
         </button>
-        <button id="add-date">
+        <button class="input-button" id="add-date">
             <img src="https://img.icons8.com/material-outlined/24/000000/calendar.png" alt="Date Picker">
             Add Date Picker
         </button>
         <h6>Basic Elements</h6>
-        <button id="add-text">
+        <button class="input-button" id="add-text">
             <img src="https://img.icons8.com/material-outlined/24/000000/text.png" alt="Text Field">
             Add Text Field
         </button>
-        <button id="add-paragraph">
+        <button class="input-button" id="add-paragraph">
             <img src="https://img.icons8.com/material-outlined/24/000000/paragraph.png" alt="Paragraph Field">
             Add Paragraph Field
         </button>
-         <button id="add-dropdown">
+         <button class="input-button" id="add-dropdown">
             <img src="https://img.icons8.com/?size=100&id=100660&format=png&color=000000" alt="Dropdown Field">
             Add Dropdown Field
         </button>
-        <button id="add-checkbox">
+        <button class="input-button" id="add-checkbox">
             <img src="https://img.icons8.com/material-outlined/24/000000/checked-checkbox.png" alt="Checkbox Field">
             Add Checkbox Field
         </button>
-        <button id="add-radio">
+        <button class="input-button" id="add-radio">
             <img src="https://img.icons8.com/?size=100&id=9cgyYZlqlNq3&format=png&color=000000" alt="Radio Field">
             Add Radio Field
         </button>
-        <button id="add-number">
+        <button class="input-button" id="add-number">
             <img src="https://img.icons8.com/?size=100&id=1437&format=png&color=000000" alt="Number Field">
             Add Number Field
         </button>
-        <button id="add-photo">
+        <button class="input-button" id="add-photo">
             <img src="https://img.icons8.com/material-outlined/24/000000/add-image.png" alt="Photo Upload">
             Add Photo Upload
         </button>
-        <button id="add-document">
+        <button class="input-button" id="add-document">
             <img src="https://img.icons8.com/?size=100&id=dM-cqlhsN3-n&format=png&color=000000" alt="Document Upload">
             Add Document Upload
         </button>
         <h6>Page Elements</h6>
-        <button id="add-page-divider">
+        <button class="input-button" id="add-page-divider">
             <img src="https://img.icons8.com/?size=100&id=6450&format=png&color=000000" alt="Page Divider">
             Add Page Divider
         </button>
     </div>
-    <div id="fields-container">
+    <div id="fields-container" class="empty">
         <!-- Fields will be added here dynamically -->
     </div>
 </div>
-<button id="submit-form" style="margin: 20px auto; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; display: block;">Submit</button>
+<button class="input-button" id="submit-form" style="margin: 20px auto; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; display: block;">Submit</button>
 
 
 <script>
