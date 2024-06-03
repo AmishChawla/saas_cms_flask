@@ -1017,6 +1017,64 @@ def user_all_subcategory(category_id):
 
     return render_template('view_user_subcategory.html', result=result)
 
+@app.route("/user/add-tag", methods=['GET', 'POST'])
+@login_required
+def add_tag():
+    form = forms.AddTag()
+    if form.validate_on_submit():
+        tag = form.tag.data
+        response = api_calls.add_tag(tag, access_token=current_user.id)
+        print(response.status_code)
+        if (response.status_code == 200):
+            flash('Tag added Successful')
+            return redirect(url_for('user_all_tag'))
+        else:
+            flash('Some problem occured')
+
+    return render_template('user_add_tags.html', form=form)
+
+
+@app.route("/user/edit-tag/<int:tag_id>", methods=['GET', 'POST'])
+@login_required
+def edit_tag(tag_id):
+    form = forms.EditTag()
+    if form.validate_on_submit():
+        new_tag = form.tag.data
+        response = api_calls.edit_tag(tag_id, new_tag, access_token=current_user.id)
+        print(response.status_code)
+        if response.status_code == 200:
+            flash('Tag edited successfully')
+            return redirect(url_for('user_all_tag'))
+        else:
+            flash('Some problem occurred while editing the tag')
+
+
+    return render_template('user_edit_tag.html', form=form, tag_id=tag_id)
+
+
+@app.route("/user/delete-tag/<int:tag_id>", methods=['GET', 'POST'])
+@login_required
+def delete_tag(tag_id):
+    response = api_calls.delete_tag(tag_id, access_token=current_user.id)
+    print(response.status_code)
+    if response.status_code == 200:
+        flash('Tag deleted successfully')
+    else:
+        flash('Some problem occurred while deleting the tag')
+    return redirect(url_for('user_all_tag'))
+
+
+@app.route('/user/all-tags')
+@login_required
+def user_all_tag():
+    result = api_calls.get_user_all_tags(access_token=current_user.id)
+    if result is None:
+        result = []  # Set result to an empty list
+    print(result)
+
+    return render_template('view_user_tags.html', result=result)
+
+
 @app.route("/users/delete-category/<category_id>", methods=['GET', 'POST'])
 @login_required
 def user_delete_category(category_id):

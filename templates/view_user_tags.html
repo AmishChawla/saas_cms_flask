@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}User's all posts{% endblock %}
+{% block title %}User's all tags{% endblock %}
 
 {% block content %}
 <link href="https://cdn.datatables.net/2.0.0/css/dataTables.dataTables.css" rel="stylesheet">
@@ -9,50 +9,31 @@
       <div class="card">
         <div class="card-body" style="overflow-x: auto;">
           <div style="display:flex; justify-content:space-between;">
-            <h4 class="card-title">Posts</h4>
+            <h4 class="card-title">Tags</h4>
             <div style="display: flex; justify-content: space-between;">
-              <a class="btn btn-info" href="{{ url_for('add_category')}}" style="padding: 6px 30px 6px 30px;">
-                <span class="menu-title">Add new category</span>
-              </a>
-              <a class="btn btn-success" href="{{ url_for('user_all_category')}}" style="padding: 6px 30px 6px 30px; border-radius:10px; margin-left:10px;">
-                <span class="menu-title">View category</span>
-              </a>
-              <a class="btn btn-info" href="{{ url_for('add_post')}}" style="padding: 6px 30px 6px 30px;margin-left:10px;">
-                <span class="menu-title">Add new post</span>
+              <a class="btn btn-info" href="{{ url_for('add_tag')}}" style="padding: 6px 30px 6px 30px;">
+                <span class="menu-title">Add new tag</span>
               </a>
             </div>
           </div>
-          <table id="userpostTable" class="display" style="width:100%;">
+          <table id="usertagTable" class="display" style="width:100%;">
             <thead>
               <tr>
                 <th>Sr. No.</th>
-                <th>Author</th>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Subcategory</th>
                 <th>Tag</th>
                 <th>Created Date</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {% for data in result | reverse %}
+              {% for data in result %}
               <tr style="max-height: 100px; overflow-y: auto;">
                 <td class="py-1">{{ loop.index }}</td>
-                <td class="py-1">{{ data.author_name }}</td>
-                <td class="py-1"><form action="{{ url_for('get_post', post_title=data.title | lower | replace(' ', '')) }}" method="POST" style="display:inline;">
-        <input type="hidden" name="post_id" value="{{ data.id }}">
-        <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left; color: blue;">
-            {{ data.title }}
-        </button>
-    </form></td>
-                <td class="py-1">{{ data.category.category }}</td>
-                <td class="py-1">{{ data.subcategory.subcategory }}</td>
-                <td class="py-1">{{ data.tag.tag }}</td>
+                <td class="py-1"><a href="#">{{ data.tag }}</a></td>
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 
-                  <a class="button button1" href="{{ url_for('admin_edit_post', post_id=data.id) }}">Edit</a>
+                  <a class="button button1" href="{{ url_for('edit_tag', tag_id=data.id) }}">Edit</a>
                   <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}">Delete</button>
 
                   <!-- Modal for delete button -->
@@ -68,7 +49,7 @@
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                          <a type="button" class="btn btn-danger" href="{{ url_for('user_delete_post', post_id=data.id) }}">Delete</a>
+                          <a type="button" class="btn btn-danger" href="{{ url_for('delete_tag', tag_id=data.id) }}">Delete</a>
                         </div>
                       </div>
                     </div>
@@ -82,8 +63,7 @@
       </div>
     </div>
   </div>
-
 <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script>new DataTable('#userpostTable');</script>
+<script>new DataTable('#usertagTable');</script>
 {% endblock %}
