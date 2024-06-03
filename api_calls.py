@@ -1181,6 +1181,84 @@ def get_category_name(category_id):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+
+def get_user_all_tags(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.get(constants.BASE_URL + '/user-all-tags', headers=headers)
+        print("Response Status Code:", response.status_code)  # Debug: Print status code
+        if response.status_code == 200:
+            result = response.json()
+            print("API Result:", result)  # Debug: Print API result
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def add_tag(tag, access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    params = {
+        "tag": tag,
+    }
+
+    try:
+        response = requests.post(constants.BASE_URL + f'/user/add-tags', json=params, headers=headers)
+        print(response.text)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def edit_tag(tag_id, new_tag, access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    params = {
+        "tag": new_tag,
+    }
+
+    try:
+        response = requests.put(constants.BASE_URL + f'/user/edit-tag/{tag_id}', json=params, headers=headers)
+        print(response.text)
+        return response
+    except HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def delete_tag(tag_id, access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    try:
+        response = requests.delete(constants.BASE_URL + f'/user/delete-tag/{tag_id}', headers=headers)
+        print(response.text)
+        return response
+    except HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
 def get_all_email_templates(access_token):
     print("trying")
     headers = {'Authorization': f'Bearer {access_token}'}

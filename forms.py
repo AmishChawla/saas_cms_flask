@@ -199,6 +199,14 @@ class AddSubcategory(FlaskForm):
     category = SelectField('Category', coerce=int, validators=[DataRequired()], default='Select Category')
     submit = SubmitField('Add Subcategory')
 
+class AddTag(FlaskForm):
+    tag = StringField('Tag title', validators=[validators.DataRequired()])
+    submit = SubmitField('Add Tag')
+
+class EditTag(FlaskForm):
+    tag = StringField('Tag title', validators=[validators.DataRequired()])
+    submit = SubmitField('Update Tag')
+
 class AdminUpdatePost(FlaskForm):
     title = StringField('Post title', validators=[validators.DataRequired()])
     category = SelectField('Category', validators=[DataRequired()], choices=[('', 'Select a category')])
