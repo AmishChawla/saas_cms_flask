@@ -1,4 +1,4 @@
-from wtforms import StringField, IntegerField, PasswordField, SubmitField, validators, SelectField, BooleanField, \
+from wtforms import StringField, SelectMultipleField, IntegerField, PasswordField, SubmitField, validators, SelectField, BooleanField, \
     TextAreaField
 from flask_wtf import FlaskForm
 
@@ -187,6 +187,7 @@ class AddPost(FlaskForm):
     category = SelectField('Category', validators=[DataRequired()], choices=[('', 'Select a category')])
     subcategory = SelectField('Subcategory', validators=[DataRequired()], choices=[('', 'Select a subcategory')])
     content = TextAreaField('Content', validators=[DataRequired()], render_kw={'rows': 30, 'cols': 30, 'id': 'content', 'placeholder': 'Write details about the post.'})
+    tags = SelectMultipleField('Tags', choices=['Tag1', 'Tag2', 'Tag3'], coerce=int)  # New field for tags
     submit = SubmitField('Add Post')
 
 class AddCategory(FlaskForm):
