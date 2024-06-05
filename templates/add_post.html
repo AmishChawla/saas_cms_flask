@@ -7,6 +7,30 @@
 {% block title %}Add Post{% endblock %}
 
 {% block content %}
+
+<style>
+    .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.tag {
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.close-button {
+    margin-left: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+</style>
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
@@ -22,6 +46,7 @@
                             {{ form.hidden_tag() }}
 
                             <div class="mb-3">
+                                {{form.title.label}}
                                 {{ form.title(class="form-control", placeholder="Title", required=True) }}
                             </div>
 
@@ -33,6 +58,11 @@
                             <div class="mb-3">
                                 {{ form.subcategory.label }}
                                 {{ form.subcategory(class="form-control", id="subcategory", required=True) }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.tags.label }}
+                                <!-- New dynamic tags input -->
+                                <textarea name="dynamic_tags" class="form-control" rows="3" placeholder="Enter tags separated by commas..."></textarea>
                             </div>
 
                             <div class="mb-3">
@@ -51,6 +81,59 @@
     </div>
 
     <script src="https://cdn.ckeditor.com/4.16.2/standard-all/ckeditor.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dynamicTagsInput = document.querySelector('[name="dynamic_tags"]');
+        const tagsContainer = document.createElement('div');
+        tagsContainer.classList.add('tags-container');
+
+        dynamicTagsInput.addEventListener('input', function () {
+            const tags = dynamicTagsInput.value.split(',').map(tag => tag.trim());
+            tagsContainer.innerHTML = ''; // Clear existing tags
+
+            tags.forEach(tag => {
+                const tagElement = document.createElement('span');
+                tagElement.classList.add('tag');
+                tagElement.textContent = tag;
+                tagElement.addEventListener('click', function () {
+                    tags.splice(tags.indexOf(tag), 1);
+                    dynamicTagsInput.value = tags.join(',');
+                    updateTagsDisplay();
+                });
+
+                const closeButton = document.createElement('button');
+                closeButton.classList.add('close-button');
+                closeButton.textContent = '×';
+                closeButton.addEventListener('click', function () {
+                    tags.splice(tags.indexOf(tag), 1);
+                    dynamicTagsInput.value = tags.join(',');
+                    updateTagsDisplay();
+                });
+
+                tagElement.appendChild(closeButton);
+                tagsContainer.appendChild(tagElement);
+            });
+
+            updateTagsDisplay();
+        });
+
+        function updateTagsDisplay() {
+            const tags = dynamicTagsInput.value.split(',').map(tag => tag.trim());
+            tagsContainer.innerHTML = '';
+            tags.forEach(tag => {
+                const tagElement = document.createElement('span');
+                tagElement.classList.add('tag');
+                tagElement.textContent = tag;
+                tagsContainer.appendChild(tagElement);
+            });
+        }
+
+        dynamicTagsInput.parentNode.insertBefore(tagsContainer, dynamicTagsInput.nextSibling);
+
+        // Initial display of any pre-existing tags
+        updateTagsDisplay();
+    });
+</script>
 
     <script>
         // Replace the CKEditor instance with the correct ID

@@ -901,7 +901,7 @@ def add_post():
     # Fetch categories and format them for the form choices
     try:
         categories = api_calls.get_user_all_categories(access_token=current_user.id)
-        category_choices = [(category['id'], category['category']) for category in categories]
+        category_choices = [('', 'Select a category')] + [(category['id'], category['category']) for category in categories]
         if not category_choices:
             category_choices = [('', 'Select Category')]
     except Exception as e:
