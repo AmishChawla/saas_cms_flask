@@ -939,18 +939,18 @@ def admin_delete_post(post_id, access_token):
         print(f"An unexpected error occurred: {err}")
 
 
-def create_post(title, content, category_id, subcategory_id, access_token):
-    print('trying3')
+def create_post(title, content, category_id, subcategory_id, tag_id, access_token):
+    print('trying to create post')
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
         "title": title,
         "content": content,
         "category_id": category_id,
-        "subcategory_id": subcategory_id
-
-        }
+        "subcategory_id": subcategory_id,
+        "tag_id": tag_id
+    }
     try:
-        response = requests.post(constants.BASE_URL+f'/posts/create-post', json=params, headers=headers)
+        response = requests.post(constants.BASE_URL + '/posts/create-post', json=params, headers=headers)
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:
@@ -964,14 +964,15 @@ def create_post(title, content, category_id, subcategory_id, access_token):
 
 
 
-def admin_update_post(post_id, title, content, category_id, subcategory_id, access_token):
+def admin_update_post(post_id, title, content, category_id, subcategory_id, tag_id, access_token):
     print('trying3')
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
         "title": title,
         "content": content,
         "category_id": category_id,
-        "subcategory_id": subcategory_id
+        "subcategory_id": subcategory_id,
+        "tag_id": tag_id
         }
     try:
         response = requests.put(constants.BASE_URL+f'/posts/update-post/{post_id}', json=params, headers=headers)
