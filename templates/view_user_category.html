@@ -29,7 +29,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for data in result %}
+              {% for data in result | reverse %}
               <tr style="max-height: 100px; overflow-y: auto;">
                 <td class="py-1">{{ loop.index }}</td>
                 <td class="py-1"><a href="{{ url_for('user_all_subcategory', category_id=data.id) }}">{{ data.category }}</a></td>

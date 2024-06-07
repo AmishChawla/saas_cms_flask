@@ -1001,6 +1001,19 @@ def get_post(post_id: int):
         print(f"Timeout Error: {errt}")
 
 
+def get_user_post_by_username(username: str):
+
+    try:
+        response = requests.get(constants.BASE_URL + f'/user-posts/{username}')
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+
 def get_subcategories_by_category(category_id):
     try:
         response = requests.get(constants.BASE_URL + f'/categories/{category_id}/subcategories/')

@@ -1,6 +1,6 @@
 {% extends 'admin_base.html' %}
 
-{% block title %}List of users{% endblock %}
+{% block title %}All Posts{% endblock %}
 
 {% block content %}
   <div class="row">
@@ -27,7 +27,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for data in result %}
+              {% for data in result | reverse %}
               <tr style="max-height: 100px; overflow-y: auto;">
                 <td class="py-1">{{ loop.index }}</td>
                 <td class="py-1">{{ data.id }}</td>

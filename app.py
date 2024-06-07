@@ -871,6 +871,17 @@ def user_all_post():
     return render_template('user_all_post.html', result=result)
 
 
+@app.route('/<username>/posts')
+def user_post_list(username):
+
+    result = api_calls.get_user_post_by_username(username=username)
+    if result is None:
+        result = []  # Set result to an empty list
+
+
+
+    return render_template('user_post_list.html', result=result)
+
 @app.route("/admin/delete-posts/<post_id>", methods=['GET', 'POST'])
 @login_required
 def admin_delete_post(post_id):
@@ -901,7 +912,7 @@ def add_post():
     # Fetch categories and format them for the form choices
     try:
         categories = api_calls.get_user_all_categories(access_token=current_user.id)
-        category_choices = [(category['id'], category['category']) for category in categories]
+        category_choices = [('', 'Select a category')] + [(category['id'], category['category']) for category in categories]
         if not category_choices:
             category_choices = [('', 'Select Category')]
     except Exception as e:
