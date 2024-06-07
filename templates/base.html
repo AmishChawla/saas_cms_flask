@@ -227,16 +227,16 @@
             </li>
 
               <li class="nav-item sidenav">
-    <a class="nav-link {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' %}active{% endif %}" href="{{ url_for('user_all_post') }}">
-        <i class="mdi mdi-pin menu-icon" style="margin-left:5px; margin-right:5px;  color: {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' %}#202124 !important{% endif %};"></i>
-        <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' %}#202124 !important{% endif %};">CMS</span>
+    <a class="nav-link {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' or request.endpoint == 'user_post_list' %}active{% endif %}" href="{{ url_for('user_all_post') }}">
+        <i class="mdi mdi-pin menu-icon" style="margin-left:5px; margin-right:5px;  color: {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' or request.endpoint == 'user_post_list' %}#202124 !important{% endif %};"></i>
+        <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' or request.endpoint == 'user_post_list' %}#202124 !important{% endif %};">CMS</span>
     </a>
 </li>
-{% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post' or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' %}
+{% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post' or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' or request.endpoint == 'user_post_list' %}
             <li class="nav-item sidenav">
-              <a class="nav-link" style="background-color: {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post' or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' %}#E7F2FA !important{% endif %}; border-radius: 20px;" href="{{ url_for('user_all_post') }}">
-                   <i class="mdi mdi-pin menu-icon" style="margin-left:5px; margin-right:5px;  color: {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post' or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' %}#202124 !important{% endif %};"></i>
-                <span class="menu-title" style="margin-left:1.5vw;  color: {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post' or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' %}#202124 !important{% endif %};">Posts</span>
+              <a class="nav-link" style="background-color: {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post' or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'user_post_list' %}#E7F2FA !important{% endif %}; border-radius: 20px;" href="{{ url_for('user_all_post') }}">
+                   <i class="mdi mdi-pin menu-icon" style="margin-left:5px; margin-right:5px;  color: {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post' or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'user_post_list' %}#202124 !important{% endif %};"></i>
+                <span class="menu-title" style="margin-left:1.5vw;  color: {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post' or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'user_post_list' %}#202124 !important{% endif %};">Posts</span>
               </a>
             </li>
 
@@ -253,16 +253,17 @@
                 <span class="menu-title" style="margin-left:1.5vw;  color: {% if request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' %}#202124 !important{% endif %};">Tags</span>
               </a>
             </li>
-              {% endif %}
-
-
-              <li class="nav-item sidenav">
+                            <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'formbuilder' %}active{% endif %}" href="{{ url_for('formbuilder') }}">
                   <i class="mdi mdi-file-document-edit-outline menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'formbuilder' %}#202124 !important{% endif %};"></i>
                 <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'formbuilder' %}#202124 !important{% endif %};">Form builder</span>
 
               </a>
             </li>
+              {% endif %}
+
+
+
 
               <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'get_purchase_history' %}active{% endif %}" href="{{ url_for('get_purchase_history') }}">
