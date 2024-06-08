@@ -18,16 +18,15 @@
                     </div>
 
                     <div class="card-body">
-                        {% if form.errors %}
-                            <div class="alert alert-danger">
-                                {% for field_errors in form.errors.values() %}
-                                    {% for error in field_errors %}
-                                        <p>{{ error }}</p>
-                                    {% endfor %}
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                <ul class="flashes alert alert-danger" style="list-style-type: none;">
+                                {% for message in messages %}
+                                    <li>{{ message }}</li>
                                 {% endfor %}
-                            </div>
-                        {% endif %}
-
+                                </ul>
+                            {% endif %}
+                        {% endwith %}
                         <form method="post" action="{{ url_for('login') }}">
                             {{ form.hidden_tag() }}
 
