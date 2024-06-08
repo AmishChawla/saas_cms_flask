@@ -130,6 +130,7 @@ def empty_uploads_folder():
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    session.pop('_flashes', None)
     print('trying')
     if current_user.is_authenticated:
         if current_user.company is not None:
@@ -160,6 +161,10 @@ def login():
                 return redirect(url_for('user_dashboard'))
             else:
                 return redirect(url_for('company_register'))
+        elif response.status_code == 400:
+            result = response.json()
+            message = result["detail"]
+            flash(message, category='error')
         else:
             # Handle the case where the response is None or the status code is not 200
             print("Error: Response is None or status code is not 200")
@@ -170,6 +175,7 @@ def login():
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
+    session.pop('_flashes', None)
     form = forms.RegisterForm()
     print("outside")
     if form.validate_on_submit():
@@ -178,11 +184,30 @@ def register():
         password = form.password.data
         response = api_calls.user_register(username, email, password)
         print("inside")
+        if response.status_code == 200:
+            response = api_calls.user_login(email, password)
+            if response is not None and response.status_code == 200:
+                data = response.json()
+                token = data.get('access_token')
+                role = data.get('role')
+                username = data.get('username')
+                email = data.get('email')
+                services = data.get('services', [])
+                company = data.get('company', {})
+                profile_picture = f"{ROOT_URL}/{data['profile_picture']}"
 
-        if (response.status_code == 200):
+                user = User(user_id=token, role=role, username=username, email=email, services=services,
+                            company=company,
+                            profile_picture=profile_picture)
+                login_user(user)
             flash('Registration Successful', category='info')
-            return redirect(url_for('login'))
-        else:
+            return redirect(url_for('user_view_plan'))
+        elif response.status_code == 400:
+            result = response.json()
+            message = result["detail"]
+            flash(message, category='error')
+
+        else :
             flash('Registration unsuccessful. Please check username, email and password.', category='error')
 
     return render_template('register.html', form=form)
@@ -308,6 +333,7 @@ def list_of_users():
 
 @app.route("/admin/login", methods=['GET', 'POST'])
 def admin_login():
+    session.pop('_flashes', None)
     print('trying')
     if current_user.is_authenticated:
         return redirect(url_for('admin_dashboard'))
@@ -346,6 +372,10 @@ def admin_login():
             # login_user(user)
 
             return redirect(url_for('admin_dashboard'))
+        elif response.status_code == 400:
+            result = response.json()
+            message = result["detail"]
+            flash(message, category='error')
         else:
             flash('Login unsuccessful. Please check email and password.', category='error')
 
@@ -433,9 +463,9 @@ def user_password_update():
                                                   confirm_new_password=confirm_new_password,
                                                   access_token=current_user.id)
         print(response.status_code)
-        if (response.status_code == 200):
+        if response.status_code == 200:
             flash('Password Updated Successfully', category='info')
-            if (current_user.role == 'user'):
+            if current_user.role == 'user':
                 return redirect(url_for('profile'))
             else:
                 return redirect(url_for('admin_dashboard'))
