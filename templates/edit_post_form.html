@@ -38,6 +38,12 @@
                                 {{ form.subcategory.label }}
                                 {{ form.subcategory(class="form-control", id="subcategory", required=True) }}
                             </div>
+
+                            <div class="mb-3">
+                                {{ form.tags.label }}
+                                {{ form.tags(class="form-control", id="tags", required=True) }}
+                            </div>
+
                             <div class="mb-3">
                                 {{ form.content.label }}
                                 {{ form.content(class="ckeditor", placeholder="Write details about the post.") }}

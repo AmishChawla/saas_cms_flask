@@ -40,8 +40,6 @@
                     </div>
 
                     <div class="card-body">
-
-
                         <form method="post" action="{{ url_for('add_post') }}">
                             {{ form.hidden_tag() }}
 
@@ -59,16 +57,20 @@
                                 {{ form.subcategory.label }}
                                 {{ form.subcategory(class="form-control", id="subcategory", required=True) }}
                             </div>
-                            <div class="mb-3">
+
+
+                           <div class="mb-3">
                                 {{ form.tags.label }}
-                                <!-- New dynamic tags input -->
-                                <textarea name="dynamic_tags" class="form-control" rows="3" placeholder="Enter tags separated by commas..."></textarea>
+                                {{ form.tags(class="form-control", id="tags", required=True) }}
                             </div>
+
 
                             <div class="mb-3">
                                 {{ form.content.label }}
                                 {{ form.content(class="form-control", id="content", placeholder="Write details about the post.") }}
                             </div>
+
+
 
                             <div class="mb-3 text-center">
                                 {{ form.submit(class="btn btn-dark btn-lg") }}
@@ -81,61 +83,11 @@
     </div>
 
     <script src="https://cdn.ckeditor.com/4.16.2/standard-all/ckeditor.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const dynamicTagsInput = document.querySelector('[name="dynamic_tags"]');
-        const tagsContainer = document.createElement('div');
-        tagsContainer.classList.add('tags-container');
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-        dynamicTagsInput.addEventListener('input', function () {
-            const tags = dynamicTagsInput.value.split(',').map(tag => tag.trim());
-            tagsContainer.innerHTML = ''; // Clear existing tags
 
-            tags.forEach(tag => {
-                const tagElement = document.createElement('span');
-                tagElement.classList.add('tag');
-                tagElement.textContent = tag;
-                tagElement.addEventListener('click', function () {
-                    tags.splice(tags.indexOf(tag), 1);
-                    dynamicTagsInput.value = tags.join(',');
-                    updateTagsDisplay();
-                });
-
-                const closeButton = document.createElement('button');
-                closeButton.classList.add('close-button');
-                closeButton.textContent = '×';
-                closeButton.addEventListener('click', function () {
-                    tags.splice(tags.indexOf(tag), 1);
-                    dynamicTagsInput.value = tags.join(',');
-                    updateTagsDisplay();
-                });
-
-                tagElement.appendChild(closeButton);
-                tagsContainer.appendChild(tagElement);
-            });
-
-            updateTagsDisplay();
-        });
-
-        function updateTagsDisplay() {
-            const tags = dynamicTagsInput.value.split(',').map(tag => tag.trim());
-            tagsContainer.innerHTML = '';
-            tags.forEach(tag => {
-                const tagElement = document.createElement('span');
-                tagElement.classList.add('tag');
-                tagElement.textContent = tag;
-                tagsContainer.appendChild(tagElement);
-            });
-        }
-
-        dynamicTagsInput.parentNode.insertBefore(tagsContainer, dynamicTagsInput.nextSibling);
-
-        // Initial display of any pre-existing tags
-        updateTagsDisplay();
-    });
-</script>
-
-    <script>
+  <script>
         // Replace the CKEditor instance with the correct ID
         CKEDITOR.replace('content');
 
@@ -169,4 +121,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
     </script>
+
+
+
+
 {% endblock %}
