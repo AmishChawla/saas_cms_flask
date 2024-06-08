@@ -193,7 +193,7 @@
                           <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'resume_history' %}active{% endif %}" href="{{ url_for('resume_history') }}">
                   <i class="mdi mdi-history menu-icon" style="margin-left:5px; margin-right:5px; color: {% if request.endpoint == 'resume_history' %}#202124 !important{% endif %};"></i>
-                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'resume_history' %}#202124 !important{% endif %};">Resume History</span>
+                <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'resume_history' %}#202124 !important{% endif %};">Resume Parsing</span>
               </a>
             </li>
 
@@ -239,14 +239,15 @@
                 <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'media' or request.endpoint == 'all_post' or request.endpoint == 'view_post' or request.endpoint == 'get_post' %}#202124 !important{% endif %};">Pages</span>
               </a>
             </li>
-              {% endif %}
-
               <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'formbuilder' %}active{% endif %}" href="{{ url_for('formbuilder') }}" >
                   <i class="mdi mdi-file-document-edit-outline menu-icon" style="margin-left:5px; margin-right:5px;  color: {% if request.endpoint == 'formbuilder' %}#202124 !important{% endif %};"></i>
                 <span class="menu-title" style="margin-left:1.5vw; color: {% if request.endpoint == 'formbuilder' %}#202124 !important{% endif %};">Form builder</span>
               </a>
             </li>
+              {% endif %}
+
+
 
              <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'services' %}active{% endif %}" href="{{ url_for('services') }}">

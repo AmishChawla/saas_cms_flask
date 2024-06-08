@@ -901,6 +901,17 @@ def user_all_post():
     return render_template('user_all_post.html', result=result)
 
 
+@app.route('/<username>/posts')
+def user_post_list(username):
+
+    result = api_calls.get_user_post_by_username(username=username)
+    if result is None:
+        result = []  # Set result to an empty list
+
+
+
+    return render_template('user_post_list.html', result=result)
+
 @app.route("/admin/delete-posts/<post_id>", methods=['GET', 'POST'])
 @login_required
 def admin_delete_post(post_id):
@@ -952,11 +963,24 @@ def add_post():
             subcategory_choices = [('', 'Select Subcategory')]
         form.subcategory.choices = subcategory_choices
 
+    # Fetch tags and format them for the form choices
+    try:
+        tags = api_calls.get_user_all_tags(access_token=current_user.id)
+        tag_choices = [(tag['id'], tag['tag']) for tag in tags]
+        if not tag_choices:
+            tag_choices = [('', 'Select Tag')]
+    except Exception as e:
+        print(f"Error fetching tags: {e}")
+        tag_choices = [('', 'Select Tag')]
+
+    form.tags.choices = tag_choices
+
     if form.validate_on_submit():
         title = form.title.data
         content = form.content.data
         category = form.category.data
         subcategory = form.subcategory.data
+        tag = form.tags.data
 
         print(content)
 
@@ -966,6 +990,7 @@ def add_post():
                 content=content,
                 category_id=category,
                 subcategory_id=subcategory,
+                tag_id=tag,
                 access_token=current_user.id
             )
 
@@ -991,6 +1016,7 @@ def add_post():
         return redirect(url_for('user_view_plan'))
     else:
         return render_template('add_post.html', form=form, categories=category_choices)
+
 
 
 @app.route("/user/add-category", methods=['GET', 'POST'])
@@ -1169,9 +1195,12 @@ def user_delete_subcategory(subcategory_id):
     if result.status_code == 200:
         return redirect(url_for('user_all_category'))
 
+
 @app.route('/posts/edit-post/<post_id>', methods=['GET', 'POST'])
 def admin_edit_post(post_id):
     form = forms.AdminUpdatePost()
+
+    # Fetch categories and format them for the form choices
     try:
         categories = api_calls.get_user_all_categories(access_token=current_user.id)
         category_choices = [(category['id'], category['category']) for category in categories]
@@ -1180,11 +1209,10 @@ def admin_edit_post(post_id):
     except Exception as e:
         print(f"Error fetching categories: {e}")
         category_choices = [('', 'Select Category')]
-
     form.category.choices = category_choices
 
+    # If a category is selected, fetch and set subcategories
     if form.category.data:
-        # Fetch subcategories based on the selected category
         try:
             subcategories = api_calls.get_subcategories_by_category(form.category.data)
             subcategory_choices = [(subcategory['id'], subcategory['subcategory']) for subcategory in subcategories]
@@ -1194,32 +1222,53 @@ def admin_edit_post(post_id):
             print(f"Error fetching subcategories: {e}")
             subcategory_choices = [('', 'Select Subcategory')]
         form.subcategory.choices = subcategory_choices
+
+    # Fetch tags and format them for the form choices
+    try:
+        tags = api_calls.get_user_all_tags(access_token=current_user.id)
+        tag_choices = [(tag['id'], tag['tag']) for tag in tags]
+        if not tag_choices:
+            tag_choices = [('', 'Select Tag')]
+    except Exception as e:
+        print(f"Error fetching tags: {e}")
+        tag_choices = [('', 'Select Tag')]
+    form.tags.choices = tag_choices
+
     if form.validate_on_submit():
         title = form.title.data
         content = form.content.data
-        category_id = form.category.data
-        subcategory_id = form.subcategory.data
-        result = api_calls.admin_update_post(
-            post_id=post_id,
-            title=title,
-            content=content,
-            category_id=category_id,
-            subcategory_id=subcategory_id,
-            access_token=current_user.id
-        )
-        if result:
-            print("Post created successfully")
-            if current_user.role == 'user':
-                return redirect(url_for('view_post'))
+        category = form.category.data
+        subcategory = form.subcategory.data
+        tag = form.tags.data
+
+        try:
+            result = api_calls.admin_update_post(
+                post_id=post_id,
+                title=title,
+                content=content,
+                category_id=category,
+                subcategory_id=subcategory,
+                tag_id=tag,
+                access_token=current_user.id
+            )
+
+            if result:
+                print("Post updated successfully")
+                if current_user.role == 'user':
+                    return redirect(url_for('view_post'))
+                else:
+                    return redirect(url_for('all_post'))
             else:
-                return redirect(url_for('all_post'))
-        else:
-            print("Failed to create post")
+                print("Failed to update post")
+        except Exception as e:
+            print(f"Error updating post: {e}")
     else:
         print("Form validation failed")
         print(form.errors)
 
     return render_template('edit_post_form.html', form=form, post_id=post_id)
+
+
 
 ############################################################ SUBSCRIPTION #############################################################
 @app.route('/payment/<plan_id>', methods=['GET', 'POST'])

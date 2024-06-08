@@ -939,18 +939,18 @@ def admin_delete_post(post_id, access_token):
         print(f"An unexpected error occurred: {err}")
 
 
-def create_post(title, content, category_id, subcategory_id, access_token):
-    print('trying3')
+def create_post(title, content, category_id, subcategory_id, tag_id, access_token):
+    print('trying to create post')
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
         "title": title,
         "content": content,
         "category_id": category_id,
-        "subcategory_id": subcategory_id
-
-        }
+        "subcategory_id": subcategory_id,
+        "tag_id": tag_id
+    }
     try:
-        response = requests.post(constants.BASE_URL+f'/posts/create-post', json=params, headers=headers)
+        response = requests.post(constants.BASE_URL + '/posts/create-post', json=params, headers=headers)
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:
@@ -964,14 +964,15 @@ def create_post(title, content, category_id, subcategory_id, access_token):
 
 
 
-def admin_update_post(post_id, title, content, category_id, subcategory_id, access_token):
+def admin_update_post(post_id, title, content, category_id, subcategory_id, tag_id, access_token):
     print('trying3')
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
         "title": title,
         "content": content,
         "category_id": category_id,
-        "subcategory_id": subcategory_id
+        "subcategory_id": subcategory_id,
+        "tag_id": tag_id
         }
     try:
         response = requests.put(constants.BASE_URL+f'/posts/update-post/{post_id}', json=params, headers=headers)
@@ -999,6 +1000,19 @@ def get_post(post_id: int):
     except requests.exceptions.Timeout as errt:
         print(f"Timeout Error: {errt}")
 
+
+def get_user_post_by_username(username: str):
+
+    try:
+        response = requests.get(constants.BASE_URL + f'/user-posts/{username}')
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
 
 def get_subcategories_by_category(category_id):
     try:
