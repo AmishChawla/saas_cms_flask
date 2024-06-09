@@ -36,7 +36,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for data in result | reverse %}
+              {% for data in result %}
               <tr style="max-height: 100px; overflow-y: auto;">
                 <td class="py-1">{{ loop.index }}</td>
                 <td class="py-1">{{ data.author_name }}</td>
