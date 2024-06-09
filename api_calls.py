@@ -44,11 +44,10 @@ def user_register(username, email, password):
         "email": email,
         "password": password,
         "role": "user"
-        }
-
+    }
 
     try:
-        response = requests.post(constants.BASE_URL+f'/register', data=json.dumps(data), headers=headers)
+        response = requests.post(constants.BASE_URL + f'/register', data=json.dumps(data), headers=headers)
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:
@@ -59,6 +58,7 @@ def user_register(username, email, password):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
 
 def admin_register(username, email, password):
     print('trying9')
@@ -72,7 +72,7 @@ def admin_register(username, email, password):
 
     try:
         # response = requests.post(constants.BASE_URL + '/register', data=json.dumps(data), headers=headers)
-        response = requests.post(constants.BASE_URL+'/register-admin', data=json.dumps(data), headers=headers)
+        response = requests.post(constants.BASE_URL + '/register-admin', data=json.dumps(data), headers=headers)
 
         print(response.text)
         return response
@@ -116,6 +116,7 @@ def get_all_users(access_token: str):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
 
 def admin_login(email, password):
     print('trying3')
@@ -218,8 +219,6 @@ def admin_delete_user_permanently(access_token: str, user_id: int):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
-
-
 
 
 def admin_get_any_user(access_token: str, user_id: int):
@@ -369,12 +368,7 @@ def user_update_profile(access_token: str, username, email, profile_picture):
         print(f"An unexpected error occurred: {err}")
 
 
-
-
-
-
 def get_companies():
-
     try:
         response = requests.get(constants.BASE_URL + f'/companies')
         if response.status_code == 200:
@@ -390,7 +384,6 @@ def get_companies():
 
 
 def get_company_details(company_id: int):
-
     try:
         response = requests.get(constants.BASE_URL + f'/companies/{company_id}')
         if response.status_code == 200:
@@ -404,6 +397,7 @@ def get_company_details(company_id: int):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+
 def company_register(name, location, access_token):
     print('trying3')
     headers = {'Authorization': f'Bearer {access_token}'}
@@ -411,9 +405,9 @@ def company_register(name, location, access_token):
         "name": name,
         "location": location,
 
-        }
+    }
     try:
-        response = requests.post(constants.BASE_URL+f'/companies/create-company', params=params, headers=headers)
+        response = requests.post(constants.BASE_URL + f'/companies/create-company', params=params, headers=headers)
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:
@@ -424,7 +418,6 @@ def company_register(name, location, access_token):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
-
 
 
 def services():
@@ -462,7 +455,6 @@ def add_service(name, description):
 
 
 def admin_delete_service(service_id: int):
-
     try:
         response = requests.delete(constants.BASE_URL + f'/services/delete-service/{service_id}')
         return response
@@ -501,7 +493,7 @@ def admin_edit_any_service(service_id, service_name, service_description):
 
     try:
         print("try")
-        response = requests.put(constants.BASE_URL + f'/services/update-service/{service_id}',  json=data)
+        response = requests.put(constants.BASE_URL + f'/services/update-service/{service_id}', json=data)
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
@@ -513,9 +505,7 @@ def admin_edit_any_service(service_id, service_name, service_description):
         print(f"An unexpected error occurred: {err}")
 
 
-
 def admin_get_resume_history():
-
     try:
         response = requests.get(constants.BASE_URL + '/admin/resume-history')
         return response
@@ -545,7 +535,6 @@ def admin_get_all_companies():
         print(f"An unexpected error occurred: {err}")
 
 
-
 def get_trash_users(access_token: str):
     headers = {'Authorization': f'Bearer {access_token}'}
     try:
@@ -560,6 +549,7 @@ def get_trash_users(access_token: str):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
 
 def admin_delete_company(company_id: int):
     try:
@@ -589,6 +579,7 @@ def admin_get_any_company(company_id: int):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+
 def admin_edit_any_company(company_id, name, location):
     print("trying")
 
@@ -599,7 +590,7 @@ def admin_edit_any_company(company_id, name, location):
 
     try:
         print("try")
-        response = requests.put(constants.BASE_URL + f'/companies/update-company/{company_id}',  params=data)
+        response = requests.put(constants.BASE_URL + f'/companies/update-company/{company_id}', params=data)
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
@@ -626,7 +617,9 @@ def admin_get_email_setup(access_token: str):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+
 import requests
+
 
 def admin_update_email_setup(access_token: str, smtp_server, smtp_port, smtp_username, smtp_password, sender_email):
     headers = {'Authorization': f'Bearer {access_token}'}
@@ -640,50 +633,47 @@ def admin_update_email_setup(access_token: str, smtp_server, smtp_port, smtp_use
 
     try:
         response = requests.put(constants.BASE_URL + f'/admin/update-email-settings/', headers=headers, json=data)
-        response.raise_for_status() # Raises an HTTPError if the response was unsuccessful
+        response.raise_for_status()  # Raises an HTTPError if the response was unsuccessful
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
-        raise # Re-raise the exception to be handled by the caller
+        raise  # Re-raise the exception to be handled by the caller
     except requests.exceptions.ConnectionError as errc:
         print(f"Error Connecting: {errc}")
-        raise # Re-raise the exception to be handled by the caller
+        raise  # Re-raise the exception to be handled by the caller
     except requests.exceptions.Timeout as errt:
         print(f"Timeout Error: {errt}")
-        raise # Re-raise the exception to be handled by the caller
+        raise  # Re-raise the exception to be handled by the caller
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
-        raise # Re-raise the exception to be handled by the caller
+        raise  # Re-raise the exception to be handled by the caller
 
 
 def admin_assign_service(user_id, service_ids: list):
-
     params = {
         "user_id": user_id
 
     }
 
-
     try:
         response = requests.post(constants.BASE_URL + f'/users/assign_services/', params=params, json=service_ids)
-        response.raise_for_status() # Raises an HTTPError if the response was unsuccessful
+        response.raise_for_status()  # Raises an HTTPError if the response was unsuccessful
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
-        raise # Re-raise the exception to be handled by the caller
+        raise  # Re-raise the exception to be handled by the caller
     except requests.exceptions.ConnectionError as errc:
         print(f"Error Connecting: {errc}")
-        raise # Re-raise the exception to be handled by the caller
+        raise  # Re-raise the exception to be handled by the caller
     except requests.exceptions.Timeout as errt:
         print(f"Timeout Error: {errt}")
-        raise # Re-raise the exception to be handled by the caller
+        raise  # Re-raise the exception to be handled by the caller
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
-        raise # Re-raise the exception to be handled by the caller
+        raise  # Re-raise the exception to be handled by the caller
 
 
 def user_specific_services(user_id):
-
     try:
         print("try")
         response = requests.get(constants.BASE_URL + f'/users/{user_id}/services')
@@ -755,7 +745,7 @@ def delete_plan(plan_id: int):
         print(f"An unexpected error occurred: {err}")
 
 
-def admin_get_any_plan(plan_id: int):
+def get_plan_by_id(plan_id: int):
     try:
         response = requests.get(constants.BASE_URL + f'/plans/{plan_id}')
         if response.status_code == 200:
@@ -780,7 +770,7 @@ def update_plan(plan_id: int, plan_name: str, time_period: str, fees: int, num_r
     }
     try:
         print("try")
-        response = requests.put(constants.BASE_URL + f'/plans/update-plan/{plan_id}',  json=data)
+        response = requests.put(constants.BASE_URL + f'/plans/update-plan/{plan_id}', json=data)
         if response.status_code == 200:
             return response.json()
     except requests.exceptions.HTTPError as errh:
@@ -791,20 +781,25 @@ def update_plan(plan_id: int, plan_name: str, time_period: str, fees: int, num_r
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
+
 ##################################################### SUBSCRIPTION #################################################################
 
 def start_subscription(plan_id, stripe_token, access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
 
-    data = {
+    params = {
         "plan_id": plan_id,
-        "stripe_token": stripe_token,
     }
+
+    if stripe_token is not None:
+        params["stripe_token"] = stripe_token
+
     try:
         print("try")
-        response = requests.post(constants.BASE_URL + f'/subscriptions/create-subscription',  params=data, headers=headers)
-        if response.status_code == 200:
-            return response.json()
+        response = requests.post(constants.BASE_URL + '/subscriptions/create-subscription', params=params, headers=headers)
+        response.raise_for_status()  # This will raise an HTTPError for bad responses
+        return response.json()
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except requests.exceptions.ConnectionError as errc:
@@ -816,7 +811,6 @@ def start_subscription(plan_id, stripe_token, access_token):
 
 
 def cancel_subscription(subscription_id):
-
     try:
         print("try")
         response = requests.post(constants.BASE_URL + f'/subscriptions/{subscription_id}/cancel')
@@ -924,6 +918,7 @@ def get_user_all_posts(access_token):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+
 def admin_delete_post(post_id, access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
     try:
@@ -963,7 +958,6 @@ def create_post(title, content, category_id, subcategory_id, tag_id, access_toke
         print(f"An unexpected error occurred: {err}")
 
 
-
 def admin_update_post(post_id, title, content, category_id, subcategory_id, tag_id, access_token):
     print('trying3')
     headers = {'Authorization': f'Bearer {access_token}'}
@@ -973,9 +967,9 @@ def admin_update_post(post_id, title, content, category_id, subcategory_id, tag_
         "category_id": category_id,
         "subcategory_id": subcategory_id,
         "tag_id": tag_id
-        }
+    }
     try:
-        response = requests.put(constants.BASE_URL+f'/posts/update-post/{post_id}', json=params, headers=headers)
+        response = requests.put(constants.BASE_URL + f'/posts/update-post/{post_id}', json=params, headers=headers)
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:
@@ -987,8 +981,8 @@ def admin_update_post(post_id, title, content, category_id, subcategory_id, tag_
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
-def get_post(post_id: int):
 
+def get_post(post_id: int):
     try:
         response = requests.get(constants.BASE_URL + f'/posts/{post_id}')
         if response.status_code == 200:
@@ -1002,7 +996,6 @@ def get_post(post_id: int):
 
 
 def get_user_post_by_username(username: str):
-
     try:
         response = requests.get(constants.BASE_URL + f'/user-posts/{username}')
         if response.status_code == 200:
@@ -1013,6 +1006,7 @@ def get_user_post_by_username(username: str):
         print(f"Error Connecting: {errc}")
     except requests.exceptions.Timeout as errt:
         print(f"Timeout Error: {errt}")
+
 
 def get_subcategories_by_category(category_id):
     try:
@@ -1074,7 +1068,8 @@ def update_category(category_id, category, access_token):
     }
 
     try:
-        response = requests.put(constants.BASE_URL + f'/category/update-category/{category_id}', json=params, headers=headers)
+        response = requests.put(constants.BASE_URL + f'/category/update-category/{category_id}', json=params,
+                                headers=headers)
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:
@@ -1144,7 +1139,6 @@ def add_subcategory(subcategory, category_id, access_token):
         print(f"An unexpected error occurred: {err}")
 
 
-
 def update_subcategory(subcategory_id, subcategory, category_id, access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
@@ -1153,7 +1147,8 @@ def update_subcategory(subcategory_id, subcategory, category_id, access_token):
     }
 
     try:
-        response = requests.put(constants.BASE_URL + f'/user/update_subcategory/{subcategory_id}', json=params, headers=headers)
+        response = requests.put(constants.BASE_URL + f'/user/update_subcategory/{subcategory_id}', json=params,
+                                headers=headers)
         response.raise_for_status()  # Raise an exception for HTTP errors
         return response.json()  # Return the response as JSON
     except requests.exceptions.HTTPError as errh:
@@ -1179,7 +1174,6 @@ def user_delete_subcategory(subcategory_id, access_token):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
-
 
 
 def get_category_name(category_id):
@@ -1273,6 +1267,7 @@ def delete_tag(tag_id, access_token):
     except RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+
 def get_all_email_templates(access_token):
     print("trying")
     headers = {'Authorization': f'Bearer {access_token}'}
@@ -1293,7 +1288,6 @@ def get_all_email_templates(access_token):
         print(f"An unexpected error occurred: {err}")
 
 
-
 def get_subcategory_name(subcategory_id):
     try:
         response = requests.delete(constants.BASE_URL + f'/subcategory/{subcategory_id}')
@@ -1307,6 +1301,7 @@ def get_subcategory_name(subcategory_id):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+
 def create_template(name, subject, body, access_token):
     print('trying3')
     headers = {'Authorization': f'Bearer {access_token}'}
@@ -1314,9 +1309,9 @@ def create_template(name, subject, body, access_token):
         "name": name,
         "subject": subject,
         "body": body
-        }
+    }
     try:
-        response = requests.post(constants.BASE_URL+f'/email-templates/create-template', json=params, headers=headers)
+        response = requests.post(constants.BASE_URL + f'/email-templates/create-template', json=params, headers=headers)
         if response.status_code == 200:
             result = response.json()
             return result
@@ -1346,7 +1341,8 @@ def edit_eamil_template(access_token: str, name, subject, body, template_id):
 
     try:
         print("try")
-        response = requests.put(constants.BASE_URL + f'/email-templates/update-template/{template_id}', headers=headers, json=data)
+        response = requests.put(constants.BASE_URL + f'/email-templates/update-template/{template_id}', headers=headers,
+                                json=data)
         if response.status_code == 200:
             result = response.json()
             return result
@@ -1384,7 +1380,8 @@ def delete_template(access_token, template_id):
     headers = {'Authorization': f'Bearer {access_token}'}
     try:
         print("try")
-        response = requests.delete(constants.BASE_URL + f'/email-templates/delete-template/{template_id}', headers=headers)
+        response = requests.delete(constants.BASE_URL + f'/email-templates/delete-template/{template_id}',
+                                   headers=headers)
         if response.status_code == 200:
             result = response.json()
             return result
@@ -1423,3 +1420,22 @@ def send_email(access_token: str, to, subject, body):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+
+def is_service_access_allowed(access_token):
+    print("trying")
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        print("try")
+        response = requests.get(constants.BASE_URL + "/subscriptions/is-service-allowed", headers=headers)
+        if response.status_code == 200:
+            is_allowed = response.json()
+            print(is_allowed)
+            return is_allowed
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")

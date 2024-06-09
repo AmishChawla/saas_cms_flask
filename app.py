@@ -828,7 +828,7 @@ def add_plan():
 @login_required
 def update_plan(plan_id):
     form = forms.AddPlan()
-    result = api_calls.admin_get_any_plan(plan_id)
+    result = api_calls.get_plan_by_id(plan_id)
     name = result["plan_type_name"]
     duration = result["time_period"]
     fees = result["fees"]
@@ -1010,9 +1010,10 @@ def add_post():
             print(form.errors)
 
     if current_user.role == 'user':
-        for service in current_user.services:
-            if isinstance(service, dict) and service.get('name') == 'CMS':
-                return render_template('add_post.html', form=form, categories=category_choices)
+        # for service in current_user.services:
+        is_service_allowed = api_calls.is_service_access_allowed(current_user.id)
+        if is_service_allowed :
+            return render_template('add_post.html', form=form, categories=category_choices)
         return redirect(url_for('user_view_plan'))
     else:
         return render_template('add_post.html', form=form, categories=category_choices)
@@ -1274,19 +1275,35 @@ def admin_edit_post(post_id):
 @app.route('/payment/<plan_id>', methods=['GET', 'POST'])
 @login_required
 def payment(plan_id):
+    plan = api_calls.get_plan_by_id(plan_id)  # Fetch the plan details from the database or API
+
+    if plan.fees == 0:
+        return redirect(url_for('create_subscription', plan_id=plan.id))
+
     return render_template('payment.html', plan_id=plan_id)
 
 
 @app.route('/create-subscription/<plan_id>', methods=['GET','POST'])
 @login_required
 def create_subscription(plan_id):
-    stripe_token = request.form.get('stripeToken')
-    result = api_calls.start_subscription(plan_id=plan_id, stripe_token=stripe_token, access_token=current_user.id)
+    plan = api_calls.get_plan_by_id(plan_id)  # Fetch the plan details from the database or API
+    print(plan)
 
-    if result:
-        return render_template('payment_success.html')
+    if plan['fees'] == 0:
+        # Directly create the subscription for free plans
+        result = api_calls.start_subscription(plan_id=plan_id, stripe_token=None, access_token=current_user.id)
+        if result:
+            return redirect(url_for('user_dashboard'))  # Redirect to the user dashboard
+        else:
+            return redirect(url_for('user_view_plan'))
     else:
-        return render_template('payment_failure.html')
+        # Handle paid subscriptions
+        stripe_token = request.form.get('stripeToken')
+        result = api_calls.start_subscription(plan_id=plan_id, stripe_token=stripe_token, access_token=current_user.id)
+        if result:
+            return render_template('payment_success.html')
+        else:
+            return render_template('payment_failure.html')
 
 
 @app.route('/cancel-subscription/<subscription_id>', methods=['GET','POST'])

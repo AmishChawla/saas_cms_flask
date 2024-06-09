@@ -55,7 +55,11 @@
                   {{ plan.plan_details | safe }}
               </ul>
               <div class="card-body text-center">
-                <a type="button" href="{{ url_for('payment',plan_id=plan.id) }}" class="btn btn-outline-dark btn-lg btn-block" >Purchase</a>
+                            {% if plan.fees == 0 %}
+                                <a type="button" href="{{ url_for('create_subscription', plan_id=plan.id) }}" class="btn btn-outline-dark btn-lg btn-block">Subscribe for Free</a>
+                            {% else %}
+                                <a type="button" href="{{ url_for('payment', plan_id=plan.id) }}" class="btn btn-outline-dark btn-lg btn-block">Purchase</a>
+                            {% endif %}
               </div>
             </div>
           </div>
