@@ -131,11 +131,14 @@ display: inline-block;
                                     {% endif %}
                                     <strong>Next Billing Date:</strong> {{ plan.next_billing_date }}
                                 </p>
+                                {% if plan.stripe_subscription_id %}
                                 {% if plan.cancel_at_period_end %}
                                     <a href="{{ url_for('resume_subscription', subscription_id = plan.stripe_subscription_id) }}" class="btn btn-info">Resume Subscription</a>
                                 {% else %}
                                     <a href="{{ url_for('cancel_subscription', subscription_id = plan.stripe_subscription_id) }}" class="btn btn-danger">Cancel Subscription</a>
                                 {% endif %}
+                                {% endif %}
+
                             </div>
                         </div>
                     </div>
