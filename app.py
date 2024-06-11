@@ -905,12 +905,14 @@ def user_all_post():
 def user_post_list(username):
 
     result = api_calls.get_user_post_by_username(username=username)
+
+    response = api_calls.get_all_categories()
     if result is None:
         result = []  # Set result to an empty list
 
-
-
-    return render_template('user_post_list.html', result=result)
+    if response is None:
+        response = []
+    return render_template('user_post_list.html', result=result, response=response)
 
 @app.route("/admin/delete-posts/<post_id>", methods=['GET', 'POST'])
 @login_required
@@ -1064,6 +1066,8 @@ def user_all_category():
     return render_template('view_user_category.html', result=result)
 
 
+
+
 @app.route('/user/all-subcategories/<category_id>')
 @login_required
 def user_all_subcategory(category_id):
@@ -1172,7 +1176,7 @@ def add_subcategory():
 @login_required
 def update_subcategory(subcategory_id):
     form = forms.AddSubcategory()  # Assuming you have a form for subcategory
-    categories = api_calls.get_all_categories()
+    categories = api_calls.get_user_all_categories(access_token=current_user.id)
     category_choices = [(category['id'], category['category']) for category in categories]
     form.category.choices = category_choices
     if form.validate_on_submit():
@@ -1367,11 +1371,15 @@ def comment():
 @app.route('/users/view-posts')
 def view_post():
     result = api_calls.get_all_posts()
+    response = api_calls.get_all_categories()
     if result is None:
         result = []  # Set result to an empty list
+
+    if response is None:
+        response = []
     print(result)
 
-    return render_template('list_of_posts.html', result=result)
+    return render_template('list_of_posts.html', result=result, response=response)
 
 @app.route('/posts/<post_title>', methods=['GET', 'POST'])
 def get_post(post_title):

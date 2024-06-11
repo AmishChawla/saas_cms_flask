@@ -7,27 +7,82 @@
 {% block title %}List of posts{% endblock %}
 
 {% block content %}
-        <!-- Main Content-->
-        <div class="container px-4 px-lg-5">
+<style>
+    #search-input {
+    width: 80%;
+    margin: 20px auto;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    outline: none;
+    box-sizing: border-box;
+    display: block;
+}
+
+    #categories-container {
+        overflow-x: auto; /* Enable horizontal scrolling */
+        white-space: nowrap; /* Prevent buttons from wrapping to the next line */
+    }
+
+    .category-button {
+        display: inline-block;
+        padding: 10px 20px;
+        margin-right: 10px;
+        background-color: #eaeaea;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+    }
+
+    .category-button:hover {
+        background-color: #ddd;
+    }
+
+::-webkit-scrollbar {
+        display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
+    }
+
+    #selected-category {
+        font-size: 30px; /* Big font size */
+        font-weight: bold; /* Bold font weight */
+      margin: 50px auto; /* Add margin from top and bottom and center horizontally */
+    text-align: center;
+    }
+
+</style>
+    <!-- Main Content-->
+    <div class="container px-4 px-lg-5">
+        <div id="categories-container">
+            {% for data in response %}
+            <button class="category-button" onclick="selectCategory('{{ data.category }}', '{{ data.id }}')">{{ data.category }}</button>
+            {% endfor %}
+
+            <!-- Add more buttons for additional categories -->
+        </div>
+
+         <div id="selected-category" style="display: none;"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+
+            <input type="text" id="search-input" placeholder="Search posts" style="margin-right: auto; margin-left: 20px;">
             {% if current_user.role == "user" %}
-            <div style="display: flex; justify-content: space-between;">
-                <h2>Posts</h2>
-                <a class="btn btn-info" href="{{ url_for('add_post')}}" style="padding: 6px 30px 6px 30px;">
+            <a class="btn btn-info" href="{{ url_for('add_post')}}" style="padding: 6px 30px 6px 30px;">
                 <span class="menu-title">Add new post</span>
-              </a>
-                          </div>
+            </a>
             {% endif %}
-            <div class="row gx-4 gx-lg-5 justify-content-center">
-                <div class="col-md-10 col-lg-8 col-xl-7">
+        </div>
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-12">
+                <div class="row" id="posts-container">
                     <!-- Post preview-->
                     {% for data in result %}
-                    <div class="post-preview">
+                    <div class="col-md-4 post-preview" data-post-index="{{ loop.index0 }}" data-category-id="{{ data.category_id }}" style="display: none;">
                         <form action="{{ url_for('get_post', post_title=data.title | lower | replace(' ', '')) }}" method="POST" style="display:inline;">
-        <input type="hidden" name="post_id" value="{{ data.id }}">
-        <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left;">
-            <h3 class="post-title">{{ data.title }}</h3>
-        </button>
-    </form>
+                            <input type="hidden" name="post_id" value="{{ data.id }}">
+                            <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left;">
+                                <h3 class="post-title">{{ data.title }}</h3>
+                            </button>
+                        </form>
                         <p class="post-meta">
                             Posted by
                             <a href="{{ url_for('user_post_list', username=data.author_name) }}">{{ data.author_name }}</a>
@@ -35,12 +90,99 @@
                         </p>
                     </div>
                     {% endfor %}
-                    <!-- Divider-->
-                    <hr class="my-4" />
-                    <!-- Post preview-->
-                    <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">Older Posts →</a></div>
+                </div>
+                <!-- Divider-->
+                <hr class="my-4" />
+                <!-- Post preview-->
+                <div class="d-flex justify-content-between mb-4">
+                    <button id="load-newer" class="btn btn-primary text-uppercase" style="display: none;">← Newer Posts</button>
+                    <button id="load-more" class="btn btn-primary text-uppercase">Older Posts →</button>
                 </div>
             </div>
         </div>
-        <!-- Footer-->
+    </div>
+<script>
+    let selectedCategoryId = null;
+    let currentPage = 0;
+    const postsPerPage = 7;
+
+    function filterPosts() {
+        const query = document.getElementById('search-input').value.trim().toLowerCase();
+        let visiblePosts = 0;
+        const posts = document.querySelectorAll('.post-preview');
+
+        posts.forEach((post, index) => {
+            const title = post.querySelector('.post-title').textContent.toLowerCase();
+            const categoryId = post.getAttribute('data-category-id');
+            const isVisible = title.includes(query) && (!selectedCategoryId || selectedCategoryId === categoryId);
+
+            if (isVisible && visiblePosts >= currentPage * postsPerPage && visiblePosts < (currentPage + 1) * postsPerPage) {
+                post.style.display = 'block';
+            } else {
+                post.style.display = 'none';
+            }
+            if (isVisible) {
+                visiblePosts++;
+            }
+        });
+
+        const loadMoreButton = document.getElementById('load-more');
+        const loadNewerButton = document.getElementById('load-newer');
+
+        // Hide the loadMoreButton if there are no more posts to show
+        if (visiblePosts <= (currentPage + 1) * postsPerPage) {
+            loadMoreButton.style.display = 'none';
+        } else {
+            loadMoreButton.style.display = 'block';
+        }
+
+        // Show the loadNewerButton if we are not on the first page
+        if (currentPage > 0) {
+            loadNewerButton.style.display = 'block';
+        } else {
+            loadNewerButton.style.display = 'none';
+        }
+    }
+
+    function selectCategory(category, categoryId) {
+        console.log("Category selected:", category, "ID:", categoryId);
+        selectedCategoryId = categoryId;
+        console.log("Selected category ID:", selectedCategoryId);
+        currentPage = 0;
+        filterPosts();
+        document.getElementById('selected-category').innerText = category;
+        document.getElementById('selected-category').style.display = 'block';
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize the first page
+        filterPosts();
+
+        // Adjust search input width based on user role
+        const searchInput = document.getElementById('search-input');
+        if ('{{ current_user.role }}' === 'user') {
+            searchInput.style.width = '80%';
+        } else {
+            searchInput.style.width = '96%';
+        }
+
+        // Event listeners for load more and load newer buttons
+        document.getElementById('load-more').addEventListener('click', function () {
+            currentPage++;
+            filterPosts();
+        });
+
+        document.getElementById('load-newer').addEventListener('click', function () {
+            if (currentPage > 0) {
+                currentPage--;
+                filterPosts();
+            }
+        });
+
+        // Event listener for search input
+        searchInput.addEventListener('input', filterPosts);
+    });
+</script>
+
+    <!-- Footer-->
 {% endblock %}
