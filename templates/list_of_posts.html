@@ -38,15 +38,35 @@
         background-color: #ddd;
     }
 
-::-webkit-scrollbar {
-        display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
+/* Hide scrollbar for Chrome, Safari, and Opera */
+    ::-webkit-scrollbar {
+        display: none;
     }
+
+    /* Hide scrollbar for IE, Edge (non-Chromium) */
+    body, html, #categories-container {
+        -ms-overflow-style: none;  /* IE and Edge */
+    }
+
+    /* Hide scrollbar for Firefox */
+    body, #categories-container {
+        scrollbar-width: none;  /* Firefox */
+    }
+
 
     #selected-category {
         font-size: 30px; /* Big font size */
         font-weight: bold; /* Bold font weight */
-      margin: 50px auto; /* Add margin from top and bottom and center horizontally */
-    text-align: center;
+        margin: auto; /* Add margin from top and bottom and center horizontally */
+        margin-top: 50px;
+        text-align: center;
+    }
+
+    #post-count {
+        font-size: 16px;
+        text-align: center;
+        margin-top: 10px;
+        margin-bottom: 30px;
     }
 
 </style>
@@ -56,14 +76,12 @@
             {% for data in response %}
             <button class="category-button" onclick="selectCategory('{{ data.category }}', '{{ data.id }}')">{{ data.category }}</button>
             {% endfor %}
-
-            <!-- Add more buttons for additional categories -->
         </div>
 
-         <div id="selected-category" style="display: none;"></div>
+        <div id="selected-category" style="display: none;"></div>
+        <div id="post-count" style="display: none;"></div>
 
         <div style="display: flex; justify-content: space-between; align-items: center;">
-
             <input type="text" id="search-input" placeholder="Search posts" style="margin-right: auto; margin-left: 20px;">
             {% if current_user.role == "user" %}
             <a class="btn btn-info" href="{{ url_for('add_post')}}" style="padding: 6px 30px 6px 30px;">
@@ -109,6 +127,7 @@
     function filterPosts() {
         const query = document.getElementById('search-input').value.trim().toLowerCase();
         let visiblePosts = 0;
+        let totalPostsInCategory = 0;
         const posts = document.querySelectorAll('.post-preview');
 
         posts.forEach((post, index) => {
@@ -123,6 +142,9 @@
             }
             if (isVisible) {
                 visiblePosts++;
+            }
+            if (selectedCategoryId === categoryId) {
+                totalPostsInCategory++;
             }
         });
 
@@ -142,12 +164,23 @@
         } else {
             loadNewerButton.style.display = 'none';
         }
+
+        // Update the post count
+         const postCountElement = document.getElementById('post-count');
+        if (selectedCategoryId) {
+            if (totalPostsInCategory <= 1) {
+                postCountElement.textContent = `${totalPostsInCategory} Post`;
+            } else {
+                postCountElement.textContent = `${totalPostsInCategory} Posts`;
+            }
+            postCountElement.style.display = 'block';
+        } else {
+            postCountElement.style.display = 'none';
+        }
     }
 
     function selectCategory(category, categoryId) {
-        console.log("Category selected:", category, "ID:", categoryId);
         selectedCategoryId = categoryId;
-        console.log("Selected category ID:", selectedCategoryId);
         currentPage = 0;
         filterPosts();
         document.getElementById('selected-category').innerText = category;

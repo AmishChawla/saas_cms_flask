@@ -1,36 +1,144 @@
-{% extends 'admin_base.html' %}
+{% if current_user.role == "admin" %}
+    {% extends 'admin_base.html' %}
+{% else %}
+    {% extends 'base.html' %}
+{% endif %}
 
 {% block title %}List of users{% endblock %}
 
 {% block content %}
 
+<style>
+    .card {
+        border: 2px dashed #ccc; /* Adjust the color and width as needed */
+        padding: 20px;
+        text-align: center;
+        position: relative;
+    }
 
+    .card.dragover {
+        border-color: #000; /* Change border color when dragging over */
+    }
 
+    .file-input {
+        display: none;
+    }
 
+    .btn-select, .btn-upload {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
 
-            <div class="row">
+    .btn-select:hover, .btn-upload:hover {
+        background-color: #0056b3;
+    }
 
+    .file-list {
+        margin-top: 20px;
+        text-align: left;
+    }
 
-              <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
-                <div class="card">
-                  <div class="card-body" style="overflow-x: auto;">
-                      <div style="display:flex; justify-content:space-between;">
-                    <h4 class="card-title">Media</h4>
-                      <div style="display: flex; justify-content: space-between;">
-                                      <a class="btn btn-info" href="#" style="padding: 6px 30px 6px 30px;">
-                <span class="menu-title"><i class="mdi mdi-folder-multiple-image" style="margin-left:5px; margin-right:5px;"></i>Add new</span>
-              </a>
-                          </div>
-                          </div>
+    .file-list p {
+        margin: 0;
+        padding: 5px;
 
+    }
 
+    .error-message {
+        color: red;
+        font-size: 14px;
+    }
 
-                  </div>
-                </div>
-              </div>
+    .disclaimer {
+        font-size: 14px;
+        color: #555;
+    }
+</style>
 
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
+        <div class="card" id="drop-zone">
+            <div class="card-body">
+                <p>Drop files here to upload</p>
+                <p>or</p>
+                <input type="file" id="file-input" class="file-input" multiple>
+                <button class="btn-select" onclick="document.getElementById('file-input').click();">Select Files</button>
+                <div id="file-list" class="file-list"></div>
+                <button id="btn-upload" class="btn-upload" style="display:none;" onclick="uploadFiles()">Upload Files</button>
+                <p id="error-message" class="error-message"></p>
             </div>
+        </div>
+    </div>
+</div>
 
-          <!-- content-wrapper ends -->
+<p class="disclaimer">Maximum upload file size is 2MB.</p>
+
+<script>
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const fileList = document.getElementById('file-list');
+    const uploadButton = document.getElementById('btn-upload');
+    const errorMessage = document.getElementById('error-message');
+    let filesArray = [];
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        const newFiles = Array.from(e.dataTransfer.files);
+        addFiles(newFiles);
+    });
+
+    fileInput.addEventListener('change', () => {
+        const newFiles = Array.from(fileInput.files);
+        addFiles(newFiles);
+        fileInput.value = ""; // Clear the input so the same file can be selected again if needed
+    });
+
+    function addFiles(newFiles) {
+        newFiles.forEach(file => {
+            if (file.size <= 2 * 1024 * 1024) { // 2MB in bytes
+                filesArray.push(file);
+                errorMessage.textContent = ''; // Clear any previous error messages
+            } else {
+                errorMessage.textContent = 'Some files were not added because they exceed the 2MB size limit.';
+            }
+        });
+        updateFileList();
+    }
+
+    function updateFileList() {
+        fileList.innerHTML = ''; // Clear the current file list
+        filesArray.forEach((file, index) => {
+            const fileItem = document.createElement('p');
+            fileItem.textContent = `${index + 1}. ${file.name}`;
+            fileList.appendChild(fileItem);
+        });
+        uploadButton.style.display = filesArray.length > 0 ? 'inline-block' : 'none';
+    }
+
+    function uploadFiles() {
+        if (filesArray.length === 0) {
+            alert('No files selected for upload.');
+            return;
+        }
+        // Perform the upload operation
+        console.log('Uploading files:', filesArray);
+        // Add your file upload logic here
+    }
+</script>
 
 {% endblock %}
