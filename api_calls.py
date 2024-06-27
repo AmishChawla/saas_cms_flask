@@ -1462,7 +1462,7 @@ def upload_medias(file_list, access_token):
             print('Media uploaded successfully.')
         else:
             print('Failed to upload media.')
-            return response
+        return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except requests.exceptions.ConnectionError as errc:
@@ -1521,6 +1521,8 @@ def get_user_all_medias(access_token):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
+
 def get_all_newsletter_subscribers(access_token):
     print("trying")
     headers = {'Authorization': f'Bearer {access_token}'}
