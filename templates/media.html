@@ -4,24 +4,25 @@
     {% extends 'base.html' %}
 {% endif %}
 
-{% block title %}List of users{% endblock %}
+{% block title %}Upload Media{% endblock %}
 
 {% block content %}
 
 <style>
     .card {
-        border: 2px dashed #ccc; /* Adjust the color and width as needed */
+        border: 2px dashed #ccc;
         padding: 20px;
         text-align: center;
         position: relative;
     }
 
     .card.dragover {
-        border-color: #000; /* Change border color when dragging over */
+        border-color: #000;
     }
 
     .file-input {
-        display: none;
+        position: absolute;
+        left: -9999px;
     }
 
     .btn-select, .btn-upload {
@@ -46,7 +47,6 @@
     .file-list p {
         margin: 0;
         padding: 5px;
-
     }
 
     .error-message {
@@ -64,13 +64,16 @@
     <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
         <div class="card" id="drop-zone">
             <div class="card-body">
-                <p>Drop files here to upload</p>
-                <p>or</p>
-                <input type="file" id="file-input" class="file-input" multiple>
-                <button class="btn-select" onclick="document.getElementById('file-input').click();">Select Files</button>
-                <div id="file-list" class="file-list"></div>
-                <button id="btn-upload" class="btn-upload" style="display:none;" onclick="uploadFiles()">Upload Files</button>
-                <p id="error-message" class="error-message"></p>
+                <form id="upload-form" method="post" action="{{ url_for('media') }}" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    <p>Drop files here to upload</p>
+                    <p>or</p>
+                    <label for="file-input" class="btn-select">Select Files</label>
+                    <input type="file" id="file-input" class="file-input" multiple>
+                    <div id="file-list" class="file-list"></div>
+                    <button type="submit" id="btn-upload" class="btn-upload" style="display:none;">Upload Files</button>
+                    <p id="error-message" class="error-message"></p>
+                </form>
             </div>
         </div>
     </div>
@@ -79,11 +82,13 @@
 <p class="disclaimer">Maximum upload file size is 2MB.</p>
 
 <script>
+document.addEventListener('DOMContentLoaded', function () {
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('file-input');
     const fileList = document.getElementById('file-list');
     const uploadButton = document.getElementById('btn-upload');
     const errorMessage = document.getElementById('error-message');
+    const uploadForm = document.getElementById('upload-form');
     let filesArray = [];
 
     dropZone.addEventListener('dragover', (e) => {
@@ -105,23 +110,33 @@
     fileInput.addEventListener('change', () => {
         const newFiles = Array.from(fileInput.files);
         addFiles(newFiles);
-        fileInput.value = ""; // Clear the input so the same file can be selected again if needed
+        fileInput.value = "";
+    });
+
+    uploadForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        uploadFiles();
     });
 
     function addFiles(newFiles) {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/avi', 'video/mov'];
         newFiles.forEach(file => {
-            if (file.size <= 2 * 1024 * 1024) { // 2MB in bytes
-                filesArray.push(file);
-                errorMessage.textContent = ''; // Clear any previous error messages
+            if (allowedTypes.includes(file.type)) {
+                if (file.size <= 2 * 1024 * 1024) {
+                    filesArray.push(file);
+                    errorMessage.textContent = '';
+                } else {
+                    errorMessage.textContent = 'Some files were not added because they exceed the 2MB size limit.';
+                }
             } else {
-                errorMessage.textContent = 'Some files were not added because they exceed the 2MB size limit.';
+                errorMessage.textContent = 'Some files were not added because they are not valid photo or video files.';
             }
         });
         updateFileList();
     }
 
     function updateFileList() {
-        fileList.innerHTML = ''; // Clear the current file list
+        fileList.innerHTML = '';
         filesArray.forEach((file, index) => {
             const fileItem = document.createElement('p');
             fileItem.textContent = `${index + 1}. ${file.name}`;
@@ -130,15 +145,43 @@
         uploadButton.style.display = filesArray.length > 0 ? 'inline-block' : 'none';
     }
 
-    function uploadFiles() {
+    async function uploadFiles() {
         if (filesArray.length === 0) {
             alert('No files selected for upload.');
             return;
         }
-        // Perform the upload operation
-        console.log('Uploading files:', filesArray);
-        // Add your file upload logic here
+
+        const formData = new FormData();
+        filesArray.forEach((file) => {
+            formData.append('files', file);
+        });
+
+        try {
+            const response = await fetch('/user/add-media', {
+                method: 'POST',
+                body: formData
+            });
+
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.indexOf('application/json') !== -1) {
+                const result = await response.json();
+                if (response.status === 200) {
+                    alert(result.message);
+                    window.location.href = result.redirect; // Redirect to the given URL
+                } else {
+                    alert('Failed to upload media: ' + result.message);
+                }
+            } else {
+                const text = await response.text();
+                console.error('Error uploading files:', text);
+                alert('Failed to upload media. Server responded with an error: ' + text);
+            }
+        } catch (error) {
+            console.error('Error uploading files:', error);
+            alert('Failed to upload media. An error occurred: ' + error.message);
+        }
     }
+});
 </script>
 
 {% endblock %}
