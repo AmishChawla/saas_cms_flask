@@ -4506,7 +4506,7 @@ textarea.form-control-lg {
   .btn-outline-primary:disabled, .btn-outline-primary.disabled {
     color: #b66dff;
     background-color: transparent; }
-
+/*
 .btn-outline-secondary {
   color: #c3bdbd;
   border-color: #c3bdbd; }
@@ -4529,7 +4529,7 @@ textarea.form-control-lg {
   .btn-outline-secondary:disabled, .btn-outline-secondary.disabled {
     color: #c3bdbd;
     background-color: transparent; }
-
+*/
 .btn-outline-success {
   color: #1bcfb4;
   border-color: #1bcfb4; }

@@ -236,6 +236,21 @@ class SendEmail(FlaskForm):
     submit = SubmitField('Send Mail')
 
 
+
 class AddMediaForm(FlaskForm):
     files = MultipleFileField('Media Files', validators=[DataRequired()])
     submit = SubmitField('Upload')
+
+class CreateNewsletterForm(FlaskForm):
+    name = StringField('Name',validators=[validators.DataRequired()], render_kw={'placeholder': 'Give a name to your Newsletter'})
+    description = TextAreaField('Description', validators=[validators.DataRequired()], render_kw={'rows': 3, 'placeholder': 'Describe what your newsletter is about'})
+    submit = SubmitField('Submit')
+
+
+class SubscribeToNewsletterForm(FlaskForm):
+    name = StringField('Name', validators=[validators.DataRequired()],
+                       render_kw={'placeholder': 'Name'})
+    email = StringField('Email', validators=[validators.DataRequired()],
+                                render_kw={'placeholder': 'Email'})
+    submit = SubmitField('Subscribe to my Newsletter')
+
