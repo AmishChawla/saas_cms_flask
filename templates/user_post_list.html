@@ -118,6 +118,19 @@
                 </div>
             </div>
         </div>
+<div class="newsletter">
+    <h5 style="margin-top: 2rem;">Subscribe to Newsletter</h5>
+    <form method="post" action="{{ url_for('user_post_list', username=username) }}">
+        {{ form.hidden_tag() }}
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">@</span>
+            {{ form.name(class="form-control", placeholder="Username", aria_label="Username", required=True) }}
+            <span class="input-group-text text-danger" id="basic-addon1"><i class="bi bi-envelope"></i></span>
+            {{ form.email(class="form-control", placeholder="Email", aria_label="Email", required=True) }}
+            {{ form.submit(class="btn btn-outline-dark", id="button-addon2") }}
+        </div>
+    </form>
+</div>
     </div>
 <script>
     let selectedCategoryId = null;

@@ -618,7 +618,7 @@ def admin_get_email_setup(access_token: str):
         print(f"An unexpected error occurred: {err}")
 
 
-import requests
+
 
 
 def admin_update_email_setup(access_token: str, smtp_server, smtp_port, smtp_username, smtp_password, sender_email):
@@ -1433,6 +1433,53 @@ def is_service_access_allowed(access_token):
             is_allowed = response.json()
             print(is_allowed)
             return is_allowed
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def subscribe_to_newsletter(name, email, username):
+    print("inside api call")
+
+    data = {
+      "subscriber_name": name,
+      "subscriber_email": email,
+      "username":username
+    }
+    print(data)
+
+    try:
+        print('trying to send')
+        response = requests.post(constants.BASE_URL + '/newsletter/subscribe_newsletter', json=data)
+        print(response.status_code)
+        if response.status_code == 200:
+            print("successful")
+            return response.json
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def get_all_newsletter_subscribers(access_token):
+    print("trying")
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        print("try")
+        response = requests.get(constants.BASE_URL + '/newsletter/newsletter-subscribers-for-user', headers=headers)
+        if response.status_code == 200:
+            result = response.json()
+            return result
+
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except requests.exceptions.ConnectionError as errc:
