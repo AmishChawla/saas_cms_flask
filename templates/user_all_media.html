@@ -7,6 +7,8 @@
 {% block title %}All Medias{% endblock %}
 
 {% block content %}
+
+<link href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" rel="stylesheet">
   <div class="row">
     <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
       <div class="card">
@@ -19,7 +21,7 @@
               </a>
             </div>
           </div>
-          <table id="userMediaTable" class="display" style="width:100%;">
+          <table id="userMediaTable" class="" style="width:100%;">
             <thead>
               <tr>
                 <th>Sr. No.</th>
@@ -31,14 +33,14 @@
             </thead>
             <tbody>
               {% for data in result %}
-              <tr style="max-height: 100px; overflow-y: auto;">
+              <tr style="max-height: 100px; overflow-y: auto; ">
                 <td class="py-1">{{ loop.index }}</td>
                    <td class="py-1">
-                  <img src="{{ data.file_url }}" alt="Media Thumbnail" style="max-height: 30px; width: 50px;">
+                  <img src="{{ root_url + data.file_url }}" alt="Media Thumbnail" style="max-height: 6rem; width: auto; margin-top: 10px">
                 </td>
                 <td class="py-1"></td>
                 <td class="py-1">{{ data.uploaded_at.split('T')[0] }} {{ data.uploaded_at.split('T')[1][:8] }}</td>
-                <td style="display: flex">
+                <td style="display: flex; margin-top: 20%; margin-bottom:10%;">
 
 
                   <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}">Delete</button>
@@ -72,6 +74,6 @@
   </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script>new DataTable('#userMediaTable');</script>
 {% endblock %}

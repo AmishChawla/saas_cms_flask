@@ -1376,7 +1376,6 @@ def media():
     if request.method == 'POST':
         files = request.files.getlist('files')
         print(files)
-        empty_uploads_folder()
         file_list = []
 
         # Ensure the media directory exists
@@ -1410,12 +1409,13 @@ def media():
 @app.route('/user/all-medias')
 @login_required
 def user_all_medias():
+    root_url = constants.ROOT_URL+'/'
     result = api_calls.get_user_all_medias(access_token=current_user.id)
     if result is None:
         result = []  # Set result to an empty list
     print(result)
 
-    return render_template('user_all_media.html', result=result)
+    return render_template('user_all_media.html', result=result, root_url=root_url )
 
 
 @app.route('/admin/comment')
