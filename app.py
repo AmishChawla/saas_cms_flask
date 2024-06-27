@@ -901,9 +901,9 @@ def user_all_post():
     return render_template('user_all_post.html', result=result)
 
 
-@app.route('/<username>/posts')
+@app.route('/<username>/posts', methods=['GET', 'POST'])
 def user_post_list(username):
-
+    form = forms.SubscribeToNewsletterForm()
     result = api_calls.get_user_post_by_username(username=username)
 
     response = api_calls.get_all_categories()
@@ -912,7 +912,17 @@ def user_post_list(username):
 
     if response is None:
         response = []
-    return render_template('user_post_list.html', result=result, response=response)
+
+    if form.validate_on_submit():
+        print('inside validating')
+        name = form.name.data
+        email = form.email.data
+        print('sending call')
+        response = api_calls.subscribe_to_newsletter(name=name, email=email, username=username)
+        print(response)
+        return redirect(url_for('user_post_list', username=username))
+    return render_template('user_post_list.html', result=result, response=response, form=form, username=username)
+
 
 @app.route("/admin/delete-posts/<post_id>", methods=['GET', 'POST'])
 @login_required
@@ -1515,6 +1525,16 @@ def send_mails(template_id):
 @login_required
 def email_settings():
     return render_template('user_email_dashboard.html')
+
+############################################################## NEWSLETTER ##############################################################
+
+
+@app.route("/newsletter-subscribers", methods=['GET', 'POST'])
+@login_required
+def newsletter_subscribers():
+    subscribers = api_calls.get_all_newsletter_subscribers(access_token=current_user.id)
+    return render_template('newsletter_subscribers.html', result=subscribers)
+
 
 
 
