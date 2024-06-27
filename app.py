@@ -1022,6 +1022,7 @@ def add_post():
 
 
 
+
 @app.route("/user/add-category", methods=['GET', 'POST'])
 @login_required
 def add_category():
@@ -1037,6 +1038,8 @@ def add_category():
             flash('Some problem occured', category='error')
 
     return render_template('user_add_category.html', form=form)
+
+
 
 
 @app.route("/user/update-category/<category_id>", methods=['GET', 'POST'])
@@ -1355,11 +1358,55 @@ def get_all_subscriptions():
 
     return render_template('all_posts.html', result=result)
 
-@app.route('/admin/media')
+
+@app.route('/user/add-media', methods=['GET', 'POST'])
 @login_required
 def media():
+    form = forms.AddMediaForm()  # Use the AddMediaForm class
+    if request.method == 'POST':
+        files = request.files.getlist('files')
+        print(files)
+        empty_uploads_folder()
+        file_list = []
 
-    return render_template('media.html', result=result)
+        # Ensure the media directory exists
+        media_folder = 'media'
+        if not os.path.exists(media_folder):
+            os.makedirs(media_folder)
+
+        for file in files:
+            # Ensure the file has a secure filename
+            filename = secure_filename(file.filename)
+            # Save the file to the designated folder
+            file_url = os.path.join(media_folder, filename)
+            print(file_url)
+            file.save(file_url)
+            file_list.append(('files', (filename, open(file_url, 'rb'))))
+
+        access_token = current_user.id  # Replace with the actual method to get the access token
+
+        # Handle file uploads using a helper function (assuming api_calls.upload_medias is properly defined)
+        response = api_calls.upload_medias(file_list, access_token)
+
+        if response and response.status_code == 200:
+            flash('Media added successfully', category='info')
+            return jsonify({"message": "Media added successfully", "redirect": url_for('user_all_medias')}), 200
+        else:
+            return jsonify({"message": "Some problem occurred"}), response.status_code if response else 500
+
+    return render_template('media.html', form=form)
+
+
+@app.route('/user/all-medias')
+@login_required
+def user_all_medias():
+    result = api_calls.get_user_all_medias(access_token=current_user.id)
+    if result is None:
+        result = []  # Set result to an empty list
+    print(result)
+
+    return render_template('user_all_media.html', result=result)
+
 
 @app.route('/admin/comment')
 @login_required

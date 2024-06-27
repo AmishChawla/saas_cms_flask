@@ -982,6 +982,8 @@ def admin_update_post(post_id, title, content, category_id, subcategory_id, tag_
         print(f"An unexpected error occurred: {err}")
 
 
+
+
 def get_post(post_id: int):
     try:
         response = requests.get(constants.BASE_URL + f'/posts/{post_id}')
@@ -1433,6 +1435,56 @@ def is_service_access_allowed(access_token):
             is_allowed = response.json()
             print(is_allowed)
             return is_allowed
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def upload_medias(file_list, access_token):
+    print(file_list)
+    print('Trying to upload medias')
+
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    try:
+        response = requests.post(constants.BASE_URL + f"/upload-multiple-files/", files=file_list, headers=headers)
+
+        print('Response status code:', response.status_code)
+        print('Response text:', response.text)
+
+        if response.status_code == 200:
+            print('Media uploaded successfully.')
+        else:
+            print('Failed to upload media.')
+
+        return response
+
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def get_user_all_medias(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.get(constants.BASE_URL + '/user-all-medias', headers=headers)
+        print("Response Status Code:", response.status_code)  # Debug: Print status code
+        if response.status_code == 200:
+            result = response.json()
+            print("API Result:", result)  # Debug: Print API result
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except requests.exceptions.ConnectionError as errc:

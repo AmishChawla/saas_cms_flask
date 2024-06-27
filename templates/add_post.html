@@ -9,89 +9,117 @@
 {% block content %}
 
 <style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow-x: hidden; /* Prevent horizontal scroll */
+        box-sizing: border-box;
+    }
+
+    *, *:before, *:after {
+        box-sizing: inherit;
+    }
+
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    .form-container form {
+        width: 100%;
+    }
+
+    .form-container .form-group {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .form-container .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .form-container .form-control {
+        width: 100%;
+        height: auto;
+    }
+
     .tags-container {
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 10px;
-}
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
 
-.tag {
-    background-color: #f0f0f0;
-    padding: 5px 10px;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    border-radius: 3px;
-    cursor: pointer;
-}
+    .tag {
+        background-color: #f0f0f0;
+        padding: 5px 10px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        border-radius: 3px;
+        cursor: pointer;
+    }
 
-.close-button {
-    margin-left: 5px;
-    background: none;
-    border: none;
-    cursor: pointer;
-}
+    .close-button {
+        margin-left: 5px;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
 </style>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card border-0">
-                    <div class="card-header bg-white text-black text-center">
-                        <h2>Add Post</h2>
-                    </div>
 
-                    <div class="card-body">
-                        <form method="post" action="{{ url_for('add_post') }}">
-                            {{ form.hidden_tag() }}
+<div class="form-container">
+    <h2>Add Post</h2>
+    <form method="post" action="{{ url_for('add_post') }}">
+        {{ form.hidden_tag() }}
 
-                            <div class="mb-3">
-                                {{form.title.label}}
-                                {{ form.title(class="form-control", placeholder="Title", required=True) }}
-                            </div>
-
-                            <div class="mb-3">
-                                {{ form.category.label }}
-                                {{ form.category(class="form-control", id="category", required=True) }}
-                            </div>
-
-                            <div class="mb-3">
-                                {{ form.subcategory.label }}
-                                {{ form.subcategory(class="form-control", id="subcategory", required=True) }}
-                            </div>
-
-
-                           <div class="mb-3">
-                                {{ form.tags.label }}
-                                {{ form.tags(class="form-control", id="tags", required=True) }}
-                            </div>
-
-
-                            <div class="mb-3">
-                                {{ form.content.label }}
-                                {{ form.content(class="form-control", id="content", placeholder="Write details about the post.") }}
-                            </div>
-
-
-
-                            <div class="mb-3 text-center">
-                                {{ form.submit(class="btn btn-dark btn-lg") }}
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+        <div class="form-group">
+            {{ form.title.label }}
+            {{ form.title(class="form-control", placeholder="Title", required=True) }}
         </div>
-    </div>
 
-    <script src="https://cdn.ckeditor.com/4.16.2/standard-all/ckeditor.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <div class="form-group">
+            {{ form.category.label }}
+            {{ form.category(class="form-control", id="category", required=True) }}
+        </div>
 
+        <div class="form-group">
+            {{ form.subcategory.label }}
+            {{ form.subcategory(class="form-control", id="subcategory", required=True) }}
+        </div>
 
-  <script>
-        // Replace the CKEditor instance with the correct ID
-        CKEDITOR.replace('content');
+        <div class="form-group">
+            {{ form.tags.label }}
+            {{ form.tags(class="form-control", id="tags", required=True) }}
+        </div>
 
-document.addEventListener('DOMContentLoaded', function () {
+        <div class="form-group">
+            {{ form.content.label }}
+            {{ form.content(class="form-control", id="content", placeholder="Write details about the post.") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.submit(class="btn btn-dark") }}
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.ckeditor.com/4.16.2/standard-all/ckeditor.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    // Replace the CKEditor instance with the correct ID
+    CKEDITOR.replace('content');
+
+    document.addEventListener('DOMContentLoaded', function () {
         const categoryElement = document.getElementById('category');
         const subcategoryElement = document.getElementById('subcategory');
 
@@ -120,9 +148,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-    </script>
-
-
-
+</script>
 
 {% endblock %}

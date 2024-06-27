@@ -1,4 +1,4 @@
-from wtforms import StringField, SelectMultipleField, IntegerField, PasswordField, SubmitField, validators, SelectField, BooleanField, \
+from wtforms import MultipleFileField, StringField, SelectMultipleField, IntegerField, PasswordField, SubmitField, validators, SelectField, BooleanField, \
     TextAreaField
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
@@ -234,3 +234,8 @@ class SendEmail(FlaskForm):
     subject = StringField('Subject', validators=[validators.DataRequired()])
     content = TextAreaField('Content', render_kw={'rows': 10, 'cols': 30, 'placeholder': 'Enter Content here...'})
     submit = SubmitField('Send Mail')
+
+
+class AddMediaForm(FlaskForm):
+    files = MultipleFileField('Media Files', validators=[DataRequired()])
+    submit = SubmitField('Upload')
