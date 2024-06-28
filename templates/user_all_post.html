@@ -22,6 +22,16 @@
               </a>
             </div>
           </div>
+            <ul class="nav nav-tabs" id="postTabs">
+            <li class="nav-item">
+              <a class="nav-link active" id="published-tab" data-toggle="tab" href="#published-posts">Published </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="drafts-tab" data-toggle="tab" href="#draft-posts">Drafts </a>
+            </li>
+          </ul>
+            <div class="tab-content" style="margin-top: 1.5rem;">
+                <div class="tab-pane fade show active" id="published-posts">
           <table id="userpostTable" class="display" style="width:100%;">
             <thead>
               <tr>
@@ -37,6 +47,7 @@
             </thead>
             <tbody>
               {% for data in result %}
+              {% if data.status == 'published' %}
               <tr style="max-height: 100px; overflow-y: auto;">
                 <td class="py-1">{{ loop.index }}</td>
                 <td class="py-1">{{ data.author_name }}</td>
@@ -75,9 +86,72 @@
                   </div>
                 </td>
               </tr>
+              {% endif %}
               {% endfor %}
             </tbody>
           </table>
+        </div>
+        <div class="tab-pane fade" id="draft-posts">
+            <table id="draftpostTable" class="display" style="width:100%;">
+            <thead>
+              <tr>
+                <th>Sr. No.</th>
+                <th>Author</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Subcategory</th>
+                <th>Tag</th>
+                <th>Created Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for data in result %}
+              {% if data.status == 'draft' %}
+              <tr style="max-height: 100px; overflow-y: auto;">
+                <td class="py-1">{{ loop.index }}</td>
+                <td class="py-1">{{ data.author_name }}</td>
+                <td class="py-1"><form action="{{ url_for('get_post', post_title=data.title | lower | replace(' ', '')) }}" method="POST" style="display:inline;">
+        <input type="hidden" name="post_id" value="{{ data.id }}">
+        <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left; color: blue;">
+            {{ data.title }}
+        </button>
+    </form></td>
+                <td class="py-1">{{ data.category.category }}</td>
+                <td class="py-1">{{ data.subcategory.subcategory }}</td>
+                <td class="py-1">{{ data.tag.tag }}</td>
+                <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
+                <td style="display: flex">
+
+                  <a class="button button1" href="{{ url_for('admin_edit_post', post_id=data.id) }}">Edit</a>
+                  <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}">Delete</button>
+
+                  <!-- Modal for delete button -->
+                  <div class="modal fade" id="deleteModal_{{ data.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel_{{ data.id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="deleteModalLabel_{{ data.id }}">Delete Post</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          Are you sure you want to delete this post?
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                          <a type="button" class="btn btn-danger" href="{{ url_for('user_delete_post', post_id=data.id) }}">Delete</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+            </div>
+                </div>
         </div>
       </div>
     </div>
@@ -85,5 +159,8 @@
 
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
-<script>new DataTable('#userpostTable');</script>
+<script>
+new DataTable('#userpostTable');
+new DataTable('#draftpostTable');
+</script>
 {% endblock %}

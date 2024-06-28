@@ -934,7 +934,7 @@ def admin_delete_post(post_id, access_token):
         print(f"An unexpected error occurred: {err}")
 
 
-def create_post(title, content, category_id, subcategory_id, tag_id, access_token):
+def create_post(title, content, category_id, subcategory_id, tag_id, status, access_token):
     print('trying to create post')
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
@@ -942,7 +942,8 @@ def create_post(title, content, category_id, subcategory_id, tag_id, access_toke
         "content": content,
         "category_id": category_id,
         "subcategory_id": subcategory_id,
-        "tag_id": tag_id
+        "tag_id": tag_id,
+        "status": status
     }
     try:
         response = requests.post(constants.BASE_URL + '/posts/create-post', json=params, headers=headers)
@@ -1534,6 +1535,32 @@ def get_all_newsletter_subscribers(access_token):
             return result
 
 
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def send_newsletter(access_token: str, subject, body):
+    print("trying")
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    data = {
+        "to": 'subscribers',
+        "subject": subject,
+        "body": body
+    }
+
+    try:
+        print("try")
+        response = requests.post(constants.BASE_URL + '/newsletter/send-newsletter', headers=headers, json=data)
+        if response.status_code == 200:
+            result = response.json()
+            return result
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except requests.exceptions.ConnectionError as errc:
