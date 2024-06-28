@@ -4,7 +4,7 @@
     {% extends 'admin_base.html' %}
 {% endif %}
 
-{% block title %}List of posts{% endblock %}
+{% block title %}Preview{% endblock %}
 
 {% block content %}
         <!-- Page Header-->
@@ -59,6 +59,20 @@
                 </div>
             </div>
         </article>
+<!--        <form method="POST" action="{{ url_for('add_post') }}">-->
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <input type="hidden" name="title" value="{{ title }}">
+        <input type="hidden" name="content" value="{{ content }}">
+        <input type="hidden" name="category" value="{{ form.category.data }}">
+        <input type="hidden" name="subcategory" value="{{ form.subcategory.data }}">
+        <input type="hidden" name="tags" value="{{ form.tags.data }}">
+
+        <div class="d-grid gap-2 col-6 mx-auto">
+            {{ form.publish(class="btn btn-dark btn-lg") }}
+            {{ form.save_draft(class="btn btn-outline-dark btn-lg") }}
+        </div>
+</form>
         <!-- Footer-->
 
         <!-- Bootstrap core JS-->
