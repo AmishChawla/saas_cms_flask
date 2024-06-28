@@ -1,4 +1,5 @@
 import csv
+import datetime
 import json
 import os
 from io import StringIO, BytesIO
@@ -988,34 +989,64 @@ def add_post():
     form.tags.choices = tag_choices
 
     if form.validate_on_submit():
+
         title = form.title.data
         content = form.content.data
         category = form.category.data
         subcategory = form.subcategory.data
         tag = form.tags.data
 
-        print(content)
+        if form.publish.data:
+            try:
+                result = api_calls.create_post(
+                    title=title,
+                    content=content,
+                    category_id=category,
+                    subcategory_id=subcategory,
+                    tag_id=tag,
+                    status='published',
+                    access_token=current_user.id
+                )
+    ################## send mail if newsletter is clicked
 
-        try:
-            result = api_calls.create_post(
-                title=title,
-                content=content,
-                category_id=category,
-                subcategory_id=subcategory,
-                tag_id=tag,
-                access_token=current_user.id
-            )
-
-            if result:
-                flash("Post created successfully", "success")
-                if current_user.role == 'user':
-                    return redirect(url_for('view_post'))
+                if result:
+                    flash("Post created successfully", "success")
+                    try:
+                        send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=title, body=content)
+                    except Exception as e:
+                        raise 'Problem sending newsletter' + e
+                    if current_user.role == 'user':
+                        return redirect(url_for('view_post'))
+                    else:
+                        return redirect(url_for('all_post'))
                 else:
-                    return redirect(url_for('all_post'))
-            else:
-                flash("Failed to create post", "danger")
-        except Exception as e:
-            flash(f"Error creating post: {e}", "danger")
+                    flash("Failed to create post", "danger")
+            except Exception as e:
+                flash(f"Error creating post: {e}", "danger")
+        elif form.save_draft.data:
+            try:
+                result = api_calls.create_post(
+                    title=title,
+                    content=content,
+                    category_id=category,
+                    subcategory_id=subcategory,
+                    tag_id=tag,
+                    status='draft',
+                    access_token=current_user.id
+                )
+
+                if result:
+                    if current_user.role == 'user':
+                        return redirect(url_for('user_all_post'))
+                    else:
+                        return redirect(url_for('all_post'))
+                else:
+                    flash("Failed to create post", "danger")
+            except Exception as e:
+                flash(f"Error creating post: {e}", "danger")
+        elif form.preview.data:
+            return render_template('preview_post.html', title=form.title.data, content=form.content.data, author_name=current_user.username, form=form)
+
     else:
         if request.method == 'POST':
             flash("Form validation failed", "danger")
@@ -1029,6 +1060,11 @@ def add_post():
         return redirect(url_for('user_view_plan'))
     else:
         return render_template('add_post.html', form=form, categories=category_choices)
+
+# @app.route("/posts/preview_post", methods=['GET', 'POST'])
+# @login_required
+# def preview_post():
+#     return render_template('user_email_dashboard.html')
 
 
 
@@ -1579,11 +1615,12 @@ def email_settings():
 @app.route("/newsletter-subscribers", methods=['GET', 'POST'])
 @login_required
 def newsletter_subscribers():
-    subscribers = api_calls.get_all_newsletter_subscribers(access_token=current_user.id)
-    return render_template('newsletter_subscribers.html', result=subscribers)
+    subscriber_info = api_calls.get_all_newsletter_subscribers(access_token=current_user.id)
+    subscribers = subscriber_info['subscribers']
+    sub_count = subscriber_info['active_sub_count']
+    unsub_count = subscriber_info['inactive_sub_count']
 
-
-
+    return render_template('newsletter_subscribers.html', result=subscribers, sub_count=sub_count, unsub_count=unsub_count)
 
 if __name__ == '__main__':
     app.run()

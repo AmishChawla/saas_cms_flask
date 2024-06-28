@@ -21,35 +21,79 @@
 <!--                <span class="menu-title">Add new post</span>-->
 <!--              </a>-->
 <!--            </div>-->
+
           </div>
-          <table id="newsletterSubscribersTable" class="display" style="width:100%;">
-            <thead>
-              <tr>
-                <th>Sr. No.</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Created At</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for data in result %}
-              <tr style="max-height: 100px; overflow-y: auto;">
-                <td class="py-1">{{ loop.index }}</td>
-                <td class="py-1">{{ data.subscriber_name }}</td>
-                <td class="py-1">{{ data.subscriber_email }}</td>
-                <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+          <ul class="nav nav-tabs" id="subscriberTabs">
+            <li class="nav-item">
+              <a class="nav-link active" id="all-tab" data-toggle="tab" href="#all-subscribers">Subscribed <span class="badge rounded-pill text-bg-light">{{sub_count}}</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="inactive-tab" data-toggle="tab" href="#inactive-subscribers">Unsubscribed <span class="badge rounded-pill text-bg-light">{{unsub_count}}</span></a>
+            </li>
+          </ul>
+          <div class="tab-content" style="margin-top: 1.5rem;">
+            <div class="tab-pane fade show active" id="all-subscribers">
+              <table id="allnewsletterSubscribersTable" class="display" style="width:100%;">
+                <thead>
+                  <tr>
+                    <th>Sr. No.</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Subscribed on</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for data in result %}
+                  {% if data.status == 'active' %}
+                  <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ data.subscriber_name }}</td>
+                    <td>{{ data.subscriber_email }}</td>
+                    <td>{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
+                  </tr>
+                  {% endif %}
+                  {% endfor %}
+                </tbody>
+              </table>
+              </div>
+            <div class="tab-pane fade" id="inactive-subscribers">
+              <table id="inactivenewsletterSubscribersTable" class="display" style="width:100%;">
+                <thead>
+                  <tr>
+                    <th>Sr. No.</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Subscribed on</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for data in result %}
+                  {% if data.status == 'inactive' %}
+                  <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ data.subscriber_name }}</td>
+                    <td>{{ data.subscriber_email }}</td>
+                    <td>{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
+                  </tr>
+                  {% endif %}
+                  {% endfor %}
+                </tbody>
+              </table>
+              </div>
+            </div>
+            </div>
         </div>
       </div>
     </div>
   </div>
-
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script>
+new DataTable('#allnewsletterSubscribersTable');
+new DataTable('#inactivenewsletterSubscribersTable');
+</script>
 
 
-<script>new DataTable('#newsletterSubscribersTable');</script>
+
+
 {% endblock %}
