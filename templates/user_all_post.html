@@ -11,14 +11,8 @@
           <div style="display:flex; justify-content:space-between;">
             <h4 class="card-title">Posts</h4>
             <div style="display: flex; justify-content: space-between;">
-              <a class="btn btn-info" href="{{ url_for('add_category')}}" style="padding: 6px 30px 6px 30px;">
-                <span class="menu-title">Add new category</span>
-              </a>
-              <a class="btn btn-success" href="{{ url_for('user_all_category')}}" style="padding: 6px 30px 6px 30px; border-radius:10px; margin-left:10px;">
-                <span class="menu-title">View category</span>
-              </a>
               <a class="btn btn-info" href="{{ url_for('add_post')}}" style="padding: 6px 30px 6px 30px;margin-left:10px;">
-                <span class="menu-title">Add new post</span>
+                <span class="menu-title">Write new post</span>
               </a>
             </div>
           </div>
@@ -63,7 +57,7 @@
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 
-                  <a class="button button1" href="{{ url_for('admin_edit_post', post_id=data.id) }}">Edit</a>
+                  <a class="button button1" href="{{ url_for('admin_edit_post', post_id=data.id) }}">Modify</a>
                   <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}">Delete</button>
 
                   <!-- Modal for delete button -->
@@ -123,7 +117,7 @@
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 
-                  <a class="button button1" href="{{ url_for('admin_edit_post', post_id=data.id) }}">Edit</a>
+                  <a class="button button1" style="background-color:#212529;" href="{{ url_for('admin_edit_post', post_id=data.id) }}">Publish</a>
                   <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}">Delete</button>
 
                   <!-- Modal for delete button -->

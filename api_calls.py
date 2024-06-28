@@ -959,7 +959,7 @@ def create_post(title, content, category_id, subcategory_id, tag_id, status, acc
         print(f"An unexpected error occurred: {err}")
 
 
-def admin_update_post(post_id, title, content, category_id, subcategory_id, tag_id, access_token):
+def admin_update_post(post_id, title, content, category_id, subcategory_id, tag_id, status, access_token):
     print('trying3')
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
@@ -967,7 +967,8 @@ def admin_update_post(post_id, title, content, category_id, subcategory_id, tag_
         "content": content,
         "category_id": category_id,
         "subcategory_id": subcategory_id,
-        "tag_id": tag_id
+        "tag_id": tag_id,
+        "status": status
     }
     try:
         response = requests.put(constants.BASE_URL + f'/posts/update-post/{post_id}', json=params, headers=headers)

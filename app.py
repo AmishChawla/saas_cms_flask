@@ -23,7 +23,6 @@ app.config['SECRET_KEY'] = 'your_secret_key'
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-
 uploads_folder = 'uploads'
 ########################################################################################################################
 # def parse_csv(csv_data):
@@ -41,6 +40,7 @@ password_reset_token = ""
 ####################### GEMINI MODEL CONFIG #########################
 genai.configure(api_key=constants.GEMINI_APIKEY)
 model = genai.GenerativeModel('gemini-pro')
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -208,7 +208,7 @@ def register():
             message = result["detail"]
             flash(message, category='error')
 
-        else :
+        else:
             flash('Registration unsuccessful. Please check username, email and password.', category='error')
 
     return render_template('register.html', form=form)
@@ -224,6 +224,7 @@ def user_dashboard():
 
     return render_template('dashboard.html', resume_data=resume_data)
 
+
 @app.route("/admin-dashboard")
 @login_required
 def admin_dashboard():
@@ -238,7 +239,6 @@ def admin_dashboard():
 @app.route("/setting")
 @login_required
 def setting():
-
     return render_template('setting.html')
 
 
@@ -280,7 +280,8 @@ def profile():
             new_email = form.email.data
             # Ensure the file is included in the request
             response = api_calls.user_update_profile(access_token=current_user.id,
-                                                     username=new_username, email=new_email, profile_picture=new_profile_picture)
+                                                     username=new_username, email=new_email,
+                                                     profile_picture=new_profile_picture)
             if response.status_code == 200:
                 return redirect(url_for('profile'))
             else:
@@ -294,10 +295,8 @@ def profile():
     form.username.data = username
     form.email.data = email
 
-    return render_template('profile.html', username=username, form=form, company=company, role=role, profile_picture=profile_picture, current_plans=current_plans)
-
-
-
+    return render_template('profile.html', username=username, form=form, company=company, role=role,
+                           profile_picture=profile_picture, current_plans=current_plans)
 
 
 @app.route("/list-of-users")
@@ -326,10 +325,7 @@ def list_of_users():
     else:
         print("Failed response")
 
-
     return render_template('list_of_users.html', result=users)
-
-
 
 
 @app.route("/admin/login", methods=['GET', 'POST'])
@@ -347,8 +343,6 @@ def admin_login():
         password = form.password.data
         response = api_calls.admin_login(email, password)
 
-
-
         # if response.status_code == 200:
         #     data = response.json()
         #     token = data.get('access_token')
@@ -358,16 +352,15 @@ def admin_login():
         #     services = data.get('services')
         #     company = data.get('company')
 
-
         if (response.status_code == 200):
             token = response.json().get('access_token')
             role = response.json().get('role')
             username = response.json().get('username')
             email = response.json().get('email')
             profile_picture = f"{ROOT_URL}/{response.json()['profile_picture']}"
-            user = User(user_id=token, role=role, username=username, email=email, services=[], company={},profile_picture=profile_picture)
+            user = User(user_id=token, role=role, username=username, email=email, services=[], company={},
+                        profile_picture=profile_picture)
             login_user(user)
-
 
             # user = User(user_id=token, role=role, username=username, email=email, services=services, company=company)
             # login_user(user)
@@ -381,6 +374,7 @@ def admin_login():
             flash('Login unsuccessful. Please check email and password.', category='error')
 
     return render_template('admin_login.html', form=form)
+
 
 @app.route("/admin/add-user", methods=['GET', 'POST'])
 @login_required
@@ -410,6 +404,7 @@ def admin_trash_user(user_id):
         print(result)
         return redirect(url_for('list_of_users'))
 
+
 @app.route("/admin/delete-user/<user_id>", methods=['GET', 'POST'])
 @login_required
 def admin_delete_user_permanently(user_id):
@@ -417,6 +412,7 @@ def admin_delete_user_permanently(user_id):
     if (result.status_code == 200):
         print(result)
         return redirect(url_for('list_of_users'))
+
 
 @app.route("/admin/restore-user/<user_id>", methods=['GET', 'POST'])
 @login_required
@@ -570,7 +566,6 @@ def admin_edit_user_profile(user_id):
                            user_services=user_services)
 
 
-
 @app.route('/company-list', methods=['GET', 'POST'])
 def company_list():
     response = api_calls.get_companies()
@@ -600,7 +595,7 @@ def company_details(company_id):
     name = result["name"]
     location = result["location"]
 
-    return render_template('company_details.html', name=name, location= location)
+    return render_template('company_details.html', name=name, location=location)
 
 
 ################################################################ SERVICES ############################################################################################
@@ -610,6 +605,7 @@ def services():
     if response.status_code == 200:
         result = response.json()
         return render_template('services.html', result=result)
+
 
 @app.route("/admin/add-service", methods=['GET', 'POST'])
 @login_required
@@ -652,7 +648,7 @@ def admin_edit_service(service_id):
         description = form.description.data
 
         response = api_calls.admin_edit_any_service(service_id=service_id,
-                                                 service_name=name, service_description=description)
+                                                    service_name=name, service_description=description)
         print(response.status_code)
         if response.status_code == 200:
             return redirect(url_for('services'))
@@ -661,7 +657,9 @@ def admin_edit_service(service_id):
     form.name.data = name
     form.description.data = description
 
-    return render_template('admin_edit_service.html', description=description, name=name, form=form, service_id=service_id)
+    return render_template('admin_edit_service.html', description=description, name=name, form=form,
+                           service_id=service_id)
+
 
 ########################################################################## COMPANIES ###############################################################3
 
@@ -698,7 +696,7 @@ def admin_edit_company(company_id):
         print(location)
 
         response = api_calls.admin_edit_any_company(company_id=company_id,
-                                                 name=name, location=location)
+                                                    name=name, location=location)
         print(response.status_code)
         if response.status_code == 200:
             return redirect(url_for('list_of_companies'))
@@ -732,7 +730,6 @@ def company_register():
     return render_template('company_register.html', form=form)
 
 
-
 ######################################## resume history ##########################################################################
 @app.route("/resume-history", methods=['GET', 'POST'])
 @login_required
@@ -742,11 +739,11 @@ def resume_history():
         result = response.json()
         return render_template('resume_history.html', result=result)
 
+
 ####################################### trash ##########################################################################
 @app.route("/trash")
 @login_required
 def trash():
-
     response = api_calls.get_trash_users(
         current_user.id,
     )
@@ -757,7 +754,8 @@ def trash():
     else:
         print("Failed response")
 
-    return render_template('trash.html', result=users )
+    return render_template('trash.html', result=users)
+
 
 ####################################### EMAIL SETUP ##########################################################################
 @app.route("/admin/email-setup", methods=['GET', 'POST'])
@@ -782,11 +780,12 @@ def admin_email_setup():
             new_sender_email = form.sender_email.data
             # Ensure the file is included in the request
             response = api_calls.admin_update_email_setup(access_token=current_user.id,
-                                                     smtp_server=new_smtp_server, smtp_port=new_smtp_port, smtp_username=new_smtp_username,
-                                                     smtp_password=new_smtp_password, sender_email=new_sender_email)
+                                                          smtp_server=new_smtp_server, smtp_port=new_smtp_port,
+                                                          smtp_username=new_smtp_username,
+                                                          smtp_password=new_smtp_password,
+                                                          sender_email=new_sender_email)
             if response.status_code == 200:
                 return redirect(url_for('admin_email_setup'))
-
 
         form.smtp_server.data = smtp_server
         form.smtp_port.data = smtp_port
@@ -816,7 +815,8 @@ def add_plan():
         num_resume_parsing = 'unlimited' if form.unlimited_resume_parsing.data else form.num_resume_parsing.data
         plan_details = form.plan_details.data
         print("sending request to add plan")
-        result = api_calls.create_plan(plan_name=name, time_period=duration, fees=fees, num_resume_parse=num_resume_parsing, plan_details=plan_details)
+        result = api_calls.create_plan(plan_name=name, time_period=duration, fees=fees,
+                                       num_resume_parse=num_resume_parsing, plan_details=plan_details)
         if result:
             return redirect(url_for('list_of_plans'))
     else:
@@ -843,7 +843,8 @@ def update_plan(plan_id):
         fees = 0 if form.is_free.data else form.fees.data
         num_resume_parsing = 'unlimited' if form.unlimited_resume_parsing.data else form.num_resume_parsing.data
         plan_details = form.plan_details.data
-        result = api_calls.update_plan(plan_id=plan_id, plan_name=name, time_period=duration, fees=fees, num_resume_parse=num_resume_parsing, plan_details=plan_details)
+        result = api_calls.update_plan(plan_id=plan_id, plan_name=name, time_period=duration, fees=fees,
+                                       num_resume_parse=num_resume_parsing, plan_details=plan_details)
         if result:
             return redirect(url_for('list_of_plans'))
     else:
@@ -897,8 +898,6 @@ def user_all_post():
     if result is None:
         result = []  # Set result to an empty list
 
-
-
     return render_template('user_all_post.html', result=result)
 
 
@@ -938,7 +937,6 @@ def admin_delete_post(post_id):
         return redirect(url_for('all_post'))
 
 
-
 @app.route("/user/delete-posts/<post_id>", methods=['GET', 'POST'])
 @login_required
 def user_delete_post(post_id):
@@ -948,14 +946,251 @@ def user_delete_post(post_id):
         return redirect(url_for('user_all_post'))
 
 
+# @app.route('/posts/add-post', methods=['GET', 'POST'])
+# def add_post():
+#     form = forms.AddPost()
+#
+#     # Fetch categories and format them for the form choices
+#     try:
+#         categories = api_calls.get_user_all_categories(access_token=current_user.id)
+#         category_choices = [('', 'Select a category')] + [(category['id'], category['category']) for category in categories]
+#         if not category_choices:
+#             category_choices = [('', 'Select Category')]
+#     except Exception as e:
+#         print(f"Error fetching categories: {e}")
+#         category_choices = [('', 'Select Category')]
+#
+#     form.category.choices = category_choices
+#
+#     if form.category.data:
+#         # Fetch subcategories based on the selected category
+#         try:
+#             subcategories = api_calls.get_subcategories_by_category(form.category.data)
+#             subcategory_choices = [(subcategory['id'], subcategory['subcategory']) for subcategory in subcategories]
+#             if not subcategory_choices:
+#                 subcategory_choices = [('', 'Select Subcategory')]
+#         except Exception as e:
+#             print(f"Error fetching subcategories: {e}")
+#             subcategory_choices = [('', 'Select Subcategory')]
+#         form.subcategory.choices = subcategory_choices
+#
+#     # Fetch tags and format them for the form choices
+#     try:
+#         tags = api_calls.get_user_all_tags(access_token=current_user.id)
+#         tag_choices = [(tag['id'], tag['tag']) for tag in tags]
+#         if not tag_choices:
+#             tag_choices = [('', 'Select Tag')]
+#     except Exception as e:
+#         print(f"Error fetching tags: {e}")
+#         tag_choices = [('', 'Select Tag')]
+#
+#     form.tags.choices = tag_choices
+#
+#     if form.validate_on_submit():
+#
+#         title = form.title.data
+#         content = form.content.data
+#         category = form.category.data
+#         subcategory = form.subcategory.data
+#         tag = form.tags.data
+#
+#         if form.publish.data:
+#             try:
+#                 result = api_calls.create_post(
+#                     title=title,
+#                     content=content,
+#                     category_id=category,
+#                     subcategory_id=subcategory,
+#                     tag_id=tag,
+#                     status='published',
+#                     access_token=current_user.id
+#                 )
+#     ################## send mail if newsletter is clicked
+#
+#                 if result:
+#                     flash("Post created successfully", "success")
+#                     try:
+#                         send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=title, body=content)
+#                     except Exception as e:
+#                         raise 'Problem sending newsletter' + e
+#                     if current_user.role == 'user':
+#                         return redirect(url_for('view_post'))
+#                     else:
+#                         return redirect(url_for('all_post'))
+#                 else:
+#                     flash("Failed to create post", "danger")
+#             except Exception as e:
+#                 flash(f"Error creating post: {e}", "danger")
+#         elif form.save_draft.data:
+#             try:
+#                 result = api_calls.create_post(
+#                     title=title,
+#                     content=content,
+#                     category_id=category,
+#                     subcategory_id=subcategory,
+#                     tag_id=tag,
+#                     status='draft',
+#                     access_token=current_user.id
+#                 )
+#
+#                 if result:
+#                     if current_user.role == 'user':
+#                         return redirect(url_for('user_all_post'))
+#                     else:
+#                         return redirect(url_for('all_post'))
+#                 else:
+#                     flash("Failed to create post", "danger")
+#             except Exception as e:
+#                 flash(f"Error creating post: {e}", "danger")
+#         elif form.preview.data:
+#             form.title.data=title
+#             form.content.data=content
+#             form.category.data=category
+#             form.subcategory.data=subcategory
+#             form.tags.data=tag
+#
+#             return render_template('preview_post.html', title=form.title.data, content=form.content.data, author_name=current_user.username, form=form, category=category,subcategory=subcategory,tag=tag)
+#
+#     else:
+#         if request.method == 'POST':
+#             flash("Form validation failed", "danger")
+#             print(form.errors)
+#
+#     if current_user.role == 'user':
+#         # for service in current_user.services:
+#         is_service_allowed = api_calls.is_service_access_allowed(current_user.id)
+#         if is_service_allowed :
+#             return render_template('add_post.html', form=form, categories=category_choices)
+#         return redirect(url_for('user_view_plan'))
+#     else:
+#         return render_template('add_post.html', form=form, categories=category_choices)
+
+
+# @app.route('/posts/add-post', methods=['GET', 'POST'])
+# def add_post():
+#     form = forms.AddPost()
+#
+#     # Fetch categories and format them for the form choices
+#     try:
+#         categories = api_calls.get_user_all_categories(access_token=current_user.id)
+#         category_choices = [('', 'Select a category')] + [(category['id'], category['category']) for category in categories]
+#         if not category_choices:
+#             category_choices = [('', 'Select Category')]
+#     except Exception as e:
+#         print(f"Error fetching categories: {e}")
+#         category_choices = [('', 'Select Category')]
+#
+#     form.category.choices = category_choices
+#
+#     if form.category.data:
+#         # Fetch subcategories based on the selected category
+#         try:
+#             subcategories = api_calls.get_subcategories_by_category(form.category.data)
+#             subcategory_choices = [(subcategory['id'], subcategory['subcategory']) for subcategory in subcategories]
+#             if not subcategory_choices:
+#                 subcategory_choices = [('', 'Select Subcategory')]
+#         except Exception as e:
+#             print(f"Error fetching subcategories: {e}")
+#             subcategory_choices = [('', 'Select Subcategory')]
+#         form.subcategory.choices = subcategory_choices
+#
+#     # Fetch tags and format them for the form choices
+#     try:
+#         tags = api_calls.get_user_all_tags(access_token=current_user.id)
+#         tag_choices = [(tag['id'], tag['tag']) for tag in tags]
+#         if not tag_choices:
+#             tag_choices = [('', 'Select Tag')]
+#     except Exception as e:
+#         print(f"Error fetching tags: {e}")
+#         tag_choices = [('', 'Select Tag')]
+#
+#     form.tags.choices = tag_choices
+#
+#     if form.validate_on_submit():
+#
+#         title = form.title.data
+#         content = form.content.data
+#         category = form.category.data
+#         subcategory = form.subcategory.data
+#         tag = form.tags.data
+#
+#         if form.publish.data:
+#             try:
+#                 result = api_calls.create_post(
+#                     title=title,
+#                     content=content,
+#                     category_id=category,
+#                     subcategory_id=subcategory,
+#                     tag_id=tag,
+#                     status='published',
+#                     access_token=current_user.id
+#                 )
+#     ################## send mail if newsletter is clicked
+#
+#                 if result:
+#                     flash("Post created successfully", "success")
+#                     try:
+#                         send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=title, body=content)
+#                     except Exception as e:
+#                         raise 'Problem sending newsletter' + e
+#                     if current_user.role == 'user':
+#                         return redirect(url_for('view_post'))
+#                     else:
+#                         return redirect(url_for('all_post'))
+#                 else:
+#                     flash("Failed to create post", "danger")
+#             except Exception as e:
+#                 flash(f"Error creating post: {e}", "danger")
+#         elif form.save_draft.data:
+#             try:
+#                 result = api_calls.create_post(
+#                     title=title,
+#                     content=content,
+#                     category_id=category,
+#                     subcategory_id=subcategory,
+#                     tag_id=tag,
+#                     status='draft',
+#                     access_token=current_user.id
+#                 )
+#
+#                 if result:
+#                     if current_user.role == 'user':
+#                         return redirect(url_for('user_all_post'))
+#                     else:
+#                         return redirect(url_for('all_post'))
+#                 else:
+#                     flash("Failed to create post", "danger")
+#             except Exception as e:
+#                 flash(f"Error creating post: {e}", "danger")
+#         elif form.preview.data:
+#             # Redirect to the preview route with form data
+#             return redirect(url_for('preview_post'))
+#
+#     else:
+#         if request.method == 'POST':
+#             flash("Form validation failed", "danger")
+#             print(form.errors)
+#
+#     if current_user.role == 'user':
+#         # for service in current_user.services:
+#         is_service_allowed = api_calls.is_service_access_allowed(current_user.id)
+#         if is_service_allowed:
+#             return render_template('add_post.html', form=form, categories=category_choices)
+#         return redirect(url_for('user_view_plan'))
+#     else:
+#         return render_template('add_post.html', form=form, categories=category_choices)
+
+
 @app.route('/posts/add-post', methods=['GET', 'POST'])
+@login_required
 def add_post():
     form = forms.AddPost()
 
     # Fetch categories and format them for the form choices
     try:
         categories = api_calls.get_user_all_categories(access_token=current_user.id)
-        category_choices = [('', 'Select a category')] + [(category['id'], category['category']) for category in categories]
+        category_choices = [('', 'Select a category')] + [(category['id'], category['category']) for category in
+                                                          categories]
         if not category_choices:
             category_choices = [('', 'Select Category')]
     except Exception as e:
@@ -988,49 +1223,24 @@ def add_post():
 
     form.tags.choices = tag_choices
 
-    if form.validate_on_submit():
+    if request.method == 'POST':
+        if form.preview.data:
+            # Redirect to the preview route with form data
+            return redirect(url_for('preview_post',
+                                    title=form.title.data,
+                                    content=form.content.data,
+                                    category=form.category.data,
+                                    subcategory=form.subcategory.data,
+                                    tags=form.tags.data))
 
-        title = form.title.data
-        content = form.content.data
-        category = form.category.data
-        subcategory = form.subcategory.data
-        tag = form.tags.data
-
-        if form.publish.data:
-            try:
-                result = api_calls.create_post(
-                    title=title,
-                    content=content,
-                    category_id=category,
-                    subcategory_id=subcategory,
-                    tag_id=tag,
-                    status='published',
-                    access_token=current_user.id
-                )
-    ################## send mail if newsletter is clicked
-
-                if result:
-                    flash("Post created successfully", "success")
-                    try:
-                        send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=title, body=content)
-                    except Exception as e:
-                        raise 'Problem sending newsletter' + e
-                    if current_user.role == 'user':
-                        return redirect(url_for('view_post'))
-                    else:
-                        return redirect(url_for('all_post'))
-                else:
-                    flash("Failed to create post", "danger")
-            except Exception as e:
-                flash(f"Error creating post: {e}", "danger")
         elif form.save_draft.data:
             try:
                 result = api_calls.create_post(
-                    title=title,
-                    content=content,
-                    category_id=category,
-                    subcategory_id=subcategory,
-                    tag_id=tag,
+                    title=form.title.data,
+                    content=form.content.data,
+                    category_id=form.category.data,
+                    subcategory_id=form.subcategory.data,
+                    tag_id=form.tags.data,
                     status='draft',
                     access_token=current_user.id
                 )
@@ -1044,29 +1254,129 @@ def add_post():
                     flash("Failed to create post", "danger")
             except Exception as e:
                 flash(f"Error creating post: {e}", "danger")
-        elif form.preview.data:
-            return render_template('preview_post.html', title=form.title.data, content=form.content.data, author_name=current_user.username, form=form)
+        elif form.publish.data:
+            try:
+                result = api_calls.create_post(
+                    title=form.title.data,
+                    content=form.content.data,
+                    category_id=form.category.data,
+                    subcategory_id=form.subcategory.data,
+                    tag_id=form.tags.data,
+                    status='published',
+                    access_token=current_user.id
+                )
 
-    else:
-        if request.method == 'POST':
-            flash("Form validation failed", "danger")
-            print(form.errors)
+                if result:
+                    flash("Post created successfully", "success")
+                    try:
+                        send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data,
+                                                               body=form.content.data)
+                    except Exception as e:
+                        raise 'Problem sending newsletter' + e
+                    if current_user.role == 'user':
+                        return redirect(url_for('user_all_post'))
+                    else:
+                        return redirect(url_for('all_post'))
+                else:
+                    flash("Failed to create post", "danger")
+            except Exception as e:
+                flash(f"Error creating post: {e}", "danger")
 
     if current_user.role == 'user':
-        # for service in current_user.services:
         is_service_allowed = api_calls.is_service_access_allowed(current_user.id)
-        if is_service_allowed :
+        if is_service_allowed:
             return render_template('add_post.html', form=form, categories=category_choices)
         return redirect(url_for('user_view_plan'))
     else:
         return render_template('add_post.html', form=form, categories=category_choices)
 
+@app.route('/posts/preview_post', methods=['GET', 'POST'])
+@login_required
+def preview_post():
+    form = forms.AddPost()
+    if request.method == 'GET':
+        # Populate the form with the data from the query parameters
+        form.title.data = request.args.get('title')
+        form.content.data = request.args.get('content')
+        form.category.data = request.args.get('category')
+        form.subcategory.data = request.args.get('subcategory')
+        form.tags.data = request.args.get('tags')
+
+    if request.method == 'POST':
+        if form.save_draft.data:
+            try:
+                result = api_calls.create_post(
+                    title=form.title.data,
+                    content=form.content.data,
+                    category_id=form.category.data,
+                    subcategory_id=form.subcategory.data,
+                    tag_id=form.tags.data,
+                    status='draft',
+                    access_token=current_user.id
+                )
+
+                if result:
+                    if current_user.role == 'user':
+                        return redirect(url_for('user_all_post'))
+                    else:
+                        return redirect(url_for('all_post'))
+                else:
+                    flash("Failed to create post", "danger")
+            except Exception as e:
+                flash(f"Error creating post: {e}", "danger")
+        elif form.publish.data:
+            try:
+                result = api_calls.create_post(
+                    title=form.title.data,
+                    content=form.content.data,
+                    category_id=form.category.data,
+                    subcategory_id=form.subcategory.data,
+                    tag_id=form.tags.data,
+                    status='published',
+                    access_token=current_user.id
+                )
+
+                if result:
+                    flash("Post created successfully", "success")
+                    try:
+                        send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data, body=form.content.data)
+                    except Exception as e:
+                        raise 'Problem sending newsletter' + e
+                    if current_user.role == 'user':
+                        return redirect(url_for('user_all_post'))
+                    else:
+                        return redirect(url_for('all_post'))
+                else:
+                    flash("Failed to create post", "danger")
+            except Exception as e:
+                flash(f"Error creating post: {e}", "danger")
+
+    return render_template('preview_post.html', title=form.title.data, content=form.content.data, author_name=current_user.username, form=form)
+
 # @app.route("/posts/preview_post", methods=['GET', 'POST'])
 # @login_required
 # def preview_post():
-#     return render_template('user_email_dashboard.html')
-
-
+#     form = forms.AddPost()
+#     if request.method == 'POST':
+#         # Get form data from request.form since the form is submitted via POST
+#         title = request.form.get('title')
+#         content = request.form.get('content')
+#         category = request.form.get('category')
+#         subcategory = request.form.get('subcategory')
+#         tag = request.form.getlist('tags')
+#
+#         # Populate the form with the data
+#         form.title.data = title
+#         form.content.data = content
+#         form.category.data = category
+#         form.subcategory.data = subcategory
+#         form.tags.data = tag
+#
+#         # Render the preview page with the populated form
+#         return render_template('preview_post.html', title=title, content=content, author_name=current_user.username,
+#                                form=form, category=category, subcategory=subcategory, tag=tag)
+#
+#     return redirect(url_for('add_post'))
 
 
 @app.route("/user/add-category", methods=['GET', 'POST'])
@@ -1086,8 +1396,6 @@ def add_category():
     return render_template('user_add_category.html', form=form)
 
 
-
-
 @app.route("/user/update-category/<category_id>", methods=['GET', 'POST'])
 @login_required
 def update_category(category_id):
@@ -1104,6 +1412,7 @@ def update_category(category_id):
 
     return render_template('update_user_category.html', form=form, category_id=category_id)
 
+
 @app.route('/user/all-categories')
 @login_required
 def user_all_category():
@@ -1115,8 +1424,6 @@ def user_all_category():
     return render_template('view_user_category.html', result=result)
 
 
-
-
 @app.route('/user/all-subcategories/<category_id>')
 @login_required
 def user_all_subcategory(category_id):
@@ -1126,6 +1433,7 @@ def user_all_subcategory(category_id):
     print(result)
 
     return render_template('view_user_subcategory.html', result=result)
+
 
 @app.route("/user/add-tag", methods=['GET', 'POST'])
 @login_required
@@ -1157,7 +1465,6 @@ def edit_tag(tag_id):
             return redirect(url_for('user_all_tag'))
         else:
             flash('Some problem occurred while editing the tag')
-
 
     return render_template('user_edit_tag.html', form=form, tag_id=tag_id)
 
@@ -1192,6 +1499,7 @@ def user_delete_category(category_id):
     print(result.status_code)
     if result.status_code == 200:
         return redirect(url_for('user_all_category'))
+
 
 @app.route('/subcategories/<int:category_id>')
 def get_subcategories(category_id):
@@ -1239,7 +1547,9 @@ def update_subcategory(subcategory_id):
         else:
             flash('Some problem occured', category='error')
 
-    return render_template('update_user_subcategory.html', form=form, subcategory_id=subcategory_id, categories=category_choices)
+    return render_template('update_user_subcategory.html', form=form, subcategory_id=subcategory_id,
+                           categories=category_choices)
+
 
 @app.route("/users/delete-subcategory/<subcategory_id>", methods=['GET', 'POST'])
 @login_required
@@ -1250,9 +1560,10 @@ def user_delete_subcategory(subcategory_id):
         return redirect(url_for('user_all_category'))
 
 
-@app.route('/posts/edit-post/<post_id>', methods=['GET', 'POST'])
+@app.route('/posts/update-post/<post_id>', methods=['GET', 'POST'])
 def admin_edit_post(post_id):
-    form = forms.AdminUpdatePost()
+    form = forms.AddPost()
+    post = api_calls.get_post(post_id=post_id)
 
     # Fetch categories and format them for the form choices
     try:
@@ -1289,39 +1600,55 @@ def admin_edit_post(post_id):
     form.tags.choices = tag_choices
 
     if form.validate_on_submit():
+
         title = form.title.data
         content = form.content.data
         category = form.category.data
         subcategory = form.subcategory.data
         tag = form.tags.data
+        if form.publish.data:
+            try:
+                result = api_calls.admin_update_post(
+                    post_id=post_id,
+                    title=title,
+                    content=content,
+                    category_id=category,
+                    subcategory_id=subcategory,
+                    tag_id=tag,
+                    status='published',
+                    access_token=current_user.id
+                )
 
-        try:
-            result = api_calls.admin_update_post(
-                post_id=post_id,
-                title=title,
-                content=content,
-                category_id=category,
-                subcategory_id=subcategory,
-                tag_id=tag,
-                access_token=current_user.id
-            )
-
-            if result:
-                print("Post updated successfully")
-                if current_user.role == 'user':
-                    return redirect(url_for('view_post'))
+                if result:
+                    try:
+                        send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data,
+                                                               body=form.content.data)
+                    except Exception as e:
+                        raise 'Problem sending newsletter' + e
+                    print("Post updated successfully")
+                    if current_user.role == 'user':
+                        return redirect(url_for('user_all_post'))
+                    else:
+                        return redirect(url_for('all_post'))
                 else:
-                    return redirect(url_for('all_post'))
-            else:
-                print("Failed to update post")
-        except Exception as e:
-            print(f"Error updating post: {e}")
-    else:
-        print("Form validation failed")
-        print(form.errors)
+                    print("Failed to update post")
+            except Exception as e:
+                print(f"Error updating post: {e}")
+        elif form.preview.data:
+
+            return redirect(url_for('preview_post',
+                                    title=form.title.data,
+                                    content=form.content.data,
+                                    category=form.category.data,
+                                    subcategory=form.subcategory.data,
+                                    tags=form.tags.data))
+    form.title.data = post['title']
+    form.category.data = post['category_id']
+    form.subcategory.data = post['subcategory_id']
+    form.tags.data = post['tag_id']
+    form.content.data = post['content']
 
     return render_template('edit_post_form.html', form=form, post_id=post_id)
-
 
 
 ############################################################ SUBSCRIPTION #############################################################
@@ -1336,7 +1663,7 @@ def payment(plan_id):
     return render_template('payment.html', plan_id=plan_id)
 
 
-@app.route('/create-subscription/<plan_id>', methods=['GET','POST'])
+@app.route('/create-subscription/<plan_id>', methods=['GET', 'POST'])
 @login_required
 def create_subscription(plan_id):
     plan = api_calls.get_plan_by_id(plan_id)  # Fetch the plan details from the database or API
@@ -1359,7 +1686,7 @@ def create_subscription(plan_id):
             return render_template('payment_failure.html')
 
 
-@app.route('/cancel-subscription/<subscription_id>', methods=['GET','POST'])
+@app.route('/cancel-subscription/<subscription_id>', methods=['GET', 'POST'])
 @login_required
 def cancel_subscription(subscription_id):
     try:
@@ -1371,13 +1698,12 @@ def cancel_subscription(subscription_id):
         print(e)
 
 
-@app.route('/resume-subscription/<subscription_id>', methods=['GET','POST'])
+@app.route('/resume-subscription/<subscription_id>', methods=['GET', 'POST'])
 @login_required
 def resume_subscription(subscription_id):
     try:
         result = api_calls.resume_subscription(subscription_id=subscription_id)
         if result:
-
             return redirect(url_for('profile'))
 
     except Exception as e:
@@ -1392,6 +1718,7 @@ def get_purchase_history():
 
     return render_template('purchase_history.html', purchase_data=purchase_data)
 
+
 @app.route('/all-subscriptions', methods=['GET'])
 @login_required
 def get_all_subscriptions():
@@ -1399,8 +1726,6 @@ def get_all_subscriptions():
     purchase_data = api_calls.get_all_subscriptions(access_token)
 
     return render_template('all_subscription.html', purchase_data=purchase_data)
-
-
 
     return render_template('all_posts.html', result=result)
 
@@ -1445,19 +1770,18 @@ def media():
 @app.route('/user/all-medias')
 @login_required
 def user_all_medias():
-    root_url = constants.ROOT_URL+'/'
+    root_url = constants.ROOT_URL + '/'
     result = api_calls.get_user_all_medias(access_token=current_user.id)
     if result is None:
         result = []  # Set result to an empty list
     print(result)
 
-    return render_template('user_all_media.html', result=result, root_url=root_url )
+    return render_template('user_all_media.html', result=result, root_url=root_url)
 
 
 @app.route('/admin/comment')
 @login_required
 def comment():
-
     return render_template('comments.html', result=result)
 
 
@@ -1474,6 +1798,7 @@ def view_post():
 
     return render_template('list_of_posts.html', result=result, response=response)
 
+
 @app.route('/posts/<post_title>', methods=['GET', 'POST'])
 def get_post(post_title):
     post_id = request.form['post_id']
@@ -1484,6 +1809,8 @@ def get_post(post_title):
     created_at = result["created_at"]
 
     return render_template('post.html', title=title, content=content, author_name=author_name, created_at=created_at)
+
+
 ################################################ CHATBOT #########################################################
 
 @app.route('/chatbot')
@@ -1559,7 +1886,7 @@ def update_email_template(template_id):
         body = form.content.data
 
         result = api_calls.edit_eamil_template(template_id=template_id,
-                                                 name=name, subject=subject, body=body, access_token=current_user.id)
+                                               name=name, subject=subject, body=body, access_token=current_user.id)
         return redirect(url_for('list_of_email_templates'))
 
     # Prefill the form fields with user information
@@ -1567,7 +1894,8 @@ def update_email_template(template_id):
     form.subject.data = subject
     form.content.data = body
 
-    return render_template('update_email_template.html', subject=subject, name=name, form=form, body=body, template_id=template_id)
+    return render_template('update_email_template.html', subject=subject, name=name, form=form, body=body,
+                           template_id=template_id)
 
 
 @app.route("/email-templates/delete-template/<template_id>", methods=['GET', 'POST'])
@@ -1609,6 +1937,7 @@ def send_mails(template_id):
 def email_settings():
     return render_template('user_email_dashboard.html')
 
+
 ############################################################## NEWSLETTER ##############################################################
 
 
@@ -1620,9 +1949,9 @@ def newsletter_subscribers():
     sub_count = subscriber_info['active_sub_count']
     unsub_count = subscriber_info['inactive_sub_count']
 
-    return render_template('newsletter_subscribers.html', result=subscribers, sub_count=sub_count, unsub_count=unsub_count)
+    return render_template('newsletter_subscribers.html', result=subscribers, sub_count=sub_count,
+                           unsub_count=unsub_count)
+
 
 if __name__ == '__main__':
     app.run()
-
-

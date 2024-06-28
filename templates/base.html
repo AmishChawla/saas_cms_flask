@@ -209,7 +209,7 @@
       <div class="container-fluid page-body-wrapper">
         <!-- partial:../../partials/_sidebar.html -->
           {% if current_user.is_authenticated %}
-        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
           <ul class="nav">
             <li class="nav-item sidenav">
               <a class="nav-link {% if request.endpoint == 'user_dashboard' %}active{% endif %}" href="{{ url_for('user_dashboard') }}">
@@ -390,6 +390,7 @@ function searchByName() {
     }
 }
 </script>
+
 
 {% block scripts %}{% endblock %}
     <!-- endinject -->
