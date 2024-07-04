@@ -1570,3 +1570,43 @@ def send_newsletter(access_token: str, subject, body):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
+
+def get_a_post_all_comments(post_id):
+    try:
+        response = requests.get(constants.BASE_URL + f'/comment/by_post_id/{post_id}')
+        print("Response Status Code:", response.status_code)  # Debug: Print status code
+        if response.status_code == 200:
+            result = response.json()
+            print("API Result:", result)  # Debug: Print API result
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+def add_comment(post_id, comment, access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    params = {
+        "post_id": post_id,
+        "comment": comment
+    }
+
+    try:
+        response = requests.post(constants.BASE_URL + f'/post/add_comment', json=params, headers=headers)
+        print(response.text)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
