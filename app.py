@@ -1,5 +1,5 @@
 import csv
-import datetime
+from datetime import datetime, timedelta
 import json
 import os
 from io import StringIO, BytesIO
@@ -1779,10 +1779,32 @@ def user_all_medias():
     return render_template('user_all_media.html', result=result, root_url=root_url)
 
 
-@app.route('/admin/comment')
+@app.route('/posts/comment/<int:post_id>', methods=['GET', 'POST'])
 @login_required
-def comment():
-    return render_template('comments.html', result=result)
+def comment(post_id):
+    if request.method == 'POST':
+        comment = request.form.get('comment')
+        if comment:
+            response = api_calls.add_comment(
+                post_id=post_id,
+                comment=comment,
+                access_token=current_user.id
+            )
+            print(response.status_code)
+            if response.status_code == 200:
+                flash('Comment added successfully', category='info')
+            else:
+                flash('Some problem occurred', category='error')
+        else:
+            flash('Comment cannot be empty', category='error')
+        return redirect(url_for('comment', post_id=post_id))
+
+    result = api_calls.get_a_post_all_comments(post_id=post_id)
+    if result is None:
+        result = []  # Set result to an empty list
+    print(result)
+
+    return render_template('comments.html', result=result, post_id=post_id)
 
 
 @app.route('/users/view-posts')
