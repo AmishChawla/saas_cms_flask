@@ -1,36 +1,89 @@
-{% extends 'CMS_base.html' %}
+{% if current_user.role == "admin" %}
+    {% extends 'admin_base.html' %}
+{% else %}
+    {% extends 'base.html' %}
+{% endif %}
 
-{% block title %}List of users{% endblock %}
+{% block title %}Comments{% endblock %}
 
 {% block content %}
 
+<style>
+  .comment-field {
+  position: fixed;
+  bottom: 0;
+  width: 70%;
+  background-color: white; /* Ensure it has a background */
+  z-index: 1000; /* Ensure it's above other content */
+}
+
+.scrollable .comment-field {
+  position: static;
+}
+</style>
+<div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Comments</h1>
+          </div><!-- /.col --><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+
+<div class="row" style="margin-left:4px;" >
+<br>
+    {% if result %}
+  {% for data in result %}
+  <div style="display: flex;">
+    {% if current_user.profile_picture %}
+                            <img src="{{ data.user.profile_picture }}" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%; border: 1px solid #b0bec5">
+                         {% else %}
+                            <img src="static/images/man.png" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%; border: 1px solid #b0bec5">
+                        {% endif %}<strong style="margin-right: 10px;">{{ data.user.username }}</strong>
+     <p>on {{ data.created_at.split('T')[0] }} at {{ data.created_at.split('T')[1][:8] }}</p></div>
+  <p class="post-title" style="margin-left:35px;">{{ data.comment }}</p>
+<div style="display: flex; margin-bottom: 20px; margin-left:35px;"><a href="#" style="color: #8fa3b0; font-size: 18px; text-decoration:none; margin-right: 20px;"><i class="bi bi-hand-thumbs-up"></i>
+</a>
+    <a href="#" style="color: #8fa3b0; font-size: 18px; text-decoration:none;">Reply</a></div>
+  {% endfor %}
+    {% else %}
+    <p style="text-align:center; margin-top:15%;">No comments</p>
+    {% endif %}
+</div>
 
 
 
+<!-- Comment field -->
+<div class="row comment-field">
+  <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
+    <div class="card">
+      <div class="card-body" >
+        <form id="comment-form" method="POST" action="{{ url_for('comment', post_id=post_id) }}">
+          <div style="display:flex; justify-content:space-between; align-items:center;" class="form-group">
+            <input type="text" class="form-control" name="comment" placeholder="Enter your comment" style="flex-grow: 1; margin-right: 10px;">
+            <button type="submit" class="btn btn-primary" style="padding: 6px 20px;">Send</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
-            <div class="row">
+<script>
+ document.addEventListener("DOMContentLoaded", function() {
+    // Find the footer element by its ID
+    var footer = document.getElementById('footer');
+
+    // Check if the footer element exists
+    if (footer) {
+        // Remove the footer element from the DOM
+        footer.parentNode.removeChild(footer);
+    }
+});
 
 
-              <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
-                <div class="card">
-                  <div class="card-body" style="overflow-x: auto;">
-                      <div style="display:flex; justify-content:space-between;">
-                    <h4 class="card-title">Comments</h4>
-                      <div style="display: flex; justify-content: space-between;">
-                                      <a class="btn btn-info" href="#" style="padding: 6px 30px 6px 30px;">
-                <span class="menu-title">Add</span>
-              </a>
-                          </div>
-                          </div>
+</script>
 
-
-
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-          <!-- content-wrapper ends -->
 
 {% endblock %}
