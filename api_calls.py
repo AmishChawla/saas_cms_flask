@@ -1636,3 +1636,35 @@ def add_comment(post_id, comment, access_token):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+
+def add_like_to_comment(comment_id, access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    print("le bhai")
+    try:
+        response = requests.put(constants.BASE_URL + f'/comments/update-like/{comment_id}', headers=headers)
+        print(response.text)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+def remove_like_from_comment(comment_id, access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    print("le bhai")
+    try:
+        response = requests.put(constants.BASE_URL + f'/comments/remove-like/{comment_id}', headers=headers)
+        print(response.text)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
