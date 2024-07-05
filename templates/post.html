@@ -14,10 +14,10 @@
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <div class="post-heading">
                             <h2 class="subheading">{{ title }}</h2>
-                            <span class="meta">
-                                Posted by
-                                <a href="#!">{{ author_name }}</a>
-                                on {{ created_at.split('T')[0] }} at {{ created_at.split('T')[1][:8] }}
+                            <span style="display:flex;" class="meta">
+                                <a href="#!" style="color: black; font-size: 0.9rem; margin-right: 0.5rem;">{{ author_name }}</a>
+                                 <div style="color: black; font-size: 0.9rem; margin-right: 0.5rem;">{{ created_at }}</div>
+                                <div style="color: black; font-size: 0.9rem; margin-right: 0.5rem;">{{ category }}</div>
                             </span>
                         </div>
                     </div>

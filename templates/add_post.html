@@ -7,14 +7,13 @@
 {% block title %}Add Post{% endblock %}
 
 {% block content %}
-
 <style>
     body, html {
         margin: 0;
         padding: 0;
         width: 100%;
         height: 100%;
-        overflow-x: hidden; /* Prevent horizontal scroll */
+        overflow-x: hidden;
         box-sizing: border-box;
     }
 
@@ -57,7 +56,6 @@
         flex-wrap: wrap;
         margin-top: 10px;
     }
-
     .tag {
         background-color: #f0f0f0;
         padding: 5px 10px;
@@ -74,84 +72,172 @@
         cursor: pointer;
     }
 </style>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+<form method="post" action="{{ url_for('add_post') }}" id="postForm">
+    {{ form.hidden_tag() }}
+    <aside class="control-sidebar control-sidebar-light">
+        <div class="p-3">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h6><strong>Publish Post</strong></h6>
+                <a href="#" data-widget="control-sidebar"><i class="bi bi-arrow-right-short" style="font-size: 1.5rem; color: black;"></i></a>
+            </div>
+            <div class="form-group">
+                {{ form.category.label }}
+                {{ form.category(class="form-control", id="category", required=True) }}
+            </div>
+            <div class="form-group">
+                {{ form.subcategory.label }}
+                {{ form.subcategory(class="form-control ", id="subcategory", required=True) }}
+            </div>
+                <div class="form-group">
+                {{ form.tags.label }}
+                {{ form.tags(class="form-control ", id="tags", required=True) }}
+            </div>
 
-<div class="form-container">
-    <h2>Add Post</h2>
-    <form method="post" action="{{ url_for('add_post') }}">
-        {{ form.hidden_tag() }}
 
-        <div class="form-group">
-            {{ form.title.label }}
-            {{ form.title(class="form-control", placeholder="Title", required=True) }}
+<!--            <div class="form-group">-->
+<!--                {{ form.tags.label }}-->
+<!--                <div class="content">-->
+<!--                    <p>Press enter or add a comma after each tag</p>-->
+<!--                    <input type="text" id="tagsInput" spellcheck="false">-->
+<!--                </div>-->
+<!--                <div class="details">-->
+<!--                    <p><span id="remainingTags">10</span> tags are remaining</p>-->
+<!--                    <button id="removeAllTags">Remove All</button>-->
+<!--                </div>-->
+<!--            </div>-->
+            {{ form.publish(class="btn btn-primary w-100 mb-3") }}
+            {{ form.preview(class="btn btn-outline-primary w-100 mb-3") }}
+            {{ form.save_draft(class="btn btn-outline-primary w-100 mb-3") }}
         </div>
-
-        <div class="form-group">
-            {{ form.category.label }}
-            {{ form.category(class="form-control", id="category", required=True) }}
+    </aside>
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Write</h1>
+                </div>
+            </div>
         </div>
-
+    </div>
+    <div class="form-container">
         <div class="form-group">
-            {{ form.subcategory.label }}
-            {{ form.subcategory(class="form-control", id="subcategory", required=True) }}
+            {{ form.title(class="form-control form-control-lg ", placeholder="Heading", required=True) }}
         </div>
-
         <div class="form-group">
-            {{ form.tags.label }}
-            {{ form.tags(class="form-control", id="tags", required=True) }}
+            {{ form.content(class="form-control", id="content") }}
         </div>
-
-        <div class="form-group">
-            {{ form.content.label }}
-            {{ form.content(class="form-control", id="content", placeholder="Write details about the post.") }}
-        </div>
-
-        <div class="d-grid gap-2 col-6 mx-auto">
-            {{ form.publish(class="btn btn-dark btn-lg") }}
-            {{ form.preview(class="btn btn-outline-dark btn-lg") }}
-            {{ form.save_draft(class="btn btn-outline-dark btn-lg") }}
-
+        <div class="d-grid gap-2 col-6 mx-auto justify-content-center align-items-center">
+            <button class="btn btn-primary w-100 mb-3" data-widget="control-sidebar" href="#" type="button">Next</button>
         </div>
     </form>
 </div>
 
-
-<script src="https://cdn.ckeditor.com/4.16.2/standard-all/ckeditor.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 <script>
-    // Replace the CKEditor instance with the correct ID
-    CKEDITOR.replace('content');
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const categoryElement = document.getElementById('category');
-        const subcategoryElement = document.getElementById('subcategory');
-
-        categoryElement.addEventListener('change', function () {
-            const selectedCategoryId = this.value;
-
-            if (selectedCategoryId) {
-                fetch(`/subcategories/${selectedCategoryId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Fetched subcategories:', data); // Debugging line
-                        // Clear existing subcategory options
-                        subcategoryElement.innerHTML = '<option value="">Select a subcategory</option>';
-
-                        // Populate new subcategory options
-                        data.subcategories.forEach(subcategory => {
-                            const option = document.createElement('option');
-                            option.value = subcategory.id;
-                            option.textContent = subcategory.subcategory;
-                            subcategoryElement.appendChild(option);
-                        });
-                    })
-                    .catch(error => console.error('Error fetching subcategories:', error));
-            } else {
-                subcategoryElement.innerHTML = '<option value="">Select a subcategory</option>';
-            }
-        });
+$(document).ready(function() {
+    $('#content').summernote({
+        height: 300,
+        minHeight: null,
+        maxHeight: null,
+        focus: true
     });
-</script>
+});
 
+document.addEventListener('DOMContentLoaded', function () {
+    const categoryElement = document.getElementById('category');
+    const subcategoryElement = document.getElementById('subcategory');
+
+    categoryElement.addEventListener('change', function () {
+        const selectedCategoryId = this.value;
+
+        if (selectedCategoryId) {
+            fetch(`/subcategories/${selectedCategoryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Fetched subcategories:', data); // Debugging line
+                    // Clear existing subcategory options
+                    subcategoryElement.innerHTML = '<option value="">Select a subcategory</option>';
+
+                    // Populate new subcategory options
+                    data.subcategories.forEach(subcategory => {
+                        const option = document.createElement('option');
+                        option.value = subcategory.id;
+                        option.textContent = subcategory.subcategory;
+                        subcategoryElement.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching subcategories:', error));
+        } else {
+            subcategoryElement.innerHTML = '<option value="">Select a subcategory</option>';
+        }
+    });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var tagsInput = document.getElementById('tagsInput');
+    var tagsContainer = document.querySelector('.tags-container');
+    var removeAllTagsButton = document.getElementById('removeAllTags');
+    var remainingTagsSpan = document.getElementById('remainingTags');
+    var tags = []; // Array to hold the tags
+
+    // Function to display tags
+    function displayTags() {
+        tagsContainer.innerHTML = ''; // Clear existing tags
+        tags.forEach(tag => {
+            var tagElement = document.createElement('span');
+            tagElement.textContent = tag;
+            tagElement.classList.add('tag');
+            tagElement.addEventListener('click', function () {
+                removeTag(tag);
+            });
+            tagsContainer.appendChild(tagElement);
+        });
+    }
+
+    // Function to add a tag
+    function addTag(value) {
+        if (value.length > 1 && !tags.includes(value)) {
+            if (tags.length < 10) {
+                tags.push(value);
+                displayTags();
+            }
+        }
+    }
+
+    // Function to remove a tag
+    function removeTag(tagToRemove) {
+        var index = tags.indexOf(tagToRemove);
+        if (index !== -1) {
+            tags.splice(index, 1);
+            displayTags();
+        }
+    }
+
+    // Listen for keyup events on the tags input
+    tagsInput.addEventListener('keyup', function (e) {
+        var inputValue = e.target.value;
+        var tagsArray = inputValue.split(/,\s?|\s+/).map(String.trim);
+
+        remainingTagsSpan.textContent = tagsArray.length > 10 ? '10' : tagsArray.length;
+
+        // Add tags based on the input value
+        tagsArray.forEach(tag => addTag(tag));
+
+        // Focus back to the input field
+        tagsInput.focus();
+    });
+
+    // Listen for click events on the Remove All button
+    removeAllTagsButton.addEventListener('click', function () {
+        tags = [];
+        displayTags();
+        tagsInput.value = '';
+        remainingTagsSpan.textContent = '10';
+    });
+});
+</script>
+{% endblock %}
 {% endblock %}
