@@ -185,7 +185,7 @@ class AddPost(FlaskForm):
     category = SelectField('Category', validators=[DataRequired()], choices=[('', 'Select a category')])
     subcategory = SelectField('Subcategory', validators=[DataRequired()], choices=[('', 'Select a subcategory')])
     content = TextAreaField('Content', validators=[DataRequired()], render_kw={'rows': 30, 'cols': 30, 'id': 'content', 'placeholder': 'Write details about the post.'})
-    tags = SelectField('Tags', validators=[DataRequired()], choices=[('', 'Select a tag')])
+    tags = StringField('Tags', validators=[DataRequired()])
     publish = SubmitField('Publish Post')
     save_draft = SubmitField('Save Draft')
     preview = SubmitField('Preview Post')

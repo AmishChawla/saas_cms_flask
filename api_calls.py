@@ -934,7 +934,7 @@ def admin_delete_post(post_id, access_token):
         print(f"An unexpected error occurred: {err}")
 
 
-def create_post(title, content, category_id, subcategory_id, tag_id, status, access_token):
+def create_post(title, content, category_id, subcategory_id, tags, status, access_token):
     print('trying to create post')
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
@@ -942,7 +942,7 @@ def create_post(title, content, category_id, subcategory_id, tag_id, status, acc
         "content": content,
         "category_id": category_id,
         "subcategory_id": subcategory_id,
-        "tag_id": tag_id,
+        "tags": tags,
         "status": status
     }
     try:
@@ -959,17 +959,18 @@ def create_post(title, content, category_id, subcategory_id, tag_id, status, acc
         print(f"An unexpected error occurred: {err}")
 
 
-def admin_update_post(post_id, title, content, category_id, subcategory_id, tag_id, status, access_token):
+def admin_update_post(post_id, title, content, category_id, subcategory_id, tags, status, access_token):
     print('trying3')
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
-        "title": title,
-        "content": content,
-        "category_id": category_id,
-        "subcategory_id": subcategory_id,
-        "tag_id": tag_id,
-        "status": status
-    }
+          "title": title,
+          "content": content,
+          "category_id": category_id,
+          "subcategory_id": subcategory_id,
+          "status": status,
+          "tags": tags
+        }
+
     try:
         response = requests.put(constants.BASE_URL + f'/posts/update-post/{post_id}', json=params, headers=headers)
         print(response.text)
@@ -1199,11 +1200,9 @@ def get_category_name(category_id):
 def get_user_all_tags(access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
     try:
-        response = requests.get(constants.BASE_URL + '/user-all-tags', headers=headers)
-        print("Response Status Code:", response.status_code)  # Debug: Print status code
+        response = requests.get(constants.BASE_URL + '/user-tags/', headers=headers)
         if response.status_code == 200:
             result = response.json()
-            print("API Result:", result)  # Debug: Print API result
             return result
         else:
             print("API Error:", response.text)  # Debug: Print error message from API
@@ -1224,8 +1223,7 @@ def add_tag(tag, access_token):
     }
 
     try:
-        response = requests.post(constants.BASE_URL + f'/user/add-tags', json=params, headers=headers)
-        print(response.text)
+        response = requests.post(constants.BASE_URL + f'/tags/', json=params, headers=headers)
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
@@ -1240,11 +1238,13 @@ def add_tag(tag, access_token):
 def edit_tag(tag_id, new_tag, access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
-        "tag": new_tag,
+      "new_tag_details": {
+        "tag": new_tag
+      }
     }
 
     try:
-        response = requests.put(constants.BASE_URL + f'/user/edit-tag/{tag_id}', json=params, headers=headers)
+        response = requests.put(constants.BASE_URL + f'/tags/update/{tag_id}', json=params, headers=headers)
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:
@@ -1261,8 +1261,7 @@ def delete_tag(tag_id, access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
 
     try:
-        response = requests.delete(constants.BASE_URL + f'/user/delete-tag/{tag_id}', headers=headers)
-        print(response.text)
+        response = requests.delete(constants.BASE_URL + f'/tags/{tag_id}', headers=headers)
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
