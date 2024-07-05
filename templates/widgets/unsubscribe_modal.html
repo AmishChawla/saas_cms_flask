@@ -1,0 +1,52 @@
+
+{% extends 'base.html' %}
+{% block content %}
+        <h2>Unsubscribe Newsletter</h2>
+        <form method="post" action="{{ url_for('unsubscribe_newsletter', username=username) }}">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{form.email.label}}
+                {{form.email(class="form-control")}}
+            </div>
+                {{ form.submit(class="btn btn-primary w-100 mb-3") }}
+        </form>
+
+
+<script>
+    // Function to show the confirmation modal
+    function showConfirmationModal() {
+        var modal = new bootstrap.Modal(document.getElementById('confirmationModal'), {});
+        modal.show();
+    }
+
+    // Check for the success query parameter and show the confirmation modal
+    window.onload = function() {
+        var urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success') === 'True') {
+            showConfirmationModal();
+        }
+    };
+</script>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Unsubscribe Confirmation</h5>
+                <button type="button" class="close" data-dismiss="confirmationModal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Thank you for managing your preferences. You have been unsubscribed successfully.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="confirmationModal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

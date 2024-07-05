@@ -119,7 +119,11 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function addFiles(newFiles) {
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/avi', 'video/mov'];
+        const allowedTypes = [
+        'image/jpeg', 'image/png', 'image/gif',
+        'video/mp4', 'video/avi', 'video/mov',
+        'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
         newFiles.forEach(file => {
             if (allowedTypes.includes(file.type)) {
                 if (file.size <= 2 * 1024 * 1024) {

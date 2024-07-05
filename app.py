@@ -24,6 +24,7 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
 uploads_folder = 'uploads'
+media_folder = 'media'
 ########################################################################################################################
 # def parse_csv(csv_data):
 #     csv_file = StringIO(csv_data)
@@ -81,7 +82,7 @@ def upload_pdf():
     if form.validate_on_submit():
         uploaded_files = request.files.getlist('files')
         print(len(uploaded_files))
-        empty_uploads_folder()
+        empty_folder(uploads_folder)
         file_list = []
         print(len(uploaded_files))
         for file in uploaded_files:
@@ -116,10 +117,10 @@ def upload_pdf():
     return render_template('upload_pdf.html', form=form)
 
 
-def empty_uploads_folder():
+def empty_folder(folder):
     # Remove all files in the uploads folder
-    for file in os.listdir(uploads_folder):
-        file_path = os.path.join(uploads_folder, file)
+    for file in os.listdir(folder):
+        file_path = os.path.join(folder, file)
         try:
             if os.path.isfile(file_path):
                 with open(file_path, 'wb'):
@@ -903,6 +904,7 @@ def user_all_post():
 
 @app.route('/<username>/posts', methods=['GET', 'POST'])
 def user_post_list(username):
+    toast = 'null';
     form = forms.SubscribeToNewsletterForm()
     result = api_calls.get_user_post_by_username(username=username)
 
@@ -918,10 +920,15 @@ def user_post_list(username):
         name = form.name.data
         email = form.email.data
         print('sending call')
-        response = api_calls.subscribe_to_newsletter(name=name, email=email, username=username)
-        print(response)
-        return redirect(url_for('user_post_list', username=username))
-    return render_template('user_post_list.html', result=result, response=response, form=form, username=username)
+        response_status = api_calls.subscribe_to_newsletter(name=name, email=email, username=username)
+        if response_status == 200:
+            return redirect(url_for('user_post_list', username=username, toast='new_sub'))
+        elif response_status == 409:
+            return redirect(url_for('user_post_list', username=username, toast='already_sub'))
+        else:
+            return redirect(url_for('user_post_list', username=username, toast='null'))
+
+    return render_template('user_post_list.html', result=result, response=response, form=form, username=username, toast=toast)
 
 
 @app.route("/admin/delete-posts/<post_id>", methods=['GET', 'POST'])
@@ -1759,7 +1766,7 @@ def media():
         response = api_calls.upload_medias(file_list, access_token)
 
         if response and response.status_code == 200:
-            flash('Media added successfully', category='info')
+            empty_folder(media_folder)
             return jsonify({"message": "Media added successfully", "redirect": url_for('user_all_medias')}), 200
         else:
             return jsonify({"message": "Some problem occurred"}), response.status_code if response else 500
@@ -1804,11 +1811,14 @@ def get_post(post_title):
     post_id = request.form['post_id']
     result = api_calls.get_post(post_id=post_id)
     title = result["title"]
+    category_name = result["category_name"]
     content = result["content"]
     author_name = result["author_name"]
     created_at = result["created_at"]
+    date_obj = datetime.datetime.strptime(created_at, '%Y-%m-%dT%H:%M:%S.%f%z')
+    formatted_date = date_obj.strftime('%d %B %Y')
 
-    return render_template('post.html', title=title, content=content, author_name=author_name, created_at=created_at)
+    return render_template('post.html', title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name)
 
 
 ################################################ CHATBOT #########################################################
@@ -1951,6 +1961,25 @@ def newsletter_subscribers():
 
     return render_template('newsletter_subscribers.html', result=subscribers, sub_count=sub_count,
                            unsub_count=unsub_count)
+
+
+@app.route("/unsubscribe-newsletter/<username>", methods=['GET', 'POST'])
+def unsubscribe_newsletter(username):
+    form = forms.UnsubscribeToNewsletterForm()
+    print('out')
+    if form.validate_on_submit():
+        print('inside')
+
+        # Update user information
+        email = form.email.data
+        print(email)
+        api_calls.unsubscribe_newsletter(email=email, username=username)
+        if result:
+            return redirect(url_for('unsubscribe_newsletter', username=username,  success=True))
+    else:
+        print('Validation failed:', form.errors)
+    # Render the template with the modal form
+    return render_template('widgets/unsubscribe_modal.html', form=form, username=username)
 
 
 if __name__ == '__main__':

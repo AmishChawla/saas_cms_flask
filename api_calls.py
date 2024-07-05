@@ -1247,13 +1247,13 @@ def edit_tag(tag_id, new_tag, access_token):
         response = requests.put(constants.BASE_URL + f'/user/edit-tag/{tag_id}', json=params, headers=headers)
         print(response.text)
         return response
-    except HTTPError as errh:
+    except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except ConnectionError as errc:
         print(f"Error Connecting: {errc}")
-    except Timeout as errt:
+    except requests.exceptions.Timeout as errt:
         print(f"Timeout Error: {errt}")
-    except RequestException as err:
+    except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
 
@@ -1264,13 +1264,13 @@ def delete_tag(tag_id, access_token):
         response = requests.delete(constants.BASE_URL + f'/user/delete-tag/{tag_id}', headers=headers)
         print(response.text)
         return response
-    except HTTPError as errh:
+    except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except ConnectionError as errc:
         print(f"Error Connecting: {errc}")
-    except Timeout as errt:
+    except requests.exceptions.Timeout as errt:
         print(f"Timeout Error: {errt}")
-    except RequestException as err:
+    except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
 
@@ -1491,7 +1491,9 @@ def subscribe_to_newsletter(name, email, username):
         print(response.status_code)
         if response.status_code == 200:
             print("successful")
-            return response.json
+            return response.status_code
+        elif response.status_code == 409:
+            return response.status_code
 
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
@@ -1570,3 +1572,27 @@ def send_newsletter(access_token: str, subject, body):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
+def unsubscribe_newsletter(email, username):
+    data = {
+        "subscriber_email": email,
+        "username": username,
+    }
+
+    try:
+        print("try")
+        response = requests.post(constants.BASE_URL + '/newsletter/unsubscribe-newsletter', json=data)
+        if response.status_code == 200:
+            result = response.json()
+            return result
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+

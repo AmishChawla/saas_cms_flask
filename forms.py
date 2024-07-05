@@ -181,7 +181,7 @@ class AddPlan(FlaskForm):
 
 
 class AddPost(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
+    title = StringField('title', validators=[DataRequired()])
     category = SelectField('Category', validators=[DataRequired()], choices=[('', 'Select a category')])
     subcategory = SelectField('Subcategory', validators=[DataRequired()], choices=[('', 'Select a subcategory')])
     content = TextAreaField('Content', validators=[DataRequired()], render_kw={'rows': 30, 'cols': 30, 'id': 'content', 'placeholder': 'Write details about the post.'})
@@ -256,3 +256,7 @@ class SubscribeToNewsletterForm(FlaskForm):
                                 render_kw={'placeholder': 'Email'})
     submit = SubmitField('Subscribe to my Newsletter')
 
+class UnsubscribeToNewsletterForm(FlaskForm):
+    email = StringField('Email', validators=[validators.DataRequired()],
+                                render_kw={'placeholder': 'Email'})
+    submit = SubmitField('Unsubscribe')

@@ -9,14 +9,14 @@
       <div class="card">
         <div class="card-body" style="overflow-x: auto;">
           <div style="display:flex; justify-content:space-between;">
-            <h4 class="card-title">Posts</h4>
+            <h2 class="m-0">My Posts</h2>
             <div style="display: flex; justify-content: space-between;">
-              <a class="btn btn-info" href="{{ url_for('add_post')}}" style="padding: 6px 30px 6px 30px;margin-left:10px;">
-                <span class="menu-title">Write new post</span>
+              <a class="btn btn-info" href="{{ url_for('add_post')}}" style="padding: 6px 30px 6px 30px;">
+                <span class="menu-title">Write new Post</span>
               </a>
             </div>
           </div>
-            <ul class="nav nav-tabs" id="postTabs">
+            <ul class="nav nav-tabs" id="postTabs" style="margin-top: 1.5rem;">
             <li class="nav-item">
               <a class="nav-link active" id="published-tab" data-toggle="tab" href="#published-posts">Published </a>
             </li>
@@ -57,16 +57,17 @@
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 
-                  <a class="button button1" href="{{ url_for('admin_edit_post', post_id=data.id) }}">Modify</a>
-                  <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}">Delete</button>
+                  <a  href="{{ url_for('admin_edit_post', post_id=data.id) }}" style="margin-right: 1rem;" data-toggle="tooltip" data-placement="top" title="Modify"><i class="bi bi-pen" style="color:#0b4647; font-size: 1.5rem"></i></a>
+                  <a  data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}" data-toggle="tooltip" data-placement="top" title="Delete"><i class="bi bi-trash3-fill " style="color:#6b1313; font-size: 1.5rem"></i></a>
 
                   <!-- Modal for delete button -->
                   <div class="modal fade" id="deleteModal_{{ data.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel_{{ data.id }}" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h1 class="modal-title fs-5" id="deleteModalLabel_{{ data.id }}">Delete Post</h1>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          <h4 class="modal-title fs-5" id="deleteModalLabel_{{ data.id }}">Delete Post</h4>
+                          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+
                         </div>
                         <div class="modal-body">
                           Are you sure you want to delete this post?
@@ -117,16 +118,17 @@
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 
-                  <a class="button button1" style="background-color:#212529;" href="{{ url_for('admin_edit_post', post_id=data.id) }}">Publish</a>
-                  <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}">Delete</button>
+                  <a href="{{ url_for('admin_edit_post', post_id=data.id) }}" style="margin-right: 1rem;" data-toggle="tooltip" data-placement="top" title="Publish"><i class="bi bi-vector-pen" style="color:#0b0a3d; font-size: 1.5rem"></i></a>
+
+                  <a data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}" data-toggle="tooltip" data-placement="top" title="Delete"><i class="bi bi-trash3-fill" style="color:#6b1313; font-size: 1.5rem"></i></a>
 
                   <!-- Modal for delete button -->
                   <div class="modal fade" id="deleteModal_{{ data.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel_{{ data.id }}" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h1 class="modal-title fs-5" id="deleteModalLabel_{{ data.id }}">Delete Post</h1>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          <h4 class="modal-title fs-5" id="deleteModalLabel_{{ data.id }}">Delete Post</h4>
+                          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
                         </div>
                         <div class="modal-body">
                           Are you sure you want to delete this post?

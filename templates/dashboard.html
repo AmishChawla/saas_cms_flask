@@ -1,15 +1,37 @@
 {% extends 'base.html' %}
 
-{% block title %}User Dashboard{% endblock %}
+{% block title %}Dashboard{% endblock %}
+
+
+<link rel="stylesheet" href="url_for('static', filename='assets/plugins/select2/css/select2.min.css')">
+<link rel="stylesheet" href="url_for('static', filename='assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')">
+
 
 {% block content %}
-<div>
-    <select id="timeRangeSelector">
-        <option value="7">Last 7 days</option>
-        <option value="14">Last 14 days</option>
-        <option value="28">Last 28 days</option>
-        <option value="90">Last 90 days</option>
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Dashboard</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+<div class="col-md-6">
+<div class="form-group">
+    <select id="timeRangeSelector" class="form-control select2">
+        <option class="form-control" value="7">Last 7 days</option>
+        <option class="form-control" value="14">Last 14 days</option>
+        <option class="form-control" value="28">Last 28 days</option>
+        <option class="form-control" value="90">Last 90 days</option>
     </select>
+</div>
 </div>
 <div id="chartContainer" style="width: 600px; height: 300px;">
     <canvas id="parsedResumeChart"></canvas>
