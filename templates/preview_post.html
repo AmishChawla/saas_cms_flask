@@ -8,6 +8,7 @@
 
 {% block content %}
     <!-- Page Header-->
+<div class="col-md-10 ml-0 mb-4 pt-3">
     <header class="masthead">
         <div class="container position-relative px-4 px-lg-5">
             <div class="row gx-4 gx-lg-5 justify-content-left">
@@ -18,6 +19,11 @@
                                 <a href="#!" style="color: black; font-size: 0.9rem; margin-right: 0.5rem;">{{ author_name }}</a>
                                  <div style="color: black; font-size: 0.9rem; margin-right: 0.5rem;">{{ created_at }}</div>
                                 <div style="color: black; font-size: 0.9rem; margin-right: 0.5rem;">Uncategorised</div>
+                                                                 {% for tag in tags %}
+                                <div style="color: #1d4196; font-size: 0.9rem; margin-right: 0.5rem;">
+                                    <a href="#">#{{ tag }}</a>
+                                </div>
+                                {% endfor %}
                             </span>
                     </div>
                 </div>

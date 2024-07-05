@@ -1218,19 +1218,9 @@ def add_post():
             subcategory_choices = [('', 'Select Subcategory')]
         form.subcategory.choices = subcategory_choices
 
-    # Fetch tags and format them for the form choices
-    try:
-        tags = api_calls.get_user_all_tags(access_token=current_user.id)
-        tag_choices = [(tag['id'], tag['tag']) for tag in tags]
-        if not tag_choices:
-            tag_choices = [('', 'Select Tag')]
-    except Exception as e:
-        print(f"Error fetching tags: {e}")
-        tag_choices = [('', 'Select Tag')]
-
-    form.tags.choices = tag_choices
 
     if request.method == 'POST':
+        tags_list = form.tags.data.split(",")
         if form.preview.data:
             # Redirect to the preview route with form data
             return redirect(url_for('preview_post',
@@ -1247,7 +1237,7 @@ def add_post():
                     content=form.content.data,
                     category_id=form.category.data,
                     subcategory_id=form.subcategory.data,
-                    tag_id=form.tags.data,
+                    tags=tags_list,
                     status='draft',
                     access_token=current_user.id
                 )
@@ -1268,7 +1258,7 @@ def add_post():
                     content=form.content.data,
                     category_id=form.category.data,
                     subcategory_id=form.subcategory.data,
-                    tag_id=form.tags.data,
+                    tags=tags_list,
                     status='published',
                     access_token=current_user.id
                 )
@@ -1308,8 +1298,14 @@ def preview_post():
         form.category.data = request.args.get('category')
         form.subcategory.data = request.args.get('subcategory')
         form.tags.data = request.args.get('tags')
+        tags_list = form.tags.data.split(",")
+        date_obj = datetime.utcnow()
+        formatted_date = date_obj.strftime('%d %B %Y')
+
+
 
     if request.method == 'POST':
+        tags_list = form.tags.data.split(",")
         if form.save_draft.data:
             try:
                 result = api_calls.create_post(
@@ -1317,7 +1313,7 @@ def preview_post():
                     content=form.content.data,
                     category_id=form.category.data,
                     subcategory_id=form.subcategory.data,
-                    tag_id=form.tags.data,
+                    tags=tags_list,
                     status='draft',
                     access_token=current_user.id
                 )
@@ -1338,7 +1334,7 @@ def preview_post():
                     content=form.content.data,
                     category_id=form.category.data,
                     subcategory_id=form.subcategory.data,
-                    tag_id=form.tags.data,
+                    tags=tags_list,
                     status='published',
                     access_token=current_user.id
                 )
@@ -1358,7 +1354,7 @@ def preview_post():
             except Exception as e:
                 flash(f"Error creating post: {e}", "danger")
 
-    return render_template('preview_post.html', title=form.title.data, content=form.content.data, author_name=current_user.username, form=form)
+    return render_template('preview_post.html', title=form.title.data, content=form.content.data, author_name=current_user.username, form=form, tags=tags_list, created_at=formatted_date)
 
 # @app.route("/posts/preview_post", methods=['GET', 'POST'])
 # @login_required
@@ -1595,16 +1591,6 @@ def admin_edit_post(post_id):
             subcategory_choices = [('', 'Select Subcategory')]
         form.subcategory.choices = subcategory_choices
 
-    # Fetch tags and format them for the form choices
-    try:
-        tags = api_calls.get_user_all_tags(access_token=current_user.id)
-        tag_choices = [(tag['id'], tag['tag']) for tag in tags]
-        if not tag_choices:
-            tag_choices = [('', 'Select Tag')]
-    except Exception as e:
-        print(f"Error fetching tags: {e}")
-        tag_choices = [('', 'Select Tag')]
-    form.tags.choices = tag_choices
 
     if form.validate_on_submit():
 
@@ -1612,7 +1598,8 @@ def admin_edit_post(post_id):
         content = form.content.data
         category = form.category.data
         subcategory = form.subcategory.data
-        tag = form.tags.data
+        tags = form.tags.data.split(",")
+
         if form.publish.data:
             try:
                 result = api_calls.admin_update_post(
@@ -1621,7 +1608,7 @@ def admin_edit_post(post_id):
                     content=content,
                     category_id=category,
                     subcategory_id=subcategory,
-                    tag_id=tag,
+                    tags=tags,
                     status='published',
                     access_token=current_user.id
                 )
@@ -1652,7 +1639,8 @@ def admin_edit_post(post_id):
     form.title.data = post['title']
     form.category.data = post['category_id']
     form.subcategory.data = post['subcategory_id']
-    form.tags.data = post['tag_id']
+    tags_list = post['tags']
+    form.tags.data = ", ".join([tag['tag'] for tag in tags_list])
     form.content.data = post['content']
 
     return render_template('edit_post_form.html', form=form, post_id=post_id)
@@ -1839,8 +1827,9 @@ def get_post(post_title):
     created_at = result["created_at"]
     date_obj = datetime.strptime(created_at, '%Y-%m-%dT%H:%M:%S.%f%z')
     formatted_date = date_obj.strftime('%d %B %Y')
+    tags =result["tags"]
 
-    return render_template('post.html', title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name)
+    return render_template('post.html', title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags)
 
 
 ################################################ CHATBOT #########################################################

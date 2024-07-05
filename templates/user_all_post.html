@@ -34,7 +34,7 @@
                 <th>Title</th>
                 <th>Category</th>
                 <th>Subcategory</th>
-                <th>Tag</th>
+                <th>Tags</th>
                 <th>Created Date</th>
                 <th>Action</th>
               </tr>
@@ -44,16 +44,19 @@
               {% if data.status == 'published' %}
               <tr style="max-height: 100px; overflow-y: auto;">
                 <td class="py-1">{{ loop.index }}</td>
-                <td class="py-1">{{ data.author_name }}</td>
+                <td class="py-1 text-truncate">{{ data.author_name }}</td>
                 <td class="py-1"><form action="{{ url_for('get_post', post_title=data.title | lower | replace(' ', '')) }}" method="POST" style="display:inline;">
         <input type="hidden" name="post_id" value="{{ data.id }}">
         <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left; color: blue;">
             {{ data.title }}
         </button>
     </form></td>
-                <td class="py-1">{{ data.category.category }}</td>
-                <td class="py-1">{{ data.subcategory.subcategory }}</td>
-                <td class="py-1">{{ data.tag.tag }}</td>
+                <td class="py-1 text-truncate">{{ data.category.category }}</td>
+                <td class="py-1 text-truncate">{{ data.subcategory.subcategory }}</td>
+                <td class="py-1 text-truncate">    {% for tag in data.tags %}
+                                        {{ tag.tag }}
+                                        {% endfor %}
+                </td>
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 
@@ -95,7 +98,7 @@
                 <th>Title</th>
                 <th>Category</th>
                 <th>Subcategory</th>
-                <th>Tag</th>
+                <th>Tags</th>
                 <th>Created Date</th>
                 <th>Action</th>
               </tr>
@@ -105,16 +108,19 @@
               {% if data.status == 'draft' %}
               <tr style="max-height: 100px; overflow-y: auto;">
                 <td class="py-1">{{ loop.index }}</td>
-                <td class="py-1">{{ data.author_name }}</td>
+                <td class="py-1 text-truncate">{{ data.author_name }}</td>
                 <td class="py-1"><form action="{{ url_for('get_post', post_title=data.title | lower | replace(' ', '')) }}" method="POST" style="display:inline;">
         <input type="hidden" name="post_id" value="{{ data.id }}">
-        <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left; color: blue;">
+        <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left; color: blue;" class="text-truncate">
             {{ data.title }}
         </button>
     </form></td>
-                <td class="py-1">{{ data.category.category }}</td>
-                <td class="py-1">{{ data.subcategory.subcategory }}</td>
-                <td class="py-1">{{ data.tag.tag }}</td>
+                <td class="py-1 text-truncate ">{{ data.category.category }}</td>
+                <td class="py-1 text-truncate">{{ data.subcategory.subcategory }}</td>
+                                <td class="py-1 text-truncate">    {% for tag in data.tags %}
+                                        {{ tag.tag }}
+                                        {% endfor %}
+                </td>
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 
