@@ -1814,6 +1814,51 @@ def comment(post_id):
     return render_template('comments.html', result=result, post_id=post_id)
 
 
+@app.route('/comments/like/<int:comment_id>/<int:post_id>')
+@login_required
+def add_like_to_comment_route(comment_id, post_id):
+    print("ander hu")
+    try:
+        # Example: Get access_token from current_user or session
+        access_token = current_user.id
+
+        # Call the api_calls method to add like to comment
+        response = api_calls.add_like_to_comment(comment_id, access_token)
+
+
+        if response and response.status_code == 200:
+            flash('Like added successfully', category='info')
+            print("hii")
+        else:
+            flash('Failed to add like', category='error')
+    except Exception as e:
+        flash(f'Error: {str(e)}', category='error')
+
+    return redirect(url_for('comment', post_id=post_id))
+
+
+@app.route('/comments/remove-like/<int:comment_id>/<int:post_id>')
+@login_required
+def remove_like_from_comment_route(comment_id, post_id):
+    print("ander hu")
+    try:
+        # Example: Get access_token from current_user or session
+        access_token = current_user.id
+
+        # Call the api_calls method to add like to comment
+        response = api_calls.remove_like_from_comment(comment_id, access_token)
+
+
+        if response and response.status_code == 200:
+            flash('Like removed successfully', category='info')
+            print("hii")
+        else:
+            flash('Failed to remove like', category='error')
+    except Exception as e:
+        flash(f'Error: {str(e)}', category='error')
+
+    return redirect(url_for('comment', post_id=post_id))
+
 @app.route('/users/view-posts')
 def view_post():
     result = api_calls.get_all_posts()

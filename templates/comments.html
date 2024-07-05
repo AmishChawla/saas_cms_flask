@@ -31,43 +31,54 @@
       </div><!-- /.container-fluid -->
     </div>
 
-<div class="row" style="margin-left:4px;" >
-<br>
+<div class="row" style="margin-left:4px;">
+    <br>
     {% if result %}
-  {% for data in result %}
-  <div style="display: flex;">
-    {% if current_user.profile_picture %}
-                            <img src="{{ data.user.profile_picture }}" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%; border: 1px solid #b0bec5">
-                         {% else %}
-                            <img src="static/images/man.png" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%; border: 1px solid #b0bec5">
-                        {% endif %}<strong style="margin-right: 10px;">{{ data.user.username }}</strong>
-     <p>on {{ data.created_at.split('T')[0] }} at {{ data.created_at.split('T')[1][:8] }}</p></div>
-  <p class="post-title" style="margin-left:35px;">{{ data.comment }}</p>
-<div style="display: flex; margin-bottom: 20px; margin-left:35px;"><a href="#" style="color: #8fa3b0; font-size: 18px; text-decoration:none; margin-right: 20px;"><i class="bi bi-hand-thumbs-up"></i>
-</a>
-    <a href="#" style="color: #8fa3b0; font-size: 18px; text-decoration:none;">Reply</a></div>
-  {% endfor %}
+        {% for data in result %}
+            <div style="display: flex;">
+                {% if data.user.profile_picture %}
+                    <img src="{{ data.user.profile_picture }}" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%; border: 1px solid #b0bec5">
+                {% else %}
+                    <div class="profile-placeholder" data-username="{{ data.user.username }}" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%; border: 1px solid #b0bec5; display: flex; align-items: center; justify-content: center;">
+                        <span style="color: white; font-weight: bold;">{{ data.user.username[0].upper() }}</span>
+                    </div>
+                {% endif %}
+                <strong style="margin-right: 10px;">{{ data.user.username }}</strong>
+                <p>on {{ data.created_at.split('T')[0] }} at {{ data.created_at.split('T')[1][:8] }}</p>
+            </div>
+            <p class="post-title" style="margin-left:35px;">{{ data.comment }}</p>
+            <div style="display: flex; margin-bottom: 20px; margin-left:35px;">
+                {% if data.like == 1 %}
+                    <a href="{{ url_for('remove_like_from_comment_route', comment_id=data.id, post_id=post_id) }}" style="color: #8fa3b0; font-size: 18px; text-decoration:none; margin-right: 20px;">
+                        <i class="bi bi-hand-thumbs-up-fill" style="color: blue;"></i>
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('add_like_to_comment_route', comment_id=data.id, post_id=post_id) }}" style="color: #8fa3b0; font-size: 18px; text-decoration:none; margin-right: 20px;">
+                        <i class="bi bi-hand-thumbs-up"></i>
+                    </a>
+                {% endif %}
+                <a href="#" class="reply-btn" style="color: #8fa3b0; font-size: 18px; text-decoration:none;" data-username="{{ data.user.username }}">Reply</a>
+            </div>
+        {% endfor %}
     {% else %}
-    <p style="text-align:center; margin-top:15%;">No comments</p>
+        <p style="text-align:center; margin-top:15%;">No comments</p>
     {% endif %}
 </div>
 
-
-
 <!-- Comment field -->
 <div class="row comment-field">
-  <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
-    <div class="card">
-      <div class="card-body" >
-        <form id="comment-form" method="POST" action="{{ url_for('comment', post_id=post_id) }}">
-          <div style="display:flex; justify-content:space-between; align-items:center;" class="form-group">
-            <input type="text" class="form-control" name="comment" placeholder="Enter your comment" style="flex-grow: 1; margin-right: 10px;">
-            <button type="submit" class="btn btn-primary" style="padding: 6px 20px;">Send</button>
-          </div>
-        </form>
-      </div>
+    <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
+        <div class="card">
+            <div class="card-body">
+                <form id="comment-form" method="POST" action="{{ url_for('comment', post_id=post_id) }}">
+                    <div style="display:flex; justify-content:space-between; align-items:center;" class="form-group">
+                        <input type="text" class="form-control" name="comment" id="comment-input" placeholder="Enter your comment" style="flex-grow: 1; margin-right: 10px;">
+                        <button type="submit" class="btn btn-primary" style="padding: 6px 20px;">Send</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <script>
@@ -82,7 +93,30 @@
     }
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+        const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#FF8333', '#33FFF5', '#F533FF'];
 
+        document.querySelectorAll('.profile-placeholder').forEach(function(element) {
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            element.style.backgroundColor = randomColor;
+        });
+    });
+
+
+     document.addEventListener('DOMContentLoaded', function() {
+        const replyButtons = document.querySelectorAll('.reply-btn');
+        const commentInput = document.getElementById('comment-input');
+
+        replyButtons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const username = btn.dataset.username;
+                if (username) {
+                    commentInput.value = `${username} `;
+                    commentInput.focus(); // Optional: Set focus to the input field after tagging
+                }
+            });
+        });
+    });
 </script>
 
 
