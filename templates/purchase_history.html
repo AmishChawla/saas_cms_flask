@@ -6,17 +6,21 @@
 {% block content %}
 <link href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" rel="stylesheet">
             <div class="page-header"></div>
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Order History</h1>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
             {% if purchase_data %}
                 <div class="row">
                     <div class="col-lg-12 grid-margin stretch-card">
-                        <div class="card" style="overflow-x:auto;">
-                            <div class="card-body" style="padding: 2rem;">
- <div style="display: flex; justify-content: space-between;">
-                                <h4 class="card-title">Order History</h4>
-                          </div>
-                                <br>
-                                <br>
-                                <table id="subscriptionTable" class="display" style="width:100%; ">
+                            <div style="padding: 2rem;">
+
+                                <table id="subscriptionTable" class="hover " style="width:100%; ">
                                     <thead>
                                         <tr>
                                             <th> Sr. No. </th>
@@ -41,14 +45,13 @@
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
                     </div>
                 </div>
                 <br>
                 <br>
             {% else %}
                 <div class="d-flex justify-content-center align-items-center" style="height: 50vh;">
-                    <p>No Orders yet</p>
+                    <p>No Purchases yet</p>
                 </div>
             {% endif %}
 
