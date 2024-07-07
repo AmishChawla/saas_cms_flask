@@ -1245,7 +1245,7 @@ def edit_tag(tag_id, new_tag, access_token):
 
     try:
         response = requests.put(constants.BASE_URL + f'/tags/update/{tag_id}', json=params, headers=headers)
-        print(response.text)
+
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
