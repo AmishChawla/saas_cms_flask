@@ -3,7 +3,7 @@ from wtforms import MultipleFileField, StringField, SelectMultipleField, Integer
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 import email_validator
-from wtforms.validators import DataRequired, Optional
+from wtforms.validators import DataRequired, Optional,  ValidationError
 
 
 class UploadForm(FlaskForm):
@@ -188,7 +188,13 @@ class AddPost(FlaskForm):
     tags = StringField('Tags', validators=[DataRequired()])
     publish = SubmitField('Publish Post')
     save_draft = SubmitField('Save Draft')
-    preview = SubmitField('Preview Post')
+    preview = SubmitField('Preview')
+
+    def validate_tags(self, tags):
+        tags_list = tags.data.split(',')
+        if len(tags_list) > 5:
+            raise ValidationError('A maximum of 5 tags are allowed.')
+
 
 class AddCategory(FlaskForm):
     category = StringField('Category title', validators=[validators.DataRequired()])

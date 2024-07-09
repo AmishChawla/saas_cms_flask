@@ -79,9 +79,13 @@
         <div class="p-3">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h6><strong>Publish Post</strong></h6>
-                <a href="#" data-widget="control-sidebar"><i class="bi bi-arrow-right-short" style="font-size: 1.5rem; color: black;"></i></a>
             </div>
             <div class="form-group">
+                {{ form.publish(class="btn btn-primary w-100 mb-3") }}
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                {{ form.preview(class="btn btn-outline-primary w-50 mb-3", id="previewPostButton", style="margin-right: 0.25rem") }}
+                {{ form.save_draft(class="btn btn-outline-primary w-50 mb-3", style="margin-left: 0.25rem") }}
+                </div>
                 {{ form.category.label }}
                 {{ form.category(class="form-control", id="category", required=True) }}
             </div>
@@ -92,6 +96,12 @@
                 <div class="form-group">
                 {{ form.tags.label }}
                 {{ form.tags(class="form-control ", id="tags", required=True) }}
+                <p class="text-danger" style="font-size: 0.8rem;" id="errorMessages"></p>
+                {% if form.tags.errors %}
+                {% for error in form.tags.errors %}
+                <p class="text-danger" style="font-size: 0.8rem;">{{ error }}</p>
+                {% endfor %}
+                {% endif %}
             </div>
 
 
@@ -106,9 +116,8 @@
 <!--                    <button id="removeAllTags">Remove All</button>-->
 <!--                </div>-->
 <!--            </div>-->
-            {{ form.publish(class="btn btn-primary w-100 mb-3") }}
-            {{ form.preview(class="btn btn-outline-primary w-100 mb-3") }}
-            {{ form.save_draft(class="btn btn-outline-primary w-100 mb-3") }}
+
+
         </div>
     </aside>
     <div class="content-header">
@@ -127,9 +136,6 @@
         <div class="form-group">
             {{ form.content(class="form-control", id="content") }}
         </div>
-        <div class="d-grid gap-2 col-6 mx-auto justify-content-center align-items-center">
-            <button class="btn btn-primary w-100 mb-3" data-widget="control-sidebar" href="#" type="button">Next</button>
-        </div>
     </form>
 </div>
 
@@ -137,8 +143,9 @@
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 <script>
 $(document).ready(function() {
+$('.control-sidebar').ControlSidebar('show');
     $('#content').summernote({
-        height: 300,
+        height: 400,
         minHeight: null,
         maxHeight: null,
         focus: true
@@ -239,5 +246,63 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('previewPostButton').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+        var formErrors = [];
+
+    // Check for errors in the tags field
+    var tagsInput = document.getElementById('tags');
+    if (!tagsInput.value || tagsInput.value.trim().split(',').length > 5) {
+        formErrors.push('A maximum of 5 tags are allowed.');
+    }
+
+    // If there are any errors, display them and stop the navigation
+    if (formErrors.length > 0) {
+        // Select the paragraph element where errors will be displayed
+        var errorParagraph = document.getElementById('errorMessages');
+
+        // Clear any existing error messages
+        errorParagraph.innerHTML = '';
+
+        // Append each error message to the paragraph element
+        formErrors.forEach(function(errorMessage) {
+            var p = document.createElement('p');
+            p.className = 'text-danger'; // Set the class for styling
+            p.textContent = errorMessage; // Set the error message text
+            errorParagraph.appendChild(p);
+        });
+
+        return; // Stop executing the rest of the function
+    }
+
+        // Collect all form data
+        const formData = new FormData(document.getElementById('postForm'));
+        console.log("Collected Form Data:", Object.fromEntries(formData.entries()));
+
+        // Convert FormData to JSON
+        const jsonData = {};
+        formData.forEach((value, key) => {
+            jsonData[key] = value;
+        });
+        console.log("jsonData:", jsonData);
+
+        // Save the JSON data to Local Storage
+        localStorage.setItem('postPreview', JSON.stringify(jsonData));
+        try {
+        const storedData = JSON.parse(localStorage.getItem('postPreview'));
+        console.log("Stored Data:", storedData);
+        } catch (error) {
+        console.error("Failed to retrieve data from Local Storage:", error);
+        }
+
+        // Optionally, redirect to the preview page
+        window.location.href = '/posts/preview-post';
+    });
+});
+</script>
+
 {% endblock %}
 {% endblock %}
