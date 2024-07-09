@@ -947,8 +947,8 @@ def create_post(title, content, category_id, subcategory_id, tags, status, acces
     }
     try:
         response = requests.post(constants.BASE_URL + '/posts/create-post', json=params, headers=headers)
-        print(response.text)
-        return response
+        if response.status_code == 200:
+            return response.json()
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except requests.exceptions.ConnectionError as errc:
@@ -990,6 +990,19 @@ def admin_update_post(post_id, title, content, category_id, subcategory_id, tags
 def get_post(post_id: int):
     try:
         response = requests.get(constants.BASE_URL + f'/posts/{post_id}')
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+
+
+def get_post_by_username_slug(post_ownername, slug):
+    try:
+        response = requests.get(constants.BASE_URL + f'/posts/{post_ownername}/{slug}')
         if response.status_code == 200:
             return response.json()
     except requests.exceptions.HTTPError as errh:
@@ -1547,30 +1560,30 @@ def get_all_newsletter_subscribers(access_token):
         print(f"An unexpected error occurred: {err}")
 
 
-def send_newsletter(access_token: str, subject, body):
-    print("trying")
-    headers = {'Authorization': f'Bearer {access_token}'}
 
+def send_newsletter(access_token: str, subject, body, post_url):
+    print("Trying to send newsletter...")
+    headers = {'Authorization': f'Bearer {access_token}'}
     data = {
         "to": 'subscribers',
         "subject": subject,
         "body": body
     }
+    url = constants.BASE_URL + f'/newsletter/send-newsletter?post_url={post_url}'
 
     try:
-        print("try")
-        response = requests.post(constants.BASE_URL + '/newsletter/send-newsletter', headers=headers, json=data)
+        print("Sending request...")
+        response = requests.post(url, headers=headers, json=data)
+        print(f"Response Status Code: {response.status_code}")
+        print(f"Response JSON: {response.json()}")
         if response.status_code == 200:
             result = response.json()
+            print("Newsletter sent successfully.")
             return result
-    except requests.exceptions.HTTPError as errh:
-        print(f"HTTP Error: {errh}")
-    except requests.exceptions.ConnectionError as errc:
-        print(f"Error Connecting: {errc}")
-    except requests.exceptions.Timeout as errt:
-        print(f"Timeout Error: {errt}")
-    except requests.exceptions.RequestException as err:
-        print(f"An unexpected error occurred: {err}")
+        else:
+            print(f"Failed to send newsletter. Status Code: {response.status_code}. Message: {response.text}")
+    except RequestException as e:
+        print(f"An error occurred: {e}")
 
 
 def unsubscribe_newsletter(email, username):

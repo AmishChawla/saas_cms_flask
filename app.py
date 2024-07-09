@@ -904,7 +904,7 @@ def user_all_post():
 
 @app.route('/<username>/posts', methods=['GET', 'POST'])
 def user_post_list(username):
-    toast = 'null';
+    toast = 'null'
     form = forms.SubscribeToNewsletterForm()
     result = api_calls.get_user_post_by_username(username=username)
 
@@ -1218,17 +1218,18 @@ def add_post():
             subcategory_choices = [('', 'Select Subcategory')]
         form.subcategory.choices = subcategory_choices
 
-
-    if request.method == 'POST':
+    if form.validate_on_submit():
         tags_list = form.tags.data.split(",")
         if form.preview.data:
+            # session['post_preview'] = {
+            #     'title': form.title.data,
+            #     'content': form.content.data,
+            #     'category': form.category.data,
+            #     'subcategory': form.subcategory.data,
+            #     'tags': form.tags.data
+            # }
             # Redirect to the preview route with form data
-            return redirect(url_for('preview_post',
-                                    title=form.title.data,
-                                    content=form.content.data,
-                                    category=form.category.data,
-                                    subcategory=form.subcategory.data,
-                                    tags=form.tags.data))
+            return redirect(url_for('preview_post'))
 
         elif form.save_draft.data:
             try:
@@ -1253,6 +1254,7 @@ def add_post():
                 flash(f"Error creating post: {e}", "danger")
         elif form.publish.data:
             try:
+                print(form.errors)
                 result = api_calls.create_post(
                     title=form.title.data,
                     content=form.content.data,
@@ -1266,8 +1268,16 @@ def add_post():
                 if result:
                     flash("Post created successfully", "success")
                     try:
+                        print("trying to send mail")
+                        dateiso = result["created_at"]
+                        post_slug = result["slug"]
+                        date = dateiso.split('T')[0]
+                        print(date)
+                        post_url = f'{constants.MY_ROOT_URL}/{current_user.username}/posts/{date}/{post_slug}'
+                        print(post_url)
                         send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data,
-                                                               body=form.content.data)
+                                                               body=form.content.data, post_url=post_url)
+                        print('done')
                     except Exception as e:
                         raise 'Problem sending newsletter' + e
                     if current_user.role == 'user':
@@ -1278,6 +1288,7 @@ def add_post():
                     flash("Failed to create post", "danger")
             except Exception as e:
                 flash(f"Error creating post: {e}", "danger")
+    else: print(form.errors)
 
     if current_user.role == 'user':
         is_service_allowed = api_calls.is_service_access_allowed(current_user.id)
@@ -1287,20 +1298,27 @@ def add_post():
     else:
         return render_template('add_post.html', form=form, categories=category_choices)
 
-@app.route('/posts/preview_post', methods=['GET', 'POST'])
+@app.route('/posts/preview-post', methods=['GET', 'POST'])
 @login_required
 def preview_post():
+    date_obj = datetime.utcnow()
+    formatted_date = date_obj.strftime('%d %B %Y')
     form = forms.AddPost()
+    post_preview_json = request.form.get('postPreview', '{}')
+    print(f"post_preview_json: {post_preview_json}")  # Debugging line
+    post_preview = json.loads(post_preview_json)
+    print(f"post_preview: {post_preview}")
+
+    # post_preview = session.get('post_preview', {})
     if request.method == 'GET':
         # Populate the form with the data from the query parameters
-        form.title.data = request.args.get('title')
-        form.content.data = request.args.get('content')
-        form.category.data = request.args.get('category')
-        form.subcategory.data = request.args.get('subcategory')
-        form.tags.data = request.args.get('tags')
-        tags_list = form.tags.data.split(",")
-        date_obj = datetime.utcnow()
-        formatted_date = date_obj.strftime('%d %B %Y')
+        # form.title.data = request.args.get('title')
+        # form.content.data = request.args.get('content')
+        # form.category.data = request.args.get('category')
+        # form.subcategory.data = request.args.get('subcategory')
+        # form.tags.data = request.args.get('tags')
+        tags_list = post_preview.get('tags', '').split(",")
+
 
 
 
@@ -1319,6 +1337,7 @@ def preview_post():
                 )
 
                 if result:
+
                     if current_user.role == 'user':
                         return redirect(url_for('user_all_post'))
                     else:
@@ -1340,9 +1359,15 @@ def preview_post():
                 )
 
                 if result:
+                    session.pop('post_preview', None)
                     flash("Post created successfully", "success")
                     try:
-                        send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data, body=form.content.data)
+                        dateiso = result["created_at"]
+                        post_slug = result["slug"]
+                        date = dateiso.split('T')[0]
+                        post_url = f'{constants.MY_ROOT_URL}/{current_user.username}/posts/{date}/{post_slug}'
+                        send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data,
+                                                               body=form.content.data, post_url=post_url)
                     except Exception as e:
                         raise 'Problem sending newsletter' + e
                     if current_user.role == 'user':
@@ -1354,7 +1379,7 @@ def preview_post():
             except Exception as e:
                 flash(f"Error creating post: {e}", "danger")
 
-    return render_template('preview_post.html', title=form.title.data, content=form.content.data, author_name=current_user.username, form=form, tags=tags_list, created_at=formatted_date)
+    return render_template('preview_post.html', post_preview=post_preview, author_name=current_user.username, form=form, tags=tags_list, created_at=formatted_date)
 
 # @app.route("/posts/preview_post", methods=['GET', 'POST'])
 # @login_required
@@ -1615,8 +1640,12 @@ def admin_edit_post(post_id):
 
                 if result:
                     try:
+                        dateiso = result["created_at"]
+                        post_slug = result["slug"]
+                        date = dateiso.split('T')[0]
+                        post_url = f'{constants.MY_ROOT_URL}/{current_user.username}/posts/{date}/{post_slug}'
                         send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data,
-                                                               body=form.content.data)
+                                                               body=form.content.data, post_url=post_url)
                     except Exception as e:
                         raise 'Problem sending newsletter' + e
                     print("Post updated successfully")
@@ -1865,6 +1894,20 @@ def view_post():
 def get_post(post_title):
     post_id = request.form['post_id']
     result = api_calls.get_post(post_id=post_id)
+    title = result["title"]
+    category_name = result["category_name"]
+    content = result["content"]
+    author_name = result["author_name"]
+    created_at = result["created_at"]
+    date_obj = datetime.strptime(created_at, '%Y-%m-%dT%H:%M:%S.%f%z')
+    formatted_date = date_obj.strftime('%d %B %Y')
+    tags =result["tags"]
+
+    return render_template('post.html', title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags)
+
+@app.route('/<username>/posts/<post_date>/<post_slug>', methods=['GET', 'POST'])
+def get_post_by_username_and_slug(username, post_date, post_slug):
+    result = api_calls.get_post_by_username_slug(post_ownername=username, slug=post_slug)
     title = result["title"]
     category_name = result["category_name"]
     content = result["content"]
