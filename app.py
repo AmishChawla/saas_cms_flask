@@ -904,7 +904,7 @@ def user_all_post():
 
 @app.route('/<username>/posts', methods=['GET', 'POST'])
 def user_post_list(username):
-    toast = 'null';
+    toast = 'null'
     form = forms.SubscribeToNewsletterForm()
     result = api_calls.get_user_post_by_username(username=username)
 
@@ -1218,27 +1218,18 @@ def add_post():
             subcategory_choices = [('', 'Select Subcategory')]
         form.subcategory.choices = subcategory_choices
 
-    # Fetch tags and format them for the form choices
-    try:
-        tags = api_calls.get_user_all_tags(access_token=current_user.id)
-        tag_choices = [(tag['id'], tag['tag']) for tag in tags]
-        if not tag_choices:
-            tag_choices = [('', 'Select Tag')]
-    except Exception as e:
-        print(f"Error fetching tags: {e}")
-        tag_choices = [('', 'Select Tag')]
-
-    form.tags.choices = tag_choices
-
-    if request.method == 'POST':
+    if form.validate_on_submit():
+        tags_list = form.tags.data.split(",")
         if form.preview.data:
+            # session['post_preview'] = {
+            #     'title': form.title.data,
+            #     'content': form.content.data,
+            #     'category': form.category.data,
+            #     'subcategory': form.subcategory.data,
+            #     'tags': form.tags.data
+            # }
             # Redirect to the preview route with form data
-            return redirect(url_for('preview_post',
-                                    title=form.title.data,
-                                    content=form.content.data,
-                                    category=form.category.data,
-                                    subcategory=form.subcategory.data,
-                                    tags=form.tags.data))
+            return redirect(url_for('preview_post'))
 
         elif form.save_draft.data:
             try:
@@ -1247,7 +1238,7 @@ def add_post():
                     content=form.content.data,
                     category_id=form.category.data,
                     subcategory_id=form.subcategory.data,
-                    tag_id=form.tags.data,
+                    tags=tags_list,
                     status='draft',
                     access_token=current_user.id
                 )
@@ -1263,12 +1254,13 @@ def add_post():
                 flash(f"Error creating post: {e}", "danger")
         elif form.publish.data:
             try:
+                print(form.errors)
                 result = api_calls.create_post(
                     title=form.title.data,
                     content=form.content.data,
                     category_id=form.category.data,
                     subcategory_id=form.subcategory.data,
-                    tag_id=form.tags.data,
+                    tags=tags_list,
                     status='published',
                     access_token=current_user.id
                 )
@@ -1276,8 +1268,16 @@ def add_post():
                 if result:
                     flash("Post created successfully", "success")
                     try:
+                        print("trying to send mail")
+                        dateiso = result["created_at"]
+                        post_slug = result["slug"]
+                        date = dateiso.split('T')[0]
+                        print(date)
+                        post_url = f'{constants.MY_ROOT_URL}/{current_user.username}/posts/{date}/{post_slug}'
+                        print(post_url)
                         send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data,
-                                                               body=form.content.data)
+                                                               body=form.content.data, post_url=post_url)
+                        print('done')
                     except Exception as e:
                         raise 'Problem sending newsletter' + e
                     if current_user.role == 'user':
@@ -1288,6 +1288,7 @@ def add_post():
                     flash("Failed to create post", "danger")
             except Exception as e:
                 flash(f"Error creating post: {e}", "danger")
+    else: print(form.errors)
 
     if current_user.role == 'user':
         is_service_allowed = api_calls.is_service_access_allowed(current_user.id)
@@ -1297,19 +1298,32 @@ def add_post():
     else:
         return render_template('add_post.html', form=form, categories=category_choices)
 
-@app.route('/posts/preview_post', methods=['GET', 'POST'])
+@app.route('/posts/preview-post', methods=['GET', 'POST'])
 @login_required
 def preview_post():
+    date_obj = datetime.utcnow()
+    formatted_date = date_obj.strftime('%d %B %Y')
     form = forms.AddPost()
+    post_preview_json = request.form.get('postPreview', '{}')
+    print(f"post_preview_json: {post_preview_json}")  # Debugging line
+    post_preview = json.loads(post_preview_json)
+    print(f"post_preview: {post_preview}")
+
+    # post_preview = session.get('post_preview', {})
     if request.method == 'GET':
         # Populate the form with the data from the query parameters
-        form.title.data = request.args.get('title')
-        form.content.data = request.args.get('content')
-        form.category.data = request.args.get('category')
-        form.subcategory.data = request.args.get('subcategory')
-        form.tags.data = request.args.get('tags')
+        # form.title.data = request.args.get('title')
+        # form.content.data = request.args.get('content')
+        # form.category.data = request.args.get('category')
+        # form.subcategory.data = request.args.get('subcategory')
+        # form.tags.data = request.args.get('tags')
+        tags_list = post_preview.get('tags', '').split(",")
+
+
+
 
     if request.method == 'POST':
+        tags_list = form.tags.data.split(",")
         if form.save_draft.data:
             try:
                 result = api_calls.create_post(
@@ -1317,12 +1331,13 @@ def preview_post():
                     content=form.content.data,
                     category_id=form.category.data,
                     subcategory_id=form.subcategory.data,
-                    tag_id=form.tags.data,
+                    tags=tags_list,
                     status='draft',
                     access_token=current_user.id
                 )
 
                 if result:
+
                     if current_user.role == 'user':
                         return redirect(url_for('user_all_post'))
                     else:
@@ -1338,15 +1353,21 @@ def preview_post():
                     content=form.content.data,
                     category_id=form.category.data,
                     subcategory_id=form.subcategory.data,
-                    tag_id=form.tags.data,
+                    tags=tags_list,
                     status='published',
                     access_token=current_user.id
                 )
 
                 if result:
+                    session.pop('post_preview', None)
                     flash("Post created successfully", "success")
                     try:
-                        send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data, body=form.content.data)
+                        dateiso = result["created_at"]
+                        post_slug = result["slug"]
+                        date = dateiso.split('T')[0]
+                        post_url = f'{constants.MY_ROOT_URL}/{current_user.username}/posts/{date}/{post_slug}'
+                        send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data,
+                                                               body=form.content.data, post_url=post_url)
                     except Exception as e:
                         raise 'Problem sending newsletter' + e
                     if current_user.role == 'user':
@@ -1358,7 +1379,7 @@ def preview_post():
             except Exception as e:
                 flash(f"Error creating post: {e}", "danger")
 
-    return render_template('preview_post.html', title=form.title.data, content=form.content.data, author_name=current_user.username, form=form)
+    return render_template('preview_post.html', post_preview=post_preview, author_name=current_user.username, form=form, tags=tags_list, created_at=formatted_date)
 
 # @app.route("/posts/preview_post", methods=['GET', 'POST'])
 # @login_required
@@ -1595,16 +1616,6 @@ def admin_edit_post(post_id):
             subcategory_choices = [('', 'Select Subcategory')]
         form.subcategory.choices = subcategory_choices
 
-    # Fetch tags and format them for the form choices
-    try:
-        tags = api_calls.get_user_all_tags(access_token=current_user.id)
-        tag_choices = [(tag['id'], tag['tag']) for tag in tags]
-        if not tag_choices:
-            tag_choices = [('', 'Select Tag')]
-    except Exception as e:
-        print(f"Error fetching tags: {e}")
-        tag_choices = [('', 'Select Tag')]
-    form.tags.choices = tag_choices
 
     if form.validate_on_submit():
 
@@ -1612,7 +1623,8 @@ def admin_edit_post(post_id):
         content = form.content.data
         category = form.category.data
         subcategory = form.subcategory.data
-        tag = form.tags.data
+        tags = form.tags.data.split(",")
+
         if form.publish.data:
             try:
                 result = api_calls.admin_update_post(
@@ -1621,15 +1633,19 @@ def admin_edit_post(post_id):
                     content=content,
                     category_id=category,
                     subcategory_id=subcategory,
-                    tag_id=tag,
+                    tags=tags,
                     status='published',
                     access_token=current_user.id
                 )
 
                 if result:
                     try:
+                        dateiso = result["created_at"]
+                        post_slug = result["slug"]
+                        date = dateiso.split('T')[0]
+                        post_url = f'{constants.MY_ROOT_URL}/{current_user.username}/posts/{date}/{post_slug}'
                         send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data,
-                                                               body=form.content.data)
+                                                               body=form.content.data, post_url=post_url)
                     except Exception as e:
                         raise 'Problem sending newsletter' + e
                     print("Post updated successfully")
@@ -1652,7 +1668,8 @@ def admin_edit_post(post_id):
     form.title.data = post['title']
     form.category.data = post['category_id']
     form.subcategory.data = post['subcategory_id']
-    form.tags.data = post['tag_id']
+    tags_list = post['tags']
+    form.tags.data = ", ".join([tag['tag'] for tag in tags_list])
     form.content.data = post['content']
 
     return render_template('edit_post_form.html', form=form, post_id=post_id)
@@ -1786,9 +1803,9 @@ def user_all_medias():
     return render_template('user_all_media.html', result=result, root_url=root_url)
 
 
-@app.route('/posts/comment/<int:post_id>/<post_title>', methods=['GET', 'POST'])
+@app.route('/posts/comment/<int:post_id>/<username>/<post_date>/<post_slug>', methods=['GET', 'POST'])
 @login_required
-def comment(post_id, post_title):
+def comment(post_id, username, post_date, post_slug):
     if request.method == 'POST':
         comment = request.form.get('comment')
         if comment:
@@ -1799,7 +1816,7 @@ def comment(post_id, post_title):
                     access_token=current_user.id
                 )
                 if response.status_code == 200:
-                    return redirect(url_for('get_post', post_title=post_title))
+                    return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
                 else:
                     flash('An error occurred while adding the comment. Please try again.', category='error')
             except Exception as e:
@@ -1807,7 +1824,7 @@ def comment(post_id, post_title):
         else:
             flash('Comment cannot be empty', category='error')
 
-    return redirect(url_for('get_post', post_title=post_title))
+    return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
 
 
 @app.route('/posts/all-comment', methods=['GET', 'POST'])
@@ -1838,9 +1855,9 @@ def deactivate_comment(comment_id):
 
 
 
-@app.route('/comments/like/<int:comment_id>/<int:post_id>/<post_title>')
+@app.route('/comments/like/<int:comment_id>/<username>/<post_date>/<post_slug>')
 @login_required
-def add_like_to_comment_route(comment_id, post_id, post_title):
+def add_like_to_comment_route(comment_id, username, post_date, post_slug):
     print("ander hu")
     try:
         # Example: Get access_token from current_user or session
@@ -1852,19 +1869,19 @@ def add_like_to_comment_route(comment_id, post_id, post_title):
 
         if response and response.status_code == 200:
             flash('Like added successfully', category='info')
-            return redirect(url_for('get_post', post_title=post_title))
+            return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
             print("hii")
         else:
             flash('Failed to add like', category='error')
     except Exception as e:
         flash(f'Error: {str(e)}', category='error')
 
-    return redirect(url_for('get_post', post_title=post_title))
+    return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
 
 
-@app.route('/comments/remove-like/<int:comment_id>/<int:post_id>/<post_title>')
+@app.route('/comments/remove-like/<int:comment_id>/<username>/<post_date>/<post_slug>')
 @login_required
-def remove_like_from_comment_route(comment_id, post_id, post_title):
+def remove_like_from_comment_route(comment_id, username, post_date, post_slug):
     print("ander hu")
     try:
         # Example: Get access_token from current_user or session
@@ -1876,14 +1893,14 @@ def remove_like_from_comment_route(comment_id, post_id, post_title):
 
         if response and response.status_code == 200:
             flash('Like removed successfully', category='info')
-            return redirect(url_for('get_post', post_title=post_title))
+            return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
             print("hii")
         else:
             flash('Failed to remove like', category='error')
     except Exception as e:
         flash(f'Error: {str(e)}', category='error')
 
-    return redirect(url_for('get_post', post_title=post_title))
+    return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
 
 @app.route('/users/view-posts')
 def view_post():
@@ -1906,22 +1923,42 @@ def get_post(post_title):
         session['post_id'] = post_id  # Store post_id in session
     else:
         post_id = session.get('post_id')  # Retrieve post_id from session
+
     response = api_calls.get_post(post_id=post_id)
-    if response:
-        title = response["title"]
-        category_name = response["category_name"]
-        content = response["content"]
-        author_name = response["author_name"]
-        created_at = response["created_at"]
-        date_obj = datetime.strptime(created_at, '%Y-%m-%dT%H:%M:%S.%f%z')
-        formatted_date = date_obj.strftime('%d %B %Y')
+    category_name = response["category_name"]
+    content = response["content"]
+    author_name = response["author_name"]
+    created_at = response["created_at"]
+    date_obj = datetime.strptime(created_at, '%Y-%m-%dT%H:%M:%S.%f%z')
+    formatted_date = date_obj.strftime('%d %B %Y')
+    tags = response["tags"]
 
-        result = api_calls.get_a_post_all_comments(post_id=post_id)
-        if result is None:
-            result = []  # Set result to an empty list
+    result = api_calls.get_a_post_all_comments(post_id=post_id)
+    if result is None:
+        result = []  # Set result to an empty list
 
-        return render_template('post.html', title=title, content=content, author_name=author_name,
-                               created_at=formatted_date, category=category_name, result=result, post_id=post_id)
+    return render_template('post.html', title=post_title, content=content, author_name=author_name,
+                           created_at=formatted_date, category=category_name, tags=tags, result=result, post_id=post_id)
+
+@app.route('/<username>/posts/<post_date>/<post_slug>', methods=['GET', 'POST'])
+def get_post_by_username_and_slug(username, post_date, post_slug):
+    response = api_calls.get_post_by_username_slug(post_ownername=username, slug=post_slug)
+    id = response["id"]
+    title = response["title"]
+    category_name = response["category_name"]
+    content = response["content"]
+    author_name = response["author_name"]
+    created_at = response["created_at"]
+    date_obj = datetime.strptime(created_at, '%Y-%m-%dT%H:%M:%S.%f%z')
+    formatted_date = date_obj.strftime('%d %B %Y')
+    tags =response["tags"]
+
+    result = api_calls.get_a_post_all_comments(post_id=id)
+    if result is None:
+        result = []  # Set result to an empty list
+
+    return render_template('post.html', result=result, title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags, post_id=id, post_date=post_date, post_slug=post_slug)
+
 ################################################ CHATBOT #########################################################
 
 @app.route('/chatbot')
