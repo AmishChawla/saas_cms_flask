@@ -106,7 +106,7 @@
                             <a href="{{ url_for('user_post_list', username=data.author_name) }}">{{ data.author_name }}</a>
                             on {{ data.created_at.split('T')[0] }} at {{ data.created_at.split('T')[1][:8] }}
                         </p>
-                        <a href="{{ url_for('comment', post_id=data.id) }}" style="color: #b0bec5; font-size: 24px;"><i class="bi bi-chat"></i></a>
+
                     </div>
                     {% endfor %}
                 </div>

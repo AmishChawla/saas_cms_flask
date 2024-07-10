@@ -133,7 +133,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </a>
           </li>
            <li class="nav-item menu-open">
-            <a class="nav-link {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' or request.endpoint == 'user_post_list' or request.endpoint == 'media' or request.endpoint == 'user_all_medias' or request.endpoint == 'newsletter_subscribers' %}active{% endif %}" href="{{ url_for('user_all_post') }}">
+            <a class="nav-link {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' or request.endpoint == 'user_post_list' or request.endpoint == 'media' or request.endpoint == 'user_all_medias' or request.endpoint == 'newsletter_subscribers' or request.endpoint == 'get_all_comment' %}active{% endif %}" href="{{ url_for('user_all_post') }}">
               <i class="far fa-regular fa-folder nav-icon"></i>
               <p>
                 CMS
@@ -191,6 +191,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <a href="{{ url_for('media') }}" class="nav-link {% if request.endpoint == 'media' %} active {% endif %}">
                   <i class="far fa fa-plus-square nav-icon"></i>
                   <p>Upload Media</p>
+                </a>
+              </li>
+            </ul>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="far fa fa-comment nav-icon"></i>
+                  <p>Comments</p>
+                  <i class="right fas fa-angle-left"></i>
+                </a>
+                <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ url_for('get_all_comment') }}" class="nav-link {% if request.endpoint == 'get_all_comment' %} active {% endif %}">
+                  <i class="far fa fa-comments nav-icon"></i>
+                  <p>All comments</p>
                 </a>
               </li>
             </ul>

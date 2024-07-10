@@ -1786,37 +1786,61 @@ def user_all_medias():
     return render_template('user_all_media.html', result=result, root_url=root_url)
 
 
-@app.route('/posts/comment/<int:post_id>', methods=['GET', 'POST'])
+@app.route('/posts/comment/<int:post_id>/<post_title>', methods=['GET', 'POST'])
 @login_required
-def comment(post_id):
+def comment(post_id, post_title):
     if request.method == 'POST':
         comment = request.form.get('comment')
         if comment:
-            response = api_calls.add_comment(
-                post_id=post_id,
-                comment=comment,
-                access_token=current_user.id
-            )
-            print(response.status_code)
-            if response.status_code == 200:
-                flash('Comment added successfully', category='info')
-            else:
-                flash('Some problem occurred', category='error')
+            try:
+                response = api_calls.add_comment(
+                    post_id=post_id,
+                    comment=comment,
+                    access_token=current_user.id
+                )
+                if response.status_code == 200:
+                    return redirect(url_for('get_post', post_title=post_title))
+                else:
+                    flash('An error occurred while adding the comment. Please try again.', category='error')
+            except Exception as e:
+                flash(f'An exception occurred: {str(e)}', category='error')
         else:
             flash('Comment cannot be empty', category='error')
-        return redirect(url_for('comment', post_id=post_id))
 
-    result = api_calls.get_a_post_all_comments(post_id=post_id)
+    return redirect(url_for('get_post', post_title=post_title))
+
+
+@app.route('/posts/all-comment', methods=['GET', 'POST'])
+@login_required
+def get_all_comment():
+    result = api_calls.get_all_comments(access_token = current_user.id)
     if result is None:
         result = []  # Set result to an empty list
     print(result)
 
-    return render_template('comments.html', result=result, post_id=post_id)
+    return render_template('comments_table.html', result=result)
 
 
-@app.route('/comments/like/<int:comment_id>/<int:post_id>')
+@app.route('/posts/activate-comment/<comment_id>', methods=['GET', 'POST'])
 @login_required
-def add_like_to_comment_route(comment_id, post_id):
+def activate_comment(comment_id):
+    response = api_calls.activate_comments(comment_id=comment_id)
+    if response:
+        return redirect(url_for('get_all_comment'))
+
+
+@app.route('/posts/deactivate-comment/<comment_id>', methods=['GET', 'POST'])
+@login_required
+def deactivate_comment(comment_id):
+    response = api_calls.deactivate_comments(comment_id=comment_id)
+    if response:
+        return redirect(url_for('get_all_comment'))
+
+
+
+@app.route('/comments/like/<int:comment_id>/<int:post_id>/<post_title>')
+@login_required
+def add_like_to_comment_route(comment_id, post_id, post_title):
     print("ander hu")
     try:
         # Example: Get access_token from current_user or session
@@ -1828,18 +1852,19 @@ def add_like_to_comment_route(comment_id, post_id):
 
         if response and response.status_code == 200:
             flash('Like added successfully', category='info')
+            return redirect(url_for('get_post', post_title=post_title))
             print("hii")
         else:
             flash('Failed to add like', category='error')
     except Exception as e:
         flash(f'Error: {str(e)}', category='error')
 
-    return redirect(url_for('comment', post_id=post_id))
+    return redirect(url_for('get_post', post_title=post_title))
 
 
-@app.route('/comments/remove-like/<int:comment_id>/<int:post_id>')
+@app.route('/comments/remove-like/<int:comment_id>/<int:post_id>/<post_title>')
 @login_required
-def remove_like_from_comment_route(comment_id, post_id):
+def remove_like_from_comment_route(comment_id, post_id, post_title):
     print("ander hu")
     try:
         # Example: Get access_token from current_user or session
@@ -1851,13 +1876,14 @@ def remove_like_from_comment_route(comment_id, post_id):
 
         if response and response.status_code == 200:
             flash('Like removed successfully', category='info')
+            return redirect(url_for('get_post', post_title=post_title))
             print("hii")
         else:
             flash('Failed to remove like', category='error')
     except Exception as e:
         flash(f'Error: {str(e)}', category='error')
 
-    return redirect(url_for('comment', post_id=post_id))
+    return redirect(url_for('get_post', post_title=post_title))
 
 @app.route('/users/view-posts')
 def view_post():
@@ -1875,19 +1901,27 @@ def view_post():
 
 @app.route('/posts/<post_title>', methods=['GET', 'POST'])
 def get_post(post_title):
-    post_id = request.form['post_id']
-    result = api_calls.get_post(post_id=post_id)
-    title = result["title"]
-    category_name = result["category_name"]
-    content = result["content"]
-    author_name = result["author_name"]
-    created_at = result["created_at"]
-    date_obj = datetime.strptime(created_at, '%Y-%m-%dT%H:%M:%S.%f%z')
-    formatted_date = date_obj.strftime('%d %B %Y')
+    if request.method == 'POST':
+        post_id = request.form.get('post_id')
+        session['post_id'] = post_id  # Store post_id in session
+    else:
+        post_id = session.get('post_id')  # Retrieve post_id from session
+    response = api_calls.get_post(post_id=post_id)
+    if response:
+        title = response["title"]
+        category_name = response["category_name"]
+        content = response["content"]
+        author_name = response["author_name"]
+        created_at = response["created_at"]
+        date_obj = datetime.strptime(created_at, '%Y-%m-%dT%H:%M:%S.%f%z')
+        formatted_date = date_obj.strftime('%d %B %Y')
 
-    return render_template('post.html', title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name)
+        result = api_calls.get_a_post_all_comments(post_id=post_id)
+        if result is None:
+            result = []  # Set result to an empty list
 
-
+        return render_template('post.html', title=title, content=content, author_name=author_name,
+                               created_at=formatted_date, category=category_name, result=result, post_id=post_id)
 ################################################ CHATBOT #########################################################
 
 @app.route('/chatbot')
