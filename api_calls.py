@@ -934,7 +934,7 @@ def admin_delete_post(post_id, access_token):
         print(f"An unexpected error occurred: {err}")
 
 
-def create_post(title, content, category_id, subcategory_id, tag_id, status, access_token):
+def create_post(title, content, category_id, subcategory_id, tags, status, access_token):
     print('trying to create post')
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
@@ -942,13 +942,13 @@ def create_post(title, content, category_id, subcategory_id, tag_id, status, acc
         "content": content,
         "category_id": category_id,
         "subcategory_id": subcategory_id,
-        "tag_id": tag_id,
+        "tags": tags,
         "status": status
     }
     try:
         response = requests.post(constants.BASE_URL + '/posts/create-post', json=params, headers=headers)
-        print(response.text)
-        return response
+        if response.status_code == 200:
+            return response.json()
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except requests.exceptions.ConnectionError as errc:
@@ -959,17 +959,18 @@ def create_post(title, content, category_id, subcategory_id, tag_id, status, acc
         print(f"An unexpected error occurred: {err}")
 
 
-def admin_update_post(post_id, title, content, category_id, subcategory_id, tag_id, status, access_token):
+def admin_update_post(post_id, title, content, category_id, subcategory_id, tags, status, access_token):
     print('trying3')
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
-        "title": title,
-        "content": content,
-        "category_id": category_id,
-        "subcategory_id": subcategory_id,
-        "tag_id": tag_id,
-        "status": status
-    }
+          "title": title,
+          "content": content,
+          "category_id": category_id,
+          "subcategory_id": subcategory_id,
+          "status": status,
+          "tags": tags
+        }
+
     try:
         response = requests.put(constants.BASE_URL + f'/posts/update-post/{post_id}', json=params, headers=headers)
         print(response.text)
@@ -989,6 +990,19 @@ def admin_update_post(post_id, title, content, category_id, subcategory_id, tag_
 def get_post(post_id: int):
     try:
         response = requests.get(constants.BASE_URL + f'/posts/{post_id}')
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+
+
+def get_post_by_username_slug(post_ownername, slug):
+    try:
+        response = requests.get(constants.BASE_URL + f'/posts/{post_ownername}/{slug}')
         if response.status_code == 200:
             return response.json()
     except requests.exceptions.HTTPError as errh:
@@ -1199,11 +1213,9 @@ def get_category_name(category_id):
 def get_user_all_tags(access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
     try:
-        response = requests.get(constants.BASE_URL + '/user-all-tags', headers=headers)
-        print("Response Status Code:", response.status_code)  # Debug: Print status code
+        response = requests.get(constants.BASE_URL + '/user-tags/', headers=headers)
         if response.status_code == 200:
             result = response.json()
-            print("API Result:", result)  # Debug: Print API result
             return result
         else:
             print("API Error:", response.text)  # Debug: Print error message from API
@@ -1224,8 +1236,7 @@ def add_tag(tag, access_token):
     }
 
     try:
-        response = requests.post(constants.BASE_URL + f'/user/add-tags', json=params, headers=headers)
-        print(response.text)
+        response = requests.post(constants.BASE_URL + f'/tags/', json=params, headers=headers)
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
@@ -1240,12 +1251,14 @@ def add_tag(tag, access_token):
 def edit_tag(tag_id, new_tag, access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
-        "tag": new_tag,
+      "new_tag_details": {
+        "tag": new_tag
+      }
     }
 
     try:
-        response = requests.put(constants.BASE_URL + f'/user/edit-tag/{tag_id}', json=params, headers=headers)
-        print(response.text)
+        response = requests.put(constants.BASE_URL + f'/tags/update/{tag_id}', json=params, headers=headers)
+
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
@@ -1261,8 +1274,7 @@ def delete_tag(tag_id, access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
 
     try:
-        response = requests.delete(constants.BASE_URL + f'/user/delete-tag/{tag_id}', headers=headers)
-        print(response.text)
+        response = requests.delete(constants.BASE_URL + f'/tags/{tag_id}', headers=headers)
         return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
@@ -1548,30 +1560,30 @@ def get_all_newsletter_subscribers(access_token):
         print(f"An unexpected error occurred: {err}")
 
 
-def send_newsletter(access_token: str, subject, body):
-    print("trying")
-    headers = {'Authorization': f'Bearer {access_token}'}
 
+def send_newsletter(access_token: str, subject, body, post_url):
+    print("Trying to send newsletter...")
+    headers = {'Authorization': f'Bearer {access_token}'}
     data = {
         "to": 'subscribers',
         "subject": subject,
         "body": body
     }
+    url = constants.BASE_URL + f'/newsletter/send-newsletter?post_url={post_url}'
 
     try:
-        print("try")
-        response = requests.post(constants.BASE_URL + '/newsletter/send-newsletter', headers=headers, json=data)
+        print("Sending request...")
+        response = requests.post(url, headers=headers, json=data)
+        print(f"Response Status Code: {response.status_code}")
+        print(f"Response JSON: {response.json()}")
         if response.status_code == 200:
             result = response.json()
+            print("Newsletter sent successfully.")
             return result
-    except requests.exceptions.HTTPError as errh:
-        print(f"HTTP Error: {errh}")
-    except requests.exceptions.ConnectionError as errc:
-        print(f"Error Connecting: {errc}")
-    except requests.exceptions.Timeout as errt:
-        print(f"Timeout Error: {errt}")
-    except requests.exceptions.RequestException as err:
-        print(f"An unexpected error occurred: {err}")
+        else:
+            print(f"Failed to send newsletter. Status Code: {response.status_code}. Message: {response.text}")
+    except RequestException as e:
+        print(f"An error occurred: {e}")
 
 
 def unsubscribe_newsletter(email, username):

@@ -3,20 +3,22 @@
 {% block title %}User's all tags{% endblock %}
 
 {% block content %}
+
 <link href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" rel="stylesheet">
   <div class="row">
     <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
       <div class="card">
         <div class="card-body" style="overflow-x: auto;">
-          <div style="display:flex; justify-content:space-between;">
-            <h4 class="card-title">Tags</h4>
+                    <div style="display:flex; justify-content:space-between;">
+            <h2 class="m-0">Tags</h2>
             <div style="display: flex; justify-content: space-between;">
-              <a class="btn btn-info" href="{{ url_for('add_tag')}}" style="padding: 6px 30px 6px 30px;">
-                <span class="menu-title">Add new tag</span>
+              <a class="btn btn-info" href="{{ url_for('add_post')}}" style="padding: 6px 30px 6px 30px;">
+                <span class="menu-title">Add Tag</span>
               </a>
             </div>
           </div>
-          <table id="usertagTable" class="display" style="width:100%;">
+
+          <table id="usertagTable" class="hover" style="width:100%;">
             <thead>
               <tr>
                 <th>Sr. No.</th>
@@ -33,19 +35,19 @@
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 
-                  <a class="button button1" href="{{ url_for('edit_tag', tag_id=data.id) }}">Edit</a>
-                  <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}">Delete</button>
+                  <a class="button button1" href="{{ url_for('edit_tag', tag_id=data.id) }}" style="margin-right: 1rem;"><i class="bi bi-pen" style="color:#0b4647; font-size: 1.5rem"></i></a>
+                  <a class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}"><i class="bi bi-trash3-fill " style="color:#6b1313; font-size: 1.5rem"></i></a>
 
                   <!-- Modal for delete button -->
                   <div class="modal fade" id="deleteModal_{{ data.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel_{{ data.id }}" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h1 class="modal-title fs-5" id="deleteModalLabel_{{ data.id }}">Delete Post</h1>
+                          <h1 class="modal-title fs-5" id="deleteModalLabel_{{ data.id }}">Delete Tag</h1>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                          Are you sure you want to delete this post?
+                          Are you sure you want to delete this tag?
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
