@@ -1617,6 +1617,26 @@ def get_a_post_all_comments(post_id):
         print(f"An unexpected error occurred: {err}")
 
 
+def get_all_comments(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.get(constants.BASE_URL + f'/comment/all', headers=headers)
+        print("Response Status Code:", response.status_code)  # Debug: Print status code
+        if response.status_code == 200:
+            result = response.json()
+            print("API Result:", result)  # Debug: Print API result
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
 def add_comment(post_id, comment, access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
@@ -1661,6 +1681,48 @@ def remove_like_from_comment(comment_id, access_token):
         response = requests.put(constants.BASE_URL + f'/comments/remove-like/{comment_id}', headers=headers)
         print(response.text)
         return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def activate_comments(comment_id):
+
+    try:
+        response = requests.post(constants.BASE_URL + f'/comment/toggle_status/{comment_id}')
+        print("Response Status Code:", response.status_code)  # Debug: Print status code
+        if response.status_code == 200:
+            result = response.json()
+            print("API Result:", result)  # Debug: Print API result
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def deactivate_comments(comment_id):
+
+    try:
+        response = requests.post(constants.BASE_URL + f'/comment/deactivate/{comment_id}')
+        print("Response Status Code:", response.status_code)  # Debug: Print status code
+        if response.status_code == 200:
+            result = response.json()
+            print("API Result:", result)  # Debug: Print API result
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except requests.exceptions.ConnectionError as errc:
