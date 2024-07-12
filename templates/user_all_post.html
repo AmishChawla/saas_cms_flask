@@ -29,11 +29,9 @@
           <table id="userpostTable" class="hover" style="width:100%;">
             <thead>
               <tr>
-                <th>Sr. No.</th>
-                <th>Author</th>
                 <th>Title</th>
+                <th>Author</th>
                 <th>Category</th>
-                <th>Subcategory</th>
                 <th>Tags</th>
                 <th>Created Date</th>
                 <th>Action</th>
@@ -43,11 +41,9 @@
               {% for data in result %}
               {% if data.status == 'published' %}
               <tr style="max-height: 100px; overflow-y: auto;">
-                <td class="py-1">{{ loop.index }}</td>
-                <td class="py-1 text-truncate">{{ data.author_name }}</td>
                 <td class="py-1"><a href="{{ url_for('get_post_by_username_and_slug', username=data.author_name, post_date=data.created_at.split('T')[0], post_slug=data.slug) }}"> {{ data.title }}</a></td>
+                <td class="py-1 text-truncate">{{ data.author_name }}</td>
                 <td class="py-1 text-truncate">{{ data.category.category }}</td>
-                <td class="py-1 text-truncate">{{ data.subcategory.subcategory }}</td>
                 <td class="py-1 text-truncate">    {% for tag in data.tags %}
                                         {{ tag.tag }}
                                         {% endfor %}
@@ -88,11 +84,9 @@
             <table id="draftpostTable" class="hover" style="width:100%;">
             <thead>
               <tr>
-                <th>Sr. No.</th>
-                <th>Author</th>
                 <th>Title</th>
+                <th>Author</th>
                 <th>Category</th>
-                <th>Subcategory</th>
                 <th>Tags</th>
                 <th>Created Date</th>
                 <th>Action</th>
@@ -102,11 +96,9 @@
               {% for data in result %}
               {% if data.status == 'draft' %}
               <tr style="max-height: 100px; overflow-y: auto;">
-                <td class="py-1">{{ loop.index }}</td>
-                <td class="py-1 text-truncate">{{ data.author_name }}</td>
                 <td class="py-1"><a href="{{ url_for('get_post_by_username_and_slug', username=data.author_name, post_date=data.created_at.split('T')[0], post_slug=data.slug) }}"> {{ data.title }}</a></td>
+                <td class="py-1 text-truncate">{{ data.author_name }}</td>
                 <td class="py-1 text-truncate ">{{ data.category.category }}</td>
-                <td class="py-1 text-truncate">{{ data.subcategory.subcategory }}</td>
                                 <td class="py-1 text-truncate">    {% for tag in data.tags %}
                                         {{ tag.tag }}
                                         {% endfor %}
