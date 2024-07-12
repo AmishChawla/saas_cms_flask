@@ -1649,10 +1649,11 @@ def get_all_comments(access_token):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
-def add_comment(post_id, comment, access_token):
+def add_comment(reply_id, post_id, comment, access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
         "post_id": post_id,
+        "reply_id": reply_id,
         "comment": comment
     }
 
@@ -1670,11 +1671,15 @@ def add_comment(post_id, comment, access_token):
         print(f"An unexpected error occurred: {err}")
 
 
-def add_like_to_comment(comment_id, access_token):
+def add_like_to_comment(post_id, comment_id, access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
+    params = {
+        "post_id": post_id,
+        "comment_id": comment_id
+    }
     print("le bhai")
     try:
-        response = requests.put(constants.BASE_URL + f'/comments/update-like/{comment_id}', headers=headers)
+        response = requests.post(constants.BASE_URL + f'/user/add_like_to_a_comment', json=params, headers=headers)
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:
@@ -1686,11 +1691,11 @@ def add_like_to_comment(comment_id, access_token):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
-def remove_like_from_comment(comment_id, access_token):
+def remove_like_from_comment(comment_like_id, access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
     print("le bhai")
     try:
-        response = requests.put(constants.BASE_URL + f'/comments/remove-like/{comment_id}', headers=headers)
+        response = requests.delete(constants.BASE_URL + f'/comments/remove-like/{comment_like_id}', headers=headers)
         print(response.text)
         return response
     except requests.exceptions.HTTPError as errh:
@@ -1728,6 +1733,27 @@ def deactivate_comments(comment_id):
 
     try:
         response = requests.post(constants.BASE_URL + f'/comment/deactivate/{comment_id}')
+        print("Response Status Code:", response.status_code)  # Debug: Print status code
+        if response.status_code == 200:
+            result = response.json()
+            print("API Result:", result)  # Debug: Print API result
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def get_like_of_a_comment(post_id):
+    print(post_id)
+    try:
+        response = requests.get(constants.BASE_URL + f'/comment/like/{post_id}')
         print("Response Status Code:", response.status_code)  # Debug: Print status code
         if response.status_code == 200:
             result = response.json()
