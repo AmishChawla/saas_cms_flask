@@ -51,7 +51,7 @@ def load_user(user_id):
         profile_picture = f"{ROOT_URL}/{user_data['profile_picture']}"
 
         # Create a User object using the retrieved data
-        user = User(user_id=user_id, role=user_data['role'], username=user_data['username'], email=user_data['email'],
+        user = User(id=user_data['id'], user_id=user_id, role=user_data['role'], username=user_data['username'], email=user_data['email'],
                     services=user_data['services'], company=user_data['company'], profile_picture=profile_picture)
 
         return user
@@ -60,7 +60,8 @@ def load_user(user_id):
 
 
 class User(UserMixin):
-    def __init__(self, user_id, role, username, email, services, company, profile_picture):
+    def __init__(self, id, user_id, role, username, email, services, company, profile_picture):
+        self.user_id = id
         self.id = user_id
         self.role = role
         self.username = username
@@ -148,6 +149,7 @@ def login():
 
         if response is not None and response.status_code == 200:
             data = response.json()
+            id = data.get('id')
             token = data.get('access_token')
             role = data.get('role')
             username = data.get('username')
@@ -156,7 +158,7 @@ def login():
             company = data.get('company', {})
             profile_picture = f"{ROOT_URL}/{data['profile_picture']}"
 
-            user = User(user_id=token, role=role, username=username, email=email, services=services, company=company,
+            user = User(id=id, user_id=token, role=role, username=username, email=email, services=services, company=company,
                         profile_picture=profile_picture)
             login_user(user)
             if current_user.company is not None:
@@ -1808,10 +1810,12 @@ def user_all_medias():
 def comment(post_id, username, post_date, post_slug):
     if request.method == 'POST':
         comment = request.form.get('comment')
+        reply_id = request.form.get('reply_id')
         if comment:
             try:
                 response = api_calls.add_comment(
                     post_id=post_id,
+                    reply_id=reply_id,
                     comment=comment,
                     access_token=current_user.id
                 )
@@ -1855,16 +1859,16 @@ def deactivate_comment(comment_id):
 
 
 
-@app.route('/comments/like/<int:comment_id>/<username>/<post_date>/<post_slug>')
+@app.route('/comments/like/<int:post_id>/<int:comment_id>/<username>/<post_date>/<post_slug>')
 @login_required
-def add_like_to_comment_route(comment_id, username, post_date, post_slug):
+def add_like_to_comment_route(post_id, comment_id, username, post_date, post_slug):
     print("ander hu")
     try:
         # Example: Get access_token from current_user or session
         access_token = current_user.id
 
         # Call the api_calls method to add like to comment
-        response = api_calls.add_like_to_comment(comment_id, access_token)
+        response = api_calls.add_like_to_comment(post_id, comment_id, access_token)
 
 
         if response and response.status_code == 200:
@@ -1879,16 +1883,16 @@ def add_like_to_comment_route(comment_id, username, post_date, post_slug):
     return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
 
 
-@app.route('/comments/remove-like/<int:comment_id>/<username>/<post_date>/<post_slug>')
+@app.route('/comments/remove-like/<int:comment_like_id>/<int:comment_id>/<username>/<post_date>/<post_slug>')
 @login_required
-def remove_like_from_comment_route(comment_id, username, post_date, post_slug):
+def remove_like_from_comment_route(comment_like_id, comment_id, username, post_date, post_slug):
     print("ander hu")
     try:
         # Example: Get access_token from current_user or session
         access_token = current_user.id
 
         # Call the api_calls method to add like to comment
-        response = api_calls.remove_like_from_comment(comment_id, access_token)
+        response = api_calls.remove_like_from_comment(comment_like_id, access_token)
 
 
         if response and response.status_code == 200:
@@ -1953,11 +1957,17 @@ def get_post_by_username_and_slug(username, post_date, post_slug):
     formatted_date = date_obj.strftime('%d %B %Y')
     tags =response["tags"]
 
+
     result = api_calls.get_a_post_all_comments(post_id=id)
     if result is None:
         result = []  # Set result to an empty list
 
-    return render_template('post.html', result=result, title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags, post_id=id, post_date=post_date, post_slug=post_slug)
+    comment_like_result = api_calls.get_like_of_a_comment(post_id=id)
+    if comment_like_result is None:
+        comment_like_result = []
+    print(comment_like_result)
+
+    return render_template('post.html', comment_like_result=comment_like_result, result=result, title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags, post_id=id, post_date=post_date, post_slug=post_slug)
 
 ################################################ CHATBOT #########################################################
 

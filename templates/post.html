@@ -7,149 +7,225 @@
 {% block title %}{{ author_name }}{% endblock %}
 
 {% block content %}
-
-
-        <!-- Page Header-->
+<!-- Page Header -->
 <div class="col-md-10 ml-0 mb-4 pt-3">
-        <header class="masthead">
-            <div class="container position-relative px-4 px-lg-5">
-                <div class="row gx-4 gx-lg-5 justify-content-left">
-                    <div class="col-md-10 col-lg-8 col-xl-7">
-                        <div class="post-heading">
-                            <h2 class="subheading">{{ title }}</h2>
-                            <span style="display:flex;" class="meta">
-                                <a href="#!" style="color: black; font-size: 0.9rem; margin-right: 0.5rem;">{{ author_name }}</a>
-                                 <div style="color: black; font-size: 0.9rem; margin-right: 0.5rem;">{{ created_at }}</div>
-                                <div style="color: black; font-size: 0.9rem; margin-right: 0.5rem;">{{ category }}</div>
-                            </span>
-                        </div>
+    <header class="masthead">
+        <div class="container position-relative px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-left">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <div class="post-heading">
+                        <h2 class="subheading">{{ title }}</h2>
+                        <span style="display:flex;" class="meta">
+                            <a href="#!" style="color: black; font-size: 0.9rem; margin-right: 0.5rem;">{{ author_name }}</a>
+                            <div style="color: black; font-size: 0.9rem; margin-right: 0.5rem;">{{ created_at }}</div>
+                            <div style="color: black; font-size: 0.9rem; margin-right: 0.5rem;">{{ category }}</div>
+                        </span>
                     </div>
                 </div>
             </div>
-        </header>
-<hr>
-<br>
-<br>
-        <!-- Post Content-->
-        <article class="mb-4">
-            <div class="container px-4 px-lg-5">
-                <div class="row gx-4 gx-lg-5 justify-content-left">
-                    <div class="col-md-10 col-lg-8 col-xl-7">
-
-                        {{ content | safe }}
-
+        </div>
+    </header>
+    <hr>
+    <br>
+    <br>
+    <!-- Post Content -->
+    <article class="mb-4">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-left">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    {{ content | safe }}
                     <div style="display:flex;" class="meta">
-                    {% for tag in tags %}
-                    <div style="color: #1d4196; font-size: 0.9rem; margin-right: 0.5rem;">
-                        <a href="#">#{{ tag.tag }}</a>
-                    </div>
-                    {% endfor %}
-                    </div>
+                        {% for tag in tags %}
+                            <div style="color: #1d4196; font-size: 0.9rem; margin-right: 0.5rem;">
+                                <a href="#">#{{ tag.tag }}</a>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
-        </article>
-
-
-<hr>
-<br>
-<br>
-<div class="content-header" style="margin-left:6%;">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0">Comments</h1>
-          </div><!-- /.col --><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </div>
-    <div class="comment-field" style="margin-left: 10%; margin-right: 20%;">
-    <div style="padding-right: 0; padding-left: 0;">
-        <div>
-            <div class="card-body">
-                <form id="comment-form" method="POST" action="{{ url_for('comment', post_id=post_id, username=author_name, post_date=post_date, post_slug=post_slug) }}">
-                    <div style="display:flex; justify-content:space-between; align-items:center;" class="form-group">
-                        <input type="text" class="form-control" name="comment" id="comment-input" placeholder="Enter your comment" style="flex-grow: 1; margin-right: 10px;">
-                        <button type="submit" class="btn btn-primary" style="padding: 6px 20px;">Send</button>
-                    </div>
-                </form>
+        </div>
+    </article>
+    <hr>
+    <br>
+    <br>
+    <div class="content-header" style="margin-left:6%;">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Comments</h1>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<div style="margin-left:10%;">
+    <div class="comment-field" style="margin-left: 10%; margin-right: 20%;">
+        <div style="padding-right: 0; padding-left: 0;">
+            <div>
+                <div class="card-body">
+                    <form id="comment-form" method="POST" action="{{ url_for('comment', post_id=post_id, username=author_name, post_date=post_date, post_slug=post_slug) }}">
+                        <div style="display:flex; justify-content:space-between; align-items:center;" class="form-group">
+                            <input type="hidden" id="username-field" value="">
+                            <input type="hidden" class="form-control" name="reply_id" id="comment-id-field" value="">
+                            <input type="text" class="form-control" name="comment" id="comment-input" placeholder="Enter your comment" style="flex-grow: 1; margin-right: 10px;">
+                            <button type="submit" class="btn btn-primary" style="padding: 6px 20px;">Send</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="margin-left: 10%;">
     <br>
     {% if result %}
-        {% for data in result %}
-            <div style="display: flex;">
-                {% if data.user.profile_picture %}
-                    <img src="{{ data.user.profile_picture }}" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%; border: 1px solid #b0bec5">
-                {% else %}
-                    <div class="profile-placeholder" data-username="{{ data.user.username }}" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%; border: 1px solid #b0bec5; display: flex; align-items: center; justify-content: center;">
-                        <span style="color: white; font-weight: bold;">{{ data.user.username[0].upper() }}</span>
-                    </div>
-                {% endif %}
-                <strong style="margin-right: 10px;">{{ data.user.username }}</strong>
-                <p>on {{ data.created_at.split('T')[0] }} at {{ data.created_at.split('T')[1][:8] }}</p>
-            </div>
-            <p class="post-title" style="margin-left:35px;">{{ data.comment }}</p>
-            <div style="display: flex; margin-bottom: 20px; margin-left:35px;">
-                {% if data.like == 1 %}
-                    <a href="{{ url_for('remove_like_from_comment_route', comment_id=data.id, username=author_name, post_date=post_date, post_slug=post_slug) }}" style="color: #8fa3b0; font-size: 18px; text-decoration:none; margin-right: 20px;">
-                        <i class="bi bi-hand-thumbs-up-fill" style="color: blue;"></i>
-                    </a>
-                {% else %}
-                    <a href="{{ url_for('add_like_to_comment_route', comment_id=data.id, username=author_name, post_date=post_date, post_slug=post_slug) }}" style="color: #8fa3b0; font-size: 18px; text-decoration:none; margin-right: 20px;">
-                        <i class="bi bi-hand-thumbs-up"></i>
-                    </a>
-                {% endif %}
-                <a href="#" class="reply-btn" style="color: #8fa3b0; font-size: 18px; text-decoration:none;" data-username="{{ data.user.username }}">Reply</a>
-            </div>
+        {% for comment in result | sort(attribute='created_at') %}
+            {% if comment.active == true and not comment.reply_id %}
+                <!-- Display top-level comment -->
+                <div style="display: flex;">
+                    {% if comment.user.profile_picture %}
+                        <img src="{{ comment.user.profile_picture }}" alt="profile" style="width: 25px; height: 25px; margin-right: 10px; border-radius: 50%; border: 1px solid #b0bec5">
+                    {% else %}
+                        <div class="profile-placeholder" data-username="{{ comment.user.username }}" style="width: 25px; height: 25px; margin-right: 10px; border-radius: 50%; border: 1px solid #b0bec5; display: flex; align-items: center; justify-content: center;">
+                            <span style="color: white; font-weight: bold;">{{ comment.user.username[0].upper() }}</span>
+                        </div>
+                    {% endif %}
+                    <strong style="margin-right: 10px;">{{ comment.user.username }}</strong>
+                    <p>on {{ comment.created_at.split('T')[0] }} at {{ comment.created_at.split('T')[1][:8] }}</p>
+                </div>
+                <p class="post-title" style="margin-left: 35px;">{{ comment.comment }}</p>
+                <div style="display: flex; margin-bottom: 20px; margin-left: 35px;">
+                    {% set like_count = comment_like_result | selectattr('comment_id', 'equalto', comment.id) | list | length %}
+                    {% set user_like = comment_like_result | selectattr('comment_id', 'equalto', comment.id) | selectattr('user_id', 'equalto', current_user.user_id) | list %}
+                    {% if user_like | length > 0 %}
+                        {% set like = user_like[0] %}
+                        <a href="{{ url_for('remove_like_from_comment_route', comment_like_id=like.id, comment_id=comment.id, username=author_name, post_date=post_date, post_slug=post_slug) }}" style="color: #8fa3b0; border: 1px solid #8fa3b0; border-radius: 50px; padding: 0 20px 0 20px; font-size: 18px; text-decoration: none; margin-right: 20px;">
+                            <i class="bi bi-hand-thumbs-up-fill" style="color: blue;"></i>
+                            {% if like_count >= 1000 %}
+                                {{ '{:.1f}k'.format(like_count / 1000) }}
+                            {% elif like_count > 0 %}
+                                {{ like_count }}
+                            {% endif %}
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('add_like_to_comment_route', post_id=post_id, comment_id=comment.id, username=author_name, post_date=post_date, post_slug=post_slug) }}" style="color: #8fa3b0; border: 1px solid #8fa3b0; border-radius: 50px; padding: 0 20px 0 20px; font-size: 18px; text-decoration: none; margin-right: 20px;">
+                            <i class="bi bi-hand-thumbs-up"></i>
+                            {% if like_count >= 1000 %}
+                                {{ '{:.1f}k'.format(like_count / 1000) }}
+                            {% elif like_count > 0 %}
+                                {{ like_count }}
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                    <a href="#" class="reply-btn" style="color: #8fa3b0; font-size: 18px; text-decoration: none;" data-username="{{ comment.user.username }}" data-comment-id="{{ comment.id }}">Reply</a>
+                </div>
+
+                <!-- Function to recursively display replies -->
+                {% macro render_replies(parent_id) %}
+                    {% for reply in result | sort(attribute='created_at') %}
+                        {% if reply.active == true and reply.reply_id == parent_id %}
+                            <!-- Display reply -->
+                            <div style="display: flex; margin-left: {{ '50px' if parent_id else '85px' }};">
+                                {% if reply.user.profile_picture %}
+                                    <img src="{{ reply.user.profile_picture }}" alt="profile" style="width: 25px; height: 25px; margin-right: 10px; border-radius: 50%; border: 1px solid #b0bec5">
+                                {% else %}
+                                    <div class="profile-placeholder" data-username="{{ reply.user.username }}" style="width: 25px; height: 25px; margin-right: 10px; border-radius: 50%; border: 1px solid #b0bec5; display: flex; align-items: center; justify-content: center;">
+                                        <span style="color: white; font-weight: bold;">{{ reply.user.username[0].upper() }}</span>
+                                    </div>
+                                {% endif %}
+                                <strong style="margin-right: 10px;">{{ reply.user.username }}</strong>
+                                <p>on {{ reply.created_at.split('T')[0] }} at {{ reply.created_at.split('T')[1][:8] }}</p>
+                            </div>
+                            <p class="post-title" style="margin-left: {{ '85px' if parent_id else '135px' }};">{{ reply.comment }}</p>
+                            <div style="display: flex; margin-bottom: 20px; margin-left: {{ '85px' if parent_id else '135px' }};">
+                                {% set like_count = comment_like_result | selectattr('comment_id', 'equalto', reply.id) | list | length %}
+                                {% set user_like = comment_like_result | selectattr('comment_id', 'equalto', reply.id) | selectattr('user_id', 'equalto', current_user.user_id) | list %}
+                                {% if user_like | length > 0 %}
+                                    {% set like = user_like[0] %}
+                                    <a href="{{ url_for('remove_like_from_comment_route', comment_like_id=like.id, comment_id=reply.id, username=author_name, post_date=post_date, post_slug=post_slug) }}" style="color: #8fa3b0; border: 1px solid #8fa3b0; border-radius: 50px; padding: 0 20px 0 20px; font-size: 18px; text-decoration: none; margin-right: 20px;">
+                                        <i class="bi bi-hand-thumbs-up-fill" style="color: blue;"></i>
+                                        {% if like_count >= 1000 %}
+                                            {{ '{:.1f}k'.format(like_count / 1000) }}
+                                        {% elif like_count > 0 %}
+                                            {{ like_count }}
+                                        {% endif %}
+                                    </a>
+                                {% else %}
+                                    <a href="{{ url_for('add_like_to_comment_route', post_id=post_id, comment_id=reply.id, username=author_name, post_date=post_date, post_slug=post_slug) }}" style="color: #8fa3b0; border: 1px solid #8fa3b0; border-radius: 50px; padding: 0 20px 0 20px; font-size: 18px; text-decoration: none; margin-right: 20px;">
+                                        <i class="bi bi-hand-thumbs-up"></i>
+                                        {% if like_count >= 1000 %}
+                                            {{ '{:.1f}k'.format(like_count / 1000) }}
+                                        {% elif like_count > 0 %}
+                                            {{ like_count }}
+                                        {% endif %}
+                                    </a>
+                                {% endif %}
+                                <a href="#" class="reply-btn" style="color: #8fa3b0; font-size: 18px; text-decoration: none;" data-username="{{ reply.user.username }}" data-comment-id="{{ reply.id }}">Reply</a>
+                            </div>
+
+                            <!-- Recursively call to display replies of this reply -->
+                            {{ render_replies(reply.id) }}
+                        {% endif %}
+                    {% endfor %}
+                {% endmacro %}
+
+                <!-- Call macro to render replies -->
+                {{ render_replies(comment.id) }}
+            {% endif %}
         {% endfor %}
     {% else %}
-        <p style="text-align:center; margin-top:15%;">No comments</p>
+        <p style="text-align: center; margin-top: 15%;">No comments</p>
     {% endif %}
 </div>
 
-<!-- Comment field -->
 
 </div>
+
 <script>
-
 document.addEventListener('DOMContentLoaded', function() {
-        const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#FF8333', '#33FFF5', '#F533FF'];
+    const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#FF8333', '#33FFF5', '#F533FF'];
 
-        document.querySelectorAll('.profile-placeholder').forEach(function(element) {
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            element.style.backgroundColor = randomColor;
+    document.querySelectorAll('.profile-placeholder').forEach(function(element) {
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        element.style.backgroundColor = randomColor;
+    });
+
+    const replyButtons = document.querySelectorAll('.reply-btn');
+    const commentInput = document.getElementById('comment-input');
+    const usernameField = document.getElementById('username-field');
+    const commentIdField = document.getElementById('comment-id-field');
+    const commentForm = document.getElementById('comment-form');
+
+    replyButtons.forEach(function(btn) {
+        btn.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent the default link behavior
+            const username = btn.dataset.username;
+            const commentId = btn.dataset.commentId; // Fetch comment ID
+            if (username && commentId) {
+                usernameField.value = username;
+                commentIdField.value = commentId;
+                commentInput.value = `${username} `; // Adjusted to use @username
+                commentInput.focus(); // Set focus to the input field after tagging
+                commentForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         });
     });
 
-
-     document.addEventListener('DOMContentLoaded', function() {
-        const replyButtons = document.querySelectorAll('.reply-btn');
-        const commentInput = document.getElementById('comment-input');
-
-        replyButtons.forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                const username = btn.dataset.username;
-                if (username) {
-                    commentInput.value = `${username} `;
-                    commentInput.focus(); // Optional: Set focus to the input field after tagging
-                }
-            });
-        });
+    commentInput.addEventListener('input', function() {
+        const username = usernameField.value;
+        if (!commentInput.value.startsWith(`${username}`)) {
+            commentInput.value = `${username}`;
+        }
     });
+
+    commentInput.addEventListener('keydown', function(event) {
+        const username = usernameField.value;
+        if (event.key === 'Backspace' && commentInput.selectionStart <= username.length + 1) {
+            event.preventDefault();
+        }
+    });
+});
 </script>
-
-
-
-
-        <!-- Footer-->
-
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="js/scripts.js"></script>
+<!-- Footer -->
+<!-- Bootstrap core JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS -->
+<script src="js/scripts.js"></script>
 {% endblock %}
