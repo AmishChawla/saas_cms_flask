@@ -11,6 +11,8 @@
           <div style="display:flex; justify-content:space-between;">
             <h2 class="m-0">My Posts</h2>
             <div style="display: flex; justify-content: space-between;">
+              <a href="{{ url_for('user_post_list', username=current_user.username) }}" class="d-block" style="margin-right:0.5rem; margin-top:6px; font-weight:bolder; font-size:1.1rem;">Visit Site</a>
+
               <a class="btn btn-info" href="{{ url_for('add_post')}}" style="padding: 6px 30px 6px 30px;">
                 <span class="menu-title">Write new Post</span>
               </a>
