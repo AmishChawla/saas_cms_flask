@@ -25,8 +25,8 @@
           <table id="usercategoryTable" class="hover" style="width:100%;">
             <thead>
               <tr>
-                <th>Sr. No.</th>
                 <th>Category</th>
+                <th>Posts</th>
                 <th>Created Date</th>
                 <th>Action</th>
               </tr>
@@ -34,8 +34,8 @@
             <tbody>
               {% for data in result %}
               <tr style="max-height: 100px; overflow-y: auto;">
-                <td class="py-1">{{ loop.index }}</td>
                 <td class="py-1"><a href="{{ url_for('user_all_subcategory', category_id=data.id) }}">{{ data.category }}</a></td>
+                <td class="py-1">{{ data.count }}</td>
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 

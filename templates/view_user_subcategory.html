@@ -19,7 +19,6 @@
           <table id="usersubcategoryTable" class="hover" style="width:100%;">
             <thead>
               <tr>
-                <th>Sr. No.</th>
                 <th>Subcategory</th>
                 <th>Created Date</th>
                 <th>Action</th>
@@ -28,7 +27,6 @@
             <tbody>
               {% for data in result %}
               <tr style="max-height: 100px; overflow-y: auto;">
-                <td class="py-1">{{ loop.index }}</td>
                 <td class="py-1">{{ data.subcategory }}</td>
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">

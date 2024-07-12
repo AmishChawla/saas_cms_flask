@@ -114,9 +114,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <div class="sidebar">
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-          <img src="{{ current_user.profile_picture }}" class="img-circle elevation-2" alt="User Image">
-        </div>
         <div class="info">
           <a href="#" class="d-block">{{ current_user.username }}</a>
           <a href="{{ url_for('user_post_list', username=current_user.username) }}" class="d-block"><strong style="font-size:0.8rem;">Visit Site</strong> </a>
