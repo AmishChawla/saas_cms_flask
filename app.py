@@ -1810,7 +1810,7 @@ def user_all_medias():
 def comment(post_id, username, post_date, post_slug):
     if request.method == 'POST':
         comment = request.form.get('comment')
-        reply_id = request.form.get('reply_id')
+        reply_id = request.form.get('reply_id') if request.form.get('reply_id') else None
         if comment:
             try:
                 response = api_calls.add_comment(
