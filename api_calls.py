@@ -973,8 +973,9 @@ def admin_update_post(post_id, title, content, category_id, subcategory_id, tags
 
     try:
         response = requests.put(constants.BASE_URL + f'/posts/update-post/{post_id}', json=params, headers=headers)
-        print(response.text)
-        return response
+        print(response.status_code)
+        if response.status_code == 200:
+            return response.json()
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except requests.exceptions.ConnectionError as errc:
@@ -1543,6 +1544,27 @@ def get_all_newsletter_subscribers(access_token):
     try:
         print("try")
         response = requests.get(constants.BASE_URL + '/newsletter/newsletter-subscribers-for-user', headers=headers)
+        if response.status_code == 200:
+            result = response.json()
+            return result
+
+
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def get_all_user_feedbacks(access_token):
+    print("trying")
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        print("try")
+        response = requests.get(constants.BASE_URL + '/user/all-feedbacks', headers=headers)
         if response.status_code == 200:
             result = response.json()
             return result

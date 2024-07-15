@@ -1640,28 +1640,33 @@ def admin_edit_post(post_id):
                     status='published',
                     access_token=current_user.id
                 )
+                if current_user.role == 'user':
+                    print("redirecting")
+                    return redirect(url_for('user_all_post'))
 
-                if result:
-                    try:
-                        dateiso = result["created_at"]
-                        post_slug = result["slug"]
-                        date = dateiso.split('T')[0]
-                        post_url = f'{constants.MY_ROOT_URL}/{current_user.username}/posts/{date}/{post_slug}'
-                        send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data,
-                                                               body=form.content.data, post_url=post_url)
-                    except Exception as e:
-                        raise 'Problem sending newsletter' + e
-                    print("Post updated successfully")
-                    if current_user.role == 'user':
-                        return redirect(url_for('user_all_post'))
-                    else:
-                        return redirect(url_for('all_post'))
-                else:
-                    print("Failed to update post")
+                # if result:
+                #     print("success")
+                #     try:
+                #         dateiso = result["created_at"]
+                #         post_slug = result["slug"]
+                #         date = dateiso.split('T')[0]
+                #         post_url = f'{constants.MY_ROOT_URL}/{current_user.username}/posts/{date}/{post_slug}'
+                #         print(post_url)
+                #         send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data,
+                #                                                body=form.content.data, post_url=post_url)
+                #     except Exception as e:
+                #         raise 'Problem sending newsletter' + e
+                #     print("Post updated successfully")
+                #     if current_user.role == 'user':
+                #         print("redirecting")
+                #         return redirect(url_for('user_all_post'))
+                #     else:
+                #         return redirect(url_for('all_post'))
+                # else:
+                #     print("Failed to update post")
             except Exception as e:
                 print(f"Error updating post: {e}")
         elif form.preview.data:
-
             return redirect(url_for('preview_post',
                                     title=form.title.data,
                                     content=form.content.data,
@@ -2173,8 +2178,12 @@ def user_contact_form(username):
         return redirect(url_for('user_post_list', username=username))
 
 
+@app.route("/user/feedbacks", methods=['GET', 'POST'])
+@login_required
+def user_feedbacks():
+    feedbacks = api_calls.get_all_user_feedbacks(access_token=current_user.id)
 
-
+    return render_template('user_feedbacks.html', result=feedbacks)
 
 
 if __name__ == '__main__':

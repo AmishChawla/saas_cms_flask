@@ -221,6 +221,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <p>Newsletter</p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="{{ url_for('user_feedbacks') }}" class="nav-link {% if request.endpoint == 'user_feedbacks' %} active {% endif %}">
+                  <i class="far bi bi-chat-right-text nav-icon"></i>
+                  <p>Feedback</p>
+                </a>
+              </li>
             </ul>
           </li>
           <li class="nav-item">
