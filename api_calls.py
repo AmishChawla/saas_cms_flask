@@ -1580,6 +1580,41 @@ def get_all_user_feedbacks(access_token):
         print(f"An unexpected error occurred: {err}")
 
 
+def get_post_by_category_id(author_name, category_id):
+
+    try:
+        print("try")
+        response = requests.get(constants.BASE_URL + f'/posts/by-category-and-author-name/{category_id}/{author_name}')
+        if response.status_code == 200:
+            return response.json()
+
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def get_post_by_tags(tag_id, username):
+    try:
+        print("try")
+        response = requests.get(constants.BASE_URL + f'/posts/by-tag-and-username/{username}/{tag_id}')
+        if response.status_code == 200:
+            return response.json()
+
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
 
 def send_newsletter(access_token: str, subject, body, post_url):
     print("Trying to send newsletter...")
