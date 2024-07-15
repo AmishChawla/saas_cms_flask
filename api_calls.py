@@ -985,8 +985,6 @@ def admin_update_post(post_id, title, content, category_id, subcategory_id, tags
         print(f"An unexpected error occurred: {err}")
 
 
-
-
 def get_post(post_id: int):
     try:
         response = requests.get(constants.BASE_URL + f'/posts/{post_id}')

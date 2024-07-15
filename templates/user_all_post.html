@@ -43,7 +43,7 @@
               {% for data in result %}
               {% if data.status == 'published' %}
               <tr style="max-height: 100px; overflow-y: auto;">
-                <td class="py-1"><a href="{{ url_for('get_post_by_username_and_slug', username=data.author_name, post_date=data.created_at.split('T')[0], post_slug=data.slug) }}"> {{ data.title }}</a></td>
+                <td class="py-1"><a href="{{ url_for('get_post_by_id', post_id=data.id) }}"> {{ data.title }}</a></td>
                 <td class="py-1 text-truncate">{{ data.author_name }}</td>
                 <td class="py-1 text-truncate">{{ data.category.category }}</td>
                 <td class="py-1 text-truncate">    {% for tag in data.tags %}
@@ -98,7 +98,7 @@
               {% for data in result %}
               {% if data.status == 'draft' %}
               <tr style="max-height: 100px; overflow-y: auto;">
-                <td class="py-1"><a href="{{ url_for('get_post_by_username_and_slug', username=data.author_name, post_date=data.created_at.split('T')[0], post_slug=data.slug) }}"> {{ data.title }}</a></td>
+                <td class="py-1"><a href="{{ url_for('get_post_by_id', post_id=data.id) }}"> {{ data.title }}</a></td>
                 <td class="py-1 text-truncate">{{ data.author_name }}</td>
                 <td class="py-1 text-truncate ">{{ data.category.category }}</td>
                                 <td class="py-1 text-truncate">    {% for tag in data.tags %}
