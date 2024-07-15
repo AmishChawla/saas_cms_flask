@@ -82,7 +82,6 @@
     <div class="p-3">
         <div style="display: flex; justify-content: space-between; align-items: center;">
     <h6><strong>Publish Post</strong></h6>
-    <a href="#" data-widget="control-sidebar"><i class="bi bi-arrow-right-short" style="font-size: 1.5rem; color: black;"></i></a>
 </div>
         <div class="form-group">
             {{ form.category.label }}
@@ -142,14 +141,9 @@
 <!--            {{ form.content.label }}-->
             {{ form.content(class="form-control", id="content") }}
         </div>
-        <div class="d-grid gap-2 col-6 mx-auto justify-content-center align-items-center">
-    <button class="btn btn-primary w-100 mb-3" data-widget="control-sidebar" href="#" type="button">Next</button>
 </div>
-
-        <div class="col-6 mx-auto">
-
-        </div>
     </form>
+
 </div>
 
 {% block scripts %}
@@ -157,8 +151,9 @@
 
 <script>
     $(document).ready(function() {
+    $('.control-sidebar').ControlSidebar('show');
   $('#content').summernote({
-  height: 300,                 // set editor height
+  height: 400,                 // set editor height
   minHeight: null,             // set minimum height of editor
   maxHeight: null,             // set maximum height of editor
   focus: true                  // set focus to editable area after initializing summernote
