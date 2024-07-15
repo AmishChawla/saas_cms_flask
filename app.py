@@ -1969,6 +1969,34 @@ def get_post_by_username_and_slug(username, post_date, post_slug):
 
     return render_template('post.html', comment_like_result=comment_like_result, result=result, title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags, post_id=id, post_date=post_date, post_slug=post_slug)
 
+
+@app.route('/post/<post_id>', methods=['GET', 'POST'])
+def get_post_by_id(post_id):
+    response = api_calls.get_post(post_id=post_id)
+    id = response["id"]
+    title = response["title"]
+    category_name = response["category_name"]
+    content = response["content"]
+    author_name = response["author_name"]
+    created_at = response["created_at"]
+    date_obj = datetime.strptime(created_at, '%Y-%m-%dT%H:%M:%S.%f%z')
+    formatted_date = date_obj.strftime('%d %B %Y')
+    tags =response["tags"]
+    post_slug = response["slug"]
+    post_date = date_obj.strftime('%Y-%m-%d')
+
+
+    result = api_calls.get_a_post_all_comments(post_id=id)
+    if result is None:
+        result = []  # Set result to an empty list
+
+    comment_like_result = api_calls.get_like_of_a_comment(post_id=id)
+    if comment_like_result is None:
+        comment_like_result = []
+    print(comment_like_result)
+
+    return render_template('post.html', comment_like_result=comment_like_result, result=result, title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags, post_id=id, post_date=post_date, post_slug=post_slug)
+
 ################################################ CHATBOT #########################################################
 
 @app.route('/chatbot')
