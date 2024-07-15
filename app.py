@@ -1956,6 +1956,7 @@ def get_post_by_username_and_slug(username, post_date, post_slug):
     id = response["id"]
     title = response["title"]
     category_name = response["category_name"]
+    category_id = response["category_id"]
     content = response["content"]
     author_name = response["author_name"]
     created_at = response["created_at"]
@@ -1973,7 +1974,7 @@ def get_post_by_username_and_slug(username, post_date, post_slug):
         comment_like_result = []
     print(comment_like_result)
 
-    return render_template('post.html', comment_like_result=comment_like_result, result=result, title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags, post_id=id, post_date=post_date, post_slug=post_slug)
+    return render_template('post.html', comment_like_result=comment_like_result, result=result, title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags, post_id=id, post_date=post_date, post_slug=post_slug, category_id=category_id)
 
 
 @app.route('/post/<post_id>', methods=['GET', 'POST'])
@@ -2185,6 +2186,16 @@ def user_feedbacks():
 
     return render_template('user_feedbacks.html', result=feedbacks)
 
+@app.route("/<username>/posts/category/<category>/<category_id>", methods=['GET', 'POST'])
+def posts_by_category(username, category, category_id):
+    posts= api_calls.get_post_by_category_id(author_name=username, category_id=category_id)
+    return render_template('post_by_filter.html', result=posts, filter_by=category)
+
+
+@app.route("/<username>/posts/tag/<tag>/<tag_id>", methods=['GET', 'POST'])
+def posts_by_tag(username, tag, tag_id):
+    posts= api_calls.get_post_by_tags(username=username, tag_id=tag_id)
+    return render_template('post_by_filter.html', result=posts, filter_by=tag)
 
 if __name__ == '__main__':
     app.run()

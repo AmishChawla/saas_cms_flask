@@ -4,7 +4,7 @@
     {% extends 'base.html' %}
 {% endif %}
 
-{% block title %}{{ author_name }}{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
 <!-- Page Header -->
@@ -18,7 +18,7 @@
                         <span style="display:flex;" class="meta">
                             <a href="#!" style="color: black; font-size: 0.9rem; margin-right: 0.5rem;">{{ author_name }}</a>
                             <div style="color: black; font-size: 0.9rem; margin-right: 0.5rem;">{{ created_at }}</div>
-                            <div style="color: black; font-size: 0.9rem; margin-right: 0.5rem;">{{ category }}</div>
+                            <div style="color: black; font-size: 0.9rem; margin-right: 0.5rem;"><a href="{{ url_for('posts_by_category', username=author_name, category_id=category_id, category=category ) }}">{{ category }}</a></div>
                         </span>
                     </div>
                 </div>
@@ -37,7 +37,7 @@
                     <div style="display:flex;" class="meta">
                         {% for tag in tags %}
                             <div style="color: #1d4196; font-size: 0.9rem; margin-right: 0.5rem;">
-                                <a href="#">#{{ tag.tag }}</a>
+                                <a href="{{ url_for('posts_by_tag', username=author_name, tag_id=tag.id, tag=tag.tag ) }}">#{{ tag.tag }}</a>
                             </div>
                         {% endfor %}
                     </div>
