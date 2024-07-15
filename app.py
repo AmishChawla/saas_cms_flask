@@ -2158,5 +2158,23 @@ def unsubscribe_newsletter(username):
     return render_template('widgets/unsubscribe_modal.html', form=form, username=username)
 
 
+@app.route("/<username>/pages/contact-form", methods=['GET', 'POST'])
+def user_contact_form(username):
+    if request.method == 'POST':
+        fname = request.form.get('firstName')
+        lname = request.form.get('lastName')
+        email = request.form.get('email')
+        message = request.form.get('message')
+        try:
+            message_sent = api_calls.user_contact_form(username=username, firstname=fname, lastname=lname, email=email,message=message)
+        except Exception as e:
+            print(e)
+        return redirect(url_for('user_post_list', username=username))
+
+
+
+
+
+
 if __name__ == '__main__':
     app.run()

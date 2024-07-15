@@ -1767,3 +1767,30 @@ def get_like_of_a_comment(post_id):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
+
+def user_contact_form(username, firstname, lastname, email, message):
+    print("api trying")
+    data = {
+        "username": username,
+        "firstname": firstname,
+        "lastname": lastname,
+        "email": email,
+        "message": message
+    }
+
+    try:
+        response = requests.post(constants.BASE_URL + '/user-contact-form', json=data)
+        print(response.text)
+        if response.status_code == 200:
+
+            return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
