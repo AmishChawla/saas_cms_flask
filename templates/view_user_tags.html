@@ -22,6 +22,7 @@
             <thead>
               <tr>
                 <th>Tag</th>
+                <th>Posts</th>
                 <th>Created Date</th>
                 <th>Action</th>
               </tr>
@@ -29,19 +30,20 @@
             <tbody>
               {% for data in result %}
               <tr style="max-height: 100px; overflow-y: auto;">
-                <td class="py-1"><a href="#">{{ data.tag }}</a></td>
-                <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
+                <td class="py-1"><a href="#">{{ data.Tag.tag }}</a></td>
+                <td class="py-1">{{ data.post_count }}</td>
+                <td class="py-1">{{ data.Tag.created_at.split('T')[0] }} {{ data.Tag.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 
-                  <a class="button button1" href="{{ url_for('edit_tag', tag_id=data.id) }}" style="margin-right: 1rem;"><i class="bi bi-pen" style="color:#0b4647; font-size: 1.5rem"></i></a>
-                  <a class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}"><i class="bi bi-trash3-fill " style="color:#6b1313; font-size: 1.5rem"></i></a>
+                  <a class="button button1" href="{{ url_for('edit_tag', tag_id=data.Tag.id) }}" style="margin-right: 1rem;"><i class="bi bi-pen" style="color:#0b4647; font-size: 1.5rem"></i></a>
+                  <a class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.Tag.id }}"><i class="bi bi-trash3-fill " style="color:#6b1313; font-size: 1.5rem"></i></a>
 
                   <!-- Modal for delete button -->
-                  <div class="modal fade" id="deleteModal_{{ data.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel_{{ data.id }}" aria-hidden="true">
+                  <div class="modal fade" id="deleteModal_{{ data.Tag.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel_{{ data.Tag.id }}" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h1 class="modal-title fs-5" id="deleteModalLabel_{{ data.id }}">Delete Tag</h1>
+                          <h1 class="modal-title fs-5" id="deleteModalLabel_{{ data.Tag.id }}">Delete Tag</h1>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -49,7 +51,7 @@
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                          <a type="button" class="btn btn-danger" href="{{ url_for('delete_tag', tag_id=data.id) }}">Delete</a>
+                          <a type="button" class="btn btn-danger" href="{{ url_for('delete_tag', tag_id=data.Tag.id) }}">Delete</a>
                         </div>
                       </div>
                     </div>

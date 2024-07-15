@@ -11,6 +11,8 @@
           <div style="display:flex; justify-content:space-between;">
             <h2 class="m-0">My Posts</h2>
             <div style="display: flex; justify-content: space-between;">
+              <a href="{{ url_for('user_post_list', username=current_user.username) }}" class="d-block" style="margin-right:0.5rem; margin-top:6px; font-weight:bolder; font-size:1.1rem;">Visit Site</a>
+
               <a class="btn btn-info" href="{{ url_for('add_post')}}" style="padding: 6px 30px 6px 30px;">
                 <span class="menu-title">Write new Post</span>
               </a>
@@ -41,7 +43,7 @@
               {% for data in result %}
               {% if data.status == 'published' %}
               <tr style="max-height: 100px; overflow-y: auto;">
-                <td class="py-1"><a href="{{ url_for('get_post_by_username_and_slug', username=data.author_name, post_date=data.created_at.split('T')[0], post_slug=data.slug) }}"> {{ data.title }}</a></td>
+                <td class="py-1"><a href="{{ url_for('get_post_by_id', post_id=data.id) }}"> {{ data.title }}</a></td>
                 <td class="py-1 text-truncate">{{ data.author_name }}</td>
                 <td class="py-1 text-truncate">{{ data.category.category }}</td>
                 <td class="py-1 text-truncate">    {% for tag in data.tags %}
@@ -96,7 +98,7 @@
               {% for data in result %}
               {% if data.status == 'draft' %}
               <tr style="max-height: 100px; overflow-y: auto;">
-                <td class="py-1"><a href="{{ url_for('get_post_by_username_and_slug', username=data.author_name, post_date=data.created_at.split('T')[0], post_slug=data.slug) }}"> {{ data.title }}</a></td>
+                <td class="py-1"><a href="{{ url_for('get_post_by_id', post_id=data.id) }}"> {{ data.title }}</a></td>
                 <td class="py-1 text-truncate">{{ data.author_name }}</td>
                 <td class="py-1 text-truncate ">{{ data.category.category }}</td>
                                 <td class="py-1 text-truncate">    {% for tag in data.tags %}
