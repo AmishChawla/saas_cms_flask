@@ -35,6 +35,7 @@
                 <th>Author</th>
                 <th>Category</th>
                 <th>Tags</th>
+                <th>Views</th>
                 <th>Created Date</th>
                 <th>Action</th>
               </tr>
@@ -50,6 +51,7 @@
                                         {{ tag.tag }}
                                         {% endfor %}
                 </td>
+                <td class="py-1 text-truncate">{{ data.post_views }}</td>
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 
