@@ -955,6 +955,7 @@ def user_delete_post(post_id):
         return redirect(url_for('user_all_post'))
 
 
+
 # @app.route('/posts/add-post', methods=['GET', 'POST'])
 # def add_post():
 #     form = forms.AddPost()
