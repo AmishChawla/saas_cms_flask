@@ -1837,6 +1837,15 @@ def comment(post_id, username, post_date, post_slug):
     return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
 
 
+@app.route("/user/delete-comment/<comment_id>", methods=['GET', 'POST'])
+@login_required
+def delete_comment(comment_id):
+    result = api_calls.delete_comment(comment_id=comment_id, access_token=current_user.id)
+    print(result.status_code)
+    if result.status_code == 200:
+        return redirect(url_for('get_all_comment'))
+
+
 @app.route('/posts/all-comment', methods=['GET', 'POST'])
 @login_required
 def get_all_comment():

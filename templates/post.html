@@ -76,7 +76,7 @@
     <div style="margin-left: 10%;">
     <br>
     {% if result %}
-        {% for comment in result | sort(attribute='created_at') %}
+        {% for comment in result | sort(attribute='created_at') | reverse %}
             {% if comment.active == true and not comment.reply_id %}
                 <!-- Display top-level comment -->
                 <div style="display: flex;">
@@ -119,7 +119,7 @@
 
                 <!-- Function to recursively display replies -->
                 {% macro render_replies(parent_id) %}
-                    {% for reply in result | sort(attribute='created_at') %}
+                    {% for reply in result | sort(attribute='created_at') | reverse %}
                         {% if reply.active == true and reply.reply_id == parent_id %}
                             <!-- Display reply -->
                             <div style="display: flex; margin-left: {{ '50px' if parent_id else '85px' }};">
