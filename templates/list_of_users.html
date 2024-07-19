@@ -4,10 +4,6 @@
 
 {% block content %}
 
-
-
-
-
             <div class="row">
 
 
@@ -24,12 +20,10 @@
                           </div>
                       <br>
                       <br>
-                <table id="userTable" class="display nowrap table hover">
+                <table id="userTable" class="hover">
             <thead>
                 <tr>
                     <th><input type="checkbox" id="selectAllCheckbox"></th>
-                    <th>Sr. No.</th>
-                    <th>User ID</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Role</th>
@@ -45,10 +39,6 @@
             <tr>
 <!--              <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}">-->
                 <td><input type="checkbox" class="select-checkbox"></td>
-                <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ loop.index }}</td>
-                <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
-                    U_{{ row.id }}
-                </td>
                  <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}"> {{ row.username }} </a></td>
 
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
@@ -69,8 +59,8 @@
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">{{ row.created_datetime.split('T')[0] }}&nbsp; &nbsp;{{ row.created_datetime.split('T')[1][:8] }} </td>
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> {{ row.status }} </td>
                 <td>
-    <a class="button button1" href="{{ url_for('admin_edit_user_profile', user_id=row.id) }}">Edit</a>
-    <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ row.id }}">Delete</button>
+    <a href="{{ url_for('admin_edit_user_profile', user_id=row.id) }}" style="margin-right: 1rem;"><i class="bi bi-pen" style="color:#0b4647; font-size: 1.5rem"></i></a>
+    <a data-bs-toggle="modal" data-bs-target="#deleteModal_{{ row.id }}"><i class="bi bi-trash3-fill " style="color:#6b1313; font-size: 1.5rem"></i></a>
 
     <!-- Modal for delete button -->
     <div class="modal fade" id="deleteModal_{{ row.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel_{{ row.id }}" aria-hidden="true">
