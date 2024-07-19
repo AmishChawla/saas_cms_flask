@@ -227,6 +227,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <p>Feedback</p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="{{ url_for('email_settings') }}" class="nav-link {% if request.endpoint == 'email_settings' %} active {% endif %}">
+                  <i class="far bi bi-envelope nav-icon"></i>
+                  <p>Mail Setup</p>
+                </a>
+              </li>
             </ul>
           </li>
           <li class="nav-item">

@@ -342,6 +342,7 @@ def admin_login():
     print(form.validate_on_submit())
 
     if form.validate_on_submit():
+
         email = form.email.data
         password = form.password.data
         response = api_calls.admin_login(email, password)
@@ -356,12 +357,13 @@ def admin_login():
         #     company = data.get('company')
 
         if (response.status_code == 200):
+            id = response.json().get('id')
             token = response.json().get('access_token')
             role = response.json().get('role')
             username = response.json().get('username')
             email = response.json().get('email')
             profile_picture = f"{ROOT_URL}/{response.json()['profile_picture']}"
-            user = User(user_id=token, role=role, username=username, email=email, services=[], company={},
+            user = User(id=id, user_id=token, role=role, username=username, email=email, services=[], company={},
                         profile_picture=profile_picture)
             login_user(user)
 

@@ -19,11 +19,9 @@
                           </div>
                                 <br>
                                 <br>
-                                <table id="serviceTable" class="display" style="width:100%; ">
+                                <table id="serviceTable" class="hover" style="width:100%; ">
                                     <thead>
                                         <tr>
-                                            <th> Sr. No. </th>
-                                            <th> Company ID. </th>
                                             <th> Company </th>
                                             <th> Location </th>
                                             <th> Created Date </th>
@@ -34,14 +32,12 @@
                                     <tbody>
                                         {% for data in result %}
                                             <tr style="max-height: 100px; overflow-y: auto;" onclick="window.location.href='{{ url_for('company_details', company_id=data.id) }}'">
-                                                <td class="py-1">{{ loop.index }}</td>
-                                                <td class="py-1">{{ data.id }}</td>
                                                 <td class="py-1"> <a href="#"> {{ data.name }} </a> </td>
                                                 <td class="py-1">{{ data.location }}</td>
                                                 <td class="py-1">{{ data.created_at.split('T')[0] }}&nbsp; &nbsp;{{ data.created_at.split('T')[1][:8] }}</td>
                                                 <td style="display: flex">
-    <a class="button button1" href="{{ url_for('admin_edit_company', company_id=data.id) }} ">Edit</a>
-    <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}">Delete</button>
+    <a style="margin-right: 1rem;" href="{{ url_for('admin_edit_company', company_id=data.id) }} "><i class="bi bi-pen" style="color:#0b4647; font-size: 1.5rem"></i></a>
+    <a data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}"><i class="bi bi-trash3-fill " style="color:#6b1313; font-size: 1.5rem"></i></a>
 
     <!-- Modal for delete button -->
     <div class="modal fade" id="deleteModal_{{ data.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel_{{ data.service_id }}" aria-hidden="true">

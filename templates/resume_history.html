@@ -6,7 +6,7 @@
 
 <link href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css", rel="stylesheet">
     <div class="main-panel">
-        <div class="content-wrapper" style = "background-color:#ffffff">
+
 
             <div class="page-header"></div>
             {% if result %}
@@ -15,10 +15,9 @@
                         <div class="card" style="overflow-x:auto;">
                             <div class="card-body" style="padding: 2rem;">
                                 <h4 class="card-title">Resume History</h4>
-                                <table id="userHistoryTable" class="hover table " style="width:100%; ">
+                                <table id="userHistoryTable" class="hover" style="width:100%; ">
                                     <thead>
                                         <tr>
-                                            <th> Sr. No. </th>
                                             <th> Upload Date </th>
 
                                             <th> CSV File </th>
@@ -28,7 +27,6 @@
                                     <tbody>
                                         {% for data in result|reverse %}
                                             <tr style="max-height: 100px; overflow-y: auto; ">
-                                                <td class="py-1">{{ loop.index }}</td>
                                                 <td class="py-1">{{ data.upload_datetime.split('T')[0] }} {{ data.upload_datetime.split('T')[1][:8]  }}</td>
 
                                                 <td><a href="data:application/csv;charset=utf-8,{{ data.csv_file }}" download="data.csv">Download CSV</a></td>
@@ -49,7 +47,6 @@
                     <p>No history</p>
                 </div>
             {% endif %}
-        </div>
     </div>
 <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>

@@ -16,28 +16,24 @@
                           </div>
                                 <br>
                                 <br>
-                                <table id="subscriptionTable" class="display" style="width:100%; ">
+                                <table id="subscriptionTable" class="hover" style="width:100%; ">
                                     <thead>
                                         <tr>
-                                            <th> Sr. No. </th>
                                             <th> User </th>
                                             <th> Plan </th>
                                             <th> Price </th>
                                             <th> Status </th>
                                             <th> Date of Purchase </th>
-
-
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for data in purchase_data | reverse %}
                                             <tr>
-                                                <td class="py-1">{{ loop.index }}</td>
                                                 <td class="py-1">{{ data.user.username }}</td>
                                                 <td class="py-1">{{ data.plan.plan_type_name }}</td>
                                                 <td class="py-1">{{ data.plan.fees }}</td>
                                                 <td class="py-1">{{ data.status }}</td>
-                                                <td class="py-1">{{ data.created_at.split('T')[0] }}&nbsp; &nbsp;{{ data.created_at.split('T')[1][:8] }}</td>
+                                                <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
@@ -60,9 +56,9 @@
     $(document).ready(function() {
         var table = $('#subscriptionTable').DataTable({
             "columnDefs": [
-                { "type": "date-eu", targets: [5] } // specify the column containing date-time data
+                { "type": "date-eu", targets: [4] } // specify the column containing date-time data
             ],
-            "order": [[5, 'desc']] // sorting by the 6th column (date of purchase) in descending order
+            "order": [[4, 'desc']] // sorting by the 6th column (date of purchase) in descending order
         });
     });
 </script>
