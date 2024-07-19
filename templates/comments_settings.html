@@ -1,0 +1,134 @@
+{% if current_user.role == "admin" %}
+  {% extends "admin_base.html" %}
+{% else %}
+  {% extends "base.html" %}
+{% endif %}
+
+{% block title %}Discussion Settings{% endblock %}
+
+{% block content %}
+<style>
+  /* Overall container */
+  .settings-container {
+    margin: 50px auto; /* Center horizontally with margin */
+    padding: 20px;
+  }
+
+  /* Headings */
+  h1, h2 {
+    font-family: Arial, sans-serif; /* Adjust font family as needed */
+    margin-bottom: 10px;
+    margin-left: 20px;
+  }
+
+  h1 {
+    font-size: 24px; /* Adjust font size */
+    margin-top: 20px;
+  }
+
+  h2 {
+    font-size: 18px; /* Adjust font size */
+    font-weight: bold; /* Bold headings */
+  }
+
+  .setting-group {
+    margin-left: 20px;
+    margin-bottom: 15px; /* Spacing between groups */
+  }
+
+  input[type="checkbox"] {
+    margin-left: 20px; /* Spacing between checkbox and label */
+  }
+
+  label {
+    display: inline-block; /* Labels on the same line as checkboxes */
+  }
+
+  /* Button */
+  button {
+    margin-left: 20px;
+    margin-top: 20px; /* Spacing after form elements */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50; /* Green button */
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #3e8e41; /* Darker green on hover */
+  }
+</style>
+
+<h1>Discussion Settings</h1>
+
+<form method="POST" action="{{ url_for('comment_setting') }}">
+  <h2>Default post settings</h2>
+  <div class="setting-group">
+    <input type="checkbox" id="notify-linked-blogs" name="notify_linked_blogs" {% if result.notify_linked_blogs %}checked{% endif %}>
+    <label for="notify-linked-blogs">Attempt to notify any blogs linked to from the post</label>
+  </div>
+  <div class="setting-group">
+    <input type="checkbox" id="allow-trackbacks" name="allow_trackbacks" {% if result.allow_trackbacks %}checked{% endif %}>
+    <label for="allow-trackbacks">Allow link notifications from other blogs (pingbacks and trackbacks) on new posts</label>
+  </div>
+  <div class="setting-group">
+    <input type="checkbox" id="allow-comments" name="allow_comments" {% if result.allow_comments %}checked{% endif %}>
+    <label for="allow-comments">Allow people to submit comments on new posts</label>
+  </div>
+
+  <h2>Other comment settings</h2>
+  <div class="setting-group">
+    <input type="checkbox" id="comment-author-info" name="comment_author_info" {% if result.comment_author_info %}checked{% endif %}>
+    <label for="comment-author-info">Comment author must fill out name and email</label>
+  </div>
+  <div class="setting-group">
+    <input type="checkbox" id="registered-users-comment" name="registered_users_comment" {% if result.registered_users_comment %}checked{% endif %}>
+    <label for="registered-users-comment">Users must be registered and logged in to comment</label>
+  </div>
+   <div class="setting-group">
+  <input type="checkbox" id="auto-close-comments" {% if result.auto_close_comments %}checked{% endif %}>
+  <label for="auto-close-comments">Automatically close comments on posts older than</label>
+  <input type="number" id="auto-close-comments-number" name="auto_close_comments"
+    {% if result.auto_close_comments %}value="{{ result.auto_close_comments }}"{% else %}value="14"{% endif %}
+    min="1" style="width: 60px; margin-left: 5px;">
+  <label for="auto-close-comments">days</label>
+</div>
+
+  <div class="setting-group">
+    <input type="checkbox" id="show-comment-cookies" name="show_comment_cookies" {% if result.show_comment_cookies %}checked{% endif %}>
+    <label for="show-comment-cookies">Show comments cookies opt-in checkbox, allowing comment author cookies to be set</label>
+  </div>
+  <div class="setting-group">
+    <input type="checkbox" id="enable-threaded-comments" name="enable_threaded_comments" {% if result.enable_threaded_comments %}checked{% endif %}>
+    <label for="enable-threaded-comments">Enable threaded (nested) comments 5 levels deep</label>
+  </div>
+  <h2>Email me whenever</h2>
+  <div class="setting-group">
+    <input type="checkbox" id="email-new-comment" name="email_new_comment" {% if result.email_new_comment %}checked{% endif %}>
+    <label for="email-new-comment">Anyone posts a comment</label>
+  </div>
+  <div class="setting-group">
+    <input type="checkbox" id="email-held-moderation" name="email_held_moderation" {% if result.email_held_moderation %}checked{% endif %}>
+    <label for="email-held-moderation">A comment is held for moderation</label>
+  </div>
+  <div class="setting-group">
+    <input type="checkbox" id="email-new-subscription" name="email_new_subscription" {% if result.email_new_subscription %}checked{% endif %}>
+    <label for="email-new-subscription">Someone subscribes to my blog</label>
+  </div>
+
+  <h2>Before a comment appears</h2>
+  <div class="setting-group">
+    <input type="radio" id="comment-approval-manual" name="comment_approval" value="manual" {% if result.comment_approval == 'manual' %}checked{% endif %}>
+    <label for="comment-approval-manual">Manually approve each comment</label>
+  </div>
+  <div class="setting-group">
+    <input type="radio" id="comment-approval-hold" name="comment_approval" value="hold" {% if result.comment_approval == 'hold' %}checked{% endif %}>
+    <label for="comment-approval-hold">Hold all comments for moderation, then approve</label>
+  </div>
+  <button type="submit">Save Settings</button>
+</form>
+
+{% endblock %}
