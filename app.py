@@ -1895,6 +1895,57 @@ def deactivate_comment(comment_id):
         return redirect(url_for('get_all_comment'))
 
 
+@app.route('/settings/comments', methods=['GET', 'POST'])
+@login_required
+def comment_setting():
+    print("comment setting")
+    if request.method == 'POST':
+        # Extract form data
+        def get_bool_value(value):
+            return value == 'on'
+        print("chal rah hai")
+        def get_int_value(value, default):
+            try:
+                return int(value)
+            except (ValueError, TypeError):
+                return default
+
+        settings = {
+            'notify_linked_blogs': get_bool_value(request.form.get('notify_linked_blogs')),
+            'allow_trackbacks': get_bool_value(request.form.get('allow_trackbacks')),
+            'allow_comments': get_bool_value(request.form.get('allow_comments')),
+            'comment_author_info': get_bool_value(request.form.get('comment_author_info')),
+            'registered_users_comment': get_bool_value(request.form.get('registered_users_comment')),
+            'auto_close_comments': get_int_value(request.form.get('auto_close_comments'), 14),
+            'show_comment_cookies': get_bool_value(request.form.get('show_comment_cookies')),
+            'enable_threaded_comments': get_bool_value(request.form.get('enable_threaded_comments')),
+            'email_new_comment': get_bool_value(request.form.get('email_new_comment')),
+            'email_held_moderation': get_bool_value(request.form.get('email_held_moderation')),
+            'email_new_subscription': get_bool_value(request.form.get('email_new_subscription')),
+            'comment_approval': request.form.get('comment_approval')
+        }
+
+        try:
+            # Call an API endpoint to save the settings
+            response = api_calls.save_comment_settings(
+                access_token=current_user.id,
+                settings=settings
+            )
+
+            if response.status_code == 200:
+                flash('Settings saved successfully', category='success')
+            else:
+                flash('An error occurred while saving settings. Please try again.', category='error')
+        except Exception as e:
+            flash(f'An exception occurred: {str(e)}', category='error')
+
+    result = api_calls.get_comments_settings(
+        access_token=current_user.id
+    )
+
+    return render_template('comments_settings.html', result=result)
+
+
 
 @app.route('/comments/like/<int:post_id>/<int:comment_id>/<username>/<post_date>/<post_slug>')
 @login_required
@@ -1977,6 +2028,8 @@ def get_post(post_title):
     result = api_calls.get_a_post_all_comments(post_id=post_id)
     if result is None:
         result = []  # Set result to an empty list
+
+
 
     return render_template('post.html', title=post_title, content=content, author_name=author_name,
                            created_at=formatted_date, category=category_name, tags=tags, result=result, post_id=post_id)

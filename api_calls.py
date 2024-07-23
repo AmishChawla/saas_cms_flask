@@ -1819,6 +1819,61 @@ def deactivate_comments(comment_id):
         print(f"An unexpected error occurred: {err}")
 
 
+def save_comment_settings(settings, access_token):
+    print("save comment")
+    print(settings)
+    headers = {'Authorization': f'Bearer {access_token}'}
+    params = {
+        "notify_linked_blogs": settings.get('notify_linked_blogs', False),
+        "allow_trackbacks": settings.get('allow_trackbacks', False),
+        "allow_comments": settings.get('allow_comments', False),
+        "comment_author_info": settings.get('comment_author_info', False),
+        "registered_users_comment": settings.get('registered_users_comment', False),
+        "auto_close_comments": settings.get('auto_close_comments', 14),
+        "show_comment_cookies": settings.get('show_comment_cookies', False),
+        "enable_threaded_comments": settings.get('enable_threaded_comments', False),
+        "email_new_comment": settings.get('email_new_comment', False),
+        "email_held_moderation": settings.get('email_held_moderation', False),
+        "email_new_subscription": settings.get('email_new_subscription', False),
+        "comment_approval": settings.get('comment_approval', 'manual')
+    }
+
+    try:
+        response = requests.post(constants.BASE_URL + '/settings/update_comment_settings', json=params, headers=headers)
+        print(response.text)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+
+def get_comments_settings(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.get(constants.BASE_URL + f'/settings/get_comment_settings', headers=headers)
+        print("Response Status Code:", response.status_code)  # Debug: Print status code
+        if response.status_code == 200:
+            result = response.json()
+            print("API Result:", result)  # Debug: Print API result
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
 def get_like_of_a_comment(post_id):
     print(post_id)
     try:
