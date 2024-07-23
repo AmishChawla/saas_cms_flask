@@ -1,6 +1,6 @@
 {% extends 'admin_base.html' %}
 
-{% block title %}List of users{% endblock %}
+{% block title %}Users{% endblock %}
 
 {% block content %}
 
@@ -27,6 +27,7 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Role</th>
+                    <th>Site</th>
                     <th>Company Name</th>
                     <th>Creation Time</th>
                     <th>Status</th>
@@ -46,6 +47,8 @@
                 </td>
 
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> {{ row.role }} </td>
+                <td><a href="{{ url_for('user_post_list', username=row.username) }}"> /{{row.username}}/posts </a></td>
+
                 <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
                     {% if row["company"] %}
                        <a href="{{ url_for('company_details', company_id=row['company'][0]['id']) }}"> {{ row["company"][0]["name"] }}

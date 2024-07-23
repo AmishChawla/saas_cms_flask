@@ -193,6 +193,7 @@ def register():
             if response is not None and response.status_code == 200:
                 data = response.json()
                 token = data.get('access_token')
+                id=data.get('id')
                 role = data.get('role')
                 username = data.get('username')
                 email = data.get('email')
@@ -200,7 +201,7 @@ def register():
                 company = data.get('company', {})
                 profile_picture = f"{ROOT_URL}/{data['profile_picture']}"
 
-                user = User(user_id=token, role=role, username=username, email=email, services=services,
+                user = User(id=id,user_id=token, role=role, username=username, email=email, services=services,
                             company=company,
                             profile_picture=profile_picture)
                 login_user(user)
@@ -329,6 +330,25 @@ def list_of_users():
         print("Failed response")
 
     return render_template('list_of_users.html', result=users)
+
+
+@app.route("/admin/sites")
+@login_required
+def list_of_sites():
+    ITEMS_PER_PAGE = 5
+    # Fetch all users
+
+    response = api_calls.get_all_users(
+        current_user.id,
+    )
+
+    if response.status_code == 200:
+        users = response.json()
+
+    else:
+        print("Failed response")
+
+    return render_template('list_of_sites.html', result=users)
 
 
 @app.route("/admin/login", methods=['GET', 'POST'])
@@ -2207,6 +2227,151 @@ def posts_by_category(username, category, category_id):
 def posts_by_tag(username, tag, tag_id):
     posts= api_calls.get_post_by_tags(username=username, tag_id=tag_id)
     return render_template('post_by_filter.html', result=posts, filter_by=tag)
+
+
+#################################################### PAGES ##################################################
+
+
+@app.route('/pages/add-page', methods=['GET', 'POST'])
+@login_required
+def add_page():
+    form = forms.AddPage()
+
+    if form.validate_on_submit():
+        if form.save_draft.data:
+            try:
+                result = api_calls.create_page(
+                    title=form.title.data,
+                    content=form.content.data,
+                    status='draft',
+                    access_token=current_user.id
+                )
+
+                if result:
+                    if current_user.role == 'user':
+                        return redirect(url_for('cms/pages/user_all_pages.html'))
+                    else:
+                        return redirect(url_for('all_post'))
+                else:
+                    flash("Failed to create post", "danger")
+            except Exception as e:
+                flash(f"Error creating post: {e}", "danger")
+        elif form.publish.data:
+            try:
+                print(form.errors)
+                result = api_calls.create_page(
+                    title=form.title.data,
+                    content=form.content.data,
+                    status='published',
+                    access_token=current_user.id
+                )
+
+                if result:
+                    if current_user.role == 'user':
+                        return redirect(url_for('cms/pages/user_all_pages.html'))
+                    else:
+                        return redirect(url_for('all_pages'))
+                else:
+                    flash("Failed to create page", "danger")
+            except Exception as e:
+                flash(f"Error creating page: {e}", "danger")
+    else: print(form.errors)
+
+    if current_user.role == 'user':
+        is_service_allowed = api_calls.is_service_access_allowed(current_user.id)
+        if is_service_allowed:
+            return render_template('cms/pages/add_page.html', form=form)
+        return redirect(url_for('user_view_plan'))
+    else:
+        return render_template('cms/pages/add_page.html', form=form)
+
+
+@app.route('/user/all-pages')
+@login_required
+def user_all_pages():
+    pages = api_calls.get_user_all_pages(access_token=current_user.id)
+    if pages is None:
+        pages = []  # Set result to an empty list
+
+    return render_template('cms/pages/user_all_pages.html', result=pages)
+
+
+@app.route('/user/page/<page_id>', methods=['GET', 'POST'])
+@login_required
+def get_page_by_id(page_id):
+    response = api_calls.get_page(page_id=page_id)
+    title = response["title"]
+    content = response["content"]
+
+    return render_template('cms/pages/page.html', title=title, content=content)
+
+
+@app.route('/user/pages/update-page/<page_id>', methods=['GET', 'POST'])
+@login_required
+def update_page(page_id):
+    form = forms.AddPage()
+    page = api_calls.get_page(page_id=page_id)
+
+
+    if form.validate_on_submit():
+
+        title = form.title.data
+        content = form.content.data
+
+        if form.publish.data:
+            try:
+                result = api_calls.update_page(
+                    page_id=page_id,
+                    title=title,
+                    content=content,
+                    status='published',
+                    access_token=current_user.id
+                )
+                if current_user.role == 'user':
+                    print("redirecting")
+                    return redirect(url_for('user_all_pages'))
+
+            except Exception as e:
+                print(f"Error updating post: {e}")
+        elif form.save_draft.data:
+            try:
+                result = api_calls.update_page(
+                    page_id=page_id,
+                    title=title,
+                    content=content,
+                    status='draft',
+                    access_token=current_user.id
+                )
+                if current_user.role == 'user':
+                    return redirect(url_for('user_all_pages'))
+            except Exception as e:
+                print(f"Error updating post: {e}")
+    form.title.data = page['title']
+    form.content.data = page['content']
+
+    return render_template('cms/pages/update_page.html', form=form, page=page)
+
+
+@app.route("/user/pages/delete-page/<page_id>", methods=['GET', 'POST'])
+@login_required
+def user_delete_page(page_id):
+    result = api_calls.delete_page(page_id=page_id, access_token=current_user.id)
+    if result.status_code == 200:
+        return redirect(url_for('user_all_pages'))
+
+
+@app.route('/<username>/pages/<page_slug>', methods=['GET', 'POST'])
+def get_page_by_username_and_slug(username, page_slug):
+    response = api_calls.get_page_by_username_slug(page_ownername=username, page_slug=page_slug)
+    id = response["id"]
+    title = response["title"]
+    content = response["content"]
+    author_name = response["author_name"]
+    created_at = response["created_at"]
+    date_obj = datetime.strptime(created_at, '%Y-%m-%dT%H:%M:%S.%f%z')
+    formatted_date = date_obj.strftime('%d %B %Y')
+
+    return render_template('cms/pages/page.html', title=title, content=content)
 
 if __name__ == '__main__':
     app.run()

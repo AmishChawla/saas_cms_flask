@@ -190,10 +190,15 @@ class AddPost(FlaskForm):
     save_draft = SubmitField('Save Draft')
     preview = SubmitField('Preview')
 
-    def validate_tags(self, tags):
-        tags_list = tags.data.split(',')
-        if len(tags_list) > 5:
-            raise ValidationError('A maximum of 5 tags are allowed.')
+
+class AddPage(FlaskForm):
+    title = StringField('title', validators=[DataRequired()])
+    content = TextAreaField('Content', validators=[DataRequired()],
+                            render_kw={'rows': 30, 'cols': 30, 'id': 'content',
+                                       'placeholder': 'Write details about the post.'})
+    publish = SubmitField('Publish')
+    save_draft = SubmitField('Save Draft')
+
 
 
 class AddCategory(FlaskForm):
