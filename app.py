@@ -1821,7 +1821,7 @@ def media():
     return render_template('media.html', form=form)
 
 
-@app.route('/user/all-medias')
+@app.route('/user/all-media')
 @login_required
 def user_all_medias():
     root_url = constants.ROOT_URL + '/'
