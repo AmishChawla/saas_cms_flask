@@ -28,7 +28,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   {% block styles %}
   {% endblock %}
 </head>
-<body class="hold-transition {% if current_user.is_authenticated %} sidebar-mini {% else %} layout-top-nav sidebar-collapse {% endif %} control-sidebar-push">
+<body class="hold-transition {% if current_user.is_authenticated %} sidebar-mini layout-fixed {% else %} layout-top-nav sidebar-collapse {% endif %} control-sidebar-push">
 <div class="wrapper">
 
   <!-- Navbar -->
@@ -196,6 +196,27 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <a href="{{ url_for('media') }}" class="nav-link {% if request.endpoint == 'media' %} active {% endif %}">
                   <i class="far fa fa-plus-square nav-icon"></i>
                   <p>Upload Media</p>
+                </a>
+              </li>
+            </ul>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="far bi bi-window-stack nav-icon"></i>
+                  <p>Pages</p>
+                  <i class="right fas fa-angle-left"></i>
+                </a>
+                <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ url_for('user_all_pages') }}" class="nav-link {% if request.endpoint == 'user_all_pages' %} active {% endif %}">
+                  <i class="far bi bi-window-dock nav-icon"></i>
+                  <p>My Pages</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ url_for('add_page') }}" class="nav-link {% if request.endpoint == 'add_page' %} active {% endif %}">
+                  <i class="far bi bi-window-plus nav-icon"></i>
+                  <p>Add Page</p>
                 </a>
               </li>
             </ul>

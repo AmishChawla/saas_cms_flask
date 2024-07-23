@@ -150,6 +150,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <p>Users</p>
                 </a>
               </li>
+            <li class="nav-item">
+                <a href="{{ url_for('list_of_sites') }}" class="nav-link {% if request.endpoint == 'list_of_sites' %} active {% endif %}">
+                  <i class="far bi bi-window-stack nav-icon"></i>
+                  <p>Sites</p>
+                </a>
+              </li>
               <li class="nav-item">
                 <a href="{{ url_for('list_of_companies') }}" class="nav-link {% if request.endpoint == 'list_of_companies' %} active {% endif %}">
                   <i class="far bi bi-building nav-icon"></i>
