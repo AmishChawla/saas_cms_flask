@@ -237,6 +237,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </ul>
               </li>
               <li class="nav-item">
+                <a href="{{ url_for('comment_setting') }}" class="nav-link {% if request.endpoint == 'comment_setting' %} active {% endif %}">
+                  <i class="far fa fa-cog nav-icon"></i>
+                  <p>Settings</p>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a href="{{ url_for('newsletter_subscribers') }}" class="nav-link {% if request.endpoint == 'newsletter_subscribers' %} active {% endif %}">
                   <i class="far fa-thin fa-newspaper nav-icon"></i>
                   <p>Newsletter</p>
