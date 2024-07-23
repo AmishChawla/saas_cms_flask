@@ -17,7 +17,6 @@
           <table id="usercommentsTable" class="display" style="width:100%;">
             <thead>
               <tr>
-                <th>Sr. No.</th>
                 <th>Author</th>
                 <th>Comment</th>
                 <th>Post</th>
@@ -28,7 +27,6 @@
             <tbody>
               {% for data in result | reverse %}
               <tr style="max-height: 100px; overflow-y: auto;">
-                <td class="py-1">{{ loop.index }}</td>
                 <td class="py-1">{{ data.user.username }}</td>
                 <td class="py-1">{{ data.comment }}</td>
                 <td class="py-1">

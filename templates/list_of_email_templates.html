@@ -22,7 +22,6 @@
                                 <table id="templateTable" class="display" style="width:100%; ">
                                     <thead>
                                         <tr>
-                                            <th> Sr. No. </th>
                                             <th> Template </th>
                                             <th> Subject </th>
                                             <th> Body </th>
@@ -33,7 +32,6 @@
                                     <tbody>
                                         {% for data in result %}
                                             <tr style="max-height: 100px; overflow-y: auto;" onclick="window.location.href='{{ url_for('send_mails', template_id=data.id) }}'">
-                                                <td class="py-1">{{ loop.index }}</td>
                                                 <td class="py-1"> <a href="{{ url_for('send_mails', template_id=data.id) }}"> {{ data.name }} </a> </td>
                                                 <td class="py-1">{{ data.subject }}</td>
                                                 <td class="py-1">{{ data.body }}</td>
