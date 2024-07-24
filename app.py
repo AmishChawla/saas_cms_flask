@@ -7,6 +7,7 @@ import csv
 import ast
 
 import stripe as stripe
+from flask import g
 from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file, jsonify
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from jinja2 import Environment, FileSystemLoader
@@ -25,17 +26,6 @@ login_manager.login_view = 'login'
 
 uploads_folder = 'uploads'
 media_folder = 'media'
-########################################################################################################################
-# def parse_csv(csv_data):
-#     csv_file = StringIO(csv_data)
-#     csv_reader = list(csv.reader(csv_file))
-#     headers = csv_reader[0]
-#     data_rows = csv_reader[1:]
-#     return headers, data_rows
-#
-# env = Environment(loader=FileSystemLoader('templates'))
-# env.filters['parse_csv'] = parse_csv
-#########################################################################################################################
 password_reset_token = ""
 
 ####################### GEMINI MODEL CONFIG #########################
@@ -45,18 +35,31 @@ model = genai.GenerativeModel('gemini-pro')
 
 @login_manager.user_loader
 def load_user(user_id):
-    response = api_calls.get_user_profile(access_token=user_id)
-    if response.status_code == 200:
-        user_data = response.json()
-        profile_picture = f"{ROOT_URL}/{user_data['profile_picture']}"
-
-        # Create a User object using the retrieved data
-        user = User(id=user_data['id'], user_id=user_id, role=user_data['role'], username=user_data['username'], email=user_data['email'],
-                    services=user_data['services'], company=user_data['company'], profile_picture=profile_picture)
-
+    user_from_session = session.get('user')
+    if user_from_session is not None:
+        # g[user] = user_from_session
+        user = User(id=user_from_session.get('id'),
+                    user_id=user_from_session.get('user_id'),
+                    role=user_from_session.get('role'),
+                    username=user_from_session.get('username'),
+                    email=user_from_session.get('email'),
+                    services=user_from_session.get('services'),
+                    company=user_from_session.get('company'),
+                    profile_picture=user_from_session.get('profile_picture'))
         return user
     else:
-        return None
+        response = api_calls.get_user_profile(access_token=user_id)
+        if response.status_code == 200:
+            user_data = response.json()
+            profile_picture = f"{ROOT_URL}/{user_data['profile_picture']}"
+
+            # Create a User object using the retrieved data
+            user = User(id=user_data['id'], user_id=user_id, role=user_data['role'], username=user_data['username'], email=user_data['email'],
+                        services=user_data['services'], company=user_data['company'], profile_picture=profile_picture)
+
+            return user
+        else:
+            return None
 
 
 class User(UserMixin):
@@ -161,6 +164,16 @@ def login():
             user = User(id=id, user_id=token, role=role, username=username, email=email, services=services, company=company,
                         profile_picture=profile_picture)
             login_user(user)
+            session['user'] = {
+                'id': id,
+                'user_id': token,
+                'role': role,
+                'username': username,
+                'email': email,
+                'services': services,
+                'company': company,
+                'profile_picture': profile_picture
+            }
             if current_user.company is not None:
                 return redirect(url_for('user_dashboard'))
             else:
@@ -205,6 +218,16 @@ def register():
                             company=company,
                             profile_picture=profile_picture)
                 login_user(user)
+                session['user'] = {
+                    'id': id,
+                    'user_id': token,
+                    'role': role,
+                    'username': username,
+                    'email': email,
+                    'services': services,
+                    'company': company,
+                    'profile_picture': profile_picture
+                }
             flash('Registration Successful', category='info')
             return redirect(url_for('user_view_plan'))
         elif response.status_code == 400:
@@ -250,6 +273,7 @@ def setting():
 @login_required
 def logout():
     logout_user()
+    session.clear()
     flash('Logout successful!', 'success')
     return redirect(url_for('login'))
 
@@ -386,9 +410,16 @@ def admin_login():
             user = User(id=id, user_id=token, role=role, username=username, email=email, services=[], company={},
                         profile_picture=profile_picture)
             login_user(user)
-
-            # user = User(user_id=token, role=role, username=username, email=email, services=services, company=company)
-            # login_user(user)
+            session['user'] = {
+                'id': id,
+                'user_id': token,
+                'role': role,
+                'username': username,
+                'email': email,
+                'services': [],
+                'company': {},
+                'profile_picture': profile_picture
+            }
 
             return redirect(url_for('admin_dashboard'))
         elif response.status_code == 400:
@@ -467,6 +498,7 @@ def admin_view_user_profile(user_id):
 @login_required
 def admin_logout():
     logout_user()
+    session.clear()
     flash('Logout successful!', 'success')
     return redirect(url_for('admin_login'))
 
@@ -2302,7 +2334,7 @@ def add_page():
 
                 if result:
                     if current_user.role == 'user':
-                        return redirect(url_for('cms/pages/user_all_pages.html'))
+                        return redirect(url_for('user_all_pages'))
                     else:
                         return redirect(url_for('all_post'))
                 else:
@@ -2321,7 +2353,7 @@ def add_page():
 
                 if result:
                     if current_user.role == 'user':
-                        return redirect(url_for('cms/pages/user_all_pages.html'))
+                        return redirect(url_for('user_all_pages'))
                     else:
                         return redirect(url_for('all_pages'))
                 else:
