@@ -1,0 +1,41 @@
+{% if current_user.role == "admin" %}
+    {% extends 'admin_base.html' %}
+{% else %}
+    {% extends 'base.html' %}
+{% endif %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="col-md-10 ml-0 mb-4 pt-3">
+    <header class="masthead">
+        <div class="container position-relative px-4 px-lg-5">
+            <div class=" justify-content-left">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <div class="post-heading">
+                        <h2 class="subheading">{{ title }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <hr>
+    <br>
+    <br>
+    <!-- Page Content -->
+    <article class="mb-4">
+        <div class="container">
+            <div class="row justify-content-center">
+                    {{ content | safe }}
+            </div>
+        </div>
+    </article>
+</div>
+
+<!-- Footer -->
+<!-- Bootstrap core JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS -->
+<script src="js/scripts.js"></script>
+{% endblock %}

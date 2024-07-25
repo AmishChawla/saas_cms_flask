@@ -1921,3 +1921,112 @@ def user_contact_form(username, firstname, lastname, email, message):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+
+############################ PAGES ######################################
+def create_page(title, content, status, access_token):
+    print('trying to create page')
+    headers = {'Authorization': f'Bearer {access_token}'}
+    data = {
+        "title": title,
+        "content": content,
+        "status": status
+    }
+    try:
+        response = requests.post(constants.BASE_URL + '/page/create-page', json=data, headers=headers)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def update_page(page_id, title, content, status, access_token):
+    print('API CALL: Update Page')
+    headers = {'Authorization': f'Bearer {access_token}'}
+    params = {
+          "title": title,
+          "content": content,
+          "status": status
+        }
+
+    try:
+        response = requests.put(constants.BASE_URL + f'/page/update-page/{page_id}', json=params, headers=headers)
+        print(response.status_code)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def get_page(page_id: int):
+    try:
+        response = requests.get(constants.BASE_URL + f'/page/{page_id}')
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+
+
+def get_page_by_username_slug(page_ownername, page_slug):
+    try:
+        response = requests.get(constants.BASE_URL + f'/page/{page_ownername}/{page_slug}')
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+
+
+def get_user_all_pages(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.get(constants.BASE_URL + f'/page/user-all-pages', headers=headers)
+        print("Response Status Code:", response.status_code)  # Debug: Print status code
+        if response.status_code == 200:
+            result = response.json()
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def delete_page(page_id, access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.delete(constants.BASE_URL + f'/page/delete-page/{page_id}', headers=headers)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+

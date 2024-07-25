@@ -9,12 +9,6 @@
           <div class="col-sm-6">
             <h1 class="m-0">Subscribers</h1>
           </div><!-- /.col -->
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Newsletter</a></li>
-              <li class="breadcrumb-item active">Subscribers</li>
-            </ol>
-          </div><!-- /.col -->
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
@@ -37,7 +31,6 @@
               <table id="allnewsletterSubscribersTable" class="hover" style="width:100%;">
                 <thead>
                   <tr>
-                    <th>Sr. No.</th>
                     <th>Username</th>
                     <th>Email</th>
                     <th>Subscribed on</th>
@@ -47,7 +40,6 @@
                   {% for data in result %}
                   {% if data.status == 'active' %}
                   <tr>
-                    <td>{{ loop.index }}</td>
                     <td>{{ data.subscriber_name }}</td>
                     <td>{{ data.subscriber_email }}</td>
                     <td>{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
@@ -61,7 +53,6 @@
               <table id="inactivenewsletterSubscribersTable" class="hover" style="width:100%;">
                 <thead>
                   <tr>
-                    <th>Sr. No.</th>
                     <th>Username</th>
                     <th>Email</th>
                     <th>Subscribed on</th>
@@ -71,7 +62,6 @@
                   {% for data in result %}
                   {% if data.status == 'inactive' %}
                   <tr>
-                    <td>{{ loop.index }}</td>
                     <td>{{ data.subscriber_name }}</td>
                     <td>{{ data.subscriber_email }}</td>
                     <td>{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
