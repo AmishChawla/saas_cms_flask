@@ -248,8 +248,14 @@ def user_dashboard():
     if response.status_code == 200:
         result = response.json()
         resume_data = result["resume_data"]
+    stats = api_calls.get_stats(access_token=current_user.id)
+    comment_count = stats["total_comments"]
+    post_count = stats["total_posts"]
+    subscriber_count = stats["total_newsletter_subscribers"]
+    feedback_count = stats["total_feedbacks"]
 
-    return render_template('dashboard.html', resume_data=resume_data)
+
+    return render_template('dashboard.html', resume_data=resume_data, comment_count=comment_count, post_count=post_count, subscriber_count=subscriber_count, feedback_count=feedback_count)
 
 
 @app.route("/admin-dashboard")
