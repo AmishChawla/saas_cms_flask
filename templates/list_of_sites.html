@@ -1,0 +1,65 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Users{% endblock %}
+
+{% block content %}
+<link href="https://cdn.datatables.net/2.0.0/css/dataTables.dataTables.css" rel="stylesheet">
+
+
+            <div class="row">
+
+
+              <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
+                <div class="card">
+                  <div class="card-body" style="overflow-x: auto;">
+                      <div style="display:flex; justify-content:space-between;">
+                    <h4 class="card-title">Sites</h4>
+                          </div>
+                      <br>
+                      <br>
+                <table id="sitesTable" class="hover">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAllCheckbox"></th>
+                    <th>Name</th>
+                    <th>Site</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+        {% for row in result|reverse %}
+
+            <tr>
+<!--              <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}">-->
+                <td><input type="checkbox" class="select-checkbox"></td>
+                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('user_post_list', username=row.username) }}')" style="text-transform: capitalize;">{{ row.username }}</td>
+
+
+                <td><a href="{{ url_for('user_post_list', username=row.username) }}"> /{{row.username}}/posts </a></td>
+
+                <td>
+    <a href="{{ url_for('user_post_list', username=row.username) }}"><i class="bi bi-box-arrow-right" style="color:#0b4647; font-size: 1.5rem"></i></a>
+
+    <!-- Modal for delete button --></td>
+
+<!--                </a>-->
+            </tr>
+
+        {% endfor %} <!-- Your table body content here -->
+            </tbody>
+
+        </table>
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+
+
+          <!-- content-wrapper ends -->
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script>new DataTable('#sitesTable');</script>
+{% endblock %}

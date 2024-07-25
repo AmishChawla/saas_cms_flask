@@ -23,7 +23,7 @@
                                 <table id="subscriptionTable" class="hover " style="width:100%; ">
                                     <thead>
                                         <tr>
-                                            <th> Sr. No. </th>
+
                                             <th> Plan </th>
                                             <th> Price </th>
                                             <th> Status </th>
@@ -35,7 +35,6 @@
                                     <tbody>
                                         {% for data in purchase_data | reverse %}
                                             <tr>
-                                                <td class="py-1">{{ loop.index }}</td>
                                                 <td class="py-1">{{ data.plan.plan_type_name }}</td>
                                                 <td class="py-1">{{ data.plan.fees }}</td>
                                                 <td class="py-1">{{ data.status }}</td>

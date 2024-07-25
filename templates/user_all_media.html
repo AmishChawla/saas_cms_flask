@@ -24,7 +24,7 @@
           <table id="userMediaTable" class="" style="width:100%;">
             <thead>
               <tr>
-                <th>Sr. No.</th>
+
                 <th>Media</th>
                 <th>Post</th>
                 <th>Created Date</th>
@@ -34,7 +34,7 @@
             <tbody>
               {% for data in result %}
               <tr style="max-height: 100px; overflow-y: auto; ">
-                <td class="py-1">{{ loop.index }}</td>
+
                    <td class="py-1">
                   <img src="{{ root_url + data.file_url }}" alt="Media Thumbnail" style="max-height: 6rem; width: auto; margin-top: 10px">
                 </td>
