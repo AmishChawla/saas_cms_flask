@@ -1,4 +1,4 @@
-from wtforms import MultipleFileField, StringField, SelectMultipleField, IntegerField, PasswordField, SubmitField, validators, SelectField, BooleanField, \
+from wtforms import MultipleFileField, StringField, SelectMultipleField, IntegerField, PasswordField, SubmitField, HiddenField, validators, SelectField, BooleanField, \
     TextAreaField
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
@@ -181,7 +181,7 @@ class AddPlan(FlaskForm):
 
 
 class AddPost(FlaskForm):
-    title = StringField('title', validators=[DataRequired()])
+    title = StringField('Title', validators=[DataRequired()])
     category = SelectField('Category', validators=[DataRequired()], choices=[('', 'Select a category')])
     subcategory = SelectField('Subcategory', validators=[DataRequired()], choices=[('', 'Select a subcategory')])
     content = TextAreaField('Content', validators=[DataRequired()], render_kw={'rows': 30, 'cols': 30, 'id': 'content', 'placeholder': 'Write details about the post.'})
@@ -194,7 +194,6 @@ class AddPost(FlaskForm):
         tags_list = tags.data.split(',')
         if len(tags_list) > 5:
             raise ValidationError('A maximum of 5 tags are allowed.')
-
 
 class AddCategory(FlaskForm):
     category = StringField('Category title', validators=[validators.DataRequired()])
