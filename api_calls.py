@@ -936,6 +936,7 @@ def admin_delete_post(post_id, access_token):
 
 def create_post(title, content, category_id, subcategory_id, tags, status, access_token):
     print('trying to create post')
+    print("2")
     headers = {'Authorization': f'Bearer {access_token}'}
     params = {
         "title": title,

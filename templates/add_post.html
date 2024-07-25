@@ -83,41 +83,26 @@
             <div class="form-group">
                 {{ form.publish(class="btn btn-primary w-100 mb-3") }}
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                {{ form.preview(class="btn btn-outline-primary w-50 mb-3", id="previewPostButton", style="margin-right: 0.25rem") }}
-                {{ form.save_draft(class="btn btn-outline-primary w-50 mb-3", style="margin-left: 0.25rem") }}
+                    {{ form.preview(class="btn btn-outline-primary w-50 mb-3", id="previewPostButton", style="margin-right: 0.25rem") }}
+                    {{ form.save_draft(class="btn btn-outline-primary w-50 mb-3", style="margin-left: 0.25rem") }}
                 </div>
                 {{ form.category.label }}
                 {{ form.category(class="form-control", id="category", required=True) }}
             </div>
             <div class="form-group">
                 {{ form.subcategory.label }}
-                {{ form.subcategory(class="form-control ", id="subcategory", required=True) }}
+                {{ form.subcategory(class="form-control", id="subcategory", required=True) }}
             </div>
-                <div class="form-group">
+            <div class="form-group">
                 {{ form.tags.label }}
-                {{ form.tags(class="form-control ", id="tags", required=True) }}
+                {{ form.tags(class="form-control", id="tags", required=True) }}
                 <p class="text-danger" style="font-size: 0.8rem;" id="errorMessages"></p>
                 {% if form.tags.errors %}
-                {% for error in form.tags.errors %}
-                <p class="text-danger" style="font-size: 0.8rem;">{{ error }}</p>
-                {% endfor %}
+                    {% for error in form.tags.errors %}
+                        <p class="text-danger" style="font-size: 0.8rem;">{{ error }}</p>
+                    {% endfor %}
                 {% endif %}
             </div>
-
-
-<!--            <div class="form-group">-->
-<!--                {{ form.tags.label }}-->
-<!--                <div class="content">-->
-<!--                    <p>Press enter or add a comma after each tag</p>-->
-<!--                    <input type="text" id="tagsInput" spellcheck="false">-->
-<!--                </div>-->
-<!--                <div class="details">-->
-<!--                    <p><span id="remainingTags">10</span> tags are remaining</p>-->
-<!--                    <button id="removeAllTags">Remove All</button>-->
-<!--                </div>-->
-<!--            </div>-->
-
-
         </div>
     </aside>
     <div class="content-header">
@@ -131,25 +116,82 @@
     </div>
     <div class="form-container">
         <div class="form-group">
-            {{ form.title(class="form-control form-control-lg ", placeholder="Heading", required=True) }}
+            {{ form.title(class="form-control form-control-lg", placeholder="Heading", required=True) }}
         </div>
+        <div class="form-group">
+        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#mediaModal">Select Media</button>
+
+    </div>
         <div class="form-group">
             {{ form.content(class="form-control", id="content") }}
         </div>
-    </form>
+    </div>
+
+</form>
+
+<!-- Media Modal -->
+<div class="modal fade" id="mediaModal" tabindex="-1" aria-labelledby="mediaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mediaModalLabel">Media Library</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table id="userMediaTable" class="table table-striped" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>Sr. No.</th>
+                            <th>Media</th>
+
+                            <th>Created Date</th>
+
+                            <th>Select</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in result %}
+                        <tr style="max-height: 100px; overflow-y: auto; ">
+                            <td class="py-1">{{ loop.index }}</td>
+                            <td class="py-1">
+                                <img src="{{ root_url + data.file_url }}" alt="Media Thumbnail" style="max-height: 6rem; width: auto; margin-top: 10px">
+                            </td>
+
+                            <td class="py-1">{{ data.uploaded_at.split('T')[0] }} {{ data.uploaded_at.split('T')[1][:8] }}</td>
+
+                            <td><input type="checkbox" class="media-checkbox" value="{{ data.id }}" data-url="{{ root_url + data.file_url }}"></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveSelectionButton">Save Selection</button>
+            </div>
+        </div>
+    </div>
 </div>
 
+
+
+
+
 {% block scripts %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 <script>
 $(document).ready(function() {
-$('.control-sidebar').ControlSidebar('show');
+    $('.control-sidebar').ControlSidebar('show');
     $('#content').summernote({
         height: 400,
         minHeight: null,
         maxHeight: null,
         focus: true
     });
+
+    new DataTable('#userMediaTable');
 });
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -166,8 +208,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.log('Fetched subcategories:', data); // Debugging line
                     // Clear existing subcategory options
                     subcategoryElement.innerHTML = '<option value="">Select a subcategory</option>';
-
-                    // Populate new subcategory options
                     data.subcategories.forEach(subcategory => {
                         const option = document.createElement('option');
                         option.value = subcategory.id;
@@ -182,6 +222,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var tagsInput = document.getElementById('tagsInput');
@@ -249,34 +290,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Handle the preview button click
     document.getElementById('previewPostButton').addEventListener('click', function(event) {
         event.preventDefault(); // Prevent the form from submitting normally
         var formErrors = [];
 
-    // Check for errors in the tags field
-    var tagsInput = document.getElementById('tags');
-    if (!tagsInput.value || tagsInput.value.trim().split(',').length > 5) {
-        formErrors.push('A maximum of 5 tags are allowed.');
-    }
+        // Check for errors in the tags field
+        var tagsInput = document.getElementById('tags');
+        if (!tagsInput.value || tagsInput.value.trim().split(',').length > 5) {
+            formErrors.push('A maximum of 5 tags are allowed.');
+        }
 
-    // If there are any errors, display them and stop the navigation
-    if (formErrors.length > 0) {
-        // Select the paragraph element where errors will be displayed
-        var errorParagraph = document.getElementById('errorMessages');
-
-        // Clear any existing error messages
-        errorParagraph.innerHTML = '';
-
-        // Append each error message to the paragraph element
-        formErrors.forEach(function(errorMessage) {
-            var p = document.createElement('p');
-            p.className = 'text-danger'; // Set the class for styling
-            p.textContent = errorMessage; // Set the error message text
-            errorParagraph.appendChild(p);
-        });
-
-        return; // Stop executing the rest of the function
-    }
+        // If there are any errors, display them and stop the navigation
+        if (formErrors.length > 0) {
+            var errorParagraph = document.getElementById('errorMessages');
+            errorParagraph.innerHTML = '';
+            formErrors.forEach(function(errorMessage) {
+                var p = document.createElement('p');
+                p.className = 'text-danger';
+                p.textContent = errorMessage;
+                errorParagraph.appendChild(p);
+            });
+            return;
+        }
 
         // Collect all form data
         const formData = new FormData(document.getElementById('postForm'));
@@ -292,17 +328,77 @@ document.addEventListener('DOMContentLoaded', function() {
         // Save the JSON data to Local Storage
         localStorage.setItem('postPreview', JSON.stringify(jsonData));
         try {
-        const storedData = JSON.parse(localStorage.getItem('postPreview'));
-        console.log("Stored Data:", storedData);
+            const storedData = JSON.parse(localStorage.getItem('postPreview'));
+            console.log("Stored Data:", storedData);
         } catch (error) {
-        console.error("Failed to retrieve data from Local Storage:", error);
+            console.error("Failed to retrieve data from Local Storage:", error);
         }
 
         // Optionally, redirect to the preview page
         window.location.href = '/posts/preview-post';
     });
+
+    // Handle the save selection button click
+
 });
+
+
+
+
 </script>
+
+<script>
+    // Global flag to ensure the event listener is only added once
+    window.isMediaSelectionInitialized = false;
+
+    (function() {
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.isMediaSelectionInitialized) {
+                console.log('Media selection script already initialized.');
+                return;
+            }
+
+            console.log('Initializing media selection script.');
+
+            // Handle the save selection button click event
+            document.getElementById('saveSelectionButton').addEventListener('click', function() {
+                console.log('Save Selection Button clicked');
+
+                // Initialize an array to collect new media URLs
+                let selectedMediaUrls = [];
+
+                // Collect selected media URLs
+                document.querySelectorAll('.media-checkbox:checked').forEach(checkbox => {
+                    const mediaUrl = checkbox.dataset.url; // URL should be retrieved from the checkbox's data attribute
+                    selectedMediaUrls.push(mediaUrl);
+                });
+
+                console.log('Selected Media URLs:', selectedMediaUrls);
+
+                // Get the Summernote editor instance
+                const summernoteEditor = $('#content');
+
+                // Insert selected media into Summernote content area
+                selectedMediaUrls.forEach(mediaUrl => {
+                    // Create an HTML string for the media
+                    const mediaHtml = `<img src="${mediaUrl}" alt="Media" style="max-height: 300px; width: auto;">`;
+                    // Insert the media HTML at the current cursor position
+                    summernoteEditor.summernote('pasteHTML', mediaHtml);
+                });
+
+                // Close the modal
+                $('#mediaModal').modal('hide');
+            });
+
+            // Set the flag to true after initializing the script
+            window.isMediaSelectionInitialized = true;
+        });
+    })();
+</script>
+
+
+
+
 
 {% endblock %}
 {% endblock %}
