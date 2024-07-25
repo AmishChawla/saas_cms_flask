@@ -7,8 +7,8 @@ import csv
 import ast
 
 import stripe as stripe
-from flask import g
-from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file, jsonify
+from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file, jsonify,g ,Response,send_from_directory
+import xml.etree.ElementTree as ET
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from jinja2 import Environment, FileSystemLoader
 from werkzeug.utils import secure_filename
@@ -2234,6 +2234,44 @@ def get_page_by_username_and_slug(username, page_slug):
     formatted_date = date_obj.strftime('%d %B %Y')
 
     return render_template('cms/pages/page.html', title=title, content=content)
+
+
+
+#####################################################################################################################################
+############################################## ALL ROUTES ABOVE THIS ################################################################
+################################################   SITEMAP.XML  #####################################################################
+#####################################################################################################################################
+def generate_urls(app):
+    """
+    Generates a list of URLs for all registered routes in the Flask app.
+    """
+    urls = []
+    for rule in app.url_map.iter_rules():
+        # Ignore HEAD rules since they don't serve content
+        if rule.methods != {'HEAD'}:
+            urls.append(str(rule))
+    return urls
+
+@app.route('/sitemap.xml')
+def sitemap():
+    urls = generate_urls(app)  # Use the function from Step 1
+    # Start building the sitemap structure
+    sitemap_xml = ET.Element('urlset', xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
+
+    for url in urls:
+        url_element = ET.SubElement(sitemap_xml, 'url')
+        loc = ET.SubElement(url_element, 'loc')
+        loc.text = url
+
+    # Convert the ElementTree object to a string
+    sitemap_str = ET.tostring(sitemap_xml, encoding='utf8').decode('utf8')
+
+    # Return the sitemap as an XML response
+    return Response(sitemap_str, mimetype="application/xml")
+
+@app.route('/robots.txt')
+def robots_txt():
+    return send_from_directory('static', 'robots.txt', mimetype='text/plain')
 
 if __name__ == '__main__':
     app.run()
