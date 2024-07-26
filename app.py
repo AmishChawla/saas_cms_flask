@@ -241,7 +241,7 @@ def register():
     return render_template('register.html', form=form)
 
 
-@app.route("/user-dashboard")
+@app.route("/dashboard")
 @login_required
 def user_dashboard():
     response = api_calls.get_user_profile(access_token=current_user.id)
@@ -258,7 +258,7 @@ def user_dashboard():
     return render_template('dashboard.html', resume_data=resume_data, comment_count=comment_count, post_count=post_count, subscriber_count=subscriber_count, feedback_count=feedback_count)
 
 
-@app.route("/admin-dashboard")
+@app.route("/admin/admin-dashboard")
 @login_required
 def admin_dashboard():
     response = api_calls.get_all_users(current_user.id)
@@ -269,7 +269,7 @@ def admin_dashboard():
     return render_template('admin_dashboard.html', users=users)
 
 
-@app.route("/setting")
+@app.route("/admin/settings")
 @login_required
 def setting():
     return render_template('setting.html')
@@ -333,7 +333,7 @@ def profile():
                            profile_picture=profile_picture, current_plans=current_plans)
 
 
-@app.route("/list-of-users")
+@app.route("/admin/users")
 @login_required
 def list_of_users():
     ITEMS_PER_PAGE = 5
@@ -560,7 +560,7 @@ def reset_password(token):
     return render_template('reset_password.html', form=form, token=token)
 
 
-@app.route("/user-history", methods=['GET', 'POST'])
+@app.route("/user/history", methods=['GET', 'POST'])
 @login_required
 def user_history():
     response = api_calls.get_user_profile(access_token=current_user.id)
@@ -629,40 +629,8 @@ def admin_edit_user_profile(user_id):
                            user_services=user_services)
 
 
-@app.route('/company-list', methods=['GET', 'POST'])
-def company_list():
-    response = api_calls.get_companies()
-    companies = []
-
-    if isinstance(response, list):  # Check if response is a list of dictionaries
-        for company in response:
-            id = company.get('id', '')
-            name = company.get('name', '')
-            phone_no = company.get('phone_no', '')
-            email = company.get('email', '')
-            address = company.get('address', '')
-            description = company.get('description', '')
-            companies.append({'id': id, 'name': name, 'phone_no': phone_no, 'email': email, 'address': address,
-                              'description': description})
-    else:
-        # Handle the case when response is not a list of dictionaries
-        app.logger.error('Error retrieving companies. Response: %s', response)
-
-    return render_template('company_list.html', companies=companies)
-
-
-@app.route('/companies/<company_id>', methods=['GET', 'POST'])
-def company_details(company_id):
-    result = api_calls.get_company_details(company_id=company_id)
-
-    name = result["name"]
-    location = result["location"]
-
-    return render_template('company_details.html', name=name, location=location)
-
-
 ################################################################ SERVICES ############################################################################################
-@app.route('/services', methods=['GET', 'POST'])
+@app.route('/admin/services', methods=['GET', 'POST'])
 def services():
     response = api_calls.services()
     if response.status_code == 200:
@@ -726,7 +694,7 @@ def admin_edit_service(service_id):
 
 ########################################################################## COMPANIES ###############################################################3
 
-@app.route("/admin/list-of-companies", methods=['GET', 'POST'])
+@app.route("/admin/companies", methods=['GET', 'POST'])
 @login_required
 def list_of_companies():
     response = api_calls.admin_get_all_companies()
@@ -794,7 +762,7 @@ def company_register():
 
 
 ######################################## resume history ##########################################################################
-@app.route("/resume-history", methods=['GET', 'POST'])
+@app.route("/admin/resume-history", methods=['GET', 'POST'])
 @login_required
 def resume_history():
     response = api_calls.admin_get_resume_history()
@@ -804,7 +772,7 @@ def resume_history():
 
 
 ####################################### trash ##########################################################################
-@app.route("/trash")
+@app.route("/admin/trash")
 @login_required
 def trash():
     response = api_calls.get_trash_users(
@@ -1363,7 +1331,7 @@ def user_delete_category(category_id):
         return redirect(url_for('user_all_category'))
 
 
-@app.route('/subcategories/<int:category_id>')
+@app.route('/user/subcategories/<int:category_id>')
 def get_subcategories(category_id):
     # Fetch subcategories based on the category_id
     subcategories = api_calls.get_subcategories_by_category(category_id)
@@ -1582,7 +1550,7 @@ def get_purchase_history():
     return render_template('purchase_history.html', purchase_data=purchase_data)
 
 
-@app.route('/all-subscriptions', methods=['GET'])
+@app.route('/admin/all-subscriptions', methods=['GET'])
 @login_required
 def get_all_subscriptions():
     access_token = current_user.id
