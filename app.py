@@ -760,6 +760,14 @@ def company_register():
 
     return render_template('company_register.html', form=form)
 
+@app.route('/companies/<company_id>', methods=['GET', 'POST'])
+def company_details(company_id):
+    result = api_calls.get_company_details(company_id=company_id)
+
+    name = result["name"]
+    location = result["location"]
+
+    return render_template('company_details.html', name=name, location=location)
 
 ######################################## resume history ##########################################################################
 @app.route("/admin/resume-history", methods=['GET', 'POST'])
