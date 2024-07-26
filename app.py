@@ -7,8 +7,8 @@ import csv
 import ast
 
 import stripe as stripe
-from flask import g
-from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file, jsonify
+from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file, jsonify,g ,Response,send_from_directory
+import xml.etree.ElementTree as ET
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from jinja2 import Environment, FileSystemLoader
 from werkzeug.utils import secure_filename
@@ -241,18 +241,24 @@ def register():
     return render_template('register.html', form=form)
 
 
-@app.route("/user-dashboard")
+@app.route("/dashboard")
 @login_required
 def user_dashboard():
     response = api_calls.get_user_profile(access_token=current_user.id)
     if response.status_code == 200:
         result = response.json()
         resume_data = result["resume_data"]
+    stats = api_calls.get_stats(access_token=current_user.id)
+    comment_count = stats["total_comments"]
+    post_count = stats["total_posts"]
+    subscriber_count = stats["total_newsletter_subscribers"]
+    feedback_count = stats["total_feedbacks"]
 
-    return render_template('dashboard.html', resume_data=resume_data)
+
+    return render_template('dashboard.html', resume_data=resume_data, comment_count=comment_count, post_count=post_count, subscriber_count=subscriber_count, feedback_count=feedback_count)
 
 
-@app.route("/admin-dashboard")
+@app.route("/admin/admin-dashboard")
 @login_required
 def admin_dashboard():
     response = api_calls.get_all_users(current_user.id)
@@ -263,7 +269,7 @@ def admin_dashboard():
     return render_template('admin_dashboard.html', users=users)
 
 
-@app.route("/setting")
+@app.route("/admin/settings")
 @login_required
 def setting():
     return render_template('setting.html')
@@ -327,7 +333,7 @@ def profile():
                            profile_picture=profile_picture, current_plans=current_plans)
 
 
-@app.route("/list-of-users")
+@app.route("/admin/users")
 @login_required
 def list_of_users():
     ITEMS_PER_PAGE = 5
@@ -554,7 +560,7 @@ def reset_password(token):
     return render_template('reset_password.html', form=form, token=token)
 
 
-@app.route("/user-history", methods=['GET', 'POST'])
+@app.route("/user/history", methods=['GET', 'POST'])
 @login_required
 def user_history():
     response = api_calls.get_user_profile(access_token=current_user.id)
@@ -623,40 +629,8 @@ def admin_edit_user_profile(user_id):
                            user_services=user_services)
 
 
-@app.route('/company-list', methods=['GET', 'POST'])
-def company_list():
-    response = api_calls.get_companies()
-    companies = []
-
-    if isinstance(response, list):  # Check if response is a list of dictionaries
-        for company in response:
-            id = company.get('id', '')
-            name = company.get('name', '')
-            phone_no = company.get('phone_no', '')
-            email = company.get('email', '')
-            address = company.get('address', '')
-            description = company.get('description', '')
-            companies.append({'id': id, 'name': name, 'phone_no': phone_no, 'email': email, 'address': address,
-                              'description': description})
-    else:
-        # Handle the case when response is not a list of dictionaries
-        app.logger.error('Error retrieving companies. Response: %s', response)
-
-    return render_template('company_list.html', companies=companies)
-
-
-@app.route('/companies/<company_id>', methods=['GET', 'POST'])
-def company_details(company_id):
-    result = api_calls.get_company_details(company_id=company_id)
-
-    name = result["name"]
-    location = result["location"]
-
-    return render_template('company_details.html', name=name, location=location)
-
-
 ################################################################ SERVICES ############################################################################################
-@app.route('/services', methods=['GET', 'POST'])
+@app.route('/admin/services', methods=['GET', 'POST'])
 def services():
     response = api_calls.services()
     if response.status_code == 200:
@@ -720,7 +694,7 @@ def admin_edit_service(service_id):
 
 ########################################################################## COMPANIES ###############################################################3
 
-@app.route("/admin/list-of-companies", methods=['GET', 'POST'])
+@app.route("/admin/companies", methods=['GET', 'POST'])
 @login_required
 def list_of_companies():
     response = api_calls.admin_get_all_companies()
@@ -786,9 +760,17 @@ def company_register():
 
     return render_template('company_register.html', form=form)
 
+@app.route('/admin/companies/<company_id>', methods=['GET', 'POST'])
+def company_details(company_id):
+    result = api_calls.get_company_details(company_id=company_id)
+
+    name = result["name"]
+    location = result["location"]
+
+    return render_template('company_details.html', name=name, location=location)
 
 ######################################## resume history ##########################################################################
-@app.route("/resume-history", methods=['GET', 'POST'])
+@app.route("/admin/resume-history", methods=['GET', 'POST'])
 @login_required
 def resume_history():
     response = api_calls.admin_get_resume_history()
@@ -798,7 +780,7 @@ def resume_history():
 
 
 ####################################### trash ##########################################################################
-@app.route("/trash")
+@app.route("/admin/trash")
 @login_required
 def trash():
     response = api_calls.get_trash_users(
@@ -1357,7 +1339,7 @@ def user_delete_category(category_id):
         return redirect(url_for('user_all_category'))
 
 
-@app.route('/subcategories/<int:category_id>')
+@app.route('/user/subcategories/<int:category_id>')
 def get_subcategories(category_id):
     # Fetch subcategories based on the category_id
     subcategories = api_calls.get_subcategories_by_category(category_id)
@@ -1576,7 +1558,7 @@ def get_purchase_history():
     return render_template('purchase_history.html', purchase_data=purchase_data)
 
 
-@app.route('/all-subscriptions', methods=['GET'])
+@app.route('/admin/all-subscriptions', methods=['GET'])
 @login_required
 def get_all_subscriptions():
     access_token = current_user.id
@@ -2233,6 +2215,44 @@ def get_page_by_username_and_slug(username, page_slug):
     formatted_date = date_obj.strftime('%d %B %Y')
 
     return render_template('cms/pages/page.html', title=title, content=content)
+
+
+
+#####################################################################################################################################
+############################################## ALL ROUTES ABOVE THIS ################################################################
+################################################   SITEMAP.XML  #####################################################################
+#####################################################################################################################################
+def generate_urls(app):
+    """
+    Generates a list of URLs for all registered routes in the Flask app.
+    """
+    urls = []
+    for rule in app.url_map.iter_rules():
+        # Ignore HEAD rules since they don't serve content
+        if rule.methods != {'HEAD'}:
+            urls.append(str(rule))
+    return urls
+
+@app.route('/sitemap.xml')
+def sitemap():
+    urls = generate_urls(app)  # Use the function from Step 1
+    # Start building the sitemap structure
+    sitemap_xml = ET.Element('urlset', xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
+
+    for url in urls:
+        url_element = ET.SubElement(sitemap_xml, 'url')
+        loc = ET.SubElement(url_element, 'loc')
+        loc.text = url
+
+    # Convert the ElementTree object to a string
+    sitemap_str = ET.tostring(sitemap_xml, encoding='utf8').decode('utf8')
+
+    # Return the sitemap as an XML response
+    return Response(sitemap_str, mimetype="application/xml")
+
+@app.route('/robots.txt')
+def robots_txt():
+    return send_from_directory('static', 'robots.txt', mimetype='text/plain')
 
 if __name__ == '__main__':
     app.run()

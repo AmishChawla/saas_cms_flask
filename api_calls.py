@@ -1922,6 +1922,22 @@ def user_contact_form(username, firstname, lastname, email, message):
         print(f"An unexpected error occurred: {err}")
 
 
+def get_stats(access_token: str):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.get(constants.BASE_URL + '/user/stats', headers=headers)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
 ############################ PAGES ######################################
 def create_page(title, content, status, access_token):
     print('trying to create page')
