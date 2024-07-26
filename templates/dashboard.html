@@ -17,6 +17,78 @@
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
+<div>
+            <div class="row">
+          <div class="col-lg-3 col-6">
+            <!-- small card -->
+            <div class="small-box bg-info">
+              <div class="inner">
+                <h3>{{ post_count }}</h3>
+
+                <p>Posts</p>
+              </div>
+              <div class="icon">
+                <i class="fas bi bi-pin-fill"></i>
+              </div>
+              <a href="{{ url_for('user_all_post') }}" class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+              </a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-6">
+            <!-- small card -->
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h3>{{ subscriber_count }}</h3>
+
+                <p>Subscribers</p>
+              </div>
+              <div class="icon">
+                <i class="bi bi-bell-fill"></i>
+              </div>
+              <a href="{{ url_for('newsletter_subscribers') }}" class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+              </a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-6">
+            <!-- small card -->
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3>{{ comment_count }}</h3>
+
+                <p>Comments</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-comment"></i>
+              </div>
+              <a href="{{ url_for('get_all_comment') }}" class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+              </a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-6">
+            <!-- small card -->
+            <div class="small-box bg-danger">
+              <div class="inner">
+                <h3>{{ feedback_count }}</h3>
+
+                <p>Feedback</p>
+              </div>
+              <div class="icon">
+                <i class="fas bi bi-chat-right-text"></i>
+              </div>
+              <a href="{{ url_for('user_feedbacks') }}" class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+              </a>
+            </div>
+          </div>
+          <!-- ./col -->
+        </div>
+</div>
 <div class="col-md-6">
 <div class="form-group">
     <select id="timeRangeSelector" class="form-control select2">
@@ -27,7 +99,7 @@
     </select>
 </div>
 </div>
-<div id="chartContainer" style="width: 600px; height: 300px;">
+<div id="chartContainer" style="width: 100%; height: 400px;">
     <canvas id="parsedResumeChart"></canvas>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -77,24 +149,15 @@
             const dates = Object.keys(uploadDates).sort((a, b) => {
                 const [aDay, aMonth] = a.split(' ');
                 const [bDay, bMonth] = b.split(' ');
-
-                // Convert month names to month indices for comparison
                 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 const aMonthIndex = monthNames.indexOf(aMonth);
                 const bMonthIndex = monthNames.indexOf(bMonth);
 
-                // Compare months and years
                 if (aMonthIndex !== bMonthIndex) {
-                    // If both months are in the current year
-                    if (currentYear === today.getFullYear()) {
-                        // Check if any month is beyond the current month
-                        if (aMonthIndex > currentMonth && bMonthIndex <= currentMonth) return -1;
-                        if (bMonthIndex > currentMonth && aMonthIndex <= currentMonth) return 1;
-                    }
-                    return aMonthIndex - bMonthIndex;
-                } else {
-                    return aDay - bDay;
+                    if (aMonthIndex > currentMonth && bMonthIndex <= currentMonth) return -1;
+                    if (bMonthIndex > currentMonth && aMonthIndex <= currentMonth) return 1;
                 }
+                return aMonthIndex - bMonthIndex;
             });
 
             const resumeCounts = dates.map(date => uploadDates[date]);
@@ -119,12 +182,21 @@
                 },
                 options: {
                     scales: {
-                        yAxes: [{
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            },
+                            min: 0,
                             ticks: {
                                 beginAtZero: true,
                                 stepSize: 1
                             }
-                        }]
+                        }
                     }
                 }
             });
