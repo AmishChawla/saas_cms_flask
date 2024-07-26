@@ -760,7 +760,7 @@ def company_register():
 
     return render_template('company_register.html', form=form)
 
-@app.route('/companies/<company_id>', methods=['GET', 'POST'])
+@app.route('/admin/companies/<company_id>', methods=['GET', 'POST'])
 def company_details(company_id):
     result = api_calls.get_company_details(company_id=company_id)
 
