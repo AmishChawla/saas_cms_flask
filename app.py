@@ -2133,13 +2133,18 @@ def add_page():
                 flash(f"Error creating page: {e}", "danger")
     else: print(form.errors)
 
+    root_url = constants.ROOT_URL + '/'
+    media_result = api_calls.get_user_all_medias(access_token=current_user.id)
+    if media_result is None:
+        media_result = []  # Set result to an empty list
+
     if current_user.role == 'user':
         is_service_allowed = api_calls.is_service_access_allowed(current_user.id)
         if is_service_allowed:
-            return render_template('cms/pages/add_page.html', form=form)
+            return render_template('cms/pages/add_page.html', form=form, result=media_result, root_url=root_url)
         return redirect(url_for('user_view_plan'))
     else:
-        return render_template('cms/pages/add_page.html', form=form)
+        return render_template('cms/pages/add_page.html', form=form, result=media_result, root_url=root_url)
 
 
 @app.route('/user/all-pages')
