@@ -48,18 +48,7 @@ def load_user(user_id):
                     profile_picture=user_from_session.get('profile_picture'))
         return user
     else:
-        response = api_calls.get_user_profile(access_token=user_id)
-        if response.status_code == 200:
-            user_data = response.json()
-            profile_picture = f"{ROOT_URL}/{user_data['profile_picture']}"
-
-            # Create a User object using the retrieved data
-            user = User(id=user_data['id'], user_id=user_id, role=user_data['role'], username=user_data['username'], email=user_data['email'],
-                        services=user_data['services'], company=user_data['company'], profile_picture=profile_picture)
-
-            return user
-        else:
-            return None
+        return None
 
 
 class User(UserMixin):
@@ -2070,7 +2059,7 @@ def posts_by_tag(username, tag, tag_id):
 #################################################### PAGES ##################################################
 
 
-@app.route('/pages/add-page', methods=['GET', 'POST'])
+@app.route('/user/pages/add-page', methods=['GET', 'POST'])
 @login_required
 def add_page():
     form = forms.AddPage()
@@ -2224,13 +2213,20 @@ def get_page_by_username_and_slug(username, page_slug):
 #####################################################################################################################################
 def generate_urls(app):
     """
-    Generates a list of URLs for all registered routes in the Flask app.
+    Generates a list of URLs for all registered routes in the Flask app
+    that start with a username variable part.
     """
     urls = []
+    # Define a pattern that indicates a username variable part in the URL rule
+    username_pattern = '/<'
+
     for rule in app.url_map.iter_rules():
         # Ignore HEAD rules since they don't serve content
         if rule.methods != {'HEAD'}:
-            urls.append(str(rule))
+            # Check if the rule starts with a username variable part
+            if str(rule).startswith(username_pattern):
+                urls.append(str(rule))
+
     return urls
 
 @app.route('/sitemap.xml')
