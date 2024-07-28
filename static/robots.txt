@@ -1,3 +1,19 @@
 User-agent: *
 Allow:
 Disallow: /admin
+          /upload
+          /dashboard
+          /result
+          /profile
+          /user
+          /posts/add-post
+          /posts/preview-post
+          /posts/update-post
+          /purchase_history
+          /posts/all-comment
+          /posts/activate-comment
+          /posts/deactivate-comment
+          /settings/comments
+          /email-templates
+          /email-settings
+          /newsletter-subscribers
