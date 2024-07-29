@@ -2046,3 +2046,21 @@ def delete_page(page_id, access_token):
         print(f"An unexpected error occurred: {err}")
 
 
+def get_user_from_google_login(user_info):
+
+    try:
+        response = requests.get(constants.BASE_URL + '/get-google-user-info', json=user_info)
+        print("Response Status Code:", response.status_code)
+        if response.status_code == 200:
+            result = response.json()
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")

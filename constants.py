@@ -17,10 +17,16 @@ ROOT_URL = 'http://127.0.0.1:8000'
 
 
 
-load_dotenv('secrets')
+
+load_dotenv('secrets.env')
 
 
 GEMINI_APIKEY = os.getenv("GOOGLE_GEMINI_APIKEY")
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+REDIRECT_URI = 'http://127.0.0.1:5000/callback'
+AUTHORIZATION_BASE_URL = 'https://accounts.google.com/o/oauth2/auth'
+TOKEN_URL = 'https://accounts.google.com/o/oauth2/token'
 
 
 

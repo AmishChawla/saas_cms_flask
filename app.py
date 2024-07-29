@@ -48,7 +48,7 @@ def load_user(user_id):
                     profile_picture=user_from_session.get('profile_picture'))
         return user
     else:
-        return None
+        return redirect(url_for('login'))
 
 
 class User(UserMixin):
@@ -177,6 +177,63 @@ def login():
             flash('Login unsuccessful. Please check email and password.', category='error')
 
     return render_template('login.html', form=form)
+
+@app.route('/google-login')
+def google_login():
+    print(f" {constants.AUTHORIZATION_BASE_URL} + {constants.GOOGLE_CLIENT_ID} + {constants.REDIRECT_URI} + {constants.GEMINI_APIKEY} + {constants.GOOGLE_CLIENT_SECRET}")
+    return redirect(constants.AUTHORIZATION_BASE_URL + '?response_type=code&client_id=' + constants.GOOGLE_CLIENT_ID +
+                    '&redirect_uri=' + constants.REDIRECT_URI + '&scope=email%20profile')
+
+@app.route('/callback')
+def callback():
+    import requests
+    error = request.args.get('error')
+    if error:
+        # Handle the error, e.g., log it or redirect to an error page
+        print(f"OAuth2 Error: {error}")
+        return redirect(url_for('login'))
+    code = request.args.get('code')
+    params = {
+        'code': code,
+        'client_id': constants.GOOGLE_CLIENT_ID,
+        'client_secret': constants.GOOGLE_CLIENT_SECRET,
+        'redirect_uri': constants.REDIRECT_URI,
+        'grant_type': 'authorization_code'
+    }
+    token_response = requests.post(constants.TOKEN_URL, data=params)
+    access_token = token_response.json().get('access_token')
+    user_info_url = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json'
+    headers = {'Authorization': 'Bearer {}'.format(access_token)}
+    user_info_response = requests.get(user_info_url, headers=headers)
+    user_info = user_info_response.json()
+    data = api_calls.get_user_from_google_login(user_info=user_info)
+
+    id = data.get('id')
+    token = data.get('access_token')
+    role = data.get('role')
+    username = data.get('username')
+    email = data.get('email')
+    profile_picture = data.get('profile_picture')
+    services = data.get('services', [])
+    company = data.get('company', {})
+
+    user = User(id=id, user_id=token, role=role, username=username, email=email, services=services, company=company,
+                profile_picture=profile_picture)
+    login_user(user)
+    session['user'] = {
+        'id': id,
+        'user_id': token,
+        'role': role,
+        'username': username,
+        'email': email,
+        'services': services,
+        'company': company,
+        'profile_picture': profile_picture
+    }
+    if current_user.company is not None:
+        return redirect(url_for('user_dashboard'))
+    else:
+        return redirect(url_for('company_register'))
 
 
 @app.route("/register", methods=['GET', 'POST'])
