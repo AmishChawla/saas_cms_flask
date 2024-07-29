@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const selectedCategoryId = this.value;
 
         if (selectedCategoryId) {
-            fetch(`/subcategories/${selectedCategoryId}`)
+            fetch(`/user/subcategories/${selectedCategoryId}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log('Fetched subcategories:', data); // Debugging line
