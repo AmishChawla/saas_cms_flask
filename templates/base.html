@@ -134,7 +134,7 @@
             </a>
           </li>
            <li class="nav-item menu-open">
-            <a class="nav-link {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' or request.endpoint == 'user_post_list' or request.endpoint == 'media' or request.endpoint == 'user_all_medias' or request.endpoint == 'newsletter_subscribers' or request.endpoint == 'get_all_comment' %}active{% endif %}" href="{{ url_for('user_all_post') }}">
+            <a class="nav-link {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' or request.endpoint == 'user_post_list' or request.endpoint == 'media' or request.endpoint == 'user_all_medias' or request.endpoint == 'newsletter_subscribers' or request.endpoint == 'get_all_comment' or request.endpoint == 'user_all_pages' or request.endpoint == 'add_page' %}active{% endif %}" href="{{ url_for('user_all_post') }}">
               <i class="far fa-regular fa-folder nav-icon"></i>
               <p>
                 CMS
@@ -142,7 +142,7 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
-              <li class="nav-item">
+              <li class="nav-item {% if request.endpoint == 'user_all_post' or request.endpoint == 'add_post' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_tag' %} menu-open {% endif %}">
                 <a class="nav-link" href="#">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Posts</p>
@@ -175,7 +175,7 @@
               </li>
             </ul>
               </li>
-              <li class="nav-item">
+              <li class="nav-item {% if request.endpoint == 'user_all_medias' or request.endpoint == 'media' %} menu-open {% endif %}">
                 <a href="#" class="nav-link">
                   <i class="far fa fa-film nav-icon"></i>
                   <p>Media</p>
@@ -196,7 +196,7 @@
               </li>
             </ul>
               </li>
-              <li class="nav-item">
+              <li class="nav-item {% if request.endpoint == 'user_all_pages' or request.endpoint == 'add_page' %} menu-open {% endif %}">
                 <a href="#" class="nav-link">
                   <i class="far bi bi-window-stack nav-icon"></i>
                   <p>Pages</p>
@@ -217,7 +217,7 @@
               </li>
             </ul>
               </li>
-              <li class="nav-item">
+              <li class="nav-item {% if request.endpoint == 'get_all_comment' %} menu-open {% endif %}">
                 <a href="#" class="nav-link">
                   <i class="far fa fa-comment nav-icon"></i>
                   <p>Comments</p>
