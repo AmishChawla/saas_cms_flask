@@ -120,7 +120,8 @@
         </div>
         <div class="form-group">
         <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#mediaModal">Select Media</button>
-
+         <button type="button" class="btn btn-info" id="selectFromDeviceButton">Select Media from Device</button>
+            <input type="file" id="deviceMediaInput" multiple style="display: none;">
     </div>
         <div class="form-group">
             {{ form.content(class="form-control", id="content") }}
@@ -143,9 +144,7 @@
                         <tr>
                             <th>Sr. No.</th>
                             <th>Media</th>
-
                             <th>Created Date</th>
-
                             <th>Select</th>
                         </tr>
                     </thead>
@@ -156,9 +155,7 @@
                             <td class="py-1">
                                 <img src="{{ root_url + data.file_url }}" alt="Media Thumbnail" style="max-height: 6rem; width: auto; margin-top: 10px">
                             </td>
-
                             <td class="py-1">{{ data.uploaded_at.split('T')[0] }} {{ data.uploaded_at.split('T')[1][:8] }}</td>
-
                             <td><input type="checkbox" class="media-checkbox" value="{{ data.id }}" data-url="{{ root_url + data.file_url }}"></td>
                         </tr>
                         {% endfor %}
@@ -172,7 +169,6 @@
         </div>
     </div>
 </div>
-
 
 
 
@@ -202,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const selectedCategoryId = this.value;
 
         if (selectedCategoryId) {
-            fetch(`/subcategories/${selectedCategoryId}`)
+            fetch(`/user/subcategories/${selectedCategoryId}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log('Fetched subcategories:', data); // Debugging line
@@ -396,7 +392,39 @@ document.addEventListener('DOMContentLoaded', function() {
     })();
 </script>
 
+<script>
+    let isProcessingFiles = false;
 
+// Handle the select from device button click
+document.getElementById('selectFromDeviceButton').addEventListener('click', function() {
+    document.getElementById('deviceMediaInput').click();
+});
+
+// Handle the device media input change
+document.getElementById('deviceMediaInput').addEventListener('change', function(event) {
+    if (isProcessingFiles) return;
+
+    isProcessingFiles = true;
+    const files = event.target.files;
+    const summernoteEditor = $('#content');
+
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const mediaHtml = `<img src="${e.target.result}" alt="${file.name}" style="max-height: 300px; width: auto;">`;
+            summernoteEditor.summernote('pasteHTML', mediaHtml);
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // Reset the input and open the file selector again
+    setTimeout(() => {
+        document.getElementById('deviceMediaInput').value = '';
+        isProcessingFiles = false;
+        document.getElementById('deviceMediaInput').click();
+    }, 500);
+});
+</script>
 
 
 
