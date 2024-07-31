@@ -12,7 +12,7 @@ import xml.etree.ElementTree as ET
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from jinja2 import Environment, FileSystemLoader
 from werkzeug.utils import secure_filename
-
+import uuid
 import constants
 import forms
 import api_calls
@@ -180,7 +180,6 @@ def login():
 
 @app.route('/google-login')
 def google_login():
-    print(f" {constants.AUTHORIZATION_BASE_URL} + {constants.GOOGLE_CLIENT_ID} + {constants.REDIRECT_URI} + {constants.GEMINI_APIKEY} + {constants.GOOGLE_CLIENT_SECRET}")
     return redirect(constants.AUTHORIZATION_BASE_URL + '?response_type=code&client_id=' + constants.GOOGLE_CLIENT_ID +
                     '&redirect_uri=' + constants.REDIRECT_URI + '&scope=email%20profile')
 
@@ -214,6 +213,7 @@ def callback():
     username = data.get('username')
     email = data.get('email')
     profile_picture = data.get('profile_picture')
+    print(profile_picture)
     services = data.get('services', [])
     company = data.get('company', {})
 
@@ -239,6 +239,8 @@ def callback():
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     session.pop('_flashes', None)
+
+
     form = forms.RegisterForm()
     print("outside")
     if form.validate_on_submit():
@@ -1951,7 +1953,53 @@ def send_message():
 @app.route('/formbuilder')
 @login_required
 def formbuilder():
-    return render_template('formbuilder.html')
+    unique_id = str(uuid.uuid4())
+    return render_template('cms/formbuilder/formbuilder.html', form_unique_id=unique_id)
+
+
+@app.route('/formbuilder/form-create', methods=['GET', 'POST'])
+@login_required
+def formbuilder_createform():
+    data = request.get_json()
+    print('IN FORM CREATE')
+    print(data)
+    form_name = data.get('form_name', '')
+    form_html = data.get('form_html', '')
+    unique_id = data.get('unique_id', '')
+    try:
+        form_created = api_calls.create_form(form_name=form_name, form_html=form_html, form_unique_id=unique_id, access_token=current_user.id)
+        return redirect(url_for('user_all_forms'))
+    except Exception as e:
+        print(e)
+        return redirect(url_for('formbuilder'))
+
+@app.route('/user/all-forms')
+@login_required
+def user_all_forms():
+    forms = api_calls.get_user_all_forms(access_token=current_user.id)
+    if forms is None:
+        forms = []  # Set result to an empty list
+
+    return render_template('cms/formbuilder/user_all_forms.html', result=forms)
+
+
+@app.route('/user/forms/<form_id>', methods=['GET', 'POST'])
+@login_required
+def formbuilder_viewform(form_id):
+    response = api_calls.get_form_by_unique_id(form_id=form_id)
+    form_name = response["form_name"]
+    form_html = response["form_html"]
+    form_responses = response["responses"]
+
+    return render_template('cms/formbuilder/view_form.html', form_html=form_html,form_name=form_name, form_responses=form_responses)
+
+
+
+
+@app.route('/form/thank-you')
+def dynamic_form_submission():
+    unique_id = str(uuid.uuid4())
+    return 'submitted'
 
 
 ############################################# Email Templates ################################

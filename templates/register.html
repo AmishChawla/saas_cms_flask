@@ -24,7 +24,7 @@
                             {% endif %}
                         {% endwith %}
 
-                        <form method="post" action="{{ url_for('register') }}">
+                        <form method="post" action="{{ url_for('register') }}" id="registeration_form">
     {{ form.hidden_tag() }}
 
     <div class="mb-3">
@@ -47,7 +47,6 @@
         {{ form.confirm_password(class="form-control", placeholder="Confirm Password", required=True) }}
     </div>
 
-
     <div class="mb-3 text-center">
         {{ form.submit(class="btn btn-dark btn-lg") }}
     </div>
@@ -60,4 +59,7 @@
             </div>
         </div>
     </div>
+
+
+
 {% endblock %}

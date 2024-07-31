@@ -61,8 +61,8 @@ display: inline-block;
                     {{ form.hidden_tag() }}
 
                      <div class="card-img-top text-center my-3">
-                    {% if profile_picture %}
-                         <img id="profileImage" src="{{ profile_picture }}" alt="Profile Image" style="max-width: 300px; width: 5rem; height: 5rem; border-radius: 50%;" class="img-fluid">
+                    {% if current_user.profile_picture %}
+                         <img id="profileImage" src="{{ current_user.profile_picture }}" alt="Profile Image" style="max-width: 300px; width: 5rem; height: 5rem; border-radius: 50%;" class="img-fluid">
                     {% else %}
                          <img id="profileImage" src="static/images/man.png" alt="Default Profile Image" style="max-width: 300px; width: 5rem; height: 5rem; border-radius: 50%;" class="img-fluid">
                     {% endif %}

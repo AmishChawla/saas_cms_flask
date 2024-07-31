@@ -46,6 +46,45 @@
             cursor: pointer;
         }
 
+        .custom-button {
+          border: none;
+          outline: none;
+          background-color: rgb(24, 22, 22);
+          padding: 10px;
+          border-radius: 10px;
+          color: #fff;
+          font-size: 16px;
+          transform: .3s ease;
+          text-decoration: none;
+        }
+
+        .custom-button:hover {
+          background-color: rgb(21, 19, 19);
+        }
+
+        .final-button {
+            border: none;
+            outline: none;
+            background-color: royalblue;
+            padding: 15px 25px; /* Increased padding */
+            border-radius: 10px;
+            color: #fff;
+            font-size: 18px; /* Optional: Adjust font size if needed */
+            transform: .3s ease;
+            text-decoration: none;
+            display: block; /* Make it a block element to apply margin auto */
+            margin: auto; /* Center the button horizontally */
+            width: fit-content; /* Adjust width to fit content */
+            margin-top: 20px; /* Optional: Adjust vertical positioning */
+            margin-bottom: 20px; /* Optional: Adjust vertical spacing below the button */
+        }
+
+        .final-button:hover {
+          background-color: rgb(56, 90, 194);
+        }
+
+
+
         .input-button img {
             width: 20px;
             height: 20px;
@@ -142,9 +181,8 @@
         margin: 15px 0px;
         }
     </style>
-
-
-<div id="form-builder">
+<input type="text" class="form-control form-control-lg form-control-border border-width-2" id="formNameInput" placeholder="Form Heaading">
+        <div id="form-builder">
     <div id="fields-list">
         <h6>Basic</h6>
         <button class="input-button" id="add-heading">
@@ -172,7 +210,11 @@
             <img src="https://img.icons8.com/material-outlined/24/000000/calendar.png" alt="Date Picker">
             Add Date Picker
         </button>
-        <h6>Basic Elements</h6>
+        <button class="input-button" id="add-custom-button">
+             <img src="https://img.icons8.com/material-outlined/24/000000/add.png" alt="Custom Button">
+            Add Button
+        </button>
+        <h6>Advanced Elements</h6>
         <button class="input-button" id="add-text">
             <img src="https://img.icons8.com/material-outlined/24/000000/text.png" alt="Text Field">
             Add Text Field
@@ -303,6 +345,9 @@
                 case 'add-page-divider':
                     type = 'page-divider';
                     break;
+                case 'add-custom-button':
+                    addCustomButtonField();
+                    break;
                 default:
                     type = 'text';
             }
@@ -379,6 +424,21 @@
 
             fieldsContainer.appendChild(field);
         }
+        function addCustomButtonField() {
+    const buttonText = prompt('Enter button text:');
+    const buttonAction = prompt('Enter button action URL (leave blank for no action):');
+    const field = document.createElement('div');
+    field.classList.add('field');
+    const hrefAttribute = buttonAction ? `href="${buttonAction}"` : '';
+    field.innerHTML = `
+        <a class="custom-button" role="button" ${hrefAttribute} target="_blank" style="margin-top: 10px;">${buttonText || 'Click Me!'}</a>
+    `;
+
+
+    addIcons(field); // Add edit and delete icons as with other fields
+
+    fieldsContainer.appendChild(field);
+}
 
         function addCheckboxField(numCheckboxes) {
     const checkboxLabel = prompt('Enter label for checkboxes:');
@@ -603,5 +663,120 @@ field.appendChild(editIcon);
             }
         };
     });
+</script>
+
+<script>
+function generateUserBuiltFormHTML() {
+
+    const fieldsContainer = document.getElementById('fields-container');
+    const fields = Array.from(fieldsContainer.getElementsByClassName('field'));
+    var uniqueId = "{{ form_unique_id }}"
+    console.log(uniqueId)
+    let formHTML = '<form action="{{ url_for('dynamic_form_submission') }}">';
+
+    fields.forEach((field, index) => {
+        const labelElement = field.querySelector('label');
+        const inputElements = field.querySelectorAll('input, textarea, select, a');
+
+        // Generate unique ID base for labels and inputs within the field
+        const uniqueIdBase = `field-${index}`;
+
+        let fieldHTML = `<div class="field">`;
+        if (labelElement) {
+            fieldHTML += `<label>${labelElement.textContent.trim()}</label>`;
+        }
+
+        inputElements.forEach((input, inputIndex) => {
+            switch (input.tagName.toLowerCase()) {
+                case 'input':
+                    let uniqueId;
+                     if (input.type === 'checkbox' || input.type === 'radio') {
+                        // Generate unique ID for each checkbox and radio button
+                        uniqueId = `${uniqueIdBase}-${inputIndex}`;
+                        const parentContainer = input.closest('.form-check'); // Find the closest .form-check container
+                        // Extract text from the first span child of the label
+                        const optionLabelSpan = parentContainer ? parentContainer.querySelector('.form-check-label > span:first-child') : null;
+                        const optionLabel = optionLabelSpan ? optionLabelSpan.textContent.trim() : '';
+                        fieldHTML += `<div class="form-check">
+                        <input class="form-check-input" type="${input.type}" id="${uniqueId}" name="${uniqueIdBase}" value="${optionLabel}"><label class="form-check-label" for="${uniqueId}">${optionLabel}</label>
+                        </div> <br>`;
+                    } else {
+                        // Use the base unique ID for other input types
+                        uniqueId = uniqueIdBase;
+                        switch(input.type) {
+                            case 'file':
+                                fieldHTML += `<input type="file" id="${uniqueId}" name="${uniqueIdBase}" accept="${input.accept}">`;
+                                break;
+                            case 'date':
+                                fieldHTML += `<input type="date" id="${uniqueId}" name="${uniqueIdBase}" min="${input.min}" max="${input.max}">`;
+                                break;
+                            default:
+                                fieldHTML += `<input type="${input.type}" id="${uniqueId}" name="${uniqueIdBase}" placeholder="${input.placeholder || ''}">`;
+                        }
+                    }
+                    break;
+                case 'textarea':
+                    fieldHTML += `<textarea id="${uniqueIdBase}" name="${uniqueIdBase}" placeholder="${input.placeholder || ''}"></textarea>`;
+                    break;
+                case 'select':
+                    fieldHTML += `<select id="${uniqueIdBase}" name="${uniqueIdBase}">`;
+                    Array.from(input.options).forEach(option => {
+                        fieldHTML += `<option value="${option.value}">${option.text}</option>`;
+                    });
+                    fieldHTML += '</select>';
+                    break;
+                case 'a':
+                    // Custom button or link
+                    fieldHTML += `<a class="custom-button" role="button" href="${input.getAttribute('href')}" target="_blank">${input.textContent}</a>`;
+                    break;
+            }
+        });
+
+        fieldHTML += '</div>';
+        formHTML += fieldHTML;
+    });
+    formHTML += '<button type="submit" class="final-button">Submit</button>';
+    formHTML += `<input type="hidden" id="uniqueIdHiddenField" name="unique_id" value="${uniqueId}">`;
+    formHTML += '</form>';
+    return formHTML;
+}
+
+
+document.getElementById('submit-form').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+
+    // Collect form name
+    let formName = document.getElementById('formNameInput').value;
+
+    // Generate form HTML
+    const formData = generateUserBuiltFormHTML();
+
+    const uniqueId = "{{ form_unique_id }}";
+
+    // Prepare the data to be sent to the server
+    const dataToSend = {
+        form_name: formName,
+        form_html: formData,
+        unique_id: uniqueId
+    };
+
+    // Send the data to the Flask endpoint
+    fetch('/formbuilder/form-create', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dataToSend)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data);
+        // Handle success (e.g., show a message to the user)
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        // Handle errors (e.g., show an error message to the user)
+    });
+});
 </script>
 {% endblock %}
