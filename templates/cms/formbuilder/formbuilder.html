@@ -718,9 +718,7 @@ function generateUserBuiltFormHTML() {
                         // Extract text from the first span child of the label
                         const optionLabelSpan = parentContainer ? parentContainer.querySelector('.form-check-label > span:first-child') : null;
                         const optionLabel = optionLabelSpan ? optionLabelSpan.textContent.trim() : '';
-                        fieldHTML += `<div class="form-check">
-                        <input class="form-check-input" type="${input.type}" id="${uniqueId}" name="${nameAttribute}" value="${optionLabel}"><label class="form-check-label" for="${uniqueId}">${optionLabel}</label>
-                        </div> <br>`;
+                        fieldHTML += `<div class="form-check"><input class="form-check-input" type="${input.type}" id="${uniqueId}" name="${nameAttribute}" value="${optionLabel}"><label class="form-check-label" for="${uniqueId}">${optionLabel}</label></div>`;
                     } else{
                         if (inputType === 'file') {
                             fieldHTML += `<input type="file" id="${uniqueId}" name="${nameAttribute}" accept="${input.accept}">`;
