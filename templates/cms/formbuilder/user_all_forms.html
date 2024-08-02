@@ -33,15 +33,14 @@
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 
-                  <a  href="" style="margin-right: 1rem;" data-toggle="tooltip" data-placement="top" title="Modify"><i class="bi bi-pen" style="color:#0b4647; font-size: 1.5rem"></i></a>
-                  <a  data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}" data-toggle="tooltip" data-placement="top" title="Delete"><i class="bi bi-trash3-fill " style="color:#6b1313; font-size: 1.5rem"></i></a>
+                  <a  data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.unique_id }}" data-toggle="tooltip" data-placement="top" title="Delete"><i class="bi bi-trash3-fill " style="color:#6b1313; font-size: 1.5rem"></i></a>
 
                   <!-- Modal for delete button -->
-                  <div class="modal fade" id="deleteModal_{{ data.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel_{{ data.id }}" aria-hidden="true">
+                  <div class="modal fade" id="deleteModal_{{ data.unique_id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel_{{ data.id }}" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h4 class="modal-title fs-5" id="deleteModalLabel_{{ data.id }}">Delete page</h4>
+                          <h4 class="modal-title fs-5" id="deleteModalLabel_{{ data.unique_id }}">Delete page</h4>
                           <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
 
                         </div>
@@ -50,7 +49,7 @@
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                          <a type="button" class="btn btn-danger" href="">Delete</a>
+                          <a type="button" class="btn btn-danger" href="{{ url_for('formbuilder_delete_form', form_id=data.unique_id) }}">Delete</a>
                         </div>
                       </div>
                     </div>

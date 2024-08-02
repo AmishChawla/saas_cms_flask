@@ -72,6 +72,87 @@
         cursor: pointer;
     }
 </style>
+<style>
+            .custom-button {
+          border: none;
+          outline: none;
+          background-color: rgb(24, 22, 22);
+          padding: 10px;
+          border-radius: 10px;
+          color: #fff;
+          font-size: 16px;
+          transform: .3s ease;
+          text-decoration: none;
+        }
+
+        .custom-button:hover {
+          background-color: rgb(21, 19, 19);
+        }
+
+        .final-button {
+            border: none;
+            outline: none;
+            background-color: royalblue;
+            padding: 15px 25px; /* Increased padding */
+            border-radius: 10px;
+            color: #fff;
+            font-size: 18px; /* Optional: Adjust font size if needed */
+            transform: .3s ease;
+            text-decoration: none;
+            display: block; /* Make it a block element to apply margin auto */
+            margin: auto; /* Center the button horizontally */
+            width: fit-content; /* Adjust width to fit content */
+            margin-top: 20px; /* Optional: Adjust vertical positioning */
+            margin-bottom: 20px; /* Optional: Adjust vertical spacing below the button */
+        }
+
+        .final-button:hover {
+          background-color: rgb(56, 90, 194);
+        }
+
+
+        .field {
+            margin-bottom: 20px;
+            position: relative;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea,
+        select,
+        input[type="date"],
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .form-check input {
+            margin-right: 5px;
+        }
+
+        .form-check-label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+</style>
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 <form method="post" action="{{ url_for('add_post') }}" id="postForm">
     {{ form.hidden_tag() }}
@@ -122,6 +203,8 @@
         <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#mediaModal">Select Media</button>
          <button type="button" class="btn btn-info" id="selectFromDeviceButton">Select Media from Device</button>
             <input type="file" id="deviceMediaInput" multiple style="display: none;">
+         <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#formsModal">Select Form</button>
+
     </div>
         <div class="form-group">
             {{ form.content(class="form-control", id="content") }}
@@ -165,6 +248,39 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" id="saveSelectionButton">Save Selection</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="formsModal" tabindex="-1" aria-labelledby="formsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="formsModalLabel">Forms Library</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table id="userFormsTable" class="table table-hover" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Created Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in forms_result %}
+                        <tr style="max-height: 100px; overflow-y: auto; " onclick="insertFormHtml('{{ data.form_html }}')">
+                            <td class="py-1">
+                                {{ data.form_name }}
+                            </td>
+                            <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -337,10 +453,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle the save selection button click
 
 });
-
-
-
-
 </script>
 
 <script>
@@ -426,6 +538,17 @@ document.getElementById('deviceMediaInput').addEventListener('change', function(
 });
 </script>
 
+<script>
+    new DataTable('#userFormsTable');
+</script>
+
+<script>
+function insertFormHtml(formHtml) {
+    const summernoteEditor = $('#content');
+    summernoteEditor.summernote('pasteHTML', formHtml);
+    $('#formsModal').modal('hide');
+}
+</script>
 
 
 {% endblock %}

@@ -667,12 +667,11 @@ field.appendChild(editIcon);
 
 <script>
 function generateUserBuiltFormHTML() {
-
     const fieldsContainer = document.getElementById('fields-container');
     const fields = Array.from(fieldsContainer.getElementsByClassName('field'));
-    var uniqueId = "{{ form_unique_id }}"
-    console.log(uniqueId)
-    let formHTML = '<form action="{{ url_for('dynamic_form_submission') }}">';
+    var uniqueId = "{{ form_unique_id }}"; // Assuming this is provided somewhere in your template
+    console.log(uniqueId);
+    let formHTML = '<form id="dynamic-form" action="{{ url_for('dynamic_form_submission') }}">';
 
     fields.forEach((field, index) => {
         const labelElement = field.querySelector('label');
@@ -687,10 +686,32 @@ function generateUserBuiltFormHTML() {
         }
 
         inputElements.forEach((input, inputIndex) => {
+            let uniqueId;
+            let fieldName = ''; // Variable to hold the name attribute value
+            // Find the nearest label element
+            const nearestLabel = input.closest('.field').querySelector('label');
+            if (nearestLabel) {
+                // Use the text content of the nearest label as the name attribute
+                fieldName = nearestLabel.textContent.trim().toLowerCase().replace(/\s+/g, '_');
+            }
+
+            // Generate unique ID for each input
+            if (input.tagName.toLowerCase() === 'input' && ['checkbox', 'radio'].includes(input.type)) {
+                uniqueId = `${uniqueIdBase}-${inputIndex}`;
+            } else {
+                uniqueId = uniqueIdBase;
+            }
+
+            // Construct the name attribute using the fieldName and uniqueIdBase
+            const nameAttribute = fieldName ? `${fieldName}` : '';
+
+
+
+
             switch (input.tagName.toLowerCase()) {
                 case 'input':
-                    let uniqueId;
-                     if (input.type === 'checkbox' || input.type === 'radio') {
+                    let inputType = input.type;
+                        if (inputType === 'checkbox' || inputType === 'radio') {
                         // Generate unique ID for each checkbox and radio button
                         uniqueId = `${uniqueIdBase}-${inputIndex}`;
                         const parentContainer = input.closest('.form-check'); // Find the closest .form-check container
@@ -698,28 +719,23 @@ function generateUserBuiltFormHTML() {
                         const optionLabelSpan = parentContainer ? parentContainer.querySelector('.form-check-label > span:first-child') : null;
                         const optionLabel = optionLabelSpan ? optionLabelSpan.textContent.trim() : '';
                         fieldHTML += `<div class="form-check">
-                        <input class="form-check-input" type="${input.type}" id="${uniqueId}" name="${uniqueIdBase}" value="${optionLabel}"><label class="form-check-label" for="${uniqueId}">${optionLabel}</label>
+                        <input class="form-check-input" type="${input.type}" id="${uniqueId}" name="${nameAttribute}" value="${optionLabel}"><label class="form-check-label" for="${uniqueId}">${optionLabel}</label>
                         </div> <br>`;
-                    } else {
-                        // Use the base unique ID for other input types
-                        uniqueId = uniqueIdBase;
-                        switch(input.type) {
-                            case 'file':
-                                fieldHTML += `<input type="file" id="${uniqueId}" name="${uniqueIdBase}" accept="${input.accept}">`;
-                                break;
-                            case 'date':
-                                fieldHTML += `<input type="date" id="${uniqueId}" name="${uniqueIdBase}" min="${input.min}" max="${input.max}">`;
-                                break;
-                            default:
-                                fieldHTML += `<input type="${input.type}" id="${uniqueId}" name="${uniqueIdBase}" placeholder="${input.placeholder || ''}">`;
+                    } else{
+                        if (inputType === 'file') {
+                            fieldHTML += `<input type="file" id="${uniqueId}" name="${nameAttribute}" accept="${input.accept}">`;
+                        } else if (inputType === 'date') {
+                            fieldHTML += `<input type="date" id="${uniqueId}" name="${nameAttribute}" min="${input.min}" max="${input.max}">`;
+                        } else {
+                            fieldHTML += `<input type="${inputType}" id="${uniqueId}" name="${nameAttribute}" placeholder="${input.placeholder || ''}">`;
                         }
                     }
                     break;
                 case 'textarea':
-                    fieldHTML += `<textarea id="${uniqueIdBase}" name="${uniqueIdBase}" placeholder="${input.placeholder || ''}"></textarea>`;
+                    fieldHTML += `<textarea id="${uniqueId}" name="${nameAttribute}" placeholder="${input.placeholder || ''}"></textarea>`;
                     break;
                 case 'select':
-                    fieldHTML += `<select id="${uniqueIdBase}" name="${uniqueIdBase}">`;
+                    fieldHTML += `<select id="${uniqueId}" name="${nameAttribute}">`;
                     Array.from(input.options).forEach(option => {
                         fieldHTML += `<option value="${option.value}">${option.text}</option>`;
                     });
@@ -735,12 +751,11 @@ function generateUserBuiltFormHTML() {
         fieldHTML += '</div>';
         formHTML += fieldHTML;
     });
-    formHTML += '<button type="submit" class="final-button">Submit</button>';
     formHTML += `<input type="hidden" id="uniqueIdHiddenField" name="unique_id" value="${uniqueId}">`;
-    formHTML += '</form>';
+    formHTML += '<button type="submit" id="final-submission-button" class="final-button">Submit</button>';
+    formHTML += `</form>`;
     return formHTML;
 }
-
 
 document.getElementById('submit-form').addEventListener('click', function(event) {
     event.preventDefault(); // Prevent the form from submitting normally

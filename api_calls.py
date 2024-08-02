@@ -2121,3 +2121,38 @@ def get_form_by_unique_id(form_id: str):
         print(f"Error Connecting: {errc}")
     except requests.exceptions.Timeout as errt:
         print(f"Timeout Error: {errt}")
+
+
+def collect_form_response(unique_id, response_data):
+    print('trying to send response')
+    data = {
+        "response_data": response_data
+           }
+    try:
+        response = requests.post(constants.BASE_URL + f'/formbuilder/{unique_id}/add-response', json=data)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def delete_form_by_unique_id(form_id, access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.delete(constants.BASE_URL + f'/formbuilder/delete-user-form/{form_id}', headers=headers)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")

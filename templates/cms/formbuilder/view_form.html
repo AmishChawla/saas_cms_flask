@@ -8,6 +8,7 @@
 
 {% block content %}
 <!-- Page Header -->
+<link href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" rel="stylesheet">
 
 <style>
         body {
@@ -182,6 +183,10 @@
         width: 10vw;
         margin: 15px 0px;
         }
+
+        #responsesTable th {
+        text-transform: capitalize;
+        }
     </style>
 
 <div class="col-md-10 ml-0 mb-4 pt-3">
@@ -197,9 +202,19 @@
         </div>
     </header>
     <hr>
-    <br>
-    <br>
+
     <!-- Page Content -->
+
+      <ul class="nav nav-tabs" id="formTabs" style="margin-top: 1.5rem;">
+        <li class="nav-item">
+          <a class="nav-link active" id="form-tab" data-toggle="tab" href="#form"> Form </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="responses-tab" data-toggle="tab" href="#responses">Responses</a>
+        </li>
+      </ul>
+    <div class="tab-content" style="margin-top: 1.5rem;">
+    <div class="tab-pane fade show active" id="form">
     <article class="mb-4">
         <div class="container">
             <div class="row justify-content-center">
@@ -207,11 +222,101 @@
             </div>
         </div>
     </article>
+    </div>
+    <div class="tab-pane fade" id="responses">
+        {% if form_responses %}
+        <table id="responsesTable" class="hover" style="width:100%;">
+            <thead>
+            <tr>
+                {% for key in form_responses[0].keys() %}
+                    <th>{{ key }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+        <tbody>
+            {% for response in form_responses %}
+            <tr>
+                {% for key, value in response.items() %}
+                    <td>{{ value }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+
+          </table>
+        {% else %}
+        <p style="font-size:0.8rem; font-weight:lighter; margin: 0 45%;"> No Responses </p>
+        {% endif %}
+    </div>
+
+
+    </div>
 </div>
 
 <!-- Footer -->
 <!-- Bootstrap core JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+
 <!-- Core theme JS -->
 <script src="js/scripts.js"></script>
+<script>
+new DataTable('#responsesTable');
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var tableHeaders = document.querySelectorAll('#responsesTable th');
+    tableHeaders.forEach(function(header) {
+        // Split the header text into words
+        var words = header.textContent.trim().split(/[_\s]+/);
+        // Capitalize the first letter of each word except the first one
+        words = words.map(function(word, index) {
+            return index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1);
+        });
+        // Rejoin the words with a space and update the header text
+        header.textContent = words.join(' ');
+    });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Select the table
+    var table = document.querySelector('#responsesTable');
+
+    // Determine the number of columns in the table
+    var numColumns = Array.from(table.rows[0].cells).length;
+
+    // Iterate over each row starting from the second row (assuming the first row contains headers)
+    Array.from(table.rows).slice(1).forEach(function(row) {
+        // Access the last cell in each row
+        var lastCell = row.cells[numColumns - 1];
+
+        // Check if the cell contains a date string
+        if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+$/.test(lastCell.textContent)) {
+            // Extract the date part
+            var datePart = lastCell.textContent.split('T')[0];
+
+            // Create a Date object
+            var date = new Date(datePart);
+
+            // Define the month names array
+            var months = ['January', 'February', 'March', 'April', 'May', 'June',
+                         'July', 'August', 'September', 'October', 'November', 'December'];
+
+            // Format the date
+            var day = date.getDate();
+            var monthIndex = date.getMonth();
+            var year = date.getFullYear();
+            var formattedDate = day + ' ' + months[monthIndex] + ' ' + year;
+
+            // Update the cell content
+            lastCell.textContent = formattedDate;
+        }
+    });
+});
+</script>
+
 {% endblock %}

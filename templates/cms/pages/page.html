@@ -8,6 +8,89 @@
 
 {% block content %}
 <!-- Page Header -->
+
+<style>
+            .custom-button {
+          border: none;
+          outline: none;
+          background-color: rgb(24, 22, 22);
+          padding: 10px;
+          border-radius: 10px;
+          color: #fff;
+          font-size: 16px;
+          transform: .3s ease;
+          text-decoration: none;
+        }
+
+        .custom-button:hover {
+          background-color: rgb(21, 19, 19);
+        }
+
+        .final-button {
+            border: none;
+            outline: none;
+            background-color: royalblue;
+            padding: 15px 25px; /* Increased padding */
+            border-radius: 10px;
+            color: #fff;
+            font-size: 18px; /* Optional: Adjust font size if needed */
+            transform: .3s ease;
+            text-decoration: none;
+            display: block; /* Make it a block element to apply margin auto */
+            margin: auto; /* Center the button horizontally */
+            width: fit-content; /* Adjust width to fit content */
+            margin-top: 20px; /* Optional: Adjust vertical positioning */
+            margin-bottom: 20px; /* Optional: Adjust vertical spacing below the button */
+        }
+
+        .final-button:hover {
+          background-color: rgb(56, 90, 194);
+        }
+
+
+        .field {
+            margin-bottom: 20px;
+            position: relative;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea,
+        select,
+        input[type="date"],
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .form-check input {
+            margin-right: 5px;
+        }
+
+        .form-check-label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+</style>
+
 <div class="col-md-10 ml-0 mb-4 pt-3">
     <header class="masthead">
         <div class="container position-relative px-4 px-lg-5">
@@ -38,4 +121,99 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Core theme JS -->
 <script src="js/scripts.js"></script>
+<!--<script>-->
+<!--document.addEventListener('DOMContentLoaded', function() {-->
+<!--function collectFormDataWithSpecialCases(formElement) {-->
+<!--    let formData = {};-->
+<!--    let files = []; // To temporarily store file inputs-->
+
+<!--    // Iterate over each child of the form element-->
+<!--    for (let i = 0; i < formElement.children.length; i++) {-->
+<!--        let child = formElement.children[i];-->
+
+<!--        // Check if the child is a field (div with class 'field')-->
+<!--        if (child.classList.contains('field')) {-->
+<!--            let inputs = child.querySelectorAll('input, textarea, select, [type="checkbox"], [type="radio"]');-->
+
+<!--            // Iterate over each input in the field-->
+<!--            inputs.forEach(input => {-->
+<!--                let inputName = input.name;-->
+<!--                let inputValue;-->
+
+<!--                switch (input.type) {-->
+<!--                    case 'checkbox':-->
+<!--                    case 'radio':-->
+<!--                        // For checkboxes and radios, check if they are checked-->
+<!--                        inputValue = input.checked ? true : false;-->
+<!--                        // Handle multiple checkboxes by storing them in an array-->
+<!--                        if (!Array.isArray(formData[inputName])) {-->
+<!--                            formData[inputName] = [];-->
+<!--                        }-->
+<!--                        formData[inputName].push(inputValue);-->
+<!--                        break;-->
+<!--                    case 'file':-->
+<!--                        // For file inputs, read the file(s) and store the result or reference-->
+<!--                        // Note: Due to security restrictions, reading files here might not be feasible-->
+<!--                        // Instead, we'll just store the filename for demonstration purposes-->
+<!--                        inputValue = input.files[0]?.name || '';-->
+<!--                        files.push({ name: inputName, fileName: inputValue });-->
+<!--                        break;-->
+<!--                    case 'date':-->
+<!--                    default:-->
+<!--                        // For date inputs and others, get the value directly-->
+<!--                        inputValue = input.type === 'date' ? input.value : input.value.trim();-->
+<!--                        break;-->
+<!--                }-->
+
+<!--                // Store the input value under the appropriate name-->
+<!--                formData[inputName] = inputValue;-->
+<!--            });-->
+<!--        }-->
+<!--    }-->
+
+<!--    // Convert the formData object to a JSON string-->
+<!--    let jsonData = JSON.stringify(formData);-->
+
+<!--    // Optionally, handle files separately if needed-->
+<!--    // For example, upload files to a server or process them further-->
+<!--    // files.forEach(fileInfo => {-->
+<!--    //     console.log(`File for ${fileInfo.name}:`, fileInfo.fileName);-->
+<!--    // });-->
+
+<!--    return { jsonData, files };-->
+<!--}-->
+
+<!--    const formElement = document.getElementById('dynamic-form'); // Adjust selector as necessary-->
+<!--    const submitButton = document.getElementById('final-submission-button');-->
+
+<!--    submitButton.addEventListener('click', function(event) {-->
+<!--        event.preventDefault(); // Prevent the default form submission-->
+
+<!--        // Collect form data-->
+<!--        const result = collectFormDataWithSpecialCases(formElement);-->
+
+<!--        // Prepare the data to be sent-->
+<!--        const jsonData = result.jsonData;-->
+<!--        const files = result.files; // Optional: Handle files as needed before sending-->
+
+<!--        // Send the data to the Flask endpoint-->
+<!--        fetch('/form/thank-you', {-->
+<!--            method: 'POST',-->
+<!--            headers: {-->
+<!--                'Content-Type': 'application/json',-->
+<!--            },-->
+<!--            body: JSON.stringify({ data: jsonData }),-->
+<!--        })-->
+<!--        .then(response => response.text())-->
+<!--        .then(data => {-->
+<!--            console.log('Success:', data);-->
+<!--            // Handle success, e.g., show a message or redirect-->
+<!--        })-->
+<!--        .catch((error) => {-->
+<!--            console.error('Error:', error);-->
+<!--            // Handle errors, e.g., show an error message-->
+<!--        });-->
+<!--    });-->
+<!--});-->
+<!--</script>-->
 {% endblock %}

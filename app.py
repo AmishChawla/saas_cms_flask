@@ -295,7 +295,6 @@ def user_dashboard():
     response = api_calls.get_user_profile(access_token=current_user.id)
     if response.status_code == 200:
         result = response.json()
-        resume_data = result["resume_data"]
     stats = api_calls.get_stats(access_token=current_user.id)
     comment_count = stats["total_comments"]
     post_count = stats["total_posts"]
@@ -303,7 +302,7 @@ def user_dashboard():
     feedback_count = stats["total_feedbacks"]
 
 
-    return render_template('dashboard.html', resume_data=resume_data, comment_count=comment_count, post_count=post_count, subscriber_count=subscriber_count, feedback_count=feedback_count)
+    return render_template('dashboard.html', comment_count=comment_count, post_count=post_count, subscriber_count=subscriber_count, feedback_count=feedback_count)
 
 
 @app.route("/admin/admin-dashboard")
@@ -617,7 +616,7 @@ def user_history():
         username = result["username"]
         email = result["email"]
         role = result["role"]
-        resume_data = result["resume_data"]
+        resume_data = []
         # data_list = []
         # for index in range(len(result["resume_data"])):
         #     extracted_data = result["resume_data"][index]["extracted_data"]
@@ -1148,13 +1147,17 @@ def add_post():
     if media_result is None:
         media_result = []  # Set result to an empty list
 
+    forms_result = api_calls.get_user_all_forms(access_token=current_user.id)
+    if forms_result is None:
+        forms_result = []  # Set result to an empty list
+
     if current_user.role == 'user':
         is_service_allowed = api_calls.is_service_access_allowed(current_user.id)
         if is_service_allowed:
-            return render_template('add_post.html', form=form, categories=category_choices, result=media_result, root_url=root_url)
+            return render_template('add_post.html', form=form, categories=category_choices, forms_result=forms_result,result=media_result, root_url=root_url)
         return redirect(url_for('user_view_plan'))
     else:
-        return render_template('add_post.html', form=form, categories=category_choices, result=media_result, root_url=root_url)
+        return render_template('add_post.html', form=form, categories=category_choices, result=media_result, forms_result=forms_result, root_url=root_url)
 
 @app.route('/posts/preview-post', methods=['GET', 'POST'])
 @login_required
@@ -1973,12 +1976,19 @@ def formbuilder_createform():
         print(e)
         return redirect(url_for('formbuilder'))
 
+@app.route("/form/delete-form/<form_id>", methods=['GET', 'POST'])
+@login_required
+def formbuilder_delete_form(form_id):
+    result = api_calls.delete_form_by_unique_id(form_id=form_id, access_token=current_user.id)
+    return redirect(url_for('user_all_forms'))
+
 @app.route('/user/all-forms')
 @login_required
 def user_all_forms():
     forms = api_calls.get_user_all_forms(access_token=current_user.id)
     if forms is None:
         forms = []  # Set result to an empty list
+
 
     return render_template('cms/formbuilder/user_all_forms.html', result=forms)
 
@@ -1991,15 +2001,39 @@ def formbuilder_viewform(form_id):
     form_html = response["form_html"]
     form_responses = response["responses"]
 
+
+    # Convert the set back to a list since we'll pass it to the template
+    if form_responses is None:
+        form_responses = []
+    else:
+        form_responses = [json.loads(item) for item in form_responses]
+
     return render_template('cms/formbuilder/view_form.html', form_html=form_html,form_name=form_name, form_responses=form_responses)
-
-
 
 
 @app.route('/form/thank-you')
 def dynamic_form_submission():
-    unique_id = str(uuid.uuid4())
-    return 'submitted'
+    from urllib.parse import urlparse, parse_qs
+    parsed_url = urlparse(str(request.url))
+    query_string = parsed_url.query
+
+    # Parse the query string into a dictionary
+    query_params = parse_qs(query_string)
+
+    unique_id = query_params.pop('unique_id', [''])[0]
+
+    # Process the query parameters to concatenate values of repeated keys
+    query_dict = {}
+    for k, v in query_params.items():
+        # Join values with spaces if there are multiple occurrences, otherwise just take the first value
+        query_dict[k] = ' '.join(v) if len(v) > 1 else v[0]
+
+    print("Unique ID:", unique_id)
+    print("Query Dictionary:", query_dict)
+
+    submit_form_response = api_calls.collect_form_response(unique_id=unique_id, response_data=query_dict)
+
+    return render_template('widgets/response_recored_modal.html',show_modal='true')
 
 
 ############################################# Email Templates ################################
@@ -2214,13 +2248,17 @@ def add_page():
     if media_result is None:
         media_result = []  # Set result to an empty list
 
+    forms_result = api_calls.get_user_all_forms(access_token=current_user.id)
+    if forms_result is None:
+        forms_result = []  # Set result to an empty list
+
     if current_user.role == 'user':
         is_service_allowed = api_calls.is_service_access_allowed(current_user.id)
         if is_service_allowed:
-            return render_template('cms/pages/add_page.html', form=form, result=media_result, root_url=root_url)
+            return render_template('cms/pages/add_page.html', form=form,forms_result=forms_result, result=media_result, root_url=root_url)
         return redirect(url_for('user_view_plan'))
     else:
-        return render_template('cms/pages/add_page.html', form=form, result=media_result, root_url=root_url)
+        return render_template('cms/pages/add_page.html', form=form,forms_result=forms_result, result=media_result, root_url=root_url)
 
 
 @app.route('/user/all-pages')

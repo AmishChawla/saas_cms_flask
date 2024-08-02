@@ -206,6 +206,33 @@
               </li>
             </ul>
               </li>
+              <li class="nav-item {% if request.endpoint == 'user_all_forms' or request.endpoint == 'formbuilder' or request.endpoint == 'user_feedbacks' %} menu-open {% endif %}">
+                <a href="#" class="nav-link">
+                  <i class="far bi bi-window-stack nav-icon"></i>
+                  <p>Forms & Feedbacks</p>
+                  <i class="right fas fa-angle-left"></i>
+                </a>
+                <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ url_for('user_all_forms') }}" class="nav-link {% if request.endpoint == 'user_all_forms' %} active {% endif %}">
+                  <i class="far bi bi-window-dock nav-icon"></i>
+                  <p>My Forms</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ url_for('formbuilder') }}" class="nav-link {% if request.endpoint == 'formbuilder' %} active {% endif %}">
+                  <i class="far bi bi-window-plus nav-icon"></i>
+                  <p>Add Form</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ url_for('user_feedbacks') }}" class="nav-link {% if request.endpoint == 'user_feedbacks' %} active {% endif %}">
+                  <i class="far bi bi-chat-right-text nav-icon"></i>
+                  <p>Feedback</p>
+                </a>
+              </li>
+            </ul>
+              </li>
               <li class="nav-item {% if request.endpoint == 'get_all_comment' %} menu-open {% endif %}">
                 <a href="#" class="nav-link">
                   <i class="far fa fa-comment nav-icon"></i>
@@ -231,12 +258,6 @@
                 <a href="{{ url_for('newsletter_subscribers') }}" class="nav-link {% if request.endpoint == 'newsletter_subscribers' %} active {% endif %}">
                   <i class="far fa-thin fa-newspaper nav-icon"></i>
                   <p>Newsletter</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{{ url_for('user_feedbacks') }}" class="nav-link {% if request.endpoint == 'user_feedbacks' %} active {% endif %}">
-                  <i class="far bi bi-chat-right-text nav-icon"></i>
-                  <p>Feedback</p>
                 </a>
               </li>
               <li class="nav-item">
