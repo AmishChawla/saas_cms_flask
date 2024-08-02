@@ -269,14 +269,6 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.endpoint == 'upload_pdf' %}active{% endif %}" href="{{ url_for('upload_pdf') }}">
-              <i class="nav-icon far fa fa-file"></i>
-              <p>
-                Parse Resume
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link {% if request.endpoint == 'get_purchase_history' %}active{% endif %}" href="{{ url_for('get_purchase_history') }}">
               <i class="far fa fa-history nav-icon"></i>
               <p>
