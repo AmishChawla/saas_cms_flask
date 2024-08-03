@@ -281,7 +281,8 @@ $('.control-sidebar').ControlSidebar('show');
         height: 400,
         minHeight: null,
         maxHeight: null,
-        focus: true
+        focus: true,
+        allowList: ['form']
     });
      new DataTable('#userMediaTable');
 });
@@ -343,10 +344,13 @@ $('.control-sidebar').ControlSidebar('show');
 <script>
 function insertFormHtml(formHtml) {
     const summernoteEditor = $('#content');
+    console.log(formHtml);
     summernoteEditor.summernote('pasteHTML', formHtml);
     $('#formsModal').modal('hide');
 }
 </script>
+
+
 
 {% endblock %}
 {% endblock %}
