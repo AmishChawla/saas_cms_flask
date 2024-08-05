@@ -276,6 +276,14 @@
               </p>
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'chatbot' %}active{% endif %}" href="{{ url_for('chatbot') }}">
+              <i class="far fa fa-history nav-icon"></i>
+              <p>
+                Chat
+              </p>
+            </a>
+          </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
