@@ -18,6 +18,7 @@ import forms
 import api_calls
 from constants import ROOT_URL
 import google.generativeai as genai
+import openai
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -31,6 +32,7 @@ password_reset_token = ""
 ####################### GEMINI MODEL CONFIG #########################
 genai.configure(api_key=constants.GEMINI_APIKEY)
 model = genai.GenerativeModel('gemini-pro')
+openai.api_key = constants.OPEN_AI_API_KEY
 
 
 @login_manager.user_loader
@@ -1927,28 +1929,36 @@ def get_post_by_id(post_id):
 ################################################ CHATBOT #########################################################
 
 @app.route('/chatbot')
+@login_required
 def chatbot():
     return render_template('chatbot.html')
 
 
-# @app.route('/send_message', methods=['POST'])
-# def send_message():
-#     user_input = request.form['user_input']
-#     print(user_input)
-#     bot_response = model.generate_content(user_input)
-#     print(bot_response.text)
-#     return redirect(url_for('chatbot', bot_response=bot_response.text))
-
 @app.route('/send_message', methods=['POST'])
 def send_message():
+
     user_input = request.form['user_input']
     print(user_input)
-    bot_response = model.generate_content(user_input)
-    print(bot_response.text)
-    # Process user input here or send it to your chatbot backend
-    # For simplicity, let's just respond with a dummy message
 
-    return jsonify({'bot_response': bot_response.text})
+    # Send the user input to OpenAI's GPT-3.5
+    completion = openai.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "user",
+                "content": user_input,
+            },
+        ],
+        temperature=0.7,
+        max_tokens=256,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    bot_response = completion.choices[0].message.content
+    print(bot_response)
+
+    return jsonify({'bot_response': bot_response})
 
 
 ###################################form builder################

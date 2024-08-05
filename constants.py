@@ -29,7 +29,20 @@ AUTHORIZATION_BASE_URL = 'https://accounts.google.com/o/oauth2/auth'
 TOKEN_URL = 'https://accounts.google.com/o/oauth2/token'
 GOOGLE_RECAPTCHA_SITE_KEY = os.getenv('GOOGLE_RECAPTCHA_SITE_KEY')
 GOOGLE_RECAPTCHA_SECRET_KEY = os.getenv("GOOGLE_RECAPTCHA_SECRET_KEY")
+OPEN_AI_API_KEY = os.getenv("OPEN_AI_API_KEY")
+
+# < div
+#
+#
+# class ="card" style="overflow-x:auto;" >
+#
+# < div
+#
+#
+# class ="card-body" style="padding: 2rem;" >
 
 
+# < / div >
+# < / div >
 
 
