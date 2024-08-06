@@ -5,7 +5,7 @@ import os
 from io import StringIO, BytesIO
 import csv
 import ast
-
+import PyPDF2
 import stripe as stripe
 from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file, jsonify,g ,Response,send_from_directory
 import xml.etree.ElementTree as ET
@@ -1926,39 +1926,7 @@ def get_post_by_id(post_id):
 
     return render_template('post.html', comment_like_result=comment_like_result, result=result, title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags, post_id=id, post_date=post_date, post_slug=post_slug)
 
-################################################ CHATBOT #########################################################
 
-@app.route('/chatbot')
-@login_required
-def chatbot():
-    return render_template('chatbot.html')
-
-
-@app.route('/send_message', methods=['POST'])
-def send_message():
-
-    user_input = request.form['user_input']
-    print(user_input)
-
-    # Send the user input to OpenAI's GPT-3.5
-    completion = openai.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {
-                "role": "user",
-                "content": user_input,
-            },
-        ],
-        temperature=0.7,
-        max_tokens=256,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
-    )
-    bot_response = completion.choices[0].message.content
-    print(bot_response)
-
-    return jsonify({'bot_response': bot_response})
 
 
 ###################################form builder################
@@ -2358,7 +2326,181 @@ def get_page_by_username_and_slug(username, page_slug):
 
     return render_template('cms/pages/page.html', title=title, content=content)
 
+#######################################################  AI #########################################################################
 
+###################################################### CHATBOT ####################################################################
+
+@app.route('/chatbot')
+@login_required
+def chatbot():
+    return render_template('chatbot.html')
+
+
+@app.route('/send_message', methods=['POST'])
+def send_message():
+
+    user_input = request.form['user_input']
+    print(user_input)
+
+    # Send the user input to OpenAI's GPT-3.5
+    completion = openai.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "user",
+                "content": user_input,
+            },
+        ],
+        temperature=0.7,
+        max_tokens=256,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    bot_response = completion.choices[0].message.content
+    print(bot_response)
+
+    return jsonify({'bot_response': bot_response})
+
+################################################## RESUME PARSER ######################################################################
+
+def extract_text_from_pdf(file_path):
+    with open(file_path, 'rb') as file:
+        reader = PyPDF2.PdfReader(file)  # Updated line
+        text = ''
+        for page in reader.pages:  # Updated line
+            text += page.extract_text()  # Updated line
+    return text
+
+def extract_text_from_word(file_path):
+    from docx import Document
+    doc = Document(file_path)
+    text = ''
+    for paragraph in doc.paragraphs:
+        text += paragraph.text + '\n'
+    return text
+
+def parse_single_resume(resume_text):
+    prompt=f"""
+    Extract the following information from this resume in JSON format:
+    - Name
+    - Address
+    - Email
+    - Phone
+    - Education (Degree, University, Year)
+    - Experience (Position, Company, Duration, Responsibilities)
+    - Skills
+    
+    Note: Please generate a response that does not exceed 4096 tokens to ensure completeness.
+
+    Resume:
+    {resume_text}
+
+    Give JSON object
+    """
+    completion = openai.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "user",
+                "content": prompt,
+            },
+        ],
+        max_tokens=4096,
+        n=1,
+        stop=None,
+        temperature=0.5,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    json_resume = completion.choices[0].message.content
+    print(type(json_resume))
+    cleaned_json_string = json_resume.strip('```json ').strip('```')
+    data = json.loads(cleaned_json_string)
+    print(data)
+    # json_string = json_resume.replace('json ', '')
+    # print(json_string)
+    #
+    # try:
+    #     parsed_data = clean_json_response(json_resume)
+    #
+    # except Exception as e:
+    #     parsed_data = {"error": str(e)}
+
+    return data
+
+def clean_json_response(response_text):
+    import re
+    try:
+        return json.loads(response_text)
+    except json.JSONDecodeError:
+        cleaned_response = re.sub(r'\s+', '', response_text)  # Remove extra whitespace
+        try:
+            return json.loads(cleaned_response)
+        except json.JSONDecodeError:
+            return {"error": "Failed to parse resume information into JSON"}
+
+def parse_multiple_resumes(file_paths):
+    parsed_resumes = []
+    for file_path in file_paths:
+        if file_path.endswith('.pdf'):
+            resume_text = extract_text_from_pdf(file_path)
+            print('Extracted PDF')
+        elif file_path.endswith('.docx'):
+            resume_text = extract_text_from_word(file_path)
+            print('Extracted WORD')
+        else:
+            raise ValueError("Unsupported file type. Use 'pdf' or 'word'.")
+
+        parsed_data = parse_single_resume(resume_text)
+        print('GOT JSON')
+        parsed_resumes.append(parsed_data)
+    return parsed_resumes
+
+
+@app.route('/resume-parser', methods=['GET', 'POST'])
+@login_required
+def resume_parser():
+    form = forms.UploadForm()
+    if form.validate_on_submit():
+        uploaded_files = request.files.getlist('files')
+
+        # Clear the uploads folder
+        empty_folder(uploads_folder)
+
+        file_list = []
+        for file in uploaded_files:
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(uploads_folder, filename)
+            file.save(file_path)
+            file_list.append(file_path)
+
+        parsed_resumes = parse_multiple_resumes(file_list)
+
+        try:
+            resume_submission = api_calls.add_new_resume_collection(resumes=parsed_resumes, access_token=current_user.id)
+        except Exception as e:
+            raise e
+
+        # Render results
+        return parsed_resumes
+
+    return render_template('upload_pdf.html', form=form)
+
+
+@app.route('/resume-collection')
+@login_required
+def resume_collection():
+    try:
+        resume_collection = api_calls.get_past_resume_records(access_token=current_user.id)
+    except: resume_collection = []
+
+    return render_template('cms/AI/resume_collection.html', result=resume_collection)
+
+
+
+#####################################################################################################################################
 
 #####################################################################################################################################
 ############################################## ALL ROUTES ABOVE THIS ################################################################

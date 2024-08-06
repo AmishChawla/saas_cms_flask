@@ -233,6 +233,44 @@
               </li>
             </ul>
               </li>
+              <li class="nav-item menu-open">
+            <a class="nav-link {% if request.endpoint == 'resume_parser' or request.endpoint == 'resume_collection' %}active{% endif %}" href="#">
+              <i class="far fa-regular fa-folder nav-icon"></i>
+              <p>
+                AI
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item {% if request.endpoint == 'resume_parser' or request.endpoint == 'resume_collection' %} menu-open {% endif %}">
+                <a class="nav-link" href="resume_parser">
+                  <i class="far bi bi-file-code-fill nav-icon"></i>
+                  <p>Resume Parser</p>
+                  <i class="right fas fa-angle-left"></i>
+                </a>
+                <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'resume_parser' %} active {% endif %}" href="{{ url_for('resume_parser') }}">
+                  <i class="far bi bi-file-earmark-code nav-icon"></i>
+                  <p>Resume Parser</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ url_for('resume_collection') }}" class="nav-link {% if request.endpoint == 'resume_collection' %} active {% endif %}">
+                  <i class="far bi bi-journal-code nav-icon" aria-hidden="true"></i>
+                  <p>Resume Collection</p>
+                </a>
+              </li>
+            </ul>
+              </li>
+              <li class="nav-item">
+                <a href="{{ url_for('chatbot') }}" class="nav-link {% if request.endpoint == 'chatbot' %} active {% endif %}">
+                  <i class="far bi bi-chat-fill nav-icon"></i>
+                  <p>Chat</p>
+                </a>
+              </li>
+            </ul>
+          </li>
               <li class="nav-item {% if request.endpoint == 'get_all_comment' %} menu-open {% endif %}">
                 <a href="#" class="nav-link">
                   <i class="far fa fa-comment nav-icon"></i>
@@ -264,12 +302,6 @@
                 <a href="{{ url_for('email_settings') }}" class="nav-link {% if request.endpoint == 'email_settings' %} active {% endif %}">
                   <i class="far bi bi-envelope nav-icon"></i>
                   <p>Mail Setup</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{{ url_for('chatbot') }}" class="nav-link {% if request.endpoint == 'chatbot' %} active {% endif %}">
-                  <i class="far bi bi-envelope nav-icon"></i>
-                  <p>Chat</p>
                 </a>
               </li>
             </ul>
