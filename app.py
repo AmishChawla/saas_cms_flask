@@ -2333,7 +2333,7 @@ def get_page_by_username_and_slug(username, page_slug):
 @app.route('/chatbot')
 @login_required
 def chatbot():
-    return render_template('chatbot.html')
+    return render_template('cms/AI/chatbot.html')
 
 
 @app.route('/send_message', methods=['POST'])
