@@ -79,14 +79,14 @@ Run `python app.py` to run this project
 
 
 ## Documentation
-[Admin Panel](admin_panel.md) \
-[User Panel](user_panel.md) \
-[Formbuilder](formbuilder.md) \
-[Posts](posts.md) \
-[Pages](pages.md) \
-[Newsletter](newsletter.md) \
-[Mail Setup](mail_setup.md) \
-[User Site](user_site.md)
+[Admin Panel](documentation/admin_panel.md) \
+[User Panel](documentation/user_panel.md) \
+[Formbuilder](documentation/formbuilder.md) \
+[Posts](documentation/posts.md) \
+[Pages](documentation/pages.md) \
+[Newsletter](documentation/newsletter.md) \
+[Mail Setup](documentation/mail_setup.md) \
+[User Site](documentation/user_site.md)
  
 ## Demo
 Checkout the demo of the project at [SaaS Boilerplate](http://35.154.190.245:5000/login) \
