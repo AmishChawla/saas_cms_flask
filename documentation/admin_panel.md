@@ -1,6 +1,6 @@
-#Admin Panel
+# Admin Panel
 Manage your application from here 
-###List of Users
+### List of Users
 ![list_of_users.png](screenshots/list_of_users.png)
 View the list of all users on one page. You can edit delete users of your choice.
 ### Move user to Trash
@@ -16,6 +16,6 @@ _**Plans**_
 ![plans.png](screenshots/plans.png)
 Setup your own subscription plans with custom pricing directly from the admin panel
 
-###Order History
+### Order History
 ![order_history.png](screenshots/order_history.png)
 Get all the subscription details of the user in admin panel

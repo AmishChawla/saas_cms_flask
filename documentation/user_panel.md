@@ -1,11 +1,11 @@
-#User Panel
+# User Panel
 User Panel is the panel that the users of the application will be able to access to create their content.
 
-###User Dashboard
+### User Dashboard
 Dashboard is the one page representation of user stats such as posts, Comments, Subscribers, Feedbacks etc.
 ![img.png](screenshots/user_dashboard.png)
 
-###Features of User Panel
+### Features of User Panel
 [1.Create and manage Posts](posts.md) \
 [2.Create and manage Pages](pages.md)  \
 [3.Use newsletters to notify audience](newsletter.md) \

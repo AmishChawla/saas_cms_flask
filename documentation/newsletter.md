@@ -1,4 +1,4 @@
-#Newsletters
+# Newsletters
 
 Users can send newsletters to the subscribers 
 Subscribers would be auto updated whenever the user drops a new post.

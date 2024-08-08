@@ -1,4 +1,4 @@
-#User Site
+# User Site
 This is the individual ste site of the user, this is where user can showcase their posts and pages
 
 ![img.png](screenshots/user_site.png)
