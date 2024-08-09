@@ -122,6 +122,8 @@
       <div class="input-container">
         <input type="text" id="user-input" placeholder="Type your message...">
         <button onclick="sendMessage()" class="final-button">Send</button>
+        <button onclick="saveChat()" class="final-button">Save</button>
+        <button type="button" class="final-button" data-bs-toggle="modal" data-bs-target="#chatsModal">Load</button>
       </div>
          </div>
 </div>
@@ -130,8 +132,54 @@
                   </div>
       </div>
 
-  <script>
-function sendMessage() {
+ <div class="modal fade" id="chatsModal" tabindex="-1" aria-labelledby="chatsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="formsModalLabel">All Chats</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table id="userFormsTable" class="table table-hover" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>Created Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in all_chats %}
+                        <tr style="max-height: 100px; overflow-y: auto; " onclick="loadChat({{data.messages}})">
+                            <td class="py-1">{{ data.upload_datetime.split('T')[0] }} {{ data.upload_datetime.split('T')[1][:8] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+ <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Chat Saved Successfully</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Your chat has been saved.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+ <script>
+            function sendMessage() {
   var userInput = document.getElementById("user-input").value;
   if (userInput.trim() === "") return;
   var chatBody = document.getElementById("chat-body");
@@ -160,13 +208,74 @@ function sendMessage() {
   chatBody.scrollTop = chatBody.scrollHeight;
 }
 
+function saveChat() {
+    var chatBody = document.getElementById("chat-body");
+    var messages = [];
+    Array.from(chatBody.getElementsByClassName("message")).forEach(message => {
+        const role = message.classList.contains("message-user") ? "user" : "assistant";
+        const content = message.innerText;
+        messages.push({
+            role,
+            content: [{ type: "text", text: content }]
+        });
+    });
+    fetch('/save-chat', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ messages })
+    }).then(response => {
+        if (response.ok) {
+            return response.text().then(text => {
+                if (text.toLowerCase() === 'true') {
+                    // Attempt to show the success modal
+                    var modalSuccess = document.getElementById('successModal');
+                    if (modalSuccess) {
+                        var modalInstance = new bootstrap.Modal(modalSuccess);
+                        modalInstance.show();
+                    } else {
+                        console.error('Success modal element not found.');
+                    }
+                } else {
+                    console.error('Unexpected response:', text);
+                }
+            });
+        } else {
+            throw new Error('Failed to save chat');
+        }
+    }).catch(error => {
+        console.error('Error saving chat:', error.message);
+    });
+}
+function loadChat(messages) {
+    var chatBody = document.getElementById("chat-body");
+    chatBody.innerHTML = ""; // Clear existing messages
+    messages.forEach(messageObj => {
+        const messageDiv = document.createElement("div");
+        messageDiv.className = messageObj.role === "user" ? "message message-user" : "message message-bot";
+        messageDiv.innerText = messageObj.content[0].text;
+        chatBody.appendChild(messageDiv);
+    });
+    chatBody.scrollTop = chatBody.scrollHeight;
+
+    // Close the modal
+    var myModalEl = document.getElementById('chatsModal')
+    var modalInstance = bootstrap.Modal.getInstance(myModalEl)
+    modalInstance.hide()
+}
+
      document.getElementById("user-input").addEventListener("keydown", function(event) {
       if (event.key === "Enter") {
         event.preventDefault(); // Prevent form submission if this is inside a form
         sendMessage();
       }
     });
-  </script>
+
+
+
+
+ </script>
 
 {% endblock %}
 

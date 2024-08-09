@@ -2333,7 +2333,12 @@ def get_page_by_username_and_slug(username, page_slug):
 @app.route('/chatbot')
 @login_required
 def chatbot():
-    return render_template('cms/AI/chatbot.html')
+    try:
+        all_chats = api_calls.get_user_all_chats(access_token=current_user.id)
+    except:
+        all_chats = []
+
+    return render_template('cms/AI/chatbot.html', all_chats=all_chats)
 
 
 @app.route('/send_message', methods=['POST'])
@@ -2361,6 +2366,22 @@ def send_message():
     print(bot_response)
 
     return jsonify({'bot_response': bot_response})
+
+
+@app.route('/save-chat', methods=['POST'])
+@login_required
+def save_chat():
+    data = request.get_json()
+    messages = data.get('messages', [])
+    try:
+        saved = api_calls.chatbot_save_chat(messages=messages, access_token=current_user.id)
+        return 'true'
+    except Exception as e:
+        print(e)
+        return 'false'
+
+
+
 
 ################################################## RESUME PARSER ######################################################################
 

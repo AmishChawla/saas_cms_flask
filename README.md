@@ -1,6 +1,6 @@
 # Open Source SaaS Boilerplate built with Python, Flask and FastAPI
 Open Source SaaS boilerplate with API, CMS, Membership, Subscriptions, Admin Panel and AI integration, designed to accelerate your software development process. \
-Checkout demo at [SaaS Boilerplate Demo](http://35.154.190.245:5000) \
+Checkout demo at [SaaS Boilerplate Demo](http://35.154.190.245:5000) 
 ## Features
 Built with Python, Flask and FastAPI, our boilerplate is designed to accelerate
 your development process, ensuring scalability, flexibility, and top-notch
