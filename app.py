@@ -931,22 +931,19 @@ def user_all_post():
 
 @app.route('/<username>/posts', methods=['GET', 'POST'])
 def user_post_list(username):
-    toast = 'null'
+    toast = request.args.get('toast', 'null')  # Get toast value from query params
     form = forms.SubscribeToNewsletterForm()
-    result = api_calls.get_user_post_by_username(username=username)
 
-    response = api_calls.get_all_categories()
-    if result is None:
-        result = []  # Set result to an empty list
+    # Get posts and categories
+    result = api_calls.get_user_post_by_username(username=username) or []
+    response = api_calls.get_all_categories() or []
 
-    if response is None:
-        response = []
+    # Get the activated theme
+    activated_theme = api_calls.get_user_theme(access_token=current_user.id)  # Ensure current_user is accessible
 
     if form.validate_on_submit():
-        print('inside validating')
         name = form.name.data
         email = form.email.data
-        print('sending call')
         response_status = api_calls.subscribe_to_newsletter(name=name, email=email, username=username)
         if response_status == 200:
             return redirect(url_for('user_post_list', username=username, toast='new_sub'))
@@ -955,7 +952,13 @@ def user_post_list(username):
         else:
             return redirect(url_for('user_post_list', username=username, toast='null'))
 
-    return render_template('user_post_list.html', result=result, response=response, form=form, username=username, toast=toast)
+    # Render the appropriate template based on the activated theme
+    if activated_theme is not None:
+        return render_template(f'themes/theme{activated_theme["theme_id"]}.html', result=result, response=response,
+                               form=form, username=username, toast=toast)
+    else:
+        return render_template('user_post_list.html', result=result, response=response, form=form, username=username,
+                               toast=toast)
 
 
 @app.route("/admin/delete-posts/<post_id>", methods=['GET', 'POST'])
@@ -986,7 +989,7 @@ def user_delete_post(post_id):
 @login_required
 def add_post():
     form = forms.AddPost()
-
+    media_form = forms.AddMediaForm()
     # Fetch categories and format them for the form choices
     try:
         categories = api_calls.get_user_all_categories(access_token=current_user.id)
@@ -1092,10 +1095,10 @@ def add_post():
     if current_user.role == 'user':
         is_service_allowed = api_calls.is_service_access_allowed(current_user.id)
         if is_service_allowed:
-            return render_template('add_post.html', form=form, categories=category_choices, result=media_result, root_url=root_url)
+            return render_template('add_post.html', form=form, media_form=media_form, categories=category_choices, result=media_result, root_url=root_url)
         return redirect(url_for('user_view_plan'))
     else:
-        return render_template('add_post.html', form=form, categories=category_choices, result=media_result, root_url=root_url)
+        return render_template('add_post.html', form=form, media_form=media_form, categories=category_choices, result=media_result, root_url=root_url)
 
 @app.route('/posts/preview-post', methods=['GET', 'POST'])
 @login_required
@@ -1605,6 +1608,30 @@ def user_all_medias():
     print(result)
 
     return render_template('user_all_media.html', result=result, root_url=root_url)
+
+
+@app.route('/user/appearance/themes')
+@login_required
+def all_themes():
+
+    return render_template('appearance_themes.html')
+
+
+@app.route('/user/appearance/theme_detail')
+@login_required
+def theme_detail():
+    # Retrieve theme_name and theme_id from query parameters
+    theme_name = request.args.get('theme_name')
+    theme_id = request.args.get('theme_id')
+
+    if not theme_name or not theme_id:
+        # Redirect back to themes page or show an error if either parameter is missing
+        return redirect(url_for('all_themes'))
+
+    # Pass the theme name and theme ID to the template
+    return render_template('themes/theme_activation.html', theme_name=theme_name, theme_id=theme_id)
+
+
 
 
 @app.route('/posts/comment/<int:post_id>/<username>/<post_date>/<post_slug>', methods=['GET', 'POST'])
@@ -2245,6 +2272,20 @@ def sitemap():
 
     # Return the sitemap as an XML response
     return Response(sitemap_str, mimetype="application/xml")
+
+
+@app.route("/user-active-theme", methods=['GET', 'POST'])
+def user_active_theme():
+    theme_name = request.args.get('theme_name')
+    theme_id = request.args.get('theme_id')
+    try:
+        active_theme = api_calls.user_active_theme(theme_name=theme_name, theme_id=theme_id, access_token=current_user.id)
+        if (active_theme.status_code == 200):
+            print(result)
+            return redirect(url_for('all_themes'))
+    except Exception as e:
+        print(e)
+
 
 @app.route('/robots.txt')
 def robots_txt():

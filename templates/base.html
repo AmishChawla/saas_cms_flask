@@ -20,6 +20,8 @@
     .content-wrapper {
       background-color: #ffffff;
     }
+
+
   </style>
   {% block styles %}
   {% endblock %}
@@ -256,6 +258,12 @@
                   <p>Mail Setup</p>
                 </a>
               </li>
+              <li class="nav-item">
+    <a class="nav-link {% if request.endpoint == 'all_themes' or request.endpoint == 'theme_detail' %} active {% endif %}" href="{{ url_for('all_themes') }}">
+        <i class="fas fa-adjust nav-icon"></i>
+        <p>Appearance</p>
+    </a>
+</li>
             </ul>
           </li>
           <li class="nav-item">
@@ -408,6 +416,9 @@ $(document).ready(function() {
 });
 
 </script>
+
+
+
 {% block scripts %}{% endblock %}
 </div>
 </body>

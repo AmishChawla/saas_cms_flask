@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infield Style Theme</title>
+
+</head>
+<style>
+    /* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Navigation */
+.navbar {
+    background: #fff;
+    color: #111;
+    padding: 10px 0;
+}
+
+.navbar .logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.navbar .nav-links {
+    list-style: none;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.navbar .nav-links li {
+    margin-left: 20px;
+}
+
+.navbar .nav-links a {
+    color: #111;
+    text-decoration: none;
+}
+
+.navbar .nav-links a:hover {
+    color: #ff6347;
+}
+
+/* Hero Section */
+.hero {
+    background: url('https://via.placeholder.com/1200x400') no-repeat center center/cover;
+    color: #fff;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    font-size: 18px;
+}
+
+/* Blog Posts */
+.blog-posts {
+    padding: 40px 0;
+}
+
+.blog-posts h2 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.post-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.post {
+    background: #f4f4f4;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.post img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.post h3 {
+    margin-top: 15px;
+    font-size: 24px;
+}
+
+.post p {
+    margin: 15px 0;
+}
+
+.post .read-more {
+    color: #ff6347;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.post .read-more:hover {
+    text-decoration: underline;
+}
+
+/* Load More Button */
+.load-more {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.load-more:hover {
+    background-color: #ff6347;
+}
+
+/* Footer */
+.footer {
+    background: #333;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+}
+
+</style>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">MySite</div>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container">
+            <h1>Welcome to My Blog</h1>
+            <p>Explore the world of design and development</p>
+        </div>
+    </header>
+
+    <!-- Blog Posts Section -->
+    <section class="blog-posts">
+        <div class="container">
+            <h2>Latest Posts</h2>
+            <div id="post-grid" class="post-grid">
+                <!-- Initial set of posts -->
+                {% for data in result %}
+                <article class="post">
+                    <img src="https://via.placeholder.com/300" alt="Post Image">
+                   <form action="{{ url_for('get_post_by_username_and_slug', username=data.author_name, post_date=data.created_at.split('T')[0], post_slug=data.slug) }}" method="POST" style="display:inline;">
+                            <input type="hidden" name="post_id" value="{{ data.id }}">
+                            <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left;">
+                                <h3 class="post-title">{{ data.title }}</h3>
+                            </button>
+                        </form>
+                    <p class="post-meta">
+                            Posted by
+                            <a href="{{ url_for('user_post_list', username=data.author_name) }}">{{ data.author_name }}</a>
+                            on {{ data.created_at.split('T')[0] }} at {{ data.created_at.split('T')[1][:8] }}
+                        </p>
+                </article>
+                {% endfor %}
+            </div>
+            <button id="load-more" class="load-more">Load More</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 MySite. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    const postGrid = document.getElementById("post-grid");
+    const loadMoreButton = document.getElementById("load-more");
+    let currentPostIndex = 3;
+
+    const posts = [
+        {
+            title: "Post Title 4",
+            content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            img: "https://via.placeholder.com/300",
+        },
+        {
+            title: "Post Title 5",
+            content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            img: "https://via.placeholder.com/300",
+        },
+        {
+            title: "Post Title 6",
+            content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            img: "https://via.placeholder.com/300",
+        },
+        {
+            title: "Post Title 7",
+            content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            img: "https://via.placeholder.com/300",
+        },
+        {
+            title: "Post Title 8",
+            content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            img: "https://via.placeholder.com/300",
+        },
+        {
+            title: "Post Title 9",
+            content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            img: "https://via.placeholder.com/300",
+        },
+    ];
+
+    loadMoreButton.addEventListener("click", function () {
+        for (let i = currentPostIndex; i < currentPostIndex + 3; i++) {
+            if (i >= posts.length) {
+                loadMoreButton.style.display = "none";
+                break;
+            }
+            const post = posts[i];
+            const postElement = document.createElement("article");
+            postElement.classList.add("post");
+            postElement.innerHTML = `
+                <img src="${post.img}" alt="Post Image">
+                <h3>${post.title}</h3>
+                <p>${post.content}</p>
+                <a href="#" class="read-more">Read More</a>
+            `;
+            postGrid.appendChild(postElement);
+        }
+        currentPostIndex += 3;
+    });
+});
+
+    </script>
+</body>
+</html>
