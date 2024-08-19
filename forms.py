@@ -1,9 +1,14 @@
-from wtforms import MultipleFileField, StringField, SelectMultipleField, IntegerField, PasswordField, SubmitField, HiddenField, validators, SelectField, BooleanField, \
+from wtforms import MultipleFileField, StringField, SelectMultipleField, IntegerField, PasswordField, SubmitField, \
+    HiddenField, validators, SelectField, BooleanField, \
     TextAreaField
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 import email_validator
-from wtforms.validators import DataRequired, Optional,  ValidationError
+from wtforms.validators import DataRequired, Optional, ValidationError
+
+import api_calls
+
+from flask_login import current_user
 
 
 class UploadForm(FlaskForm):
@@ -78,7 +83,21 @@ class AdminAddUserForm(FlaskForm):
         validators.EqualTo('password', message='Passwords must match.')
     ])
     role = SelectField('Select Role :', choices=['user', 'admin'])
+    security_group = SelectField('Select Security Group :')
     submit = SubmitField('Add')
+
+    def __init__(self, *args, **kwargs):
+        super(AdminAddUserForm, self).__init__(*args, **kwargs)
+        self.security_group.choices = self.load_security_groups()
+
+    def load_security_groups(self):
+        # Placeholder for loading data from an API
+        try:
+            security_groups = api_calls.get_all_security_groups(access_token=current_user.id)
+            # Replace this with actual async logic to fetch data
+            return [(security_group['id'], security_group['name']) for security_group in security_groups]
+        except:
+            return []
 
 
 class UserPasswordUpdateForm(FlaskForm):
@@ -152,9 +171,12 @@ class AdminEditCompanyForm(FlaskForm):
 
 class UserEditUserForm(FlaskForm):
     profile_picture = FileField('Profile Picture', render_kw={"id": "profile_picture_input", "style": "display: none;"})
-    username = StringField('Username', validators=[validators.Length(min=4, max=25), validators.DataRequired()], render_kw={"readonly": True})
-    email = StringField('Email', validators=[validators.Email(), validators.DataRequired()], render_kw={"readonly": True})
+    username = StringField('Username', validators=[validators.Length(min=4, max=25), validators.DataRequired()],
+                           render_kw={"readonly": True})
+    email = StringField('Email', validators=[validators.Email(), validators.DataRequired()],
+                        render_kw={"readonly": True})
     submit = SubmitField('Save')
+
 
 class EmailFunctionalityForm(FlaskForm):
     smtp_server = StringField('SMTP Server')
@@ -173,10 +195,11 @@ class AddPlan(FlaskForm):
     name = StringField('Plan Name', validators=[validators.DataRequired()])
     duration = StringField('Duration (Months)', validators=[validators.DataRequired()])
     fees = IntegerField('Fees', validators=[Optional()])
-    is_free =  BooleanField('Free')
+    is_free = BooleanField('Free')
     unlimited_resume_parsing = BooleanField('Unlimited')
     num_resume_parsing = StringField('Number of Resume Parsings', validators=[Optional()])
-    plan_details = TextAreaField('Plan Details', render_kw={'rows': 30, 'cols': 30, 'placeholder': 'Enter plan details here...'})
+    plan_details = TextAreaField('Plan Details',
+                                 render_kw={'rows': 30, 'cols': 30, 'placeholder': 'Enter plan details here...'})
     submit = SubmitField('Add Plan')
 
 
@@ -184,7 +207,8 @@ class AddPost(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     category = SelectField('Category', validators=[DataRequired()], choices=[('', 'Select a category')])
     subcategory = SelectField('Subcategory', validators=[DataRequired()], choices=[('', 'Select a subcategory')])
-    content = TextAreaField('Content', validators=[DataRequired()], render_kw={'rows': 30, 'cols': 30, 'id': 'content', 'placeholder': 'Write details about the post.'})
+    content = TextAreaField('Content', validators=[DataRequired()], render_kw={'rows': 30, 'cols': 30, 'id': 'content',
+                                                                               'placeholder': 'Write details about the post.'})
     tags = StringField('Tags', validators=[DataRequired()])
     publish = SubmitField('Publish Post')
     save_draft = SubmitField('Save Draft')
@@ -210,13 +234,16 @@ class AddSubcategory(FlaskForm):
     category = SelectField('Category', coerce=int, validators=[DataRequired()], default='Select Category')
     submit = SubmitField('Add Subcategory')
 
+
 class AddTag(FlaskForm):
     tag = StringField('Tag title', validators=[validators.DataRequired()])
     submit = SubmitField('Add Tag')
 
+
 class EditTag(FlaskForm):
     tag = StringField('Tag title', validators=[validators.DataRequired()])
     submit = SubmitField('Update Tag')
+
 
 class AdminUpdatePost(FlaskForm):
     title = StringField('Post title', validators=[validators.DataRequired()])
@@ -230,14 +257,16 @@ class AdminUpdatePost(FlaskForm):
 class CreateEmailTemplate(FlaskForm):
     name = StringField('Name', validators=[validators.DataRequired()])
     subject = StringField('Subject', validators=[validators.DataRequired()])
-    content = TextAreaField('Write Email here ...', render_kw={'rows': 10, 'cols': 30, 'placeholder': 'Enter Content here...'})
+    content = TextAreaField('Write Email here ...',
+                            render_kw={'rows': 10, 'cols': 30, 'placeholder': 'Enter Content here...'})
     submit = SubmitField('Create Template')
 
 
 class UpdateEmailTemplate(FlaskForm):
     name = StringField('Name', validators=[validators.DataRequired()])
     subject = StringField('Subject', validators=[validators.DataRequired()])
-    content = TextAreaField('Write Email here ...', render_kw={'rows': 10, 'cols': 30, 'placeholder': 'Enter Content here...'})
+    content = TextAreaField('Write Email here ...',
+                            render_kw={'rows': 10, 'cols': 30, 'placeholder': 'Enter Content here...'})
     submit = SubmitField('Update Template')
 
 
@@ -248,14 +277,16 @@ class SendEmail(FlaskForm):
     submit = SubmitField('Send Mail')
 
 
-
 class AddMediaForm(FlaskForm):
     files = MultipleFileField('Media Files', validators=[DataRequired()])
     submit = SubmitField('Upload')
 
+
 class CreateNewsletterForm(FlaskForm):
-    name = StringField('Name',validators=[validators.DataRequired()], render_kw={'placeholder': 'Give a name to your Newsletter'})
-    description = TextAreaField('Description', validators=[validators.DataRequired()], render_kw={'rows': 3, 'placeholder': 'Describe what your newsletter is about'})
+    name = StringField('Name', validators=[validators.DataRequired()],
+                       render_kw={'placeholder': 'Give a name to your Newsletter'})
+    description = TextAreaField('Description', validators=[validators.DataRequired()],
+                                render_kw={'rows': 3, 'placeholder': 'Describe what your newsletter is about'})
     submit = SubmitField('Submit')
 
 
@@ -263,10 +294,11 @@ class SubscribeToNewsletterForm(FlaskForm):
     name = StringField('Name', validators=[validators.DataRequired()],
                        render_kw={'placeholder': 'Name'})
     email = StringField('Email', validators=[validators.DataRequired()],
-                                render_kw={'placeholder': 'Email'})
+                        render_kw={'placeholder': 'Email'})
     submit = SubmitField('Subscribe to my Newsletter')
+
 
 class UnsubscribeToNewsletterForm(FlaskForm):
     email = StringField('Email', validators=[validators.DataRequired()],
-                                render_kw={'placeholder': 'Email'})
+                        render_kw={'placeholder': 'Email'})
     submit = SubmitField('Unsubscribe')

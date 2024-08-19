@@ -7,7 +7,7 @@ import csv
 import ast
 import PyPDF2
 import stripe as stripe
-from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file, jsonify,g ,Response,send_from_directory
+from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file, jsonify,g ,Response,send_from_directory,abort
 import xml.etree.ElementTree as ET
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from jinja2 import Environment, FileSystemLoader
@@ -19,6 +19,7 @@ import api_calls
 from constants import ROOT_URL
 import google.generativeai as genai
 import openai
+from functools import wraps
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -47,6 +48,7 @@ def load_user(user_id):
                     email=user_from_session.get('email'),
                     services=user_from_session.get('services'),
                     company=user_from_session.get('company'),
+                    group=user_from_session.get('group'),
                     profile_picture=user_from_session.get('profile_picture'))
         return user
     else:
@@ -54,7 +56,7 @@ def load_user(user_id):
 
 
 class User(UserMixin):
-    def __init__(self, id, user_id, role, username, email, services, company, profile_picture):
+    def __init__(self, id, user_id, role, username, email, services, company, group, profile_picture):
         self.user_id = id
         self.id = user_id
         self.role = role
@@ -62,7 +64,37 @@ class User(UserMixin):
         self.email = email
         self.services = services
         self.company = company
+        self.group = group
         self.profile_picture = profile_picture
+
+    def has_permission(self, allowed_permissions):
+        # Iterate over each item in the allowed permissions list
+        for permission in allowed_permissions:
+            # Check if the current permission exists in the group's permissions
+            if permission in self.group.get('permissions', []):
+                # If a match is found, return True immediately
+                return True
+        # If no match was found after iterating through all permissions, return False
+        return False
+
+
+def requires_any_permission(*required_permissions):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            # Convert unpacked arguments to a list if needed
+            permissions_list = list(required_permissions) if not isinstance(required_permissions,
+                                                                            list) else required_permissions
+
+            # Check if the current user has any of the required permissions
+            if not current_user.has_permission(permissions_list):
+                # Redirect to a login page or show an error message
+                abort(403)
+            return f(*args, **kwargs)
+
+        return decorated_function
+
+    return decorator
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -150,10 +182,11 @@ def login():
             email = data.get('email')
             services = data.get('services', [])
             company = data.get('company', {})
+            group = data.get('group', {})
             profile_picture = f"{ROOT_URL}/{data['profile_picture']}"
 
             user = User(id=id, user_id=token, role=role, username=username, email=email, services=services, company=company,
-                        profile_picture=profile_picture)
+                        group=group, profile_picture=profile_picture)
             login_user(user)
             session['user'] = {
                 'id': id,
@@ -163,7 +196,8 @@ def login():
                 'email': email,
                 'services': services,
                 'company': company,
-                'profile_picture': profile_picture
+                'group':group,
+                'profile_picture': profile_picture,
             }
             if current_user.company is not None:
                 return redirect(url_for('user_dashboard'))
@@ -218,9 +252,10 @@ def callback():
     print(profile_picture)
     services = data.get('services', [])
     company = data.get('company', {})
+    group = data.get('group', {})
 
     user = User(id=id, user_id=token, role=role, username=username, email=email, services=services, company=company,
-                profile_picture=profile_picture)
+                group=group, profile_picture=profile_picture)
     login_user(user)
     session['user'] = {
         'id': id,
@@ -230,6 +265,7 @@ def callback():
         'email': email,
         'services': services,
         'company': company,
+        'group': group,
         'profile_picture': profile_picture
     }
     if current_user.company is not None:
@@ -262,10 +298,11 @@ def register():
                 email = data.get('email')
                 services = data.get('services', [])
                 company = data.get('company', {})
+                group = data.get('group', {})
                 profile_picture = f"{ROOT_URL}/{data['profile_picture']}"
 
                 user = User(id=id,user_id=token, role=role, username=username, email=email, services=services,
-                            company=company,
+                            company=company,group=group,
                             profile_picture=profile_picture)
                 login_user(user)
                 session['user'] = {
@@ -276,6 +313,7 @@ def register():
                     'email': email,
                     'services': services,
                     'company': company,
+                    'group': group,
                     'profile_picture': profile_picture
                 }
             flash('Registration Successful', category='info')
@@ -308,17 +346,22 @@ def user_dashboard():
 
 
 @app.route("/admin/admin-dashboard")
+@requires_any_permission("manage_user", "list_of_users", "list_of_sites", "owner_email_setup",
+                     "manage_subscription_plans", "order_history")
 @login_required
 def admin_dashboard():
     response = api_calls.get_all_users(current_user.id)
 
     if response.status_code == 200:
         users = response.json()
+    else: abort(response.status_code)
 
     return render_template('admin_dashboard.html', users=users)
 
 
 @app.route("/admin/settings")
+@requires_any_permission("manage_user", "list_of_users", "list_of_sites", "owner_email_setup",
+                     "manage_subscription_plans", "order_history")
 @login_required
 def setting():
     return render_template('setting.html')
@@ -383,6 +426,7 @@ def profile():
 
 
 @app.route("/admin/users")
+@requires_any_permission("list_of_users")
 @login_required
 def list_of_users():
     ITEMS_PER_PAGE = 5
@@ -406,12 +450,13 @@ def list_of_users():
         users = response.json()
 
     else:
-        print("Failed response")
+        abort(response.status_code)
 
     return render_template('list_of_users.html', result=users)
 
 
 @app.route("/admin/sites")
+@requires_any_permission("list_of_users")
 @login_required
 def list_of_sites():
     ITEMS_PER_PAGE = 5
@@ -425,7 +470,7 @@ def list_of_sites():
         users = response.json()
 
     else:
-        print("Failed response")
+        abort(response.status_code)
 
     return render_template('list_of_sites.html', result=users)
 
@@ -461,8 +506,9 @@ def admin_login():
             role = response.json().get('role')
             username = response.json().get('username')
             email = response.json().get('email')
+            group = response.json().get('group', {})
             profile_picture = f"{ROOT_URL}/{response.json()['profile_picture']}"
-            user = User(id=id, user_id=token, role=role, username=username, email=email, services=[], company={},
+            user = User(id=id, user_id=token, role=role, username=username, email=email, services=[], company={},group=group,
                         profile_picture=profile_picture)
             login_user(user)
             session['user'] = {
@@ -473,6 +519,7 @@ def admin_login():
                 'email': email,
                 'services': [],
                 'company': {},
+                'group': group,
                 'profile_picture': profile_picture
             }
 
@@ -488,6 +535,7 @@ def admin_login():
 
 
 @app.route("/admin/add-user", methods=['GET', 'POST'])
+@requires_any_permission("manage_user")
 @login_required
 def add_user():
     form = forms.AdminAddUserForm()
@@ -496,45 +544,53 @@ def add_user():
         email = form.email.data
         password = form.password.data
         role = form.role.data
-        response = api_calls.add_user(username, email, password, role, current_user.id)
+        security_group = form.security_group.data
+        response = api_calls.add_user(username, email, password, role, security_group, current_user.id)
         print(response.status_code)
         if (response.status_code == 200):
             flash('Registration Successful', category='info')
             return redirect(url_for('admin_dashboard'))
         else:
-            flash('Registration unsuccessful. Please check username, email and password.', category='error')
+            abort(response.status_code)
 
     return render_template('admin_add_user.html', form=form)
 
 
 @app.route("/admin/trash-user/<user_id>", methods=['GET', 'POST'])
+@requires_any_permission("manage_user")
 @login_required
 def admin_trash_user(user_id):
     result = api_calls.admin_trash_user(access_token=current_user.id, user_id=user_id)
     if (result.status_code == 200):
         print(result)
         return redirect(url_for('list_of_users'))
+    else:
+        abort(result.status_code)
 
 
 @app.route("/admin/delete-user/<user_id>", methods=['GET', 'POST'])
+@requires_any_permission("manage_user")
 @login_required
 def admin_delete_user_permanently(user_id):
     result = api_calls.admin_delete_user_permanently(access_token=current_user.id, user_id=user_id)
     if (result.status_code == 200):
         print(result)
         return redirect(url_for('list_of_users'))
+    else: abort(result.status_code)
 
 
 @app.route("/admin/restore-user/<user_id>", methods=['GET', 'POST'])
+@requires_any_permission("manage_user")
 @login_required
 def admin_restore_user(user_id):
     result = api_calls.admin_restore_user(access_token=current_user.id, user_id=user_id)
     if (result.status_code == 200):
         print(result)
         return redirect(url_for('list_of_users'))
-
+    else: abort(result.status_code)
 
 @app.route("/admin/view-user-profile/<user_id>", methods=['GET', 'POST'])
+@requires_any_permission("manage_user")
 @login_required
 def admin_view_user_profile(user_id):
     user_role = current_user.role
@@ -631,6 +687,7 @@ def user_history():
 
 
 @app.route("/admin/edit-user-profile/<user_id>", methods=['GET', 'POST'])
+@requires_any_permission("manage_user")
 @login_required
 def admin_edit_user_profile(user_id):
     form = forms.AdminEditUserForm()
@@ -660,6 +717,8 @@ def admin_edit_user_profile(user_id):
 
         if response.status_code == 200:
             return redirect(url_for('admin_edit_user_profile', user_id=user_id))
+        else:
+            abort(response.status_code)
 
     form.username.data = username
     form.role.data = role
@@ -672,6 +731,8 @@ def admin_edit_user_profile(user_id):
         if response_service.status_code == 200:
             print("Selected Services:", selected_services)
             return redirect(url_for('admin_edit_user_profile', user_id=user_id))
+        else:
+            abort(response.status_code)
 
     return render_template('edit_form.html', status=status, role=role, username=username, form=form,
                            user_id=user_id, all_service=all_service, service_form=service_form,
@@ -830,6 +891,7 @@ def resume_history():
 
 ####################################### trash ##########################################################################
 @app.route("/admin/trash")
+@requires_any_permission("manage_user")
 @login_required
 def trash():
     response = api_calls.get_trash_users(
@@ -840,13 +902,14 @@ def trash():
         users = response.json()
 
     else:
-        print("Failed response")
+        abort(response.status_code)
 
     return render_template('trash.html', result=users)
 
 
 ####################################### EMAIL SETUP ##########################################################################
 @app.route("/admin/email-setup", methods=['GET', 'POST'])
+@requires_any_permission("owner_email_setup")
 @login_required
 def admin_email_setup():
     result = api_calls.admin_get_email_setup(access_token=current_user.id)
@@ -874,6 +937,8 @@ def admin_email_setup():
                                                           sender_email=new_sender_email)
             if response.status_code == 200:
                 return redirect(url_for('admin_email_setup'))
+            else:
+                abort(response.status_code)
 
         form.smtp_server.data = smtp_server
         form.smtp_port.data = smtp_port
@@ -886,6 +951,7 @@ def admin_email_setup():
 
 ################################################################ PLANS ########################################################################
 @app.route("/admin/settings/plans", methods=['GET', 'POST'])
+@requires_any_permission("manage_subscription_plans")
 @login_required
 def list_of_plans():
     result = api_calls.get_all_plans()
@@ -893,6 +959,8 @@ def list_of_plans():
 
 
 @app.route('/admin/settings/add-plan', methods=['GET', 'POST'])
+@requires_any_permission("manage_subscription_plans")
+@login_required
 def add_plan():
     form = forms.AddPlan()
     print("outside validate on submit")
@@ -914,6 +982,7 @@ def add_plan():
 
 
 @app.route("/admin/settings/update-plan/<plan_id>", methods=['GET', 'POST'])
+@requires_any_permission("manage_subscription_plans")
 @login_required
 def update_plan(plan_id):
     form = forms.AddPlan()
@@ -955,6 +1024,7 @@ def update_plan(plan_id):
 
 
 @app.route("/admin/settings/plans/delete-plan/<plan_id>", methods=['GET', 'POST'])
+@requires_any_permission("manage_subscription_plans")
 @login_required
 def delete_plan(plan_id):
     result = api_calls.delete_plan(plan_id=plan_id)
@@ -980,6 +1050,7 @@ def all_post():
 
 
 @app.route('/user/all-posts')
+@requires_any_permission("manage_posts")
 @login_required
 def user_all_post():
     result = api_calls.get_user_all_posts(access_token=current_user.id)
@@ -1029,20 +1100,26 @@ def admin_delete_post(post_id):
     if result.status_code == 200:
         flash('Post deleted successfully', category='info')
         return redirect(url_for('all_post'))
+    else:
+        abort(response.status_code)
 
 
 @app.route("/user/delete-posts/<post_id>", methods=['GET', 'POST'])
+@requires_any_permission("manage_posts")
 @login_required
 def user_delete_post(post_id):
     result = api_calls.admin_delete_post(post_id=post_id, access_token=current_user.id)
     print(result.status_code)
     if result.status_code == 200:
         return redirect(url_for('user_all_post'))
+    else:
+        abort(result.status_code)
 
 
 
 
 @app.route('/posts/add-post', methods=['GET', 'POST'])
+@requires_any_permission("manage_posts")
 @login_required
 def add_post():
     form = forms.AddPost()
@@ -1162,6 +1239,7 @@ def add_post():
         return render_template('add_post.html', form=form, categories=category_choices, result=media_result, forms_result=forms_result, root_url=root_url)
 
 @app.route('/posts/preview-post', methods=['GET', 'POST'])
+@requires_any_permission("manage_posts")
 @login_required
 def preview_post():
     date_obj = datetime.utcnow()
@@ -1271,6 +1349,7 @@ def preview_post():
 
 
 @app.route("/user/add-category", methods=['GET', 'POST'])
+@requires_any_permission("manage_posts")
 @login_required
 def add_category():
     form = forms.AddCategory()
@@ -1288,6 +1367,7 @@ def add_category():
 
 
 @app.route("/user/update-category/<category_id>", methods=['GET', 'POST'])
+@requires_any_permission("manage_posts")
 @login_required
 def update_category(category_id):
     form = forms.AddCategory()
@@ -1305,6 +1385,7 @@ def update_category(category_id):
 
 
 @app.route('/user/all-categories')
+@requires_any_permission("manage_posts")
 @login_required
 def user_all_category():
     result = api_calls.get_user_all_categories(access_token=current_user.id)
@@ -1316,6 +1397,7 @@ def user_all_category():
 
 
 @app.route('/user/all-subcategories/<category_id>')
+@requires_any_permission("manage_posts")
 @login_required
 def user_all_subcategory(category_id):
     result = api_calls.get_subcategories_by_category(category_id=category_id)
@@ -1327,6 +1409,7 @@ def user_all_subcategory(category_id):
 
 
 @app.route("/user/add-tag", methods=['GET', 'POST'])
+@requires_any_permission("manage_posts")
 @login_required
 def add_tag():
     form = forms.AddTag()
@@ -1344,6 +1427,7 @@ def add_tag():
 
 
 @app.route("/user/edit-tag/<int:tag_id>", methods=['GET', 'POST'])
+@requires_any_permission("manage_posts")
 @login_required
 def edit_tag(tag_id):
     form = forms.EditTag()
@@ -1361,6 +1445,7 @@ def edit_tag(tag_id):
 
 
 @app.route("/user/delete-tag/<int:tag_id>", methods=['GET', 'POST'])
+@requires_any_permission("manage_posts")
 @login_required
 def delete_tag(tag_id):
     response = api_calls.delete_tag(tag_id, access_token=current_user.id)
@@ -1373,6 +1458,7 @@ def delete_tag(tag_id):
 
 
 @app.route('/user/all-tags')
+@requires_any_permission("manage_posts")
 @login_required
 def user_all_tag():
     result = api_calls.get_user_all_tags(access_token=current_user.id)
@@ -1384,6 +1470,7 @@ def user_all_tag():
 
 
 @app.route("/users/delete-category/<category_id>", methods=['GET', 'POST'])
+@requires_any_permission("manage_posts")
 @login_required
 def user_delete_category(category_id):
     result = api_calls.user_delete_category(category_id=category_id, access_token=current_user.id)
@@ -1400,6 +1487,7 @@ def get_subcategories(category_id):
 
 
 @app.route("/user/add-subcategory", methods=['GET', 'POST'])
+@requires_any_permission("manage_posts")
 @login_required
 def add_subcategory():
     form = forms.AddSubcategory()
@@ -1421,6 +1509,7 @@ def add_subcategory():
 
 
 @app.route("/user/update-subcategory/<subcategory_id>", methods=['GET', 'POST'])
+@requires_any_permission("manage_posts")
 @login_required
 def update_subcategory(subcategory_id):
     form = forms.AddSubcategory()  # Assuming you have a form for subcategory
@@ -1443,6 +1532,7 @@ def update_subcategory(subcategory_id):
 
 
 @app.route("/users/delete-subcategory/<subcategory_id>", methods=['GET', 'POST'])
+@requires_any_permission("manage_posts")
 @login_required
 def user_delete_subcategory(subcategory_id):
     result = api_calls.user_delete_subcategory(subcategory_id=subcategory_id, access_token=current_user.id)
@@ -1452,6 +1542,7 @@ def user_delete_subcategory(subcategory_id):
 
 
 @app.route('/posts/update-post/<post_id>', methods=['GET', 'POST'])
+@requires_any_permission("manage_posts")
 def admin_edit_post(post_id):
     form = forms.AddPost()
     post = api_calls.get_post(post_id=post_id)
@@ -1623,7 +1714,9 @@ def get_all_subscriptions():
 
 
 @app.route('/user/add-media', methods=['GET', 'POST'])
+
 @login_required
+@requires_any_permission("manage_media")
 def media():
     form = forms.AddMediaForm()  # Use the AddMediaForm class
     if request.method == 'POST':
@@ -1660,6 +1753,7 @@ def media():
 
 
 @app.route('/user/all-media')
+@requires_any_permission("manage_media")
 @login_required
 def user_all_medias():
     root_url = constants.ROOT_URL + '/'
@@ -1932,6 +2026,7 @@ def get_post_by_id(post_id):
 ###################################form builder################
 
 @app.route('/formbuilder')
+@requires_any_permission("manage_forms")
 @login_required
 def formbuilder():
     unique_id = str(uuid.uuid4())
@@ -1939,6 +2034,7 @@ def formbuilder():
 
 
 @app.route('/formbuilder/form-create', methods=['GET', 'POST'])
+@requires_any_permission("manage_forms")
 @login_required
 def formbuilder_createform():
     data = request.get_json()
@@ -1955,12 +2051,14 @@ def formbuilder_createform():
         return redirect(url_for('formbuilder'))
 
 @app.route("/form/delete-form/<form_id>", methods=['GET', 'POST'])
+@requires_any_permission("manage_forms")
 @login_required
 def formbuilder_delete_form(form_id):
     result = api_calls.delete_form_by_unique_id(form_id=form_id, access_token=current_user.id)
     return redirect(url_for('user_all_forms'))
 
 @app.route('/user/all-forms')
+@requires_any_permission("manage_forms")
 @login_required
 def user_all_forms():
     forms = api_calls.get_user_all_forms(access_token=current_user.id)
@@ -1972,6 +2070,7 @@ def user_all_forms():
 
 
 @app.route('/user/forms/<form_id>', methods=['GET', 'POST'])
+@requires_any_permission("manage_forms")
 @login_required
 def formbuilder_viewform(form_id):
     response = api_calls.get_form_by_unique_id(form_id=form_id)
@@ -2177,6 +2276,7 @@ def posts_by_tag(username, tag, tag_id):
 
 
 @app.route('/user/pages/add-page', methods=['GET', 'POST'])
+@requires_any_permission("manage_pages")
 @login_required
 def add_page():
     form = forms.AddPage()
@@ -2240,6 +2340,7 @@ def add_page():
 
 
 @app.route('/user/all-pages')
+@requires_any_permission("manage_pages")
 @login_required
 def user_all_pages():
     pages = api_calls.get_user_all_pages(access_token=current_user.id)
@@ -2250,6 +2351,7 @@ def user_all_pages():
 
 
 @app.route('/user/page/<page_id>', methods=['GET', 'POST'])
+@requires_any_permission("manage_pages")
 @login_required
 def get_page_by_id(page_id):
     response = api_calls.get_page(page_id=page_id)
@@ -2260,6 +2362,7 @@ def get_page_by_id(page_id):
 
 
 @app.route('/user/pages/update-page/<page_id>', methods=['GET', 'POST'])
+@requires_any_permission("manage_pages")
 @login_required
 def update_page(page_id):
     form = forms.AddPage()
@@ -2293,7 +2396,7 @@ def update_page(page_id):
                     title=title,
                     content=content,
                     status='draft',
-                    access_token=current_user.id
+                    access_token=current_user.id  
                 )
                 if current_user.role == 'user':
                     return redirect(url_for('user_all_pages'))
@@ -2306,6 +2409,7 @@ def update_page(page_id):
 
 
 @app.route("/user/pages/delete-page/<page_id>", methods=['GET', 'POST'])
+@requires_any_permission("manage_pages")
 @login_required
 def user_delete_page(page_id):
     result = api_calls.delete_page(page_id=page_id, access_token=current_user.id)
@@ -2331,6 +2435,7 @@ def get_page_by_username_and_slug(username, page_slug):
 ###################################################### CHATBOT ####################################################################
 
 @app.route('/chatbot')
+@requires_any_permission("access_chatbot")
 @login_required
 def chatbot():
     try:
@@ -2342,6 +2447,7 @@ def chatbot():
 
 
 @app.route('/send_message', methods=['POST'])
+@requires_any_permission("access_chatbot")
 def send_message():
 
     user_input = request.form['user_input']
@@ -2369,6 +2475,7 @@ def send_message():
 
 
 @app.route('/save-chat', methods=['POST'])
+@requires_any_permission("access_chatbot")
 @login_required
 def save_chat():
     data = request.get_json()
@@ -2481,6 +2588,7 @@ def parse_multiple_resumes(file_paths):
 
 
 @app.route('/resume-parser', methods=['GET', 'POST'])
+@requires_any_permission("access_resume_parser")
 @login_required
 def resume_parser():
     form = forms.UploadForm()
@@ -2511,6 +2619,7 @@ def resume_parser():
 
 
 @app.route('/resume-collection')
+@requires_any_permission("access_resume_parser")
 @login_required
 def resume_collection():
     try:
@@ -2518,6 +2627,67 @@ def resume_collection():
     except: resume_collection = []
 
     return render_template('cms/AI/resume_collection.html', result=resume_collection)
+
+#####################################################################################################################################################################################################
+##################################################### ADMIN ######################################################################
+
+@app.route('/admin/role-management')
+@requires_any_permission("manage_user")
+@login_required
+def role_management():
+    try:
+        security_groups = api_calls.get_all_security_groups(access_token=current_user.id)
+    except: security_groups = []
+
+    return render_template('admin/all_security_groups.html', result=security_groups)
+
+@app.route('/admin/create-group', methods=['GET', 'POST'])
+@requires_any_permission("manage_user")
+@login_required
+def create_group():
+    if request.method == 'POST':
+        group_name = request.form['group_name']
+        permissions = request.form.getlist('permissions[]')
+        # Here you would typically save these details to a database
+        submission = api_calls.create_security_group(access_token=current_user.id, permissions=permissions, group_name=group_name)
+        print(f"Group Name: {group_name}, Permissions: {permissions}")
+        return redirect(url_for('role_management'))
+
+    return render_template('admin/add_security_group.html')
+
+
+@app.route('/admin/update-group/<int:group_id>', methods=['GET', 'POST'])
+@requires_any_permission("manage_user")
+@login_required
+def update_group(group_id):
+    group = api_calls.get_security_group(access_token=current_user.id, group_id=group_id)  # Assume this is fetched from your database
+
+    if request.method == 'POST':
+        group_name = request.form['group_name']
+        permissions = request.form.getlist('permissions[]')
+
+        print(f"Updating Group ID: {group_id}, Group Name: {group_name}, Permissions: {permissions}")
+        updation = api_calls.update_security_group(access_token=current_user.id, permissions=permissions, group_name=group_name, group_id=group_id)
+        return redirect(url_for('role_management'))
+
+
+    return render_template('admin/update_security_group.html', group=group)
+
+@app.route('/admin/delete-group/<group_id>', methods=['GET', 'POST'])
+@requires_any_permission("manage_user")
+@login_required
+def delete_security_group(group_id):
+    try:
+        deletion = api_calls.delete_security_groups(access_token=current_user.id, group_id=group_id)
+        return redirect(url_for('role_management'))
+    except:
+        return redirect(url_for('role_management'))
+
+
+
+
+
+
 
 
 
