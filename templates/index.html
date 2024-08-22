@@ -44,6 +44,13 @@
 
       <nav id="navbar" class="navbar">
         <ul>
+
+          <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
+           <li><a class="nav-link scrollto" href="{{ url_for('view_post') }}">Posts</a></li>
+          <li><a class="nav-link scrollto" href="{{ url_for('user_view_plan') }}">Pricing</a></li>
+          <li><a class="nav-link scrollto" href="#about">About</a></li>
+          <li><a class="nav-link scrollto" href="#contact">Contact</a></li>
+
           <li><a class="nav-link scrollto" href="#features">Features</a></li>
           <li><a class="nav-link scrollto" href="#faq">FAQs</a></li>
                         <li class="nav-link dropdown">
@@ -64,6 +71,7 @@
           <li><a class="nav-link scrollto" href="#contact">Contact Us</a></li>
           <li><a class="nav-link scrollto" href="{{ url_for('register') }}">Demo</a></li>
           <li><a class="nav-link scrollto" href="https://github.com/AmishChawla/saas_cms_flask">Github</a></li>
+
 
           {% if current_user.is_authenticated %}
               <li class="nav-link dropdown">

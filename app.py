@@ -36,6 +36,7 @@ model = genai.GenerativeModel('gemini-pro')
 openai.api_key = constants.OPEN_AI_API_KEY
 
 
+
 @login_manager.user_loader
 def load_user(user_id):
     user_from_session = session.get('user')
@@ -277,8 +278,6 @@ def callback():
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     session.pop('_flashes', None)
-
-
     form = forms.RegisterForm()
     print("outside")
     if form.validate_on_submit():
@@ -335,14 +334,17 @@ def user_dashboard():
     response = api_calls.get_user_profile(access_token=current_user.id)
     if response.status_code == 200:
         result = response.json()
+        resume_data = result["resume_data"]
     stats = api_calls.get_stats(access_token=current_user.id)
     comment_count = stats["total_comments"]
     post_count = stats["total_posts"]
     subscriber_count = stats["total_newsletter_subscribers"]
     feedback_count = stats["total_feedbacks"]
 
+    return render_template('dashboard.html', resume_data=resume_data, comment_count=comment_count, post_count=post_count, subscriber_count=subscriber_count, feedback_count=feedback_count)
 
-    return render_template('dashboard.html', comment_count=comment_count, post_count=post_count, subscriber_count=subscriber_count, feedback_count=feedback_count)
+
+
 
 
 @app.route("/admin/admin-dashboard")
@@ -1062,22 +1064,20 @@ def user_all_post():
 
 @app.route('/<username>/posts', methods=['GET', 'POST'])
 def user_post_list(username):
-    toast = 'null'
+    toast = request.args.get('toast', 'null')  # Get toast value from query params
     form = forms.SubscribeToNewsletterForm()
-    result = api_calls.get_user_post_by_username(username=username)
 
-    response = api_calls.get_all_categories()
-    if result is None:
-        result = []  # Set result to an empty list
+    # Get posts and categories
+    result = api_calls.get_user_post_by_username(username=username) or []
+    response = api_calls.get_all_categories() or []
 
-    if response is None:
-        response = []
+    # Get the activated theme
+    activated_theme = api_calls.get_user_theme(access_token=current_user.id)  # Ensure current_user is accessible
+    print(activated_theme)
 
     if form.validate_on_submit():
-        print('inside validating')
         name = form.name.data
         email = form.email.data
-        print('sending call')
         response_status = api_calls.subscribe_to_newsletter(name=name, email=email, username=username)
         if response_status == 200:
             return redirect(url_for('user_post_list', username=username, toast='new_sub'))
@@ -1086,7 +1086,13 @@ def user_post_list(username):
         else:
             return redirect(url_for('user_post_list', username=username, toast='null'))
 
-    return render_template('user_post_list.html', result=result, response=response, form=form, username=username, toast=toast)
+    # Render the appropriate template based on the activated theme
+    if activated_theme is not None and activated_theme != {}:
+        return render_template(f'themes/theme{activated_theme["theme_id"]}.html', result=result, response=response,
+                               form=form, username=username, toast=toast)
+    else:
+        return render_template('user_post_list.html', result=result, response=response, form=form, username=username,
+                               toast=toast)
 
 
 @app.route("/admin/delete-posts/<post_id>", methods=['GET', 'POST'])
@@ -1123,13 +1129,12 @@ def user_delete_post(post_id):
 @login_required
 def add_post():
     form = forms.AddPost()
+    media_form = forms.AddMediaForm()
 
     # Fetch categories and format them for the form choices
     try:
         categories = api_calls.get_user_all_categories(access_token=current_user.id)
         category_choices = [('', 'Select a category')] + [(category['id'], category['category']) for category in categories]
-        if not category_choices:
-            category_choices = [('', 'Select Category')]
     except Exception as e:
         print(f"Error fetching categories: {e}")
         category_choices = [('', 'Select Category')]
@@ -1141,8 +1146,6 @@ def add_post():
         try:
             subcategories = api_calls.get_subcategories_by_category(form.category.data)
             subcategory_choices = [(subcategory['id'], subcategory['subcategory']) for subcategory in subcategories]
-            if not subcategory_choices:
-                subcategory_choices = [('', 'Select Subcategory')]
         except Exception as e:
             print(f"Error fetching subcategories: {e}")
             subcategory_choices = [('', 'Select Subcategory')]
@@ -1152,91 +1155,56 @@ def add_post():
         tags_list = form.tags.data.split(",")
 
         if form.preview.data:
-            # session['post_preview'] = {
-            #     'title': form.title.data,
-            #     'content': form.content.data,
-            #     'category': form.category.data,
-            #     'subcategory': form.subcategory.data,
-            #     'tags': form.tags.data,
-            #     'selected_media': selected_media
-            # }
-            # Redirect to the preview route with form data
             return redirect(url_for('preview_post'))
 
-        elif form.save_draft.data:
-            try:
-                result = api_calls.create_post(
-                    title=form.title.data,
-                    content=form.content.data,
-                    category_id=form.category.data,
-                    subcategory_id=form.subcategory.data,
-                    tags=tags_list,
-                    status='draft',
-                    access_token=current_user.id
-                )
+        post_data = {
+            'title': form.title.data,
+            'content': form.content.data,
+            'category_id': form.category.data,
+            'subcategory_id': form.subcategory.data,
+            'tags': tags_list,
+            'access_token': current_user.id
+        }
 
-                if result:
-                    if current_user.role == 'user':
-                        return redirect(url_for('user_all_post'))
-                    else:
-                        return redirect(url_for('all_post'))
-                else:
-                    flash("Failed to create post", "danger")
-            except Exception as e:
-                flash(f"Error creating post: {e}", "danger")
-        elif form.publish.data:
-            try:
-                result = api_calls.create_post(
-                    title=form.title.data,
-                    content=form.content.data,
-                    category_id=form.category.data,
-                    subcategory_id=form.subcategory.data,
-                    tags=tags_list,
-                    status='published',
-                    access_token=current_user.id
-                )
+        try:
+            if form.save_draft.data:
+                post_data['status'] = 'draft'
+            elif form.publish.data:
+                post_data['status'] = 'published'
 
-                if result:
+            result = api_calls.create_post(**post_data)
+
+            if result:
+                if form.publish.data:
                     flash("Post created successfully", "success")
                     try:
-                        print("trying to send mail")
-                        dateiso = result["created_at"]
                         post_slug = result["slug"]
+                        dateiso = result["created_at"]
                         date = dateiso.split('T')[0]
-                        print(date)
                         post_url = f'{constants.MY_ROOT_URL}/{current_user.username}/posts/{date}/{post_slug}'
-                        print(post_url)
-                        send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data, body=form.content.data, post_url=post_url)
-                        print('done')
+                        api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data, body=form.content.data, post_url=post_url)
                     except Exception as e:
-                        raise 'Problem sending newsletter' + e
-                    if current_user.role == 'user':
-                        return redirect(url_for('user_all_post'))
-                    else:
-                        return redirect(url_for('all_post'))
-                else:
-                    flash("Failed to create post", "danger")
-            except Exception as e:
-                flash(f"Error creating post: {e}", "danger")
-    else:
-        print(form.errors)
+                        print(f"Problem sending newsletter: {e}")
+                return redirect(url_for('user_all_post' if current_user.role == 'user' else 'all_post'))
+            else:
+                flash("Failed to create post", "danger")
+        except Exception as e:
+            flash(f"Error creating post: {e}", "danger")
 
+    # Fetch media and forms
     root_url = constants.ROOT_URL + '/'
-    media_result = api_calls.get_user_all_medias(access_token=current_user.id)
-    if media_result is None:
-        media_result = []  # Set result to an empty list
+    media_result = api_calls.get_user_all_medias(access_token=current_user.id) or []
+    forms_result = api_calls.get_user_all_forms(access_token=current_user.id) or []
 
-    forms_result = api_calls.get_user_all_forms(access_token=current_user.id)
-    if forms_result is None:
-        forms_result = []  # Set result to an empty list
-
+    # Check if service is allowed for the user
     if current_user.role == 'user':
         is_service_allowed = api_calls.is_service_access_allowed(current_user.id)
-        if is_service_allowed:
-            return render_template('add_post.html', form=form, categories=category_choices, forms_result=forms_result,result=media_result, root_url=root_url)
-        return redirect(url_for('user_view_plan'))
-    else:
-        return render_template('add_post.html', form=form, categories=category_choices, result=media_result, forms_result=forms_result, root_url=root_url)
+        if not is_service_allowed:
+            return redirect(url_for('user_view_plan'))
+
+    return render_template('add_post.html', form=form, media_form=media_form, categories=category_choices,
+                           result=media_result, forms_result=forms_result, root_url=root_url)
+
 
 @app.route('/posts/preview-post', methods=['GET', 'POST'])
 @requires_any_permission("manage_posts")
@@ -1713,6 +1681,7 @@ def get_all_subscriptions():
     return render_template('all_posts.html', result=result)
 
 
+
 @app.route('/user/add-media', methods=['GET', 'POST'])
 
 @login_required
@@ -1752,43 +1721,30 @@ def media():
     return render_template('media.html', form=form)
 
 
-@app.route('/user/all-media')
-@requires_any_permission("manage_media")
+@app.route('/user/appearance/themes')
 @login_required
-def user_all_medias():
-    root_url = constants.ROOT_URL + '/'
-    result = api_calls.get_user_all_medias(access_token=current_user.id)
-    if result is None:
-        result = []  # Set result to an empty list
-    print(result)
+def all_themes():
 
-    return render_template('user_all_media.html', result=result, root_url=root_url)
+    return render_template('appearance_themes.html')
 
 
-@app.route('/posts/comment/<int:post_id>/<username>/<post_date>/<post_slug>', methods=['GET', 'POST'])
+@app.route('/user/appearance/theme_detail')
 @login_required
-def comment(post_id, username, post_date, post_slug):
-    if request.method == 'POST':
-        comment = request.form.get('comment')
-        reply_id = request.form.get('reply_id') if request.form.get('reply_id') else None
-        if comment:
-            try:
-                response = api_calls.add_comment(
-                    post_id=post_id,
-                    reply_id=reply_id,
-                    comment=comment,
-                    access_token=current_user.id
-                )
-                if response.status_code == 200:
-                    return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
-                else:
-                    flash('An error occurred while adding the comment. Please try again.', category='error')
-            except Exception as e:
-                flash(f'An exception occurred: {str(e)}', category='error')
-        else:
-            flash('Comment cannot be empty', category='error')
+def theme_detail():
+    # Retrieve theme_name and theme_id from query parameters
+    theme_name = request.args.get('theme_name')
+    theme_id = request.args.get('theme_id')
 
-    return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
+    if not theme_name or not theme_id:
+        # Redirect back to themes page or show an error if either parameter is missing
+        return redirect(url_for('all_themes'))
+
+    # Pass the theme name and theme ID to the template
+    return render_template('themes/theme_activation.html', theme_name=theme_name, theme_id=theme_id)
+
+
+
+
 
 
 @app.route("/user/delete-comment/<comment_id>", methods=['GET', 'POST'])
@@ -1800,15 +1756,7 @@ def delete_comment(comment_id):
         return redirect(url_for('get_all_comment'))
 
 
-@app.route('/posts/all-comment', methods=['GET', 'POST'])
-@login_required
-def get_all_comment():
-    result = api_calls.get_all_comments(access_token = current_user.id)
-    if result is None:
-        result = []  # Set result to an empty list
-    print(result)
 
-    return render_template('comments_table.html', result=result)
 
 
 @app.route('/posts/activate-comment/<comment_id>', methods=['GET', 'POST'])
@@ -1819,63 +1767,7 @@ def activate_comment(comment_id):
         return redirect(url_for('get_all_comment'))
 
 
-@app.route('/posts/deactivate-comment/<comment_id>', methods=['GET', 'POST'])
-@login_required
-def deactivate_comment(comment_id):
-    response = api_calls.deactivate_comments(comment_id=comment_id)
-    if response:
-        return redirect(url_for('get_all_comment'))
 
-
-@app.route('/settings/comments', methods=['GET', 'POST'])
-@login_required
-def comment_setting():
-    print("comment setting")
-    if request.method == 'POST':
-        # Extract form data
-        def get_bool_value(value):
-            return value == 'on'
-        print("chal rah hai")
-        def get_int_value(value, default):
-            try:
-                return int(value)
-            except (ValueError, TypeError):
-                return default
-
-        settings = {
-            'notify_linked_blogs': get_bool_value(request.form.get('notify_linked_blogs')),
-            'allow_trackbacks': get_bool_value(request.form.get('allow_trackbacks')),
-            'allow_comments': get_bool_value(request.form.get('allow_comments')),
-            'comment_author_info': get_bool_value(request.form.get('comment_author_info')),
-            'registered_users_comment': get_bool_value(request.form.get('registered_users_comment')),
-            'auto_close_comments': get_int_value(request.form.get('auto_close_comments'), 14),
-            'show_comment_cookies': get_bool_value(request.form.get('show_comment_cookies')),
-            'enable_threaded_comments': get_bool_value(request.form.get('enable_threaded_comments')),
-            'email_new_comment': get_bool_value(request.form.get('email_new_comment')),
-            'email_held_moderation': get_bool_value(request.form.get('email_held_moderation')),
-            'email_new_subscription': get_bool_value(request.form.get('email_new_subscription')),
-            'comment_approval': request.form.get('comment_approval')
-        }
-
-        try:
-            # Call an API endpoint to save the settings
-            response = api_calls.save_comment_settings(
-                access_token=current_user.id,
-                settings=settings
-            )
-
-            if response.status_code == 200:
-                flash('Settings saved successfully', category='success')
-            else:
-                flash('An error occurred while saving settings. Please try again.', category='error')
-        except Exception as e:
-            flash(f'An exception occurred: {str(e)}', category='error')
-
-    result = api_calls.get_comments_settings(
-        access_token=current_user.id
-    )
-
-    return render_template('comments_settings.html', result=result)
 
 
 
@@ -1903,28 +1795,6 @@ def add_like_to_comment_route(post_id, comment_id, username, post_date, post_slu
     return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
 
 
-@app.route('/comments/remove-like/<int:comment_like_id>/<int:comment_id>/<username>/<post_date>/<post_slug>')
-@login_required
-def remove_like_from_comment_route(comment_like_id, comment_id, username, post_date, post_slug):
-    print("ander hu")
-    try:
-        # Example: Get access_token from current_user or session
-        access_token = current_user.id
-
-        # Call the api_calls method to add like to comment
-        response = api_calls.remove_like_from_comment(comment_like_id, access_token)
-
-
-        if response and response.status_code == 200:
-            flash('Like removed successfully', category='info')
-            return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
-            print("hii")
-        else:
-            flash('Failed to remove like', category='error')
-    except Exception as e:
-        flash(f'Error: {str(e)}', category='error')
-
-    return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
 
 @app.route('/users/view-posts')
 def view_post():
@@ -2019,6 +1889,162 @@ def get_post_by_id(post_id):
     print(comment_like_result)
 
     return render_template('post.html', comment_like_result=comment_like_result, result=result, title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags, post_id=id, post_date=post_date, post_slug=post_slug)
+
+################################################ CHATBOT #########################################################
+
+
+
+
+###################################form builder################
+
+
+############################################# Email Templates ################################
+
+
+
+
+@app.route('/user/all-media')
+@login_required
+def user_all_medias():
+    root_url = constants.ROOT_URL + '/'
+    result = api_calls.get_user_all_medias(access_token=current_user.id)
+    if result is None:
+        result = []  # Set result to an empty list
+    print(result)
+
+    return render_template('user_all_media.html', result=result, root_url=root_url)
+
+
+@app.route('/posts/comment/<int:post_id>/<username>/<post_date>/<post_slug>', methods=['GET', 'POST'])
+@login_required
+def comment(post_id, username, post_date, post_slug):
+    if request.method == 'POST':
+        comment = request.form.get('comment')
+        reply_id = request.form.get('reply_id') if request.form.get('reply_id') else None
+        if comment:
+            try:
+                response = api_calls.add_comment(
+                    post_id=post_id,
+                    reply_id=reply_id,
+                    comment=comment,
+                    access_token=current_user.id
+                )
+                if response.status_code == 200:
+                    return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
+                else:
+                    flash('An error occurred while adding the comment. Please try again.', category='error')
+            except Exception as e:
+                flash(f'An exception occurred: {str(e)}', category='error')
+        else:
+            flash('Comment cannot be empty', category='error')
+
+    return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
+
+
+
+
+@app.route('/posts/all-comment', methods=['GET', 'POST'])
+@login_required
+def get_all_comment():
+    result = api_calls.get_all_comments(access_token = current_user.id)
+    if result is None:
+        result = []  # Set result to an empty list
+    print(result)
+
+    return render_template('comments_table.html', result=result)
+
+
+
+
+
+@app.route('/posts/deactivate-comment/<comment_id>', methods=['GET', 'POST'])
+@login_required
+def deactivate_comment(comment_id):
+    response = api_calls.deactivate_comments(comment_id=comment_id)
+    if response:
+        return redirect(url_for('get_all_comment'))
+
+
+@app.route('/settings/comments', methods=['GET', 'POST'])
+@login_required
+def comment_setting():
+    print("comment setting")
+    if request.method == 'POST':
+        # Extract form data
+        def get_bool_value(value):
+            return value == 'on'
+        print("chal rah hai")
+        def get_int_value(value, default):
+            try:
+                return int(value)
+            except (ValueError, TypeError):
+                return default
+
+        settings = {
+            'notify_linked_blogs': get_bool_value(request.form.get('notify_linked_blogs')),
+            'allow_trackbacks': get_bool_value(request.form.get('allow_trackbacks')),
+            'allow_comments': get_bool_value(request.form.get('allow_comments')),
+            'comment_author_info': get_bool_value(request.form.get('comment_author_info')),
+            'registered_users_comment': get_bool_value(request.form.get('registered_users_comment')),
+            'auto_close_comments': get_int_value(request.form.get('auto_close_comments'), 14),
+            'show_comment_cookies': get_bool_value(request.form.get('show_comment_cookies')),
+            'enable_threaded_comments': get_bool_value(request.form.get('enable_threaded_comments')),
+            'email_new_comment': get_bool_value(request.form.get('email_new_comment')),
+            'email_held_moderation': get_bool_value(request.form.get('email_held_moderation')),
+            'email_new_subscription': get_bool_value(request.form.get('email_new_subscription')),
+            'comment_approval': request.form.get('comment_approval')
+        }
+
+        try:
+            # Call an API endpoint to save the settings
+            response = api_calls.save_comment_settings(
+                access_token=current_user.id,
+                settings=settings
+            )
+
+            if response.status_code == 200:
+                flash('Settings saved successfully', category='success')
+            else:
+                flash('An error occurred while saving settings. Please try again.', category='error')
+        except Exception as e:
+            flash(f'An exception occurred: {str(e)}', category='error')
+
+    result = api_calls.get_comments_settings(
+        access_token=current_user.id
+    )
+
+    return render_template('comments_settings.html', result=result)
+
+
+
+
+
+@app.route('/comments/remove-like/<int:comment_like_id>/<int:comment_id>/<username>/<post_date>/<post_slug>')
+@login_required
+def remove_like_from_comment_route(comment_like_id, comment_id, username, post_date, post_slug):
+    print("ander hu")
+    try:
+        # Example: Get access_token from current_user or session
+        access_token = current_user.id
+
+        # Call the api_calls method to add like to comment
+        response = api_calls.remove_like_from_comment(comment_like_id, access_token)
+
+
+        if response and response.status_code == 200:
+            flash('Like removed successfully', category='info')
+            return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
+            print("hii")
+        else:
+            flash('Failed to remove like', category='error')
+    except Exception as e:
+        flash(f'Error: {str(e)}', category='error')
+
+    return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
+
+
+
+
 
 
 
@@ -2326,6 +2352,15 @@ def add_page():
     if media_result is None:
         media_result = []  # Set result to an empty list
 
+
+    if current_user.role == 'user':
+        is_service_allowed = api_calls.is_service_access_allowed(current_user.id)
+        if is_service_allowed:
+            return render_template('cms/pages/add_page.html', form=form, result=media_result, root_url=root_url)
+        return redirect(url_for('user_view_plan'))
+    else:
+        return render_template('cms/pages/add_page.html', form=form, result=media_result, root_url=root_url)
+
     forms_result = api_calls.get_user_all_forms(access_token=current_user.id)
     if forms_result is None:
         forms_result = []  # Set result to an empty list
@@ -2337,6 +2372,7 @@ def add_page():
         return redirect(url_for('user_view_plan'))
     else:
         return render_template('cms/pages/add_page.html', form=form,forms_result=forms_result, result=media_result, root_url=root_url)
+
 
 
 @app.route('/user/all-pages')
@@ -2429,6 +2465,7 @@ def get_page_by_username_and_slug(username, page_slug):
     formatted_date = date_obj.strftime('%d %B %Y')
 
     return render_template('cms/pages/page.html', title=title, content=content)
+
 
 #######################################################  AI #########################################################################
 
@@ -2693,6 +2730,7 @@ def delete_security_group(group_id):
 
 #####################################################################################################################################
 
+
 #####################################################################################################################################
 ############################################## ALL ROUTES ABOVE THIS ################################################################
 ################################################   SITEMAP.XML  #####################################################################
@@ -2731,6 +2769,22 @@ def sitemap():
 
     # Return the sitemap as an XML response
     return Response(sitemap_str, mimetype="application/xml")
+
+
+
+@app.route("/user-active-theme", methods=['GET', 'POST'])
+def user_active_theme():
+    theme_name = request.args.get('theme_name')
+    theme_id = request.args.get('theme_id')
+    try:
+        active_theme = api_calls.user_active_theme(theme_name=theme_name, theme_id=theme_id, access_token=current_user.id)
+
+
+        return redirect(url_for('all_themes'))
+    except Exception as e:
+        print(e)
+
+
 
 @app.route('/robots.txt')
 def robots_txt():

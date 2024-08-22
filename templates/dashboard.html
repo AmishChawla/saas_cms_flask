@@ -88,7 +88,133 @@
           </div>
           <!-- ./col -->
         </div>
+
 </div>
+<div class="col-md-6">
+<div class="form-group">
+    <select id="timeRangeSelector" class="form-control select2">
+        <option class="form-control" value="7">Last 7 days</option>
+        <option class="form-control" value="14">Last 14 days</option>
+        <option class="form-control" value="28">Last 28 days</option>
+        <option class="form-control" value="90">Last 90 days</option>
+    </select>
+</div>
+</div>
+<div id="chartContainer" style="width: 100%; height: 400px;">
+    <canvas id="parsedResumeChart"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const resumeData = {{ resume_data|tojson }};
+        const ctx = document.getElementById('parsedResumeChart').getContext('2d');
+        let parsedResumeChart;
+
+        function formatDate(date) {
+            const d = new Date(date);
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ];
+            const day = d.getDate();
+            const monthIndex = d.getMonth();
+            return day + ' ' + monthNames[monthIndex];
+        }
+
+        function updateChart(range) {
+            const uploadDates = {};
+            const currentDate = new Date();
+            const startDate = new Date(currentDate);
+            startDate.setDate(startDate.getDate() - range); // Calculate the start date
+
+            // Initialize upload dates with zero counts for each date within the range
+            for (let i = 0; i <= range; i++) {
+                const date = new Date(startDate);
+                date.setDate(date.getDate() + i);
+                uploadDates[formatDate(date)] = 0;
+            }
+
+            resumeData.forEach(item => {
+                const uploadDate = new Date(item.upload_datetime.split('T')[0]);
+
+                // Check if the upload date is within the selected range
+                if (uploadDate >= startDate && uploadDate <= currentDate) {
+                    const dateString = formatDate(uploadDate);
+                    uploadDates[dateString]++;
+                }
+            });
+
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+
+            const dates = Object.keys(uploadDates).sort((a, b) => {
+                const [aDay, aMonth] = a.split(' ');
+                const [bDay, bMonth] = b.split(' ');
+                const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                const aMonthIndex = monthNames.indexOf(aMonth);
+                const bMonthIndex = monthNames.indexOf(bMonth);
+
+                if (aMonthIndex !== bMonthIndex) {
+                    if (aMonthIndex > currentMonth && bMonthIndex <= currentMonth) return -1;
+                    if (bMonthIndex > currentMonth && aMonthIndex <= currentMonth) return 1;
+                }
+                return aMonthIndex - bMonthIndex;
+            });
+
+            const resumeCounts = dates.map(date => uploadDates[date]);
+
+            if (parsedResumeChart) {
+                parsedResumeChart.destroy();
+            }
+
+            parsedResumeChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Count of Parsed Resumes',
+                        data: resumeCounts,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.2,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            },
+                            min: 0,
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        document.getElementById('timeRangeSelector').addEventListener('change', function() {
+            const selectedRange = parseInt(this.value);
+            updateChart(selectedRange);
+        });
+
+        // Initially update the chart with the default selected value
+        updateChart(parseInt(document.getElementById('timeRangeSelector').value));
+    });
+</script>
+
+
+
 
 {% endblock %}
 

@@ -72,6 +72,7 @@
         cursor: pointer;
     }
 </style>
+
 <style>
             .custom-button {
           border: none;
@@ -153,6 +154,7 @@
             margin-bottom: 5px;
         }
 </style>
+
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 <form method="post" action="{{ url_for('add_post') }}" id="postForm">
     {{ form.hidden_tag() }}
@@ -200,10 +202,11 @@
             {{ form.title(class="form-control form-control-lg", placeholder="Heading", required=True) }}
         </div>
         <div class="form-group">
-        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#mediaModal">Select Media</button>
-         <button type="button" class="btn btn-info" id="selectFromDeviceButton">Select Media from Device</button>
-            <input type="file" id="deviceMediaInput" multiple style="display: none;">
+
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mediaModal">Select Media</button>
+
          <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#formsModal">Select Form</button>
+
 
     </div>
         <div class="form-group">
@@ -221,7 +224,7 @@
                 <h5 class="modal-title" id="mediaModalLabel">Media Library</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                 <table id="userMediaTable" class="table table-striped" style="width:100%;">
                     <thead>
                         <tr>
@@ -233,7 +236,7 @@
                     </thead>
                     <tbody>
                         {% for data in result %}
-                        <tr style="max-height: 100px; overflow-y: auto; ">
+                        <tr>
                             <td class="py-1">{{ loop.index }}</td>
                             <td class="py-1">
                                 <img src="{{ root_url + data.file_url }}" alt="Media Thumbnail" style="max-height: 6rem; width: auto; margin-top: 10px">
@@ -245,9 +248,35 @@
                     </tbody>
                 </table>
             </div>
+            <div class="modal-footer" style="position: sticky; bottom: 0; background-color: #fff; z-index: 1000;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="selectFromDeviceButtonInModal">Select Media from Device</button>
+                <button type="button" class="btn btn-primary" id="saveSelectionButton">Save Selection</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- New Modal for Device Media Selection -->
+<!-- Media selection modal -->
+<div class="modal fade" id="deviceMediaModal" tabindex="-1" aria-labelledby="deviceMediaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deviceMediaModalLabel">Selected Media from Device</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="upload-form" method="post" action="{{ url_for('media') }}" enctype="multipart/form-data">
+                    <label for="deviceMediaInput" class="btn btn-outline-primary btn-select">Select Files</label>
+                    <input type="file" id="deviceMediaInput" class="file-input" multiple style="display: none;">
+                    <div id="selectedDeviceMediaContainer" class="mt-3"></div>
+                </form>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="saveSelectionButton">Save Selection</button>
+                <button type="button" class="btn btn-primary" id="saveDeviceMediaButton">Save</button>
             </div>
         </div>
     </div>
@@ -281,6 +310,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
             </div>
         </div>
     </div>
@@ -453,6 +483,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle the save selection button click
 
 });
+
 </script>
 
 <script>
@@ -461,6 +492,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     (function() {
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if the script is already initialized
             if (window.isMediaSelectionInitialized) {
                 console.log('Media selection script already initialized.');
                 return;
@@ -504,39 +536,119 @@ document.addEventListener('DOMContentLoaded', function() {
     })();
 </script>
 
+
+
+
 <script>
-    let isProcessingFiles = false;
+    window.isInitialized = false;
 
-// Handle the select from device button click
-document.getElementById('selectFromDeviceButton').addEventListener('click', function() {
-    document.getElementById('deviceMediaInput').click();
-});
+    (function() {
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.isInitialized) {
+                return;
+            }
 
-// Handle the device media input change
-document.getElementById('deviceMediaInput').addEventListener('change', function(event) {
-    if (isProcessingFiles) return;
+            const summernoteEditor = $('#content');
+            let deviceMediaAdded = false;
 
-    isProcessingFiles = true;
-    const files = event.target.files;
-    const summernoteEditor = $('#content');
+            document.getElementById('selectFromDeviceButtonInModal').addEventListener('click', function() {
+                $('#mediaModal').modal('hide');
+                $('#deviceMediaInput').click();
+            });
 
-    Array.from(files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const mediaHtml = `<img src="${e.target.result}" alt="${file.name}" style="max-height: 300px; width: auto;">`;
-            summernoteEditor.summernote('pasteHTML', mediaHtml);
-        };
-        reader.readAsDataURL(file);
-    });
+            document.getElementById('deviceMediaInput').addEventListener('change', function(event) {
+                const files = event.target.files;
+                const selectedDeviceMediaContainer = document.getElementById('selectedDeviceMediaContainer');
+                selectedDeviceMediaContainer.innerHTML = '';
 
-    // Reset the input and open the file selector again
-    setTimeout(() => {
-        document.getElementById('deviceMediaInput').value = '';
-        isProcessingFiles = false;
-        document.getElementById('deviceMediaInput').click();
-    }, 500);
-});
+                // Focus the editor to maintain cursor position
+                summernoteEditor.summernote('focus');
+
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const mediaHtml = `<img src="${e.target.result}" alt="${file.name}" style="max-height: 300px; width: auto; margin: 10px;" class="device-media">`;
+                        selectedDeviceMediaContainer.innerHTML += mediaHtml;
+                        summernoteEditor.summernote('pasteHTML', mediaHtml);
+                        deviceMediaAdded = true;
+                    };
+                    reader.readAsDataURL(file);
+                });
+
+                // Clear the file input to allow re-selection
+                event.target.value = '';
+
+                $('#deviceMediaModal').modal('show');
+            });
+
+            document.getElementById('saveDeviceMediaButton').addEventListener('click', async function() {
+                const files = document.getElementById('deviceMediaInput').files;
+                const formData = new FormData();
+
+                // Append files to FormData
+                Array.from(files).forEach((file) => {
+                    console.log('Appending file:', file.name);  // Debug: Check files being appended
+                    formData.append('files', file);
+                });
+
+                // Log FormData content for debugging
+                for (let [key, value] of formData.entries()) {
+                    console.log(key, value);
+                }
+
+                try {
+                    const response = await fetch('/user/add-media', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.indexOf('application/json') !== -1) {
+                        const result = await response.json();
+                        if (response.status === 200) {
+                            alert(result.message);
+                            window.location.href = result.redirect;
+                        } else {
+                            console.error('Failed upload:', result.message);  // Debug: Log failure
+                            alert('Failed to upload media: ' + result.message);
+                        }
+                    } else {
+                        const text = await response.text();
+                        console.error('Unexpected response:', text);  // Debug: Log unexpected response
+                        alert('Failed to upload media. Server responded with an error: ' + text);
+                    }
+                } catch (error) {
+                    console.error('Fetch error:', error);  // Debug: Log fetch error
+                    alert('Failed to upload media. An error occurred: ' + error.message);
+                }
+
+                $('#deviceMediaModal').modal('hide');
+            });
+
+            $('#deviceMediaModal').on('hide.bs.modal', function() {
+                if (deviceMediaAdded) {
+                    clearDeviceMediaFromContent();
+                    deviceMediaAdded = false;
+                }
+            });
+
+            function clearDeviceMediaFromContent() {
+                const content = summernoteEditor.summernote('code');
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = content;
+                tempDiv.querySelectorAll('.device-media').forEach(el => el.remove());
+                summernoteEditor.summernote('code', tempDiv.innerHTML);
+            }
+
+            window.isInitialized = true;
+        });
+    })();
 </script>
+
+
+
+
+
 
 <script>
     new DataTable('#userFormsTable');
@@ -549,6 +661,7 @@ function insertFormHtml(formHtml) {
     $('#formsModal').modal('hide');
 }
 </script>
+
 
 
 {% endblock %}

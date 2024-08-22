@@ -286,6 +286,7 @@
               </li>
             </ul>
               </li>
+
               <li class="nav-item">
                 <a href="{{ url_for('comment_setting') }}" class="nav-link {% if request.endpoint == 'comment_setting' %} active {% endif %}">
                   <i class="far fa fa-cog nav-icon"></i>
@@ -298,6 +299,12 @@
                   <p>Newsletter</p>
                 </a>
               </li>
+              <li class="nav-item">
+    <a class="nav-link {% if request.endpoint == 'all_themes' or request.endpoint == 'theme_detail' %} active {% endif %}" href="{{ url_for('all_themes') }}">
+        <i class="fas fa-adjust nav-icon"></i>
+        <p>Appearance</p>
+    </a>
+</li>
               <li class="nav-item">
                 <a href="{{ url_for('email_settings') }}" class="nav-link {% if request.endpoint == 'email_settings' %} active {% endif %}">
                   <i class="far bi bi-envelope nav-icon"></i>

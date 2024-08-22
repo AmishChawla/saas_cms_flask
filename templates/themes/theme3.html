@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bark Style Theme - Grid Layout</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: #333;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            margin: 0;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+        }
+
+        .navbar ul li {
+            margin: 0 15px;
+        }
+
+        .navbar ul li a {
+            color: #333;
+            text-decoration: none;
+            padding: 5px 10px;
+            transition: color 0.3s;
+        }
+
+        .navbar ul li a:hover {
+            color: #007bff;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 20px 0;
+        }
+
+        .post-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .post {
+            background: #fff;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            padding: 20px;
+        }
+
+        .post:hover {
+            transform: translateY(-5px);
+        }
+
+        .post img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .post h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .post p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .post-meta {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        /* Load More Button */
+        .load-more {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .load-more:hover {
+            background-color: #0056b3;
+        }
+
+        /* Footer */
+        .footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1>Bark Style Theme</h1>
+            <p>Clean and minimalist design</p>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container" id="post-list">
+            <!-- Grid layout for posts -->
+            <div class="post-grid">
+                <!-- Example posts -->
+                <div class="post">
+                    <img src="https://via.placeholder.com/500x300" alt="Post Image">
+                    <h2>Post Title 1</h2>
+                    <p class="post-meta">Posted by Author Name on August 1, 2024</p>
+                    <p>This is a brief description of the first post. It provides a summary or introduction to the content of the post, encouraging readers to continue reading.</p>
+                </div>
+                <div class="post">
+                    <img src="https://via.placeholder.com/500x300" alt="Post Image">
+                    <h2>Post Title 2</h2>
+                    <p class="post-meta">Posted by Author Name on August 2, 2024</p>
+                    <p>This is a brief description of the second post. It provides a summary or introduction to the content of the post, encouraging readers to continue reading.</p>
+                </div>
+                <div class="post">
+                    <img src="https://via.placeholder.com/500x300" alt="Post Image">
+                    <h2>Post Title 3</h2>
+                    <p class="post-meta">Posted by Author Name on August 3, 2024</p>
+                    <p>This is a brief description of the third post. It provides a summary or introduction to the content of the post, encouraging readers to continue reading.</p>
+                </div>
+                <div class="post">
+                    <img src="https://via.placeholder.com/500x300" alt="Post Image">
+                    <h2>Post Title 4</h2>
+                    <p class="post-meta">Posted by Author Name on August 4, 2024</p>
+                    <p>This is a brief description of the fourth post. It provides a summary or introduction to the content of the post, encouraging readers to continue reading.</p>
+                </div>
+                <!-- More posts will be loaded here -->
+            </div>
+            <button id="load-more" class="load-more">Load More</button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Bark Style Theme. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const postList = document.querySelector(".post-grid");
+            const loadMoreButton = document.getElementById("load-more");
+            let currentPostIndex = 4;
+
+            const posts = [
+                {
+                    title: "Post Title 5",
+                    date: "August 5, 2024",
+                    img: "https://via.placeholder.com/500x300",
+                    description: "This is a brief description of the fifth post. It provides a summary or introduction to the content of the post, encouraging readers to continue reading."
+                },
+                {
+                    title: "Post Title 6",
+                    date: "August 6, 2024",
+                    img: "https://via.placeholder.com/500x300",
+                    description: "This is a brief description of the sixth post. It provides a summary or introduction to the content of the post, encouraging readers to continue reading."
+                },
+                {
+                    title: "Post Title 7",
+                    date: "August 7, 2024",
+                    img: "https://via.placeholder.com/500x300",
+                    description: "This is a brief description of the seventh post. It provides a summary or introduction to the content of the post, encouraging readers to continue reading."
+                }
+            ];
+
+            function loadMorePosts() {
+                const itemsToLoad = posts.slice(currentPostIndex, currentPostIndex + 3);
+                currentPostIndex += 3;
+
+                itemsToLoad.forEach(post => {
+                    const div = document.createElement("div");
+                    div.className = "post";
+                    div.innerHTML = `
+                        <img src="${post.img}" alt="Post Image">
+                        <h2>${post.title}</h2>
+                        <p class="post-meta">Posted by Author Name on ${post.date}</p>
+                        <p>${post.description}</p>
+                    `;
+                    postList.appendChild(div);
+                });
+
+                if (currentPostIndex >= posts.length) {
+                    loadMoreButton.style.display = "none";
+                }
+            }
+
+            loadMoreButton.addEventListener("click", loadMorePosts);
+        });
+    </script>
+</body>
+</html>

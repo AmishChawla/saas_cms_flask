@@ -47,7 +47,11 @@
                 </td>
 
                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')" style="text-transform: capitalize;"> {{ row.role }} </td>
+
+                <td><a href="{{ url_for('user_post_list', username=row.username) }}"> /{{row.username}}/posts </a></td>
+
                 <td><a href=""> /{{row.username}}/posts </a></td>
+
 
                 <td class="py-1 clickable text-center" onclick="redirectToPage('{{ url_for('admin_view_user_profile', user_id=row.id) }}')">
                     {% if row["company"] %}

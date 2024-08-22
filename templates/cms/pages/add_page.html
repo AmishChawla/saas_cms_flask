@@ -58,6 +58,7 @@
         cursor: pointer;
     }
 </style>
+
 <style>
             .custom-button {
           border: none;
@@ -139,6 +140,7 @@
             margin-bottom: 5px;
         }
 </style>
+
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 <form method="post" action="{{ url_for('add_page') }}" id="pageForm">
     {{ form.hidden_tag() }}
@@ -182,8 +184,8 @@
     <div class="form-container">
 <div class="form-group">
         <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#mediaModal">Select Media</button>
-        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#formsModal">Select Form</button>
 
+        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#formsModal">Select Form</button>
 
 
     </div>
@@ -236,6 +238,7 @@
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="formsModal" tabindex="-1" aria-labelledby="formsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -272,6 +275,7 @@
 
 
 
+
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 <script>
@@ -283,6 +287,7 @@ $('.control-sidebar').ControlSidebar('show');
         maxHeight: null,
         focus: true,
         allowList: ['form']
+
     });
      new DataTable('#userMediaTable');
 });
@@ -336,6 +341,7 @@ $('.control-sidebar').ControlSidebar('show');
         });
     })();
 </script>
+
 
 <script>
     new DataTable('#userFormsTable');

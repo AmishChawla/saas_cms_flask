@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nook Style Theme</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .navbar .nav-links {
+            list-style: none;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .navbar .nav-links li {
+            margin-left: 20px;
+        }
+
+        .navbar .nav-links a {
+            color: #333;
+            text-decoration: none;
+            padding: 5px;
+            transition: color 0.3s;
+        }
+
+        .navbar .nav-links a:hover {
+            color: #007bff;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: url('https://via.placeholder.com/1200x400') no-repeat center center/cover;
+            color: #fff;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            font-size: 18px;
+        }
+
+        /* Portfolio Section */
+        .portfolio {
+            padding: 40px 0;
+        }
+
+        .portfolio h2 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .portfolio-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .portfolio-item {
+            background: #fff;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            padding: 20px;
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .portfolio-img {
+            width: 500px;
+            height: 300px;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+
+        .portfolio-info {
+            padding: 15px;
+            flex-grow: 1;
+        }
+
+        .portfolio-info h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .portfolio-info .post-meta {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        .portfolio-info p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        /* Load More Button */
+        .load-more {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .load-more:hover {
+            background-color: #0056b3;
+        }
+
+        /* Footer */
+        .footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">NookStyle</div>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Portfolio</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container">
+            <h1>Welcome to My Portfolio</h1>
+            <p>Discover my work and projects</p>
+        </div>
+    </header>
+
+    <!-- Portfolio Section -->
+    <section class="portfolio">
+        <div class="container">
+            <h2>Recent Works</h2>
+            {% for data in result %}
+            <div id="portfolio-list" class="portfolio-list">
+                <!-- Portfolio items -->
+                <div class="portfolio-item">
+                                       <form action="{{ url_for('get_post_by_username_and_slug', username=data.author_name, post_date=data.created_at.split('T')[0], post_slug=data.slug) }}" method="POST" style="display:inline;">
+                            <input type="hidden" name="post_id" value="{{ data.id }}">
+                            <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left;">
+                                <h1>{{ data.title }}</h1>
+                            </button>
+                        </form>
+
+                    <p class="post-meta">Posted by {{data.author_name}} on {{ data.created_at.split('T')[0] }}</p>
+                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
+                    <div class="portfolio-info">
+                        <p>This is a detailed description of the first project. It covers the main features and goals of the project, providing insights into the development process and the outcomes achieved. The content here can be expanded to include any relevant information that readers might find useful or interesting.</p>
+                    </div>
+                </div>
+
+            </div>
+                        {% endfor %}
+
+            <button id="load-more" class="load-more">Load More</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 NookStyle. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const portfolioList = document.getElementById("portfolio-list");
+            const loadMoreButton = document.getElementById("load-more");
+            let currentPortfolioIndex = 4;
+
+            const portfolioItems = [
+                {
+                    title: "Project Title 5",
+                    description: "This is a detailed description of the fifth project. It covers the main features and goals of the project, providing insights into the development process and the outcomes achieved. The content here can be expanded to include any relevant information that readers might find useful or interesting.",
+                    img: "https://via.placeholder.com/500x300",
+                    date: "July 30, 2024",
+                },
+                {
+                    title: "Project Title 6",
+                    description: "This is a detailed description of the sixth project. It covers the main features and goals of the project, providing insights into the development process and the outcomes achieved. The content here can be expanded to include any relevant information that readers might find useful or interesting.",
+                    img: "https://via.placeholder.com/500x300",
+                    date: "July 31, 2024",
+                },
+                {
+                    title: "Project Title 7",
+                    description: "This is a detailed description of the seventh project. It covers the main features and goals of the project, providing insights into the development process and the outcomes achieved. The content here can be expanded to include any relevant information that readers might find useful or interesting.",
+                    img: "https://via.placeholder.com/500x300",
+                    date: "August 1, 2024",
+                },
+                // Add more items as needed
+            ];
+
+            function loadMorePortfolioItems() {
+                const itemsToLoad = portfolioItems.slice(currentPortfolioIndex, currentPortfolioIndex + 3);
+                currentPortfolioIndex += 3;
+
+                itemsToLoad.forEach(item => {
+                    const div = document.createElement("div");
+                    div.className = "portfolio-item";
+                    div.innerHTML = `
+                        <h1>${item.title}</h1>
+                        <p class="post-meta">Posted by Author Name on ${item.date}</p>
+                        <img src="${item.img}" alt="Portfolio Item" class="portfolio-img">
+                        <div class="portfolio-info">
+                            <p>${item.description}</p>
+                        </div>
+                    `;
+                    portfolioList.appendChild(div);
+                });
+
+                if (currentPortfolioIndex >= portfolioItems.length) {
+                    loadMoreButton.style.display = "none";
+                }
+            }
+
+            loadMoreButton.addEventListener("click", loadMorePortfolioItems);
+        });
+    </script>
+</body>
+</html>
