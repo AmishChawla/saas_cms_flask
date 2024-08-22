@@ -6,7 +6,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Resume Parser</title>
+  <title>SaaS Boilerplate</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -38,17 +38,41 @@
     <div class="container d-flex align-items-center">
 
       <h1 class="logo me-auto"><a href="index.html"><img src="/static/images/logo.png" alt="Logo" height="30" class="d-inline-block align-top">
-                Resume Parser</a></h1>
+                SaaS Boilerplate</a></h1>
       <!-- Uncomment below if you prefer to use an image logo -->
       <!-- <a href="index.html" class="logo me-auto"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
       <nav id="navbar" class="navbar">
         <ul>
+
           <li><a class="nav-link scrollto active" href="#hero">Home</a></li>
            <li><a class="nav-link scrollto" href="{{ url_for('view_post') }}">Posts</a></li>
           <li><a class="nav-link scrollto" href="{{ url_for('user_view_plan') }}">Pricing</a></li>
           <li><a class="nav-link scrollto" href="#about">About</a></li>
           <li><a class="nav-link scrollto" href="#contact">Contact</a></li>
+
+          <li><a class="nav-link scrollto" href="#features">Features</a></li>
+          <li><a class="nav-link scrollto" href="#faq">FAQs</a></li>
+                        <li class="nav-link dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="ai" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        AI
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="aiDropdown" style="position:absolute;left:-50px">
+                      <li>
+                          <a class="dropdown-item" href="{{ url_for('chatbot') }}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Chat<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
+                     </li>
+                      <li>
+                            <a class="dropdown-item" href="{{ url_for('resume_parser') }}" onmouseover="this.style.color='blue'" onmouseout="this.style.color='grey'" style="display: flex; justify-content: space-between;">Parse Resume<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
+                        </li>
+
+                    </ul>
+                </li>
+          <li><a class="nav-link scrollto" href="https://github.com/AmishChawla/saas_cms_flask/blob/main/README.md">Documentation</a></li>
+          <li><a class="nav-link scrollto" href="#contact">Contact Us</a></li>
+          <li><a class="nav-link scrollto" href="{{ url_for('register') }}">Demo</a></li>
+          <li><a class="nav-link scrollto" href="https://github.com/AmishChawla/saas_cms_flask">Github</a></li>
+
+
           {% if current_user.is_authenticated %}
               <li class="nav-link dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="updatePasswordDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -98,11 +122,11 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-6 d-flex flex-column justify-content-center pt-4 pt-lg-0 order-2 order-lg-1" data-aos="fade-up" data-aos-delay="200">
-          <h1>Better Solutions For Your Business</h1>
-          <h2>Parse resumes in bulk</h2>
+          <h1>Open Source SaaS Boilerplate built with Python</h1>
+          <h2>Open Source SaaS boilerplate with API, CMS, Membership, Subscriptions,
+              Admin Panel and AI integration, designed to accelerate your software
+              development process</h2>
           <div class="d-flex justify-content-center justify-content-lg-start">
-
-
           </div>
         </div>
         <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="zoom-in" data-aos-delay="200">
@@ -119,93 +143,226 @@
 
 
     <!-- ======= About Us Section ======= -->
-    <section id="about" class="about">
+<!-- ======= Features Section ======= -->
+<section id="features" class="faq section-bg">
       <div class="container" data-aos="fade-up">
 
         <div class="section-title">
-          <h2>About Us</h2>
+          <h2>Features</h2>
+          <p>
+            Built with Python, Flask and FastAPI, our boilerplate is designed to accelerate
+your development process, ensuring scalability, flexibility, and top-notch
+performance.
+          </p>
         </div>
 
-        <div class="row content">
-          <div class="col-lg-6">
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-              magna aliqua.
-            </p>
-            <ul>
-              <li><i class="ri-check-double-line"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat</li>
-              <li><i class="ri-check-double-line"></i> Duis aute irure dolor in reprehenderit in voluptate velit</li>
-              <li><i class="ri-check-double-line"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat</li>
-            </ul>
-          </div>
-          <div class="col-lg-6 pt-4 pt-lg-0">
-            <p>
-              Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-              velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-              culpa qui officia deserunt mollit anim id est laborum.
-            </p>
-            <a href="#" class="btn-learn-more">Learn More</a>
-          </div>
+        <div class="faq-list">
+          <ul>
+            <li data-aos="fade-up" data-aos-delay="100">
+              <i class="bx bx-help-circle icon-help"></i> <a class="collapse" data-bs-target="#faq-list-1">FastAPI Integration </a>
+              <div id="faq-list-1" class="show" data-bs-parent=".faq-list">
+                <p>
+Experience the speed and simplicity of FastAPI, a modern web framework for
+building APIs with Python.
+FastAPI’s asynchronous capabilities enable you to create high-performance
+applications that handle concurrent tasks effortlessly.
+                </p>
+
+              </div>
+            </li>
+
+            <li data-aos="fade-up" data-aos-delay="200">
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-target="#faq-list-2" class="collapsed">Asynchronous Support </a>
+              <div id="faq-list-2" class="show" data-bs-parent=".faq-list">
+                <p>
+Our boilerplate is fully equipped with asynchronous programming support,
+allowing you to build responsive and scalable applications.
+This ensures your SaaS application can manage multiple requests
+simultaneously without compromising on performance.
+                </p>
+              </div>
+            </li>
+
+            <li data-aos="fade-up" data-aos-delay="300">
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-target="#faq-list-3" class="collapsed">User Authentication and Authorization </a>
+              <div id="faq-list-3" class="show" data-bs-parent=".faq-list">
+                <p>
+Robust user authentication and authorization systems out-of-the-
+box.
+Our boilerplate includes secure login, registration, password management, and
+role-based access control to protect your application and its users.
+                </p>
+              </div>
+            </li>
+
+            <li data-aos="fade-up" data-aos-delay="400">
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-target="#faq-list-4" class="collapsed">Database Integration </a>
+              <div id="faq-list-4" class="show" data-bs-parent=".faq-list">
+                <p>
+Seamlessly integrate with popular databases such as PostgreSQL, MySQL, and
+SQLite.
+Our boilerplate provides a flexible and efficient way to manage your
+application’s data, ensuring reliability and performance.                </p>
+              </div>
+            </li>
+
+            <li data-aos="fade-up" data-aos-delay="500">
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-target="#faq-list-5" class="collapsed">Email and Notification System </a>
+              <div id="faq-list-5" class="show" data-bs-parent=".faq-list">
+                <p>
+An efficient email and notification system with built-in support for
+sending emails and notifications to users.
+This feature is essential for user engagement and communication within your
+application.             </p>
+              </div>
+            </li>
+                        <li data-aos="fade-up" data-aos-delay="500">
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-target="#faq-list-5" class="collapsed">Admin Dashboard </a>
+              <div id="faq-list-5" class="show" data-bs-parent=".faq-list">
+                <p>
+Manage your application with ease using the built-in admin dashboard.
+Monitor user activities, manage content, and perform administrative tasks
+through a user-friendly interface.                </p>
+              </div>
+            </li>
+
+                                    <li data-aos="fade-up" data-aos-delay="500">
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-target="#faq-list-5" class="collapsed">Security Best Practices </a>
+              <div id="faq-list-5" class="show" data-bs-parent=".faq-list">
+                <p>
+Our boilerplate follows security best practices, ensuring your application is
+protected against common vulnerabilities.
+Features such as secure password hashing, input validation, and CSRF
+protection are built-in to safeguard your data and users.                </p>
+              </div>
+            </li>
+
+          </ul>
         </div>
 
       </div>
-    </section><!-- End About Us Section -->
-
-
-
+    </section><!-- End Features Section -->
     <!-- ======= Frequently Asked Questions Section ======= -->
     <section id="faq" class="faq section-bg">
       <div class="container" data-aos="fade-up">
 
         <div class="section-title">
           <h2>Frequently Asked Questions</h2>
-          <p>Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic quas.</p>
         </div>
 
         <div class="faq-list">
           <ul>
             <li data-aos="fade-up" data-aos-delay="100">
-              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" class="collapse" data-bs-target="#faq-list-1">Non consectetur a erat nam at lectus urna duis? <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" class="collapse" data-bs-target="#faq-list-1">What is the Open Source SaaS Boilerplate? <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
               <div id="faq-list-1" class="collapse show" data-bs-parent=".faq-list">
                 <p>
-                  Feugiat pretium nibh ipsum consequat. Tempus iaculis urna id volutpat lacus laoreet non curabitur gravida. Venenatis lectus magna fringilla urna porttitor rhoncus dolor purus non.
+Our Open Source SaaS Boilerplate is a foundational framework designed to
+help you quickly build and deploy SaaS applications.
+It is developed using Python, Flask and FastAPI, offering a high-performance,
+scalable, and modular solution for your software development needs.
                 </p>
               </div>
             </li>
 
             <li data-aos="fade-up" data-aos-delay="200">
-              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" data-bs-target="#faq-list-2" class="collapsed">Feugiat scelerisque varius morbi enim nunc? <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" data-bs-target="#faq-list-2" class="collapsed">Who is the Open Source SaaS Boilerplate for? <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
               <div id="faq-list-2" class="collapse" data-bs-parent=".faq-list">
                 <p>
-                  Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim. Mauris ultrices eros in cursus turpis massa tincidunt dui.
+This boilerplate is ideal for developers, startups, and enterprises looking to
+accelerate their SaaS application development.
+Whether you are a seasoned developer or just starting, our boilerplate
+provides a robust foundation to build upon.
                 </p>
               </div>
             </li>
 
             <li data-aos="fade-up" data-aos-delay="300">
-              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" data-bs-target="#faq-list-3" class="collapsed">Dolor sit amet consectetur adipiscing elit? <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" data-bs-target="#faq-list-3" class="collapsed">Is the SaaS Boilerplate really free to use?<i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
               <div id="faq-list-3" class="collapse" data-bs-parent=".faq-list">
                 <p>
-                  Eleifend mi in nulla posuere sollicitudin aliquam ultrices sagittis orci. Faucibus pulvinar elementum integer enim. Sem nulla pharetra diam sit amet nisl suscipit. Rutrum tellus pellentesque eu tincidunt. Lectus urna duis convallis convallis tellus. Urna molestie at elementum eu facilisis sed odio morbi quis
-                </p>
+Yes, our SaaS Boilerplate is open source and free to use.
+You can access the source code, contribute to its development, and customize
+it to fit your specific needs.                </p>
               </div>
             </li>
 
             <li data-aos="fade-up" data-aos-delay="400">
-              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" data-bs-target="#faq-list-4" class="collapsed">Tempus quam pellentesque nec nam aliquam sem et tortor consequat? <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" data-bs-target="#faq-list-4" class="collapsed">What technologies are used in the SaaS Boilerplate? <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
               <div id="faq-list-4" class="collapse" data-bs-parent=".faq-list">
                 <p>
-                  Molestie a iaculis at erat pellentesque adipiscing commodo. Dignissim suspendisse in est ante in. Nunc vel risus commodo viverra maecenas accumsan. Sit amet nisl suscipit adipiscing bibendum est. Purus gravida quis blandit turpis cursus in.
-                </p>
+The boilerplate is built using Python, Flask and FastAPI, leveraging the
+strengths of these technologies to deliver high performance and scalability.
+It also includes integration with popular databases like PostgreSQL, MySQL,
+and SQLite.                </p>
               </div>
             </li>
 
             <li data-aos="fade-up" data-aos-delay="500">
-              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" data-bs-target="#faq-list-5" class="collapsed">Tortor vitae purus faucibus ornare. Varius vel pharetra vel turpis nunc eget lorem dolor? <i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" data-bs-target="#faq-list-5" class="collapsed">Can I customize the boilerplate to suit my needs?<i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
               <div id="faq-list-5" class="collapse" data-bs-parent=".faq-list">
                 <p>
-                  Laoreet sit amet cursus sit amet dictum sit amet justo. Mauris vitae ultricies leo integer malesuada nunc vel. Tincidunt eget nullam non nisi est sit amet. Turpis nunc eget lorem dolor sed. Ut venenatis tellus in metus vulputate eu scelerisque.
-                </p>
+Absolutely!
+The boilerplate is designed with modularity in mind, allowing you to easily
+customize and extend its functionalities to match your project requirements.                </p>
+              </div>
+            </li>
+                        <li data-aos="fade-up" data-aos-delay="500">
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" data-bs-target="#faq-list-6" class="collapsed">How do I get started with the SaaS Boilerplate?<i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
+              <div id="faq-list-6" class="collapse" data-bs-parent=".faq-list">
+                <p>
+To get started, visit our <a href="https://github.com/AmishChawla/saas_cms_flask">GitHub</a> to download the source code.
+You can also refer to our <a href="https://github.com/AmishChawla/saas_cms_flask">Documentation</a> for detailed setup instructions and
+tutorials.               </p>
+              </div>
+            </li>
+                                    <li data-aos="fade-up" data-aos-delay="500">
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" data-bs-target="#faq-list-7" class="collapsed">What features are included in the SaaS Boilerplate?<i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
+              <div id="faq-list-7" class="collapse" data-bs-parent=".faq-list">
+                <p>
+The boilerplate includes a range of essential features such as:
+ FastAPI Integration
+ Asynchronous Support
+ User Authentication and Authorization
+ Database Integration
+ Auto-generated API Documentation with Swagger UI
+ Built-in Testing Framework   </p>
+              </div>
+            </li>
+                                    <li data-aos="fade-up" data-aos-delay="500">
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" data-bs-target="#faq-list-8" class="collapsed">Can I use the boilerplate for commercial projects?<i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
+              <div id="faq-list-8" class="collapse" data-bs-parent=".faq-list">
+                <p>
+Yes, you can use the SaaS Boilerplate for both personal and commercial
+projects.
+Being open source, it provides the flexibility to adapt and use it as needed.               </p>
+              </div>
+            </li>
+                                    <li data-aos="fade-up" data-aos-delay="500">
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" data-bs-target="#faq-list-9" class="collapsed">How can I contribute to the project?<i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
+              <div id="faq-list-9" class="collapse" data-bs-parent=".faq-list">
+                <p>
+We welcome contributions from the community!
+You can contribute by submitting pull requests, reporting issues, or
+participating in discussions on our <a href="https://github.com/AmishChawla/saas_cms_flask">GitHub</a></p>
+              </div>
+            </li>
+                                    <li data-aos="fade-up" data-aos-delay="500">
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" data-bs-target="#faq-list-10" class="collapsed">Where can I find support if I encounter issues?<i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
+              <div id="faq-list-10" class="collapse" data-bs-parent=".faq-list">
+                <p>
+A: For support, you can refer to our <a href="https://github.com/AmishChawla/saas_cms_flask">Documentation</a>, join our community
+forums, or reach out to us via our <a href="#contact">Contact Us</a> page.
+Our community and team are here to help you.            </p>
+              </div>
+            </li>
+                                    <li data-aos="fade-up" data-aos-delay="500">
+              <i class="bx bx-help-circle icon-help"></i> <a data-bs-toggle="collapse" data-bs-target="#faq-list-11" class="collapsed">How can I contact you for more information?<i class="bx bx-chevron-down icon-show"></i><i class="bx bx-chevron-up icon-close"></i></a>
+              <div id="faq-list-11" class="collapse" data-bs-parent=".faq-list">
+                <p>
+You can contact us through our <a href="#contact">Contact Us</a> page for any inquiries,
+feedback, or support requests.
+We are here to assist you and provide any additional information you may
+need.              </p>
               </div>
             </li>
 
@@ -221,7 +378,7 @@
 
         <div class="section-title">
           <h2>Contact</h2>
-          <p>Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic quas.</p>
+          <p>For more information, Please contact us</p>
         </div>
 
         <div class="row">
@@ -231,19 +388,19 @@
               <div class="address">
                 <i class="bi bi-geo-alt"></i>
                 <h4>Location:</h4>
-                <p>A108 Adam Street, New York, NY 535022</p>
+                <p>Shalimar Bagh, Delhi</p>
               </div>
 
               <div class="email">
                 <i class="bi bi-envelope"></i>
                 <h4>Email:</h4>
-                <p>info@example.com</p>
+                <p>info@aynsoft.com</p>
               </div>
 
               <div class="phone">
                 <i class="bi bi-phone"></i>
                 <h4>Call:</h4>
-                <p>+1 5589 55488 55s</p>
+                <p>+91 9810 336 906</p>
               </div>
 
               <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12097.433213460943!2d-74.0062269!3d40.7101282!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xb89d1fe6bc499443!2sDowntown+Conference+Center!5e0!3m2!1smk!2sbg!4v1539943755621" frameborder="0" style="border:0; width: 100%; height: 290px;" allowfullscreen></iframe>
@@ -288,77 +445,68 @@
   </main><!-- End #main -->
 
   <!-- ======= Footer ======= -->
-  <footer id="footer">
+<!--  <footer id="footer">-->
 
-    <div class="footer-top">
-      <div class="container">
-        <div class="row">
+<!--    <div class="footer-top">-->
+<!--      <div class="container">-->
+<!--        <div class="row">-->
 
-          <div class="col-lg-3 col-md-6 footer-contact">
-            <h3>Resume Parser</h3>
-            <p>
-              A108 Adam Street <br>
-              New York, NY 535022<br>
-              United States <br><br>
-              <strong>Phone:</strong> +1 5589 55488 55<br>
-              <strong>Email:</strong> info@example.com<br>
-            </p>
-          </div>
+<!--          <div class="col-lg-3 col-md-6 footer-contact">-->
+<!--            <h3>SaaS Boilerplate</h3>-->
+<!--          </div>-->
 
-          <div class="col-lg-3 col-md-6 footer-links">
-            <h4>Useful Links</h4>
-            <ul>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Home</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">About us</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Services</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Terms of service</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Privacy policy</a></li>
-            </ul>
-          </div>
+<!--          <div class="col-lg-3 col-md-6 footer-links">-->
+<!--              Features-->
+<!--          </div>-->
 
-          <div class="col-lg-3 col-md-6 footer-links">
-            <h4>Our Services</h4>
-            <ul>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Web Design</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Web Development</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Product Management</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Marketing</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Graphic Design</a></li>
-            </ul>
-          </div>
+<!--          <div class="col-lg-3 col-md-6 footer-links">-->
+<!--              FAQs-->
+<!--          </div>-->
 
-          <div class="col-lg-3 col-md-6 footer-links">
-            <h4>Our Social Networks</h4>
-            <p>Cras fermentum odio eu feugiat lide par naso tierra videa magna derita valies</p>
-            <div class="social-links mt-3">
-              <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
-              <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
-              <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
-              <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
-              <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
-            </div>
-          </div>
+<!--          <div class="col-lg-3 col-md-6 footer-links">-->
+<!--              Documentation-->
+<!--          </div>-->
+<!--                      <div class="col-lg-3 col-md-6 footer-links">-->
+<!--              Contact Us-->
+<!--          </div>-->
+<!--                      <div class="col-lg-3 col-md-6 footer-links">-->
+<!--              Github-->
+<!--          </div>-->
 
-        </div>
-      </div>
-    </div>
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
 
-    <div class="container footer-bottom clearfix">
-      <div class="copyright">
-        &copy; Copyright <strong><span>Resume Parser</span></strong>. All Rights Reserved
-      </div>
-      <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you purchased the pro version. -->
-        <!-- Licensing information: https://bootstrapmade.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/ -->
+<!--    <div class="container footer-bottom clearfix">-->
+<!--      <div class="copyright">-->
+<!--        &copy; Copyright <strong><span>SaaS Boilerplate</span></strong>. All Rights Reserved-->
+<!--      </div>-->
+<!--      <div class="credits">-->
+<!--        &lt;!&ndash; All the links in the footer should remain intact. &ndash;&gt;-->
+<!--        &lt;!&ndash; You can delete the links only if you purchased the pro version. &ndash;&gt;-->
+<!--        &lt;!&ndash; Licensing information: https://bootstrapmade.com/license/ &ndash;&gt;-->
+<!--        &lt;!&ndash; Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/ &ndash;&gt;-->
 
-      </div>
-    </div>
-  </footer><!-- End Footer -->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </footer>&lt;!&ndash; End Footer &ndash;&gt;-->
+
+  <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+    <p class="col-md-4 mb-0 text-muted">© 2024 SaaS Boilerplate, Inc</p>
+
+
+
+    <ul class="nav col-md-4 justify-content-end">
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
+      <li class="nav-item"><a href="#features" class="nav-link px-2 text-muted">Features</a></li>
+      <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Pricing</a></li>
+      <li class="nav-item"><a href="#faq" class="nav-link px-2 text-muted">FAQs</a></li>
+        <li class="nav-item"><a href="https://github.com/AmishChawla/saas_cms_flask/blob/main/README.md" class="nav-link px-2 text-muted">Documentation</a></li>
+        <li class="nav-item"><a href="https://github.com/AmishChawla/saas_cms_flask" class="nav-link px-2 text-muted">Github</a></li>
+    </ul>
+  </footer>
 
   <div id="preloader"></div>
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
   <script src="../static/assets/vendor/aos/aos.js"></script>

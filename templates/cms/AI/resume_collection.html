@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Resume Collection{% endblock %}
+
+{% block content %}
+
+<link href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css", rel="stylesheet">
+    <div class="main-panel">
+
+            <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Resume Collection</h1>
+          </div><!-- /.col --><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+            {% if result %}
+                <div class="row">
+                    <div class="col-lg-12 grid-margin stretch-card">
+                        <table id="resumeCollectionTable" class="hover" style="width:100%; ">
+                                    <thead>
+                                        <tr>
+                                            <th> Upload Date </th>
+                                            <th> JSON File </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for data in result %}
+                                            <tr style="max-height: 100px; overflow-y: auto; ">
+                                                <td class="py-1">{{ data.upload_datetime.split('T')[0] }} {{ data.upload_datetime.split('T')[1][:8] }}</td>
+                                                <td class="py-1"><a href="#" onclick="downloadJson({{ data.extracted_data }})">Download JSON</a></td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                    </div>
+                </div>
+                <br>
+                <br>
+            {% else %}
+                <div class="d-flex justify-content-center align-items-center" style="height: 50vh;">
+                    <p>No Collection</p>
+                </div>
+            {% endif %}
+    </div>
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+<script>new DataTable('#resumeCollectionTable');</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xml-js/1.5.1/xml-js.min.js"></script>
+
+<script>
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const day = date.getDate();
+        const monthIndex = date.getMonth();
+        const year = date.getFullYear();
+
+        return `${day} ${monthNames[monthIndex]}, ${year}`;
+    }
+function downloadJson(data) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'data.json';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+    $(document).ready(function() {
+        $('#resumeCollectionTable tbody tr').each(function() {
+            const uploadDateTime = $(this).find('td:eq(0)').text().trim();
+            const formattedDate = formatDate(uploadDateTime);
+            $(this).find('td:eq(0)').text(formattedDate);
+        });
+    });
+</script>
+
+{% endblock %}

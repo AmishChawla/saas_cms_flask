@@ -5,19 +5,20 @@ import os
 from io import StringIO, BytesIO
 import csv
 import ast
-
+import PyPDF2
 import stripe as stripe
 from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file, jsonify,g ,Response,send_from_directory
 import xml.etree.ElementTree as ET
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from jinja2 import Environment, FileSystemLoader
 from werkzeug.utils import secure_filename
-
+import uuid
 import constants
 import forms
 import api_calls
 from constants import ROOT_URL
 import google.generativeai as genai
+import openai
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -31,6 +32,8 @@ password_reset_token = ""
 ####################### GEMINI MODEL CONFIG #########################
 genai.configure(api_key=constants.GEMINI_APIKEY)
 model = genai.GenerativeModel('gemini-pro')
+openai.api_key = constants.OPEN_AI_API_KEY
+
 
 
 @login_manager.user_loader
@@ -48,7 +51,7 @@ def load_user(user_id):
                     profile_picture=user_from_session.get('profile_picture'))
         return user
     else:
-        return None
+        return redirect(url_for('login'))
 
 
 class User(UserMixin):
@@ -178,6 +181,63 @@ def login():
 
     return render_template('login.html', form=form)
 
+@app.route('/google-login')
+def google_login():
+    return redirect(constants.AUTHORIZATION_BASE_URL + '?response_type=code&client_id=' + constants.GOOGLE_CLIENT_ID +
+                    '&redirect_uri=' + constants.REDIRECT_URI + '&scope=email%20profile')
+
+@app.route('/callback')
+def callback():
+    import requests
+    error = request.args.get('error')
+    if error:
+        # Handle the error, e.g., log it or redirect to an error page
+        print(f"OAuth2 Error: {error}")
+        return redirect(url_for('login'))
+    code = request.args.get('code')
+    params = {
+        'code': code,
+        'client_id': constants.GOOGLE_CLIENT_ID,
+        'client_secret': constants.GOOGLE_CLIENT_SECRET,
+        'redirect_uri': constants.REDIRECT_URI,
+        'grant_type': 'authorization_code'
+    }
+    token_response = requests.post(constants.TOKEN_URL, data=params)
+    access_token = token_response.json().get('access_token')
+    user_info_url = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json'
+    headers = {'Authorization': 'Bearer {}'.format(access_token)}
+    user_info_response = requests.get(user_info_url, headers=headers)
+    user_info = user_info_response.json()
+    data = api_calls.get_user_from_google_login(user_info=user_info)
+
+    id = data.get('id')
+    token = data.get('access_token')
+    role = data.get('role')
+    username = data.get('username')
+    email = data.get('email')
+    profile_picture = data.get('profile_picture')
+    print(profile_picture)
+    services = data.get('services', [])
+    company = data.get('company', {})
+
+    user = User(id=id, user_id=token, role=role, username=username, email=email, services=services, company=company,
+                profile_picture=profile_picture)
+    login_user(user)
+    session['user'] = {
+        'id': id,
+        'user_id': token,
+        'role': role,
+        'username': username,
+        'email': email,
+        'services': services,
+        'company': company,
+        'profile_picture': profile_picture
+    }
+    if current_user.company is not None:
+        return redirect(url_for('user_dashboard'))
+    else:
+        return redirect(url_for('company_register'))
+
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -243,8 +303,10 @@ def user_dashboard():
     subscriber_count = stats["total_newsletter_subscribers"]
     feedback_count = stats["total_feedbacks"]
 
-
     return render_template('dashboard.html', resume_data=resume_data, comment_count=comment_count, post_count=post_count, subscriber_count=subscriber_count, feedback_count=feedback_count)
+
+
+
 
 
 @app.route("/admin/admin-dashboard")
@@ -558,7 +620,7 @@ def user_history():
         username = result["username"]
         email = result["email"]
         role = result["role"]
-        resume_data = result["resume_data"]
+        resume_data = []
         # data_list = []
         # for index in range(len(result["resume_data"])):
         #     extracted_data = result["resume_data"][index]["extracted_data"]
@@ -990,12 +1052,11 @@ def user_delete_post(post_id):
 def add_post():
     form = forms.AddPost()
     media_form = forms.AddMediaForm()
+
     # Fetch categories and format them for the form choices
     try:
         categories = api_calls.get_user_all_categories(access_token=current_user.id)
         category_choices = [('', 'Select a category')] + [(category['id'], category['category']) for category in categories]
-        if not category_choices:
-            category_choices = [('', 'Select Category')]
     except Exception as e:
         print(f"Error fetching categories: {e}")
         category_choices = [('', 'Select Category')]
@@ -1007,8 +1068,6 @@ def add_post():
         try:
             subcategories = api_calls.get_subcategories_by_category(form.category.data)
             subcategory_choices = [(subcategory['id'], subcategory['subcategory']) for subcategory in subcategories]
-            if not subcategory_choices:
-                subcategory_choices = [('', 'Select Subcategory')]
         except Exception as e:
             print(f"Error fetching subcategories: {e}")
             subcategory_choices = [('', 'Select Subcategory')]
@@ -1018,87 +1077,56 @@ def add_post():
         tags_list = form.tags.data.split(",")
 
         if form.preview.data:
-            # session['post_preview'] = {
-            #     'title': form.title.data,
-            #     'content': form.content.data,
-            #     'category': form.category.data,
-            #     'subcategory': form.subcategory.data,
-            #     'tags': form.tags.data,
-            #     'selected_media': selected_media
-            # }
-            # Redirect to the preview route with form data
             return redirect(url_for('preview_post'))
 
-        elif form.save_draft.data:
-            try:
-                result = api_calls.create_post(
-                    title=form.title.data,
-                    content=form.content.data,
-                    category_id=form.category.data,
-                    subcategory_id=form.subcategory.data,
-                    tags=tags_list,
-                    status='draft',
-                    access_token=current_user.id
-                )
+        post_data = {
+            'title': form.title.data,
+            'content': form.content.data,
+            'category_id': form.category.data,
+            'subcategory_id': form.subcategory.data,
+            'tags': tags_list,
+            'access_token': current_user.id
+        }
 
-                if result:
-                    if current_user.role == 'user':
-                        return redirect(url_for('user_all_post'))
-                    else:
-                        return redirect(url_for('all_post'))
-                else:
-                    flash("Failed to create post", "danger")
-            except Exception as e:
-                flash(f"Error creating post: {e}", "danger")
-        elif form.publish.data:
-            try:
-                result = api_calls.create_post(
-                    title=form.title.data,
-                    content=form.content.data,
-                    category_id=form.category.data,
-                    subcategory_id=form.subcategory.data,
-                    tags=tags_list,
-                    status='published',
-                    access_token=current_user.id
-                )
+        try:
+            if form.save_draft.data:
+                post_data['status'] = 'draft'
+            elif form.publish.data:
+                post_data['status'] = 'published'
 
-                if result:
+            result = api_calls.create_post(**post_data)
+
+            if result:
+                if form.publish.data:
                     flash("Post created successfully", "success")
                     try:
-                        print("trying to send mail")
-                        dateiso = result["created_at"]
                         post_slug = result["slug"]
+                        dateiso = result["created_at"]
                         date = dateiso.split('T')[0]
-                        print(date)
                         post_url = f'{constants.MY_ROOT_URL}/{current_user.username}/posts/{date}/{post_slug}'
-                        print(post_url)
-                        send_mails = api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data, body=form.content.data, post_url=post_url)
-                        print('done')
+                        api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data, body=form.content.data, post_url=post_url)
                     except Exception as e:
-                        raise 'Problem sending newsletter' + e
-                    if current_user.role == 'user':
-                        return redirect(url_for('user_all_post'))
-                    else:
-                        return redirect(url_for('all_post'))
-                else:
-                    flash("Failed to create post", "danger")
-            except Exception as e:
-                flash(f"Error creating post: {e}", "danger")
-    else:
-        print(form.errors)
+                        print(f"Problem sending newsletter: {e}")
+                return redirect(url_for('user_all_post' if current_user.role == 'user' else 'all_post'))
+            else:
+                flash("Failed to create post", "danger")
+        except Exception as e:
+            flash(f"Error creating post: {e}", "danger")
 
+    # Fetch media and forms
     root_url = constants.ROOT_URL + '/'
-    media_result = api_calls.get_user_all_medias(access_token=current_user.id)
-    if media_result is None:
-        media_result = []  # Set result to an empty list
+    media_result = api_calls.get_user_all_medias(access_token=current_user.id) or []
+    forms_result = api_calls.get_user_all_forms(access_token=current_user.id) or []
 
+    # Check if service is allowed for the user
     if current_user.role == 'user':
         is_service_allowed = api_calls.is_service_access_allowed(current_user.id)
-        if is_service_allowed:
-            return render_template('add_post.html', form=form, media_form=media_form, categories=category_choices, result=media_result, root_url=root_url)
-        return redirect(url_for('user_view_plan'))
-    else:
-        return render_template('add_post.html', form=form, media_form=media_form, categories=category_choices, result=media_result, root_url=root_url)
+        if not is_service_allowed:
+            return redirect(url_for('user_view_plan'))
+
+    return render_template('add_post.html', form=form, media_form=media_form, categories=category_choices,
+                           result=media_result, forms_result=forms_result, root_url=root_url)
+
 
 @app.route('/posts/preview-post', methods=['GET', 'POST'])
 @login_required
@@ -1561,6 +1589,7 @@ def get_all_subscriptions():
     return render_template('all_posts.html', result=result)
 
 
+
 @app.route('/user/add-media', methods=['GET', 'POST'])
 @login_required
 def media():
@@ -1598,16 +1627,7 @@ def media():
     return render_template('media.html', form=form)
 
 
-@app.route('/user/all-media')
-@login_required
-def user_all_medias():
-    root_url = constants.ROOT_URL + '/'
-    result = api_calls.get_user_all_medias(access_token=current_user.id)
-    if result is None:
-        result = []  # Set result to an empty list
-    print(result)
 
-    return render_template('user_all_media.html', result=result, root_url=root_url)
 
 
 @app.route('/user/appearance/themes')
@@ -1634,30 +1654,6 @@ def theme_detail():
 
 
 
-@app.route('/posts/comment/<int:post_id>/<username>/<post_date>/<post_slug>', methods=['GET', 'POST'])
-@login_required
-def comment(post_id, username, post_date, post_slug):
-    if request.method == 'POST':
-        comment = request.form.get('comment')
-        reply_id = request.form.get('reply_id') if request.form.get('reply_id') else None
-        if comment:
-            try:
-                response = api_calls.add_comment(
-                    post_id=post_id,
-                    reply_id=reply_id,
-                    comment=comment,
-                    access_token=current_user.id
-                )
-                if response.status_code == 200:
-                    return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
-                else:
-                    flash('An error occurred while adding the comment. Please try again.', category='error')
-            except Exception as e:
-                flash(f'An exception occurred: {str(e)}', category='error')
-        else:
-            flash('Comment cannot be empty', category='error')
-
-    return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
 
 
 @app.route("/user/delete-comment/<comment_id>", methods=['GET', 'POST'])
@@ -1669,15 +1665,7 @@ def delete_comment(comment_id):
         return redirect(url_for('get_all_comment'))
 
 
-@app.route('/posts/all-comment', methods=['GET', 'POST'])
-@login_required
-def get_all_comment():
-    result = api_calls.get_all_comments(access_token = current_user.id)
-    if result is None:
-        result = []  # Set result to an empty list
-    print(result)
 
-    return render_template('comments_table.html', result=result)
 
 
 @app.route('/posts/activate-comment/<comment_id>', methods=['GET', 'POST'])
@@ -1688,63 +1676,7 @@ def activate_comment(comment_id):
         return redirect(url_for('get_all_comment'))
 
 
-@app.route('/posts/deactivate-comment/<comment_id>', methods=['GET', 'POST'])
-@login_required
-def deactivate_comment(comment_id):
-    response = api_calls.deactivate_comments(comment_id=comment_id)
-    if response:
-        return redirect(url_for('get_all_comment'))
 
-
-@app.route('/settings/comments', methods=['GET', 'POST'])
-@login_required
-def comment_setting():
-    print("comment setting")
-    if request.method == 'POST':
-        # Extract form data
-        def get_bool_value(value):
-            return value == 'on'
-        print("chal rah hai")
-        def get_int_value(value, default):
-            try:
-                return int(value)
-            except (ValueError, TypeError):
-                return default
-
-        settings = {
-            'notify_linked_blogs': get_bool_value(request.form.get('notify_linked_blogs')),
-            'allow_trackbacks': get_bool_value(request.form.get('allow_trackbacks')),
-            'allow_comments': get_bool_value(request.form.get('allow_comments')),
-            'comment_author_info': get_bool_value(request.form.get('comment_author_info')),
-            'registered_users_comment': get_bool_value(request.form.get('registered_users_comment')),
-            'auto_close_comments': get_int_value(request.form.get('auto_close_comments'), 14),
-            'show_comment_cookies': get_bool_value(request.form.get('show_comment_cookies')),
-            'enable_threaded_comments': get_bool_value(request.form.get('enable_threaded_comments')),
-            'email_new_comment': get_bool_value(request.form.get('email_new_comment')),
-            'email_held_moderation': get_bool_value(request.form.get('email_held_moderation')),
-            'email_new_subscription': get_bool_value(request.form.get('email_new_subscription')),
-            'comment_approval': request.form.get('comment_approval')
-        }
-
-        try:
-            # Call an API endpoint to save the settings
-            response = api_calls.save_comment_settings(
-                access_token=current_user.id,
-                settings=settings
-            )
-
-            if response.status_code == 200:
-                flash('Settings saved successfully', category='success')
-            else:
-                flash('An error occurred while saving settings. Please try again.', category='error')
-        except Exception as e:
-            flash(f'An exception occurred: {str(e)}', category='error')
-
-    result = api_calls.get_comments_settings(
-        access_token=current_user.id
-    )
-
-    return render_template('comments_settings.html', result=result)
 
 
 
@@ -1772,28 +1704,6 @@ def add_like_to_comment_route(post_id, comment_id, username, post_date, post_slu
     return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
 
 
-@app.route('/comments/remove-like/<int:comment_like_id>/<int:comment_id>/<username>/<post_date>/<post_slug>')
-@login_required
-def remove_like_from_comment_route(comment_like_id, comment_id, username, post_date, post_slug):
-    print("ander hu")
-    try:
-        # Example: Get access_token from current_user or session
-        access_token = current_user.id
-
-        # Call the api_calls method to add like to comment
-        response = api_calls.remove_like_from_comment(comment_like_id, access_token)
-
-
-        if response and response.status_code == 200:
-            flash('Like removed successfully', category='info')
-            return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
-            print("hii")
-        else:
-            flash('Failed to remove like', category='error')
-    except Exception as e:
-        flash(f'Error: {str(e)}', category='error')
-
-    return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
 
 @app.route('/users/view-posts')
 def view_post():
@@ -1891,29 +1801,161 @@ def get_post_by_id(post_id):
 
 ################################################ CHATBOT #########################################################
 
-@app.route('/chatbot')
-def chatbot():
-    return render_template('chatbot.html')
 
 
-# @app.route('/send_message', methods=['POST'])
-# def send_message():
-#     user_input = request.form['user_input']
-#     print(user_input)
-#     bot_response = model.generate_content(user_input)
-#     print(bot_response.text)
-#     return redirect(url_for('chatbot', bot_response=bot_response.text))
 
-@app.route('/send_message', methods=['POST'])
-def send_message():
-    user_input = request.form['user_input']
-    print(user_input)
-    bot_response = model.generate_content(user_input)
-    print(bot_response.text)
-    # Process user input here or send it to your chatbot backend
-    # For simplicity, let's just respond with a dummy message
+###################################form builder################
 
-    return jsonify({'bot_response': bot_response.text})
+
+############################################# Email Templates ################################
+
+
+
+
+@app.route('/user/all-media')
+@login_required
+def user_all_medias():
+    root_url = constants.ROOT_URL + '/'
+    result = api_calls.get_user_all_medias(access_token=current_user.id)
+    if result is None:
+        result = []  # Set result to an empty list
+    print(result)
+
+    return render_template('user_all_media.html', result=result, root_url=root_url)
+
+
+@app.route('/posts/comment/<int:post_id>/<username>/<post_date>/<post_slug>', methods=['GET', 'POST'])
+@login_required
+def comment(post_id, username, post_date, post_slug):
+    if request.method == 'POST':
+        comment = request.form.get('comment')
+        reply_id = request.form.get('reply_id') if request.form.get('reply_id') else None
+        if comment:
+            try:
+                response = api_calls.add_comment(
+                    post_id=post_id,
+                    reply_id=reply_id,
+                    comment=comment,
+                    access_token=current_user.id
+                )
+                if response.status_code == 200:
+                    return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
+                else:
+                    flash('An error occurred while adding the comment. Please try again.', category='error')
+            except Exception as e:
+                flash(f'An exception occurred: {str(e)}', category='error')
+        else:
+            flash('Comment cannot be empty', category='error')
+
+    return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
+
+
+
+
+@app.route('/posts/all-comment', methods=['GET', 'POST'])
+@login_required
+def get_all_comment():
+    result = api_calls.get_all_comments(access_token = current_user.id)
+    if result is None:
+        result = []  # Set result to an empty list
+    print(result)
+
+    return render_template('comments_table.html', result=result)
+
+
+
+
+
+@app.route('/posts/deactivate-comment/<comment_id>', methods=['GET', 'POST'])
+@login_required
+def deactivate_comment(comment_id):
+    response = api_calls.deactivate_comments(comment_id=comment_id)
+    if response:
+        return redirect(url_for('get_all_comment'))
+
+
+@app.route('/settings/comments', methods=['GET', 'POST'])
+@login_required
+def comment_setting():
+    print("comment setting")
+    if request.method == 'POST':
+        # Extract form data
+        def get_bool_value(value):
+            return value == 'on'
+        print("chal rah hai")
+        def get_int_value(value, default):
+            try:
+                return int(value)
+            except (ValueError, TypeError):
+                return default
+
+        settings = {
+            'notify_linked_blogs': get_bool_value(request.form.get('notify_linked_blogs')),
+            'allow_trackbacks': get_bool_value(request.form.get('allow_trackbacks')),
+            'allow_comments': get_bool_value(request.form.get('allow_comments')),
+            'comment_author_info': get_bool_value(request.form.get('comment_author_info')),
+            'registered_users_comment': get_bool_value(request.form.get('registered_users_comment')),
+            'auto_close_comments': get_int_value(request.form.get('auto_close_comments'), 14),
+            'show_comment_cookies': get_bool_value(request.form.get('show_comment_cookies')),
+            'enable_threaded_comments': get_bool_value(request.form.get('enable_threaded_comments')),
+            'email_new_comment': get_bool_value(request.form.get('email_new_comment')),
+            'email_held_moderation': get_bool_value(request.form.get('email_held_moderation')),
+            'email_new_subscription': get_bool_value(request.form.get('email_new_subscription')),
+            'comment_approval': request.form.get('comment_approval')
+        }
+
+        try:
+            # Call an API endpoint to save the settings
+            response = api_calls.save_comment_settings(
+                access_token=current_user.id,
+                settings=settings
+            )
+
+            if response.status_code == 200:
+                flash('Settings saved successfully', category='success')
+            else:
+                flash('An error occurred while saving settings. Please try again.', category='error')
+        except Exception as e:
+            flash(f'An exception occurred: {str(e)}', category='error')
+
+    result = api_calls.get_comments_settings(
+        access_token=current_user.id
+    )
+
+    return render_template('comments_settings.html', result=result)
+
+
+
+
+
+@app.route('/comments/remove-like/<int:comment_like_id>/<int:comment_id>/<username>/<post_date>/<post_slug>')
+@login_required
+def remove_like_from_comment_route(comment_like_id, comment_id, username, post_date, post_slug):
+    print("ander hu")
+    try:
+        # Example: Get access_token from current_user or session
+        access_token = current_user.id
+
+        # Call the api_calls method to add like to comment
+        response = api_calls.remove_like_from_comment(comment_like_id, access_token)
+
+
+        if response and response.status_code == 200:
+            flash('Like removed successfully', category='info')
+            return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
+            print("hii")
+        else:
+            flash('Failed to remove like', category='error')
+    except Exception as e:
+        flash(f'Error: {str(e)}', category='error')
+
+    return redirect(url_for('get_post_by_username_and_slug', username=username, post_date=post_date, post_slug=post_slug))
+
+
+
+
+
+
 
 
 ###################################form builder################
@@ -1921,7 +1963,84 @@ def send_message():
 @app.route('/formbuilder')
 @login_required
 def formbuilder():
-    return render_template('formbuilder.html')
+    unique_id = str(uuid.uuid4())
+    return render_template('cms/formbuilder/formbuilder.html', form_unique_id=unique_id)
+
+
+@app.route('/formbuilder/form-create', methods=['GET', 'POST'])
+@login_required
+def formbuilder_createform():
+    data = request.get_json()
+    print('IN FORM CREATE')
+    print(data)
+    form_name = data.get('form_name', '')
+    form_html = data.get('form_html', '')
+    unique_id = data.get('unique_id', '')
+    try:
+        form_created = api_calls.create_form(form_name=form_name, form_html=form_html, form_unique_id=unique_id, access_token=current_user.id)
+        return redirect(url_for('user_all_forms'))
+    except Exception as e:
+        print(e)
+        return redirect(url_for('formbuilder'))
+
+@app.route("/form/delete-form/<form_id>", methods=['GET', 'POST'])
+@login_required
+def formbuilder_delete_form(form_id):
+    result = api_calls.delete_form_by_unique_id(form_id=form_id, access_token=current_user.id)
+    return redirect(url_for('user_all_forms'))
+
+@app.route('/user/all-forms')
+@login_required
+def user_all_forms():
+    forms = api_calls.get_user_all_forms(access_token=current_user.id)
+    if forms is None:
+        forms = []  # Set result to an empty list
+
+
+    return render_template('cms/formbuilder/user_all_forms.html', result=forms)
+
+
+@app.route('/user/forms/<form_id>', methods=['GET', 'POST'])
+@login_required
+def formbuilder_viewform(form_id):
+    response = api_calls.get_form_by_unique_id(form_id=form_id)
+    form_name = response["form_name"]
+    form_html = response["form_html"]
+    form_responses = response["responses"]
+
+
+    # Convert the set back to a list since we'll pass it to the template
+    if form_responses is None:
+        form_responses = []
+    else:
+        form_responses = [json.loads(item) for item in form_responses]
+
+    return render_template('cms/formbuilder/view_form.html', form_html=form_html,form_name=form_name, form_responses=form_responses)
+
+
+@app.route('/form/thank-you')
+def dynamic_form_submission():
+    from urllib.parse import urlparse, parse_qs
+    parsed_url = urlparse(str(request.url))
+    query_string = parsed_url.query
+
+    # Parse the query string into a dictionary
+    query_params = parse_qs(query_string)
+
+    unique_id = query_params.pop('unique_id', [''])[0]
+
+    # Process the query parameters to concatenate values of repeated keys
+    query_dict = {}
+    for k, v in query_params.items():
+        # Join values with spaces if there are multiple occurrences, otherwise just take the first value
+        query_dict[k] = ' '.join(v) if len(v) > 1 else v[0]
+
+    print("Unique ID:", unique_id)
+    print("Query Dictionary:", query_dict)
+
+    submit_form_response = api_calls.collect_form_response(unique_id=unique_id, response_data=query_dict)
+
+    return render_template('widgets/response_recored_modal.html',show_modal='true')
 
 
 ############################################# Email Templates ################################
@@ -2136,6 +2255,7 @@ def add_page():
     if media_result is None:
         media_result = []  # Set result to an empty list
 
+
     if current_user.role == 'user':
         is_service_allowed = api_calls.is_service_access_allowed(current_user.id)
         if is_service_allowed:
@@ -2143,6 +2263,19 @@ def add_page():
         return redirect(url_for('user_view_plan'))
     else:
         return render_template('cms/pages/add_page.html', form=form, result=media_result, root_url=root_url)
+
+    forms_result = api_calls.get_user_all_forms(access_token=current_user.id)
+    if forms_result is None:
+        forms_result = []  # Set result to an empty list
+
+    if current_user.role == 'user':
+        is_service_allowed = api_calls.is_service_access_allowed(current_user.id)
+        if is_service_allowed:
+            return render_template('cms/pages/add_page.html', form=form,forms_result=forms_result, result=media_result, root_url=root_url)
+        return redirect(url_for('user_view_plan'))
+    else:
+        return render_template('cms/pages/add_page.html', form=form,forms_result=forms_result, result=media_result, root_url=root_url)
+
 
 
 @app.route('/user/all-pages')
@@ -2233,6 +2366,203 @@ def get_page_by_username_and_slug(username, page_slug):
     return render_template('cms/pages/page.html', title=title, content=content)
 
 
+#######################################################  AI #########################################################################
+
+###################################################### CHATBOT ####################################################################
+
+@app.route('/chatbot')
+@login_required
+def chatbot():
+    try:
+        all_chats = api_calls.get_user_all_chats(access_token=current_user.id)
+    except:
+        all_chats = []
+
+    return render_template('cms/AI/chatbot.html', all_chats=all_chats)
+
+
+@app.route('/send_message', methods=['POST'])
+def send_message():
+
+    user_input = request.form['user_input']
+    print(user_input)
+
+    # Send the user input to OpenAI's GPT-3.5
+    completion = openai.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "user",
+                "content": user_input,
+            },
+        ],
+        temperature=0.7,
+        max_tokens=256,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    bot_response = completion.choices[0].message.content
+    print(bot_response)
+
+    return jsonify({'bot_response': bot_response})
+
+
+@app.route('/save-chat', methods=['POST'])
+@login_required
+def save_chat():
+    data = request.get_json()
+    messages = data.get('messages', [])
+    try:
+        saved = api_calls.chatbot_save_chat(messages=messages, access_token=current_user.id)
+        return 'true'
+    except Exception as e:
+        print(e)
+        return 'false'
+
+
+
+
+################################################## RESUME PARSER ######################################################################
+
+def extract_text_from_pdf(file_path):
+    with open(file_path, 'rb') as file:
+        reader = PyPDF2.PdfReader(file)  # Updated line
+        text = ''
+        for page in reader.pages:  # Updated line
+            text += page.extract_text()  # Updated line
+    return text
+
+def extract_text_from_word(file_path):
+    from docx import Document
+    doc = Document(file_path)
+    text = ''
+    for paragraph in doc.paragraphs:
+        text += paragraph.text + '\n'
+    return text
+
+def parse_single_resume(resume_text):
+    prompt=f"""
+    Extract the following information from this resume in JSON format:
+    - Name
+    - Address
+    - Email
+    - Phone
+    - Education (Degree, University, Year)
+    - Experience (Position, Company, Duration, Responsibilities)
+    - Skills
+    
+    Note: Please generate a response that does not exceed 4096 tokens to ensure completeness.
+
+    Resume:
+    {resume_text}
+
+    Give JSON object
+    """
+    completion = openai.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "user",
+                "content": prompt,
+            },
+        ],
+        max_tokens=4096,
+        n=1,
+        stop=None,
+        temperature=0.5,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    json_resume = completion.choices[0].message.content
+    print(type(json_resume))
+    cleaned_json_string = json_resume.strip('```json ').strip('```')
+    data = json.loads(cleaned_json_string)
+    print(data)
+    # json_string = json_resume.replace('json ', '')
+    # print(json_string)
+    #
+    # try:
+    #     parsed_data = clean_json_response(json_resume)
+    #
+    # except Exception as e:
+    #     parsed_data = {"error": str(e)}
+
+    return data
+
+def clean_json_response(response_text):
+    import re
+    try:
+        return json.loads(response_text)
+    except json.JSONDecodeError:
+        cleaned_response = re.sub(r'\s+', '', response_text)  # Remove extra whitespace
+        try:
+            return json.loads(cleaned_response)
+        except json.JSONDecodeError:
+            return {"error": "Failed to parse resume information into JSON"}
+
+def parse_multiple_resumes(file_paths):
+    parsed_resumes = []
+    for file_path in file_paths:
+        if file_path.endswith('.pdf'):
+            resume_text = extract_text_from_pdf(file_path)
+            print('Extracted PDF')
+        elif file_path.endswith('.docx'):
+            resume_text = extract_text_from_word(file_path)
+            print('Extracted WORD')
+        else:
+            raise ValueError("Unsupported file type. Use 'pdf' or 'word'.")
+
+        parsed_data = parse_single_resume(resume_text)
+        print('GOT JSON')
+        parsed_resumes.append(parsed_data)
+    return parsed_resumes
+
+
+@app.route('/resume-parser', methods=['GET', 'POST'])
+@login_required
+def resume_parser():
+    form = forms.UploadForm()
+    if form.validate_on_submit():
+        uploaded_files = request.files.getlist('files')
+
+        # Clear the uploads folder
+        empty_folder(uploads_folder)
+
+        file_list = []
+        for file in uploaded_files:
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(uploads_folder, filename)
+            file.save(file_path)
+            file_list.append(file_path)
+
+        parsed_resumes = parse_multiple_resumes(file_list)
+
+        try:
+            resume_submission = api_calls.add_new_resume_collection(resumes=parsed_resumes, access_token=current_user.id)
+        except Exception as e:
+            raise e
+
+        # Render results
+        return parsed_resumes
+
+    return render_template('upload_pdf.html', form=form)
+
+
+@app.route('/resume-collection')
+@login_required
+def resume_collection():
+    try:
+        resume_collection = api_calls.get_past_resume_records(access_token=current_user.id)
+    except: resume_collection = []
+
+    return render_template('cms/AI/resume_collection.html', result=resume_collection)
+
+
+
+#####################################################################################################################################
+
 
 #####################################################################################################################################
 ############################################## ALL ROUTES ABOVE THIS ################################################################
@@ -2274,17 +2604,19 @@ def sitemap():
     return Response(sitemap_str, mimetype="application/xml")
 
 
+
 @app.route("/user-active-theme", methods=['GET', 'POST'])
 def user_active_theme():
     theme_name = request.args.get('theme_name')
     theme_id = request.args.get('theme_id')
     try:
         active_theme = api_calls.user_active_theme(theme_name=theme_name, theme_id=theme_id, access_token=current_user.id)
-        if (active_theme.status_code == 200):
-            print(result)
-            return redirect(url_for('all_themes'))
+
+
+        return redirect(url_for('all_themes'))
     except Exception as e:
         print(e)
+
 
 
 @app.route('/robots.txt')

@@ -2046,6 +2046,7 @@ def delete_page(page_id, access_token):
         print(f"An unexpected error occurred: {err}")
 
 
+
 def user_active_theme(access_token, theme_id, theme_name):
     headers = {'Authorization': f'Bearer {access_token}'}
     data = {
@@ -2055,10 +2056,57 @@ def user_active_theme(access_token, theme_id, theme_name):
 
     try:
         response = requests.post(constants.BASE_URL + '/user/create_user_theme', json=data, headers=headers)
-        print(response.text)
+        print("Response Status Code:", response.status_code)
         if response.status_code == 200:
+            result = response.json()
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
 
-            return response
+
+def get_user_from_google_login(user_info):
+
+    try:
+        response = requests.get(constants.BASE_URL + '/get-google-user-info', json=user_info)
+        print("Response Status Code:", response.status_code)
+        if response.status_code == 200:
+            result = response.json()
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+#################################### FORM BUILDER ##############################################################
+
+
+def create_form(form_name, form_unique_id, form_html, access_token):
+    print('trying to create form')
+    headers = {'Authorization': f'Bearer {access_token}'}
+    data = {
+        "form_name": form_name,
+        "unique_id": form_unique_id,
+        "form_html": form_html
+    }
+    try:
+        response = requests.post(constants.BASE_URL + '/formbuilder/create-form', json=data, headers=headers)
+        if response.status_code == 200:
+            return response.json()
+
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except requests.exceptions.ConnectionError as errc:
@@ -2072,7 +2120,29 @@ def user_active_theme(access_token, theme_id, theme_name):
 def get_user_theme(access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
     try:
-        response = requests.get(constants.BASE_URL + f'/themes/get_user_theme', headers=headers)
+        response = requests.get(constants.BASE_URL + '/themes/get_user_theme', headers=headers)
+        print("Response Status Code:", response.status_code)
+        if response.status_code == 200:
+            result = response.json()
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
+
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def get_user_all_forms(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.get(constants.BASE_URL + f'/formbuilder/user-all-forms', headers=headers)
+
         print("Response Status Code:", response.status_code)  # Debug: Print status code
         if response.status_code == 200:
             result = response.json()
@@ -2087,3 +2157,130 @@ def get_user_theme(access_token):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
+
+def get_form_by_unique_id(form_id: str):
+    try:
+        response = requests.get(constants.BASE_URL + f'/formbuilder/forms/{form_id}')
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+
+
+def collect_form_response(unique_id, response_data):
+    print('trying to send response')
+    data = {
+        "response_data": response_data
+           }
+    try:
+        response = requests.post(constants.BASE_URL + f'/formbuilder/{unique_id}/add-response', json=data)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def delete_form_by_unique_id(form_id, access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.delete(constants.BASE_URL + f'/formbuilder/delete-user-form/{form_id}', headers=headers)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+############################################## RESUME PARSER #######################################################
+
+def add_new_resume_collection(resumes, access_token):
+    print('trying to add resume collection')
+    headers = {'Authorization': f'Bearer {access_token}'}
+    data = {
+        "json_data": resumes
+    }
+
+    try:
+        response = requests.post(constants.BASE_URL + '/resume_parser_v2/add-resume', json=data, headers=headers)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def get_past_resume_records(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.get(constants.BASE_URL + '/resume_parser_v2/resumes-history', headers=headers)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+##################################################### CHATBOT ##############################################################################
+
+def chatbot_save_chat(messages, access_token):
+    print('trying to save chat')
+    headers = {'Authorization': f'Bearer {access_token}'}
+    data = {
+        "json_data": messages
+    }
+
+    try:
+        response = requests.post(constants.BASE_URL + '/chatbot/save-chat', json=data, headers=headers)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def get_user_all_chats(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.get(constants.BASE_URL + '/chatbot/all-chats', headers=headers)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+

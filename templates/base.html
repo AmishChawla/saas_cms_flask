@@ -20,8 +20,6 @@
     .content-wrapper {
       background-color: #ffffff;
     }
-
-
   </style>
   {% block styles %}
   {% endblock %}
@@ -105,21 +103,10 @@
     <!-- Brand Logo -->
     <a href="#index3.html" class="brand-link">
       <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">HireGen</span>
+      <span class="brand-text font-weight-light">SaaS CMS</span>
     </a>
 
-    <!-- Sidebar -->
     <div class="sidebar">
-      <!-- Sidebar user panel (optional) -->
-<!--      <div class="user-panel mt-3 pb-3 mb-3 d-flex">-->
-<!--        <div class="info">-->
-<!--          <a href="#" class="d-block">{{ current_user.username }}</a>-->
-<!--          <a href="{{ url_for('user_post_list', username=current_user.username) }}" class="d-block"><strong style="font-size:0.8rem;">Visit Site</strong> </a>-->
-<!--        </div>-->
-<!--      </div>-->
-
-
-      <!-- Sidebar Menu -->
 
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
@@ -136,7 +123,7 @@
             </a>
           </li>
            <li class="nav-item menu-open">
-            <a class="nav-link {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' or request.endpoint == 'user_post_list' or request.endpoint == 'media' or request.endpoint == 'user_all_medias' or request.endpoint == 'newsletter_subscribers' or request.endpoint == 'get_all_comment' or request.endpoint == 'user_all_pages' or request.endpoint == 'add_page' %}active{% endif %}" href="{{ url_for('user_all_post') }}">
+            <a class="nav-link {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' or request.endpoint == 'user_post_list' or request.endpoint == 'media' or request.endpoint == 'user_all_medias' or request.endpoint == 'newsletter_subscribers' or request.endpoint == 'get_all_comment' or request.endpoint == 'user_all_pages' or request.endpoint == 'add_page' or request.endpoint == 'chatbot' %}active{% endif %}" href="{{ url_for('user_all_post') }}">
               <i class="far fa-regular fa-folder nav-icon"></i>
               <p>
                 CMS
@@ -219,6 +206,71 @@
               </li>
             </ul>
               </li>
+              <li class="nav-item {% if request.endpoint == 'user_all_forms' or request.endpoint == 'formbuilder' or request.endpoint == 'user_feedbacks' %} menu-open {% endif %}">
+                <a href="#" class="nav-link">
+                  <i class="far bi bi-window-stack nav-icon"></i>
+                  <p>Forms & Feedbacks</p>
+                  <i class="right fas fa-angle-left"></i>
+                </a>
+                <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ url_for('user_all_forms') }}" class="nav-link {% if request.endpoint == 'user_all_forms' %} active {% endif %}">
+                  <i class="far bi bi-window-dock nav-icon"></i>
+                  <p>My Forms</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ url_for('formbuilder') }}" class="nav-link {% if request.endpoint == 'formbuilder' %} active {% endif %}">
+                  <i class="far bi bi-window-plus nav-icon"></i>
+                  <p>Add Form</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ url_for('user_feedbacks') }}" class="nav-link {% if request.endpoint == 'user_feedbacks' %} active {% endif %}">
+                  <i class="far bi bi-chat-right-text nav-icon"></i>
+                  <p>Feedback</p>
+                </a>
+              </li>
+            </ul>
+              </li>
+              <li class="nav-item menu-open">
+            <a class="nav-link {% if request.endpoint == 'resume_parser' or request.endpoint == 'resume_collection' %}active{% endif %}" href="#">
+              <i class="far fa-regular fa-folder nav-icon"></i>
+              <p>
+                AI
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item {% if request.endpoint == 'resume_parser' or request.endpoint == 'resume_collection' %} menu-open {% endif %}">
+                <a class="nav-link" href="resume_parser">
+                  <i class="far bi bi-file-code-fill nav-icon"></i>
+                  <p>Resume Parser</p>
+                  <i class="right fas fa-angle-left"></i>
+                </a>
+                <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'resume_parser' %} active {% endif %}" href="{{ url_for('resume_parser') }}">
+                  <i class="far bi bi-file-earmark-code nav-icon"></i>
+                  <p>Resume Parser</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ url_for('resume_collection') }}" class="nav-link {% if request.endpoint == 'resume_collection' %} active {% endif %}">
+                  <i class="far bi bi-journal-code nav-icon" aria-hidden="true"></i>
+                  <p>Resume Collection</p>
+                </a>
+              </li>
+            </ul>
+              </li>
+              <li class="nav-item">
+                <a href="{{ url_for('chatbot') }}" class="nav-link {% if request.endpoint == 'chatbot' %} active {% endif %}">
+                  <i class="far bi bi-chat-fill nav-icon"></i>
+                  <p>Chat</p>
+                </a>
+              </li>
+            </ul>
+          </li>
               <li class="nav-item {% if request.endpoint == 'get_all_comment' %} menu-open {% endif %}">
                 <a href="#" class="nav-link">
                   <i class="far fa fa-comment nav-icon"></i>
@@ -234,6 +286,7 @@
               </li>
             </ul>
               </li>
+
               <li class="nav-item">
                 <a href="{{ url_for('comment_setting') }}" class="nav-link {% if request.endpoint == 'comment_setting' %} active {% endif %}">
                   <i class="far fa fa-cog nav-icon"></i>
@@ -247,32 +300,18 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{ url_for('user_feedbacks') }}" class="nav-link {% if request.endpoint == 'user_feedbacks' %} active {% endif %}">
-                  <i class="far bi bi-chat-right-text nav-icon"></i>
-                  <p>Feedback</p>
-                </a>
-              </li>
+    <a class="nav-link {% if request.endpoint == 'all_themes' or request.endpoint == 'theme_detail' %} active {% endif %}" href="{{ url_for('all_themes') }}">
+        <i class="fas fa-adjust nav-icon"></i>
+        <p>Appearance</p>
+    </a>
+</li>
               <li class="nav-item">
                 <a href="{{ url_for('email_settings') }}" class="nav-link {% if request.endpoint == 'email_settings' %} active {% endif %}">
                   <i class="far bi bi-envelope nav-icon"></i>
                   <p>Mail Setup</p>
                 </a>
               </li>
-              <li class="nav-item">
-    <a class="nav-link {% if request.endpoint == 'all_themes' or request.endpoint == 'theme_detail' %} active {% endif %}" href="{{ url_for('all_themes') }}">
-        <i class="fas fa-adjust nav-icon"></i>
-        <p>Appearance</p>
-    </a>
-</li>
             </ul>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if request.endpoint == 'upload_pdf' %}active{% endif %}" href="{{ url_for('upload_pdf') }}">
-              <i class="nav-icon far fa fa-file"></i>
-              <p>
-                Parse Resume
-              </p>
-            </a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if request.endpoint == 'get_purchase_history' %}active{% endif %}" href="{{ url_for('get_purchase_history') }}">
@@ -315,7 +354,7 @@
 <!--     /.content-header -->
 
     <!-- Main content -->
-    <div class=" content">
+    <div class="content">
     <!-- /.content -->
         {% block content %}
        {% endblock %}
@@ -325,6 +364,8 @@
 
 
   <!-- Main Footer -->
+
+
 <footer id="footer" class="py-5 bg-light" style="margin-top: 25vh;width:100%">
 
     <div class="footer-top">
@@ -332,12 +373,12 @@
         <div class="row">
 
           <div class="col-lg-3 col-md-6 footer-contact">
-            <h3>Resume Parser</h3>
+            <h3>SaaS CMS</h3>
             <p>
               Shalimar Bagh  <br>
                New Delhi 110088<br>
               India <br><br>
-              <strong>Phone:</strong> 9810484755<br>
+              <strong>Phone:</strong> 9810336906<br>
               <strong>Email:</strong> info@aynsoft.com<br>
             </p>
           </div>
@@ -416,9 +457,6 @@ $(document).ready(function() {
 });
 
 </script>
-
-
-
 {% block scripts %}{% endblock %}
 </div>
 </body>

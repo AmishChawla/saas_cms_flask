@@ -72,6 +72,89 @@
         cursor: pointer;
     }
 </style>
+
+<style>
+            .custom-button {
+          border: none;
+          outline: none;
+          background-color: rgb(24, 22, 22);
+          padding: 10px;
+          border-radius: 10px;
+          color: #fff;
+          font-size: 16px;
+          transform: .3s ease;
+          text-decoration: none;
+        }
+
+        .custom-button:hover {
+          background-color: rgb(21, 19, 19);
+        }
+
+        .final-button {
+            border: none;
+            outline: none;
+            background-color: royalblue;
+            padding: 15px 25px; /* Increased padding */
+            border-radius: 10px;
+            color: #fff;
+            font-size: 18px; /* Optional: Adjust font size if needed */
+            transform: .3s ease;
+            text-decoration: none;
+            display: block; /* Make it a block element to apply margin auto */
+            margin: auto; /* Center the button horizontally */
+            width: fit-content; /* Adjust width to fit content */
+            margin-top: 20px; /* Optional: Adjust vertical positioning */
+            margin-bottom: 20px; /* Optional: Adjust vertical spacing below the button */
+        }
+
+        .final-button:hover {
+          background-color: rgb(56, 90, 194);
+        }
+
+
+        .field {
+            margin-bottom: 20px;
+            position: relative;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea,
+        select,
+        input[type="date"],
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .form-check input {
+            margin-right: 5px;
+        }
+
+        .form-check-label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+</style>
+
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 <form method="post" action="{{ url_for('add_post') }}" id="postForm">
     {{ form.hidden_tag() }}
@@ -119,7 +202,11 @@
             {{ form.title(class="form-control form-control-lg", placeholder="Heading", required=True) }}
         </div>
         <div class="form-group">
+
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mediaModal">Select Media</button>
+
+         <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#formsModal">Select Form</button>
+
 
     </div>
         <div class="form-group">
@@ -137,7 +224,7 @@
                 <h5 class="modal-title" id="mediaModalLabel">Media Library</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                 <table id="userMediaTable" class="table table-striped" style="width:100%;">
                     <thead>
                         <tr>
@@ -149,7 +236,7 @@
                     </thead>
                     <tbody>
                         {% for data in result %}
-                        <tr style="max-height: 100px; overflow-y: auto; ">
+                        <tr>
                             <td class="py-1">{{ loop.index }}</td>
                             <td class="py-1">
                                 <img src="{{ root_url + data.file_url }}" alt="Media Thumbnail" style="max-height: 6rem; width: auto; margin-top: 10px">
@@ -161,7 +248,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" style="position: sticky; bottom: 0; background-color: #fff; z-index: 1000;">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" id="selectFromDeviceButtonInModal">Select Media from Device</button>
                 <button type="button" class="btn btn-primary" id="saveSelectionButton">Save Selection</button>
@@ -169,6 +256,7 @@
         </div>
     </div>
 </div>
+
 
 <!-- New Modal for Device Media Selection -->
 <!-- Media selection modal -->
@@ -181,9 +269,9 @@
             </div>
             <div class="modal-body">
                 <form id="upload-form" method="post" action="{{ url_for('media') }}" enctype="multipart/form-data">
-                    <label for="deviceMediaInput" class="btn-select">Select Files</label>
+                    <label for="deviceMediaInput" class="btn btn-outline-primary btn-select">Select Files</label>
                     <input type="file" id="deviceMediaInput" class="file-input" multiple style="display: none;">
-                    <div id="selectedDeviceMediaContainer"></div>
+                    <div id="selectedDeviceMediaContainer" class="mt-3"></div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -193,6 +281,41 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="formsModal" tabindex="-1" aria-labelledby="formsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="formsModalLabel">Forms Library</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table id="userFormsTable" class="table table-hover" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Created Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in forms_result %}
+                        <tr style="max-height: 100px; overflow-y: auto; " onclick="insertFormHtml('{{ data.form_html }}')">
+                            <td class="py-1">
+                                {{ data.form_name }}
+                            </td>
+                            <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 
@@ -361,9 +484,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
-
-
-
 </script>
 
 <script>
@@ -372,12 +492,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     (function() {
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if the script is already initialized
             if (window.isMediaSelectionInitialized) {
-
+                console.log('Media selection script already initialized.');
                 return;
             }
 
-
+            console.log('Initializing media selection script.');
 
             // Handle the save selection button click event
             document.getElementById('saveSelectionButton').addEventListener('click', function() {
@@ -414,6 +535,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     })();
 </script>
+
+
 
 
 <script>
@@ -463,9 +586,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 const formData = new FormData();
 
                 // Append files to FormData
-                Array.from(files).forEach((file, index) => {
-                    formData.append(`files[${index}]`, file);
+                Array.from(files).forEach((file) => {
+                    console.log('Appending file:', file.name);  // Debug: Check files being appended
+                    formData.append('files', file);
                 });
+
+                // Log FormData content for debugging
+                for (let [key, value] of formData.entries()) {
+                    console.log(key, value);
+                }
 
                 try {
                     const response = await fetch('/user/add-media', {
@@ -473,15 +602,23 @@ document.addEventListener('DOMContentLoaded', function() {
                         body: formData
                     });
 
-                    const result = await response.json();
-                    if (response.ok) {
-                        alert(result.message);
-                        window.location.href = result.redirect;
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.indexOf('application/json') !== -1) {
+                        const result = await response.json();
+                        if (response.status === 200) {
+                            alert(result.message);
+                            window.location.href = result.redirect;
+                        } else {
+                            console.error('Failed upload:', result.message);  // Debug: Log failure
+                            alert('Failed to upload media: ' + result.message);
+                        }
                     } else {
-                        alert('Failed to upload media: ' + result.message);
+                        const text = await response.text();
+                        console.error('Unexpected response:', text);  // Debug: Log unexpected response
+                        alert('Failed to upload media. Server responded with an error: ' + text);
                     }
                 } catch (error) {
-                    console.error('Error uploading files:', error);
+                    console.error('Fetch error:', error);  // Debug: Log fetch error
                     alert('Failed to upload media. An error occurred: ' + error.message);
                 }
 
@@ -506,6 +643,23 @@ document.addEventListener('DOMContentLoaded', function() {
             window.isInitialized = true;
         });
     })();
+</script>
+
+
+
+
+
+
+<script>
+    new DataTable('#userFormsTable');
+</script>
+
+<script>
+function insertFormHtml(formHtml) {
+    const summernoteEditor = $('#content');
+    summernoteEditor.summernote('pasteHTML', formHtml);
+    $('#formsModal').modal('hide');
+}
 </script>
 
 
