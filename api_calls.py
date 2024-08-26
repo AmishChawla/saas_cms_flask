@@ -1,4 +1,6 @@
 import json
+import pprint
+from flask import abort
 import requests
 import constants
 
@@ -142,7 +144,7 @@ def admin_login(email, password):
 
 
 # Endpoint only accessible to admin
-def add_user(username, email, password, role, access_token: str):
+def add_user(username, email, password, role, security_group, access_token: str):
     print('trying3')
     headers = {
         'Content-Type': 'application/json',
@@ -153,7 +155,8 @@ def add_user(username, email, password, role, access_token: str):
         "username": username,
         "email": email,
         "password": password,
-        "role": role
+        "role": role,
+        "security_group": security_group
     }
 
     try:
@@ -227,6 +230,8 @@ def admin_get_any_user(access_token: str, user_id: int):
         response = requests.get(constants.BASE_URL + f'/admin/view-user/{user_id}', headers=headers)
         if response.status_code == 200:
             return response.json()
+        else:
+            abort(response.status_code)
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except requests.exceptions.ConnectionError as errc:
@@ -907,8 +912,10 @@ def get_user_all_posts(access_token):
             result = response.json()
             print("API Result:", result)  # Debug: Print API result
             return result
+
         else:
-            print("API Error:", response.text)  # Debug: Print error message from API
+            print("API Error:", response.text)
+            abort(response.status_code)
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except requests.exceptions.ConnectionError as errc:
@@ -2273,6 +2280,103 @@ def get_user_all_chats(access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
     try:
         response = requests.get(constants.BASE_URL + '/chatbot/all-chats', headers=headers)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+
+def get_all_security_groups(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.get(constants.BASE_URL + '/access-management/all-groups', headers=headers)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def create_security_group(access_token, permissions, group_name):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    params = {
+        "name": group_name
+    }
+    data = {
+        "permission_names": permissions
+    }
+    pprint.pprint(data)
+
+    try:
+        response = requests.post(constants.BASE_URL + f'/access-management/groups/create-group', params=params, json=data, headers=headers)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def delete_security_groups(access_token, group_id):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.delete(constants.BASE_URL + f'/access-management/groups/delete-group/{group_id}', headers=headers)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def get_security_group(access_token, group_id):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.get(constants.BASE_URL + f'/access-management/groups/{group_id}', headers=headers)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def update_security_group(access_token, permissions, group_name, group_id):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    params = {
+        "name": group_name
+    }
+    data = {
+        "permission_names": permissions
+    }
+    pprint.pprint(data)
+
+    try:
+        response = requests.put(constants.BASE_URL + f'/access-management/groups/update-group/{group_id}', params=params, json=data, headers=headers)
         if response.status_code == 200:
             return response.json()
     except requests.exceptions.HTTPError as errh:

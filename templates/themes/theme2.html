@@ -188,41 +188,27 @@
     <section class="portfolio">
         <div class="container">
             <h2>Recent Works</h2>
+            {% for data in result %}
             <div id="portfolio-list" class="portfolio-list">
                 <!-- Portfolio items -->
                 <div class="portfolio-item">
-                    <h1>Project Title 1</h1>
-                    <p class="post-meta">Posted by Author Name on July 30, 2024</p>
+                                       <form action="{{ url_for('get_post_by_username_and_slug', username=data.author_name, post_date=data.created_at.split('T')[0], post_slug=data.slug) }}" method="POST" style="display:inline;">
+                            <input type="hidden" name="post_id" value="{{ data.id }}">
+                            <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left;">
+                                <h1>{{ data.title }}</h1>
+                            </button>
+                        </form>
+
+                    <p class="post-meta">Posted by {{data.author_name}} on {{ data.created_at.split('T')[0] }}</p>
                     <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
                     <div class="portfolio-info">
                         <p>This is a detailed description of the first project. It covers the main features and goals of the project, providing insights into the development process and the outcomes achieved. The content here can be expanded to include any relevant information that readers might find useful or interesting.</p>
                     </div>
                 </div>
-                <div class="portfolio-item">
-                    <h1>Project Title 2</h1>
-                    <p class="post-meta">Posted by Author Name on July 30, 2024</p>
-                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
-                    <div class="portfolio-info">
-                        <p>This is a detailed description of the second project. It covers the main features and goals of the project, providing insights into the development process and the outcomes achieved. The content here can be expanded to include any relevant information that readers might find useful or interesting.</p>
-                    </div>
-                </div>
-                <div class="portfolio-item">
-                    <h1>Project Title 3</h1>
-                    <p class="post-meta">Posted by Author Name on July 30, 2024</p>
-                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
-                    <div class="portfolio-info">
-                        <p>This is a detailed description of the third project. It covers the main features and goals of the project, providing insights into the development process and the outcomes achieved. The content here can be expanded to include any relevant information that readers might find useful or interesting.</p>
-                    </div>
-                </div>
-                <div class="portfolio-item">
-                    <h1>Project Title 4</h1>
-                    <p class="post-meta">Posted by Author Name on July 30, 2024</p>
-                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
-                    <div class="portfolio-info">
-                        <p>This is a detailed description of the fourth project. It covers the main features and goals of the project, providing insights into the development process and the outcomes achieved. The content here can be expanded to include any relevant information that readers might find useful or interesting.</p>
-                    </div>
-                </div>
+
             </div>
+                        {% endfor %}
+
             <button id="load-more" class="load-more">Load More</button>
         </div>
     </section>

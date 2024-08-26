@@ -1,0 +1,109 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}File Permissions{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h2>File Permissions</h2>
+    <form action="{{url_for('update_group', group_id=group.id)}}" method="post" id="permissionForm">
+        <div class="form-group">
+            <label for="group-name">Group Name:</label>
+            <input type="text" class="form-control" id="group-name" name="group_name" value="{{ group.name }}" required>
+        </div>
+        <fieldset>
+            <legend>Permissions:</legend>
+            <h5 class="ms-2">Owner</h5>
+            <strong class="ms-3">Users</strong>
+            <div class="form-check ms-4">
+                <input class="form-check-input" type="checkbox" name="permissions[]" value="manage_user">
+                <label class="form-check-label" data-toggle="tooltip" data-placement="top" title="Add/Modify/Delete Users">Manage User</label>
+            </div>
+            <div class="form-check ms-4">
+                <input class="form-check-input" type="checkbox" name="permissions[]" value="list_of_users">
+                <label class="form-check-label" data-toggle="tooltip" data-placement="top" title="Monitor all users">Monitor Users</label>
+            </div>
+                        <div class="form-check ms-4">
+                <input class="form-check-input" type="checkbox" name="permissions[]" value="list_of_sites">
+                <label class="form-check-label" data-toggle="tooltip" data-placement="top" title="Monitor all user sites">Sites</label>
+            </div>
+            <strong class="ms-3">Settings</strong>
+
+            <div class="form-check ms-4">
+                <input class="form-check-input" type="checkbox" name="permissions[]" value="owner_email_setup">
+                <label class="form-check-label" data-toggle="tooltip" data-placement="top" title="Setup Email address for owner">Manage Email</label>
+            </div>
+            <div class="form-check ms-4">
+                <input class="form-check-input" type="checkbox" name="permissions[]" value="manage_subscription_plans">
+                <label class="form-check-label" data-toggle="tooltip" data-placement="top" title="Setup subscription plans ">Manage Plans</label>
+            </div>
+            <strong class="ms-3">Order History</strong>
+                        <div class="form-check ms-4">
+                <input class="form-check-input" type="checkbox" name="permissions[]" value="order_history">
+                <label class="form-check-label" data-toggle="tooltip" data-placement="top" title="View Order History">Order History</label>
+            </div>
+            <h5 class="ms-2">Site Admin</h5>
+            <strong class="ms-3">Posts</strong>
+                        <div class="form-check ms-4">
+                <input class="form-check-input" type="checkbox" name="permissions[]" value="manage_posts">
+                <label class="form-check-label" data-toggle="tooltip" data-placement="top" title="Add/Modify/Delete Posts">Manage Posts</label>
+            </div>
+                                    <div class="form-check ms-4">
+                <input class="form-check-input" type="checkbox" name="permissions[]" value="manage_comments">
+                <label class="form-check-label" data-toggle="tooltip" data-placement="top" title="Add/Modify/Delete Comments">Manage Comments</label>
+            </div>
+            <strong class="ms-3">Pages</strong>
+                        <div class="form-check ms-4">
+                <input class="form-check-input" type="checkbox" name="permissions[]" value="manage_pages">
+                <label class="form-check-label" data-toggle="tooltip" data-placement="top" title="Add/Modify/Delete Pages">Manage Pages</label>
+            </div>
+            <strong class="ms-3">Media</strong>
+                        <div class="form-check ms-4">
+                <input class="form-check-input" type="checkbox" name="permissions[]" value="manage_media">
+                <label class="form-check-label" data-toggle="tooltip" data-placement="top" title="Add/Modify/Delete Media">Manage Media</label>
+            </div>
+            <strong class="ms-3">Forms</strong>
+                        <div class="form-check ms-4">
+                <input class="form-check-input" type="checkbox" name="permissions[]" value="manage_forms">
+                <label class="form-check-label" data-toggle="tooltip" data-placement="top" title="Add/Modify/Delete Forms">Manage Forms</label>
+            </div>
+                        <strong class="ms-3">AI</strong>
+                        <div class="form-check ms-4">
+                <input class="form-check-input" type="checkbox" name="permissions[]" value="access_chatbot">
+                <label class="form-check-label" data-toggle="tooltip" data-placement="top" title="Use Chatbot">Access Chatbot</label>
+            </div>
+                                    <div class="form-check ms-4">
+                <input class="form-check-input" type="checkbox" name="permissions[]" value="access_resume_parser">
+                <label class="form-check-label" data-toggle="tooltip" data-placement="top" title="Use Resume Parser">Access Resume Parser</label>
+            </div>
+            <h5 class="ms-2">Site User</h5>
+            <div class="form-check ms-4">
+                <input class="form-check-input" type="checkbox" name="permissions[]" value="site_user">
+                <label class="form-check-label">Site User</label>
+            </div>
+        </fieldset>
+        <div class="d-grid gap-2 d-md-block">
+        <button type="submit" class="btn btn-primary btn-block mt-2">Submit</button>
+        </div>
+    </form>
+</div>
+
+<!-- jQuery and Bootstrap Bundle (includes Popper) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script>
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    var groupPermissions = {{ group.permissions | safe }}; // Replace this with your actual permissions
+    console.log(groupPermissions)
+
+    var checkboxes = document.querySelectorAll('#permissionForm .form-check-input');
+
+    checkboxes.forEach(function(checkbox) {
+        if (groupPermissions.includes(checkbox.value)) {
+            checkbox.checked = true;
+        }
+    });
+});
+</script>
+{% endblock %}
