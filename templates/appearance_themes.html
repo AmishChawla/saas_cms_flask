@@ -164,24 +164,11 @@
     <div class="header">
         <h1>Themes</h1>
         <div class="header-buttons">
-            <button class="header-button btn1" onclick="installNewTheme()">Install New Theme</button>
-            <button class="header-button btn2" onclick="designYourOwn()">Design Your Own</button>
+            <a href="{{ url_for('user_post_list', username=current_user.username) }}" class="d-block" style="margin-right:0.5rem; margin-top:6px; font-weight:bolder; font-size:1.1rem;">Visit Site</a>
         </div>
     </div>
 
-    <div class="theme-controls">
-        <div class="search-bar">
-            <input type="text" placeholder="Search themes..." id="searchInput" oninput="searchThemes()">
-        </div>
-        <div class="view-options">
-            <label for="viewSelect">View:</label>
-            <select id="viewSelect" onchange="updateView()">
-                <option value="all">All</option>
-                <option value="free">Free</option>
-                <option value="premium">Premium</option>
-            </select>
-        </div>
-    </div>
+
 
     <div class="theme-grid" id="themeGrid">
     <div class="theme-card" id="theme1">
@@ -207,35 +194,5 @@
 
 </div>
 
-<script>
-    function installNewTheme() {
-        alert('Redirecting to install new theme page.');
-        // Add logic here to redirect or open a new page
-    }
 
-    function designYourOwn() {
-        alert('Redirecting to design your own theme page.');
-        // Add logic here to redirect or open a new page
-    }
-
-    function searchThemes() {
-        const searchInput = document.getElementById('searchInput').value.toLowerCase();
-        const themeCards = document.querySelectorAll('.theme-card');
-
-        themeCards.forEach(card => {
-            const title = card.querySelector('.theme-title').textContent.toLowerCase();
-            if (title.includes(searchInput)) {
-                card.style.display = 'block';
-            } else {
-                card.style.display = 'none';
-            }
-        });
-    }
-
-    function updateView() {
-        const viewSelect = document.getElementById('viewSelect').value;
-        // Update the view based on the selected option
-        // Implement filtering or sorting logic here
-    }
-</script>
 {% endblock %}

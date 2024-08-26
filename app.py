@@ -2618,6 +2618,16 @@ def user_active_theme():
         print(e)
 
 
+@app.route('/user/appearance/theme-customization')
+@login_required
+def user_theme_customization():
+    theme_name = request.args.get('theme_name')
+    theme_id = request.args.get('theme_id')
+    result = api_calls.get_user_all_posts(access_token=current_user.id)
+    if result is None:
+        result = []  # Set result to an empty list
+
+    return render_template(f'themes/customization/theme{theme_id}_customization_form.html', result=result, theme_id=theme_id, theme_name=theme_name)
 
 @app.route('/robots.txt')
 def robots_txt():

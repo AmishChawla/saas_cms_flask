@@ -217,7 +217,7 @@
             <div class="theme-title" id="themeTitle">{{ theme_name }}</div>
             <div class="theme-actions">
     <a href="{{ url_for('user_active_theme', theme_name=theme_name, theme_id=theme_id) }}" class="theme-action-button">Activate This Design</a>
-    <a href="#" class="theme-action-button" onclick="previewCustomize()">Customize</a>
+    <a href="{{ url_for('user_theme_customization', theme_name=theme_name, theme_id=theme_id) }}" class="theme-action-button">Customize</a>
 </div>
         </div>
 
