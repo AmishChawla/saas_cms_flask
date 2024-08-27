@@ -2054,12 +2054,20 @@ def delete_page(page_id, access_token):
 
 
 
-def user_active_theme(access_token, theme_id, theme_name):
+def user_active_theme(access_token, theme_id, theme_name, logo_text, hero_title, hero_subtitle):
     headers = {'Authorization': f'Bearer {access_token}'}
+
+    # Prepare data
     data = {
         "theme_id": theme_id,
-        "theme_name": theme_name
+        "theme_name": theme_name,
+        "site_title": logo_text,
+        "heading": hero_title,
+        "description": hero_subtitle,
+        "background_image": 'https://example.com/image.jpg'
     }
+
+
 
     try:
         response = requests.post(constants.BASE_URL + '/user/create_user_theme', json=data, headers=headers)
@@ -2068,14 +2076,15 @@ def user_active_theme(access_token, theme_id, theme_name):
             result = response.json()
             return result
         else:
-            print("API Error:", response.text)  # Debug: Print error message from API
-    except requests.exceptions.HTTPError as errh:
+            print("API Error:", response.text)
+            return None
+    except HTTPError as errh:
         print(f"HTTP Error: {errh}")
-    except requests.exceptions.ConnectionError as errc:
+    except ConnectionError as errc:
         print(f"Error Connecting: {errc}")
-    except requests.exceptions.Timeout as errt:
+    except Timeout as errt:
         print(f"Timeout Error: {errt}")
-    except requests.exceptions.RequestException as err:
+    except RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
 
@@ -2128,6 +2137,26 @@ def get_user_theme(access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
     try:
         response = requests.get(constants.BASE_URL + '/themes/get_user_theme', headers=headers)
+        print("Response Status Code:", response.status_code)
+        if response.status_code == 200:
+            result = response.json()
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
+
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+def get_user_theme_by_username(username):
+
+    try:
+        response = requests.get(constants.BASE_URL + f'/themes/get_user_theme_by_username/{username}')
         print("Response Status Code:", response.status_code)
         if response.status_code == 200:
             result = response.json()

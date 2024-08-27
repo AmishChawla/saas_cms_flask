@@ -4,24 +4,29 @@
 
 {% block content %}
 
-
     <style>
-        body {
+       body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
         }
+
+
+
+        /* Navigation */
         .navbar {
-            background-color: #ffffff;
+            background: #fff;
+            border-bottom: 1px solid #ddd;
             padding: 10px 0;
-            color: #111111;
         }
+
         .navbar .container {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin: 0 20px;
         }
+
         .navbar .logo input {
             border: none;
             background: none;
@@ -32,23 +37,36 @@
             text-align: left;
             outline: none;
         }
+
         .navbar .nav-links {
             list-style: none;
-            padding: 0;
-            margin: 0;
             display: flex;
-            gap: 15px;
+            justify-content: flex-end;
         }
+
+        .navbar .nav-links li {
+            margin-left: 20px;
+        }
+
         .navbar .nav-links a {
-            color: #111111;
+            color: #333;
             text-decoration: none;
+            padding: 5px;
+            transition: color 0.3s;
         }
+
+        .navbar .nav-links a:hover {
+            color: #007bff;
+        }
+
+        /* Hero Section */
         .hero {
             background: url('https://via.placeholder.com/1200x400') no-repeat center center/cover;
+            color: #fff;
             padding: 60px 0;
             text-align: center;
-            transition: background-image 0.3s ease-in-out;
         }
+
         .hero input[type="text"] {
             border: none;
             background: none;
@@ -61,58 +79,91 @@
         .hero input[name="hero_subtitle"] {
             font-size: 18px;
         }
-        .blog-posts {
+
+        /* Portfolio Section */
+        .portfolio {
             padding: 40px 0;
-            background-color: #f4f4f4;
         }
-        .blog-posts .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-        .blog-posts h2 {
+
+        .portfolio h2 {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
         }
-        .post-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
+        .portfolio-list {
+            display: flex;
+            flex-direction: column;
             gap: 20px;
         }
-        .post {
-            background-color: #fff;
+
+        .portfolio-item {
+            background: #fff;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
             padding: 20px;
-            border: 1px solid #ddd;
         }
-        .post img {
-            width: 100%;
-            height: auto;
+
+        .portfolio-item:hover {
+            transform: translateY(-5px);
         }
-        .post-title {
-            margin: 15px 0 10px;
+
+        .portfolio-img {
+            width: 500px;
+            height: 300px;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+
+        .portfolio-info {
+            padding: 15px;
+            flex-grow: 1;
+        }
+
+        .portfolio-info h1 {
             font-size: 24px;
-            color: #333;
+            margin-bottom: 10px;
         }
-        .post-meta {
-            color: #777;
+
+        .portfolio-info .post-meta {
             font-size: 14px;
+            color: #999;
+            margin-bottom: 20px;
         }
+
+        .portfolio-info p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        /* Load More Button */
         .load-more {
             display: block;
-            width: 200px;
-            margin: 30px auto 0;
-            padding: 10px;
-            background-color: #333;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
             color: #fff;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
+
+        .load-more:hover {
+            background-color: #0056b3;
+        }
+
+        /* Footer */
         .footer {
-            background-color: #333;
-            padding: 20px 0;
+            background: #333;
             color: #fff;
             text-align: center;
+            padding: 20px 0;
+            margin-top: 20px;
         }
+
         .sticky-save {
             position: sticky;
             bottom: 20px;
@@ -141,8 +192,9 @@
                 </div>
                 <ul class="nav-links">
                     <li><a href="#">Home</a></li>
-                    <li><a href="#">About</a></li>
+                    <li><a href="#">Portfolio</a></li>
                     <li><a href="#">Blog</a></li>
+                    <li><a href="#">About</a></li>
                     <li><a href="#">Contact</a></li>
                 </ul>
             </div>
@@ -150,54 +202,49 @@
 
         <!-- Hero Section -->
         <header class="hero" id="hero-section">
-            <input type="file" name="hero_background" accept="image/*" style="display: none;" id="hero-background-input">
+
             <div onclick="document.getElementById('hero-background-input').click();">
-                <input type="text" name="hero_title" value="Welcome to My Blog">
-                <input type="text" name="hero_subtitle" value="Explore the world of design and development">
+                <input type="text" name="hero_title" value="Welcome to My Portfolio">
+                <input type="text" name="hero_subtitle" value="Discover my work and projects">
             </div>
         </header>
 
-        <!-- Blog Posts Section -->
-        <section class="blog-posts">
+        <!-- Portfolio Section -->
+        <section class="portfolio">
             <div class="container">
-                <h2>Latest Posts</h2>
-                <div id="post-grid" class="post-grid">
-                    <!-- Initial set of posts -->
+                <h2>Recent Works</h2>
+                <div id="portfolio-list" class="portfolio-list">
                     {% if result %}
-                {% for data in result %}
-                <article class="post">
-                    <img src="https://via.placeholder.com/300" alt="Post Image">
-
-                    <h3 class="post-title">{{ data.title }}</h3>
-                    <p class="post-meta">
-                            Posted by
-                            <a href="{{ url_for('user_post_list', username=data.author_name) }}">{{ data.author_name }}</a>
-                            on {{ data.created_at.split('T')[0] }} at {{ data.created_at.split('T')[1][:8] }}
-                        </p>
-                </article>
-                {% endfor %}
-                {% else %}
-                <!-- Initial set of posts -->
-                <article class="post">
-                    <img src="https://via.placeholder.com/300" alt="Post Image">
-                    <h3>Post Title 1</h3>
-                    <p>Posted by <a>Author name</a> on DATE at Time</p>
-
-                </article>
-                <article class="post">
-                    <img src="https://via.placeholder.com/300" alt="Post Image">
-                    <h3>Post Title 2</h3>
-                    <p>Posted by <a>Author name</a> on DATE at Time</p>
-
-                </article>
-                <article class="post">
-                    <img src="https://via.placeholder.com/300" alt="Post Image">
-                    <h3>Post Title 3</h3>
-                    <p>Posted by <a>Author name</a> on DATE at Time</p>
-
-                </article>
-
-                {% endif %}
+                        {% for data in result %}
+                            <div class="portfolio-item">
+                                <h1>{{ data.title }}</h1>
+                                <p class="post-meta">Posted by {{data.author_name}} on {{ data.created_at.split('T')[0] }}</p>
+                                <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <!-- Static Portfolio Items for Demo -->
+                        <div class="portfolio-item">
+                            <h1>Project Title 1</h1>
+                            <p class="post-meta">Posted by Author Name on July 30, 2024</p>
+                            <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
+                        </div>
+                        <div class="portfolio-item">
+                            <h1>Project Title 2</h1>
+                            <p class="post-meta">Posted by Author Name on July 30, 2024</p>
+                            <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
+                        </div>
+                        <div class="portfolio-item">
+                            <h1>Project Title 3</h1>
+                            <p class="post-meta">Posted by Author Name on July 30, 2024</p>
+                            <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
+                        </div>
+                        <div class="portfolio-item">
+                            <h1>Project Title 4</h1>
+                            <p class="post-meta">Posted by Author Name on July 30, 2024</p>
+                            <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
+                        </div>
+                    {% endif %}
                 </div>
                 <button id="load-more" class="load-more">Load More</button>
             </div>
@@ -206,11 +253,11 @@
         <!-- Footer -->
         <footer class="footer">
             <div class="container">
-                <p>&copy; 2024 MySite. All rights reserved.</p>
+                <p>&copy; 2024 NookStyle. All rights reserved.</p>
             </div>
         </footer>
 
-        <!-- Save Button -->
+        <!-- Sticky Save Button -->
         <div class="sticky-save">
             <button type="submit">Save Customizations</button>
         </div>
@@ -240,5 +287,4 @@
         });
     </script>
 </body>
-
 {% endblock %}

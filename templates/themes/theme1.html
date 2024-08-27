@@ -153,7 +153,12 @@ body {
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
+            {% if activated_theme %}
+            <div class="logo">{{ activated_theme.site_title }}</div>
+
+            {% else %}
             <div class="logo">MySite</div>
+            {% endif %}
             <ul class="nav-links">
                 <li><a href="#">Home</a></li>
                 <li><a href="#">About</a></li>
@@ -166,8 +171,17 @@ body {
     <!-- Hero Section -->
     <header class="hero">
         <div class="container">
+            {% if activated_theme %}
+            <h1>{{ activated_theme.heading }}</h1>
+            {% else %}
             <h1>Welcome to My Blog</h1>
+            {% endif %}
+            {% if activated_theme %}
+            <p>{{ activated_theme.description }}</p>
+            {% else %}
             <p>Explore the world of design and development</p>
+            {% endif %}
+
         </div>
     </header>
 
@@ -177,6 +191,7 @@ body {
             <h2>Latest Posts</h2>
             <div id="post-grid" class="post-grid">
                 <!-- Initial set of posts -->
+                {% if result %}
                 {% for data in result %}
                 <article class="post">
                     <img src="https://via.placeholder.com/300" alt="Post Image">
@@ -193,6 +208,28 @@ body {
                         </p>
                 </article>
                 {% endfor %}
+                {% else %}
+                <!-- Initial set of posts -->
+                <article class="post">
+                    <img src="https://via.placeholder.com/300" alt="Post Image">
+                    <h3>Post Title 1</h3>
+                    <p>Posted by <a>Author name</a> on DATE at Time</p>
+
+                </article>
+                <article class="post">
+                    <img src="https://via.placeholder.com/300" alt="Post Image">
+                    <h3>Post Title 2</h3>
+                    <p>Posted by <a>Author name</a> on DATE at Time</p>
+
+                </article>
+                <article class="post">
+                    <img src="https://via.placeholder.com/300" alt="Post Image">
+                    <h3>Post Title 3</h3>
+                    <p>Posted by <a>Author name</a> on DATE at Time</p>
+
+                </article>
+
+                {% endif %}
             </div>
             <button id="load-more" class="load-more">Load More</button>
         </div>

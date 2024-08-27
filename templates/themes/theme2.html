@@ -165,7 +165,12 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
+            {% if activated_theme %}
+            <div class="logo">{{ activated_theme.site_title }}</div>
+
+            {% else %}
             <div class="logo">NookStyle</div>
+            {% endif %}
             <ul class="nav-links">
                 <li><a href="#">Home</a></li>
                 <li><a href="#">Portfolio</a></li>
@@ -179,8 +184,16 @@
     <!-- Hero Section -->
     <header class="hero">
         <div class="container">
+            {% if activated_theme %}
+            <h1>{{ activated_theme.heading }}</h1>
+            {% else %}
             <h1>Welcome to My Portfolio</h1>
+            {% endif %}
+            {% if activated_theme %}
+            <p>{{ activated_theme.description }}</p>
+            {% else %}
             <p>Discover my work and projects</p>
+            {% endif %}
         </div>
     </header>
 
@@ -188,6 +201,7 @@
     <section class="portfolio">
         <div class="container">
             <h2>Recent Works</h2>
+            {% if result %}
             {% for data in result %}
             <div id="portfolio-list" class="portfolio-list">
                 <!-- Portfolio items -->
@@ -201,13 +215,41 @@
 
                     <p class="post-meta">Posted by {{data.author_name}} on {{ data.created_at.split('T')[0] }}</p>
                     <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
-                    <div class="portfolio-info">
-                        <p>This is a detailed description of the first project. It covers the main features and goals of the project, providing insights into the development process and the outcomes achieved. The content here can be expanded to include any relevant information that readers might find useful or interesting.</p>
-                    </div>
+
                 </div>
 
             </div>
                         {% endfor %}
+            {% else %}
+            <div id="portfolio-list" class="portfolio-list">
+                <!-- Portfolio items -->
+                <div class="portfolio-item">
+                    <h1>Project Title 1</h1>
+                    <p class="post-meta">Posted by Author Name on July 30, 2024</p>
+                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
+
+                </div>
+                <div class="portfolio-item">
+                    <h1>Project Title 2</h1>
+                    <p class="post-meta">Posted by Author Name on July 30, 2024</p>
+                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
+
+                </div>
+                <div class="portfolio-item">
+                    <h1>Project Title 3</h1>
+                    <p class="post-meta">Posted by Author Name on July 30, 2024</p>
+                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
+
+                </div>
+                <div class="portfolio-item">
+                    <h1>Project Title 4</h1>
+                    <p class="post-meta">Posted by Author Name on July 30, 2024</p>
+                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
+
+                </div>
+            </div>
+
+            {% endif %}
 
             <button id="load-more" class="load-more">Load More</button>
         </div>

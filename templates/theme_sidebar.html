@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Customize Appearance</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Icons -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/plugins/fontawesome-free/css/all.min.css') }}">
+  <link href="{{ url_for('static', filename='assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
+
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/adminlte.min.css') }}">
+
+  <style>
+    /* Sidebar Styles */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 100vh;
+      background-color: #343a40;
+      color: #d0d0d0;
+      padding: 20px;
+      overflow: hidden; /* Ensure sidebar content doesn't scroll */
+      z-index: 1000;
+    }
+
+    .sidebar .site-title {
+      display: flex;
+      align-items: center;
+      font-size: 1em;
+      margin-bottom: 20px;
+    }
+
+    .sidebar .site-title .search-icon {
+      margin-left: auto;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    .sidebar .site-title + .design-link {
+      margin-top: 80px; /* Add space between the site-title div and design-link */
+    }
+    .sidebar .design-link {
+      display: block;
+      margin: 20px 0;
+      text-decoration: none;
+      color: #d0d0d0;
+      font-weight: bold;
+    }
+    .sidebar .design-link span {
+     font-size: 1.2em;
+    }
+    .sidebar .design-link:hover {
+      text-decoration: none;
+    }
+
+    .sidebar .description {
+      margin-bottom: 30px;
+      font-size: 13px;
+      color: #d0d0d0;
+      line-height: 1.5;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 10px;
+    }
+
+    .sidebar ul li a {
+      display: flex;
+      align-items: center; /* Vertically center the text and icon */
+      text-decoration: none;
+      color: #d0d0d0;
+      font-size: 1em;
+      position: relative; /* Allows positioning of the ">" symbol */
+      padding-right: 30px; /* Adds space for the ">" symbol */
+    }
+
+
+    .sidebar ul li a i {
+      margin-right: 10px; /* Space between icon and text */
+      width: 24px; /* Fixed width for all icons */
+      text-align: center; /* Center icon horizontally */
+    }
+
+    .sidebar ul li a span {
+      flex: 1; /* Allows text to take remaining space */
+      margin-left: 5px; /* Space between icon and text */
+    }
+
+
+
+    .content {
+      margin-left: 270px; /* Leave space for the sidebar */
+      padding: 20px;
+    }
+  </style>
+</head>
+<body class="hold-transition sidebar-mini">
+  <div class="wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="site-title">
+        <span>Site Title</span>
+        <i class="search-icon fas fa-search"></i>
+      </div>
+      <a href="#" class="design-link"><i class="bi bi-chevron-left" style="margin-right: 20px;"></i> <span>Design</span></a>
+      <p class="description">Customize the appearance of your website using the block editor.</p>
+      <nav>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="fas fa-sitemap"></i>
+              <span>Navigation</span>
+              <i class="bi bi-chevron-right" style="float: right; margin-left: auto;"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="fas fa-paint-brush"></i>
+              <span>Styles</span>
+              <i class="bi bi-chevron-right" style="float: right; margin-left: auto;"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="fas fa-file-alt"></i>
+              <span>Pages</span>
+              <i class="bi bi-chevron-right" style="float: right; margin-left: auto;"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="fas fa-columns"></i>
+              <span>Templates</span>
+              <i class="bi bi-chevron-right" style="float: right; margin-left: auto;"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="fas fa-th-large"></i>
+              <span>Patterns</span>
+              <i class="bi bi-chevron-right" style="float: right; margin-left: auto;"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+    <!-- Content Wrapper -->
+    <div class="content">
+      <!-- Your content goes here -->
+      {% block content %}
+      {% endblock %}
+    </div>
+  </div>
+</body>
+</html>

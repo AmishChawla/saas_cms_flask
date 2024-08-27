@@ -70,12 +70,17 @@ class User(UserMixin):
 
     def has_permission(self, allowed_permissions):
         # Iterate over each item in the allowed permissions list
+        print(allowed_permissions)
+        print(self.group)
+
         for permission in allowed_permissions:
             # Check if the current permission exists in the group's permissions
             if permission in self.group.get('permissions', []):
+
                 # If a match is found, return True immediately
                 return True
         # If no match was found after iterating through all permissions, return False
+        print(self.group.get('permissions', []))
         return False
 
 
@@ -184,6 +189,7 @@ def login():
             services = data.get('services', [])
             company = data.get('company', {})
             group = data.get('group', {})
+            print(group.get("permission", []))
             profile_picture = f"{ROOT_URL}/{data['profile_picture']}"
 
             user = User(id=id, user_id=token, role=role, username=username, email=email, services=services, company=company,
@@ -1072,7 +1078,7 @@ def user_post_list(username):
     response = api_calls.get_all_categories() or []
 
     # Get the activated theme
-    activated_theme = api_calls.get_user_theme(access_token=current_user.id)  # Ensure current_user is accessible
+    activated_theme = api_calls.get_user_theme_by_username(username=username)  # Ensure current_user is accessible
     print(activated_theme)
 
     if form.validate_on_submit():
@@ -1088,7 +1094,7 @@ def user_post_list(username):
 
     # Render the appropriate template based on the activated theme
     if activated_theme is not None and activated_theme != {}:
-        return render_template(f'themes/theme{activated_theme["theme_id"]}.html', result=result, response=response,
+        return render_template(f'themes/theme{activated_theme["theme_id"]}.html', activated_theme=activated_theme, result=result, response=response,
                                form=form, username=username, toast=toast)
     else:
         return render_template('user_post_list.html', result=result, response=response, form=form, username=username,
@@ -2771,18 +2777,36 @@ def sitemap():
     return Response(sitemap_str, mimetype="application/xml")
 
 
-
-@app.route("/user-active-theme", methods=['GET', 'POST'])
+@app.route("/user-active-theme", methods=['POST'])
 def user_active_theme():
-    theme_name = request.args.get('theme_name')
-    theme_id = request.args.get('theme_id')
-    try:
-        active_theme = api_calls.user_active_theme(theme_name=theme_name, theme_id=theme_id, access_token=current_user.id)
+    # Extract form data
+    logo_text = request.form.get('logo_text')
+    hero_title = request.form.get('hero_title')
+    hero_subtitle = request.form.get('hero_subtitle')
+    print(logo_text)
+    # Handle file upload if any
 
+
+    theme_name = request.form.get('theme_name')
+    theme_id = request.form.get('theme_id')
+
+    try:
+        # Assuming api_calls.user_active_theme is modified to accept these parameters
+        active_theme = api_calls.user_active_theme(
+            theme_name=theme_name,
+            theme_id=theme_id,
+            logo_text=logo_text,
+            hero_title=hero_title,
+            hero_subtitle=hero_subtitle,
+
+            access_token=current_user.id
+        )
 
         return redirect(url_for('all_themes'))
     except Exception as e:
         print(e)
+        # Handle the error appropriately
+        return "An error occurred while updating the theme.", 500
 
 
 @app.route('/user/appearance/theme-customization')

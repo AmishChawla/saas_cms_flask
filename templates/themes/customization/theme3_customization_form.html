@@ -1,23 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bark Style Theme - Grid Layout</title>
-    <style>
-        /* Basic Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+{% extends 'theme_sidebar.html' %}
 
+{% block title %}My Pages{% endblock %}
+
+{% block content %}
+    <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
             line-height: 1.6;
             color: #333;
             background-color: #f4f4f4;
         }
+
+
 
         .container {
             max-width: 100%;
@@ -33,12 +29,19 @@
             text-align: center;
         }
 
-        .header h1 {
+
+        .header input[type="text"] {
+            border: none;
+            background: none;
+            font-size: 48px;
+            color: white;
+            text-align: center;
+            width: 100%;
+            outline: none;
             margin-bottom: 10px;
         }
-
-        .header p {
-            margin: 0;
+        .header input[name="hero_subtitle"] {
+            font-size: 18px;
         }
 
         /* Navigation */
@@ -145,22 +148,30 @@
             padding: 20px 0;
             margin-top: 20px;
         }
+
+        .sticky-save {
+            position: sticky;
+            bottom: 20px;
+            text-align: center;
+            background: none;
+            padding: 0;
+        }
+        .sticky-save button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
     </style>
-</head>
+
 <body>
+<form id="theme-customization-form" action="{{ url_for('user_active_theme') }}" method="POST" enctype="multipart/form-data">
     <!-- Header -->
     <header class="header">
         <div class="container">
-            {% if activated_theme %}
-            <h1>{{ activated_theme.heading }}</h1>
-            {% else %}
-            <h1>Bark Style Theme</h1>
-            {% endif %}
-            {% if activated_theme %}
-            <p>{{ activated_theme.description }}</p>
-            {% else %}
-            <p>Clean and minimalist design</p>
-            {% endif %}
+            <input type="text" name="hero_title" value="Bark Style Theme">
+                <input type="text" name="hero_subtitle" value="Clean and minimalist design">
 
         </div>
     </header>
@@ -241,6 +252,10 @@
         </div>
     </footer>
 
+    <div class="sticky-save">
+            <button type="submit">Save Customizations</button>
+        </div>
+ </form>
 
 </body>
-</html>
+{% endblock %}
