@@ -2052,6 +2052,33 @@ def delete_page(page_id, access_token):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+def user_theme_activation(access_token, theme_id, theme_name):
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    # Prepare data
+    data = {
+        "theme_id": theme_id,
+        "theme_name": theme_name,
+    }
+
+    try:
+        response = requests.post(constants.BASE_URL + '/user/create_user_theme', json=data, headers=headers)
+        print("Response Status Code:", response.status_code)
+        if response.status_code == 200:
+            result = response.json()
+            return result
+        else:
+            print("API Error:", response.text)
+            return None
+    except HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
 
 
 def user_active_theme(access_token, theme_id, theme_name, logo_text, hero_title, hero_subtitle):

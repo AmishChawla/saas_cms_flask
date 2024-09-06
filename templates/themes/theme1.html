@@ -160,10 +160,19 @@ body {
             <div class="logo">MySite</div>
             {% endif %}
             <ul class="nav-links">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Blog</a></li>
-                <li><a href="#">Contact</a></li>
+                {% if pages %}
+                    {% for page in pages %}
+                    {% if page.status == 'published' %}
+                    <li><a href="#">{{ page.title }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    {% else %}
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Contact</a></li>
+                    {% endif %}
+
             </ul>
         </div>
     </nav>

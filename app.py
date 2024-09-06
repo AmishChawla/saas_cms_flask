@@ -1080,6 +1080,9 @@ def user_post_list(username):
     # Get the activated theme
     activated_theme = api_calls.get_user_theme_by_username(username=username)  # Ensure current_user is accessible
     print(activated_theme)
+    pages = api_calls.get_user_all_pages(access_token=current_user.id)
+    if pages is None:
+        pages = []  # Set result to an empty list
 
     if form.validate_on_submit():
         name = form.name.data
@@ -1094,10 +1097,10 @@ def user_post_list(username):
 
     # Render the appropriate template based on the activated theme
     if activated_theme is not None and activated_theme != {}:
-        return render_template(f'themes/theme{activated_theme["theme_id"]}.html', activated_theme=activated_theme, result=result, response=response,
+        return render_template(f'themes/theme{activated_theme["theme_id"]}.html', pages=pages, activated_theme=activated_theme, result=result, response=response,
                                form=form, username=username, toast=toast)
     else:
-        return render_template('user_post_list.html', result=result, response=response, form=form, username=username,
+        return render_template('user_post_list.html', pages=pages, result=result, response=response, form=form, username=username,
                                toast=toast)
 
 
@@ -2388,7 +2391,6 @@ def user_all_pages():
     pages = api_calls.get_user_all_pages(access_token=current_user.id)
     if pages is None:
         pages = []  # Set result to an empty list
-
     return render_template('cms/pages/user_all_pages.html', result=pages)
 
 
@@ -2776,19 +2778,47 @@ def sitemap():
     # Return the sitemap as an XML response
     return Response(sitemap_str, mimetype="application/xml")
 
+@app.route("/user-theme-activation", methods=['GET', 'POST'])
+def user_theme_activation():
+    # Extract form data
+    theme_name = request.form.get('theme_name')
+    theme_id = request.form.get('theme_id')
 
-@app.route("/user-active-theme", methods=['POST'])
+    # Ensure that mandatory fields are present
+    if not theme_name or not theme_id:
+        return "Theme name and ID are required.", 400
+
+
+    try:
+        # Assuming api_calls.user_active_theme is modified to accept these parameters
+        active_theme = api_calls.user_theme_activation(
+            theme_name=theme_name,
+            theme_id=theme_id,
+            access_token=current_user.id
+        )
+
+        return redirect(url_for('all_themes'))
+    except Exception as e:
+        print(e)
+        # Handle the error appropriately
+        return "An error occurred while updating the theme.", 500
+
+
+
+@app.route("/user-active-theme", methods=['GET', 'POST'])
 def user_active_theme():
     # Extract form data
+    theme_name = request.form.get('theme_name')
+    theme_id = request.form.get('theme_id')
+
+    # Ensure that mandatory fields are present
+    if not theme_name or not theme_id:
+        return "Theme name and ID are required.", 400
+
+    # Extract optional form data only if they are present
     logo_text = request.form.get('logo_text')
     hero_title = request.form.get('hero_title')
     hero_subtitle = request.form.get('hero_subtitle')
-    print(logo_text)
-    # Handle file upload if any
-
-
-    theme_name = request.form.get('theme_name')
-    theme_id = request.form.get('theme_id')
 
     try:
         # Assuming api_calls.user_active_theme is modified to accept these parameters
@@ -2818,7 +2848,11 @@ def user_theme_customization():
     if result is None:
         result = []  # Set result to an empty list
 
-    return render_template(f'themes/customization/theme{theme_id}_customization_form.html', result=result, theme_id=theme_id, theme_name=theme_name)
+    pages = api_calls.get_user_all_pages(access_token=current_user.id)
+    if pages is None:
+        pages = []  # Set result to an empty list
+
+    return render_template(f'themes/customization/theme{theme_id}_customization_form.html', pages=pages, result=result, theme_id=theme_id, theme_name=theme_name)
 
 @app.route('/robots.txt')
 def robots_txt():

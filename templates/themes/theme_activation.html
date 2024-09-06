@@ -17,11 +17,13 @@
         background-color: transparent;
         border: none;
         color: #0073aa;
-        font-size: 16px;
+        font-size: 13px;
         cursor: pointer;
         text-decoration: none;
         display: flex;
         align-items: center;
+        margin-top: 15px;
+        margin-bottom: 15px;
     }
 
     .navbar .back-button i {
@@ -31,6 +33,7 @@
     .container {
         width: 100%;
         margin: 0 auto;
+
     }
 
     .theme-container {
@@ -68,9 +71,21 @@
     }
 
     .theme-action-button {
-        background-color: #0073aa;
+        background-color: #c9356e;
         color: white;
-        border: none;
+        border: #ab235a;
+        font-size: 14px;
+        padding: 8px 16px;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+
+    .theme-customize-button {
+        background-color: none;
+        color: #111;
+        border: 0.8px solid #ccc;
+        font-size: 14px;
         padding: 8px 16px;
         cursor: pointer;
         border-radius: 4px;
@@ -78,7 +93,11 @@
     }
 
     .theme-action-button:hover {
-        background-color: #005177;
+        background-color: #ab235a;
+    }
+
+    .theme-customize-button:hover {
+        color: #111;
     }
 
     .default-style {
@@ -205,7 +224,7 @@
     }
 </style>
 
-<div class="navbar">
+<div class="navbar" style="margin-bottom: 50px;">
     <a href="{{ url_for('all_themes') }}" class="back-button">
         <i class="bi bi-arrow-left"></i> Back to Themes
     </a>
@@ -216,8 +235,16 @@
         <div class="theme-header">
             <div class="theme-title" id="themeTitle">{{ theme_name }}</div>
             <div class="theme-actions">
-    <a href="{{ url_for('user_active_theme', theme_name=theme_name, theme_id=theme_id) }}" class="theme-action-button">Activate This Design</a>
-    <a href="{{ url_for('user_theme_customization', theme_name=theme_name, theme_id=theme_id) }}" class="theme-action-button">Customize</a>
+    <form action="{{ url_for('user_active_theme') }}" method="POST" class="theme-action-form">
+    <!-- Hidden fields for theme_name and theme_id -->
+    <input type="hidden" name="theme_name" value="{{ theme_name }}">
+    <input type="hidden" name="theme_id" value="{{ theme_id }}">
+
+    <!-- Submit button -->
+    <button type="submit" class="theme-action-button">Activate This Design</button>
+</form>
+
+    <a href="{{ url_for('user_theme_customization', theme_name=theme_name, theme_id=theme_id) }}" class="theme-customize-button">Customize</a>
 </div>
         </div>
 
