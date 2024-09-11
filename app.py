@@ -2852,7 +2852,37 @@ def user_theme_customization():
     if pages is None:
         pages = []  # Set result to an empty list
 
-    return render_template(f'themes/customization/theme{theme_id}_customization_form.html', pages=pages, result=result, theme_id=theme_id, theme_name=theme_name)
+    return render_template(f'themes/customization/theme{theme_id}_customization_form.html', pages=pages, result=result, theme_id=theme_id, theme_name=theme_name, page_id=None)
+
+
+@app.route('/nav-items/show-in-nav/<page_id>/<theme_name>/<theme_id>', methods=['GET', 'POST'])
+@login_required
+def page_show_in_nav(page_id, theme_name, theme_id):
+    # Get the response for toggling show in nav
+    response = api_calls.page_show_in_nav(page_id=page_id)
+
+    result = api_calls.get_user_all_posts(access_token=current_user.id)
+    if result is None:
+        result = []  # Set result to an empty list
+
+    pages = api_calls.get_user_all_pages(access_token=current_user.id)
+    if pages is None:
+        pages = []  # Set pages to an empty list
+
+    # Render the template regardless of the response result
+    return render_template(f'themes/customization/theme{theme_id}_customization_form.html',
+                           pages=pages,
+                           result=result,
+                           theme_id=theme_id,
+                           theme_name=theme_name,
+                           page_id=page_id)
+
+@app.route('/user/appearance/menus')
+@login_required
+def menu_management():
+
+    return render_template('themes/theme_menu.html')
+
 
 @app.route('/robots.txt')
 def robots_txt():

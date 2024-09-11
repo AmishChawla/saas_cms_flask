@@ -13,7 +13,36 @@
     margin: 50px auto; /* Center horizontally with margin */
     padding: 20px;
   }
+.settings-buttons {
+    display: flex;
+    margin-right: 10px;
+    margin-bottom: 20px;
 
+  }
+
+  .settings-buttons button {
+    background-color: #1a75ff;
+  }
+  .settings-buttons button:hover {
+  background-color: #1493d9; /* Slightly darker on hover */
+}
+
+  .settings-section {
+    display: none;
+  }
+
+  .active {
+    display: block;
+
+  }
+
+  .settings-buttons button.active {
+  background-color: #4CAF50;
+}
+
+.settings-buttons button:active {
+  background-color: #4CAF50;
+}
   /* Headings */
   h1, h2 {
     font-family: Arial, sans-serif; /* Adjust font family as needed */
@@ -62,8 +91,12 @@
   }
 </style>
 
-<h1>Discussion Settings</h1>
+<div class="settings-buttons">
+  <button class="section-toggle" data-section="discussion">Discussion Settings</button>
+  <button class="section-toggle" data-section="mail">Mail Setup</button>
+</div>
 
+<div id="discussion" class="settings-section active">
 <form method="POST" action="{{ url_for('comment_setting') }}">
   <h2>Default post settings</h2>
   <div class="setting-group">
@@ -130,5 +163,70 @@
   </div>
   <button type="submit">Save Settings</button>
 </form>
+  </div>
+
+<div id="mail" class="settings-section">
+  <div class="container">
+    <div class="row">
+        <div class="col-12">
+            <a href="{{ url_for('admin_email_setup') }}" class="btn btn-custom w-100 d-flex align-items-center justify-content-between" style="border: 1px solid #d6d6c2; border-radius: 10px;" role="button">
+                <i class="mdi mdi-email" style="margin-right: 10px;margin-top: 2px;"></i>
+                Email Config
+                <i class="mdi mdi-chevron-right" style="margin-left: auto;"></i>
+            </a>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-12">
+            <a href="{{ url_for('list_of_email_templates') }}" class="btn btn-custom w-100 d-flex align-items-center justify-content-between" style="border: 1px solid #d6d6c2; border-radius: 10px;" role="button">
+                <i class="mdi mdi-email" style="margin-right: 10px;margin-top: 2px;"></i>
+                Email Templates
+                <i class="mdi mdi-chevron-right" style="margin-left: auto;"></i>
+            </a>
+        </div>
+    </div>
+     <br>
+
+</div>
+  <!-- Mail setup content goes here -->
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const buttons = document.querySelectorAll('.section-toggle');
+
+  // Add event listeners to all buttons
+  buttons.forEach(button => {
+    button.addEventListener('click', handleClick);
+  });
+
+  let currentSection = 'discussion';
+
+  function handleClick(event) {
+    const targetSectionId = event.target.getAttribute('data-section');
+    toggleSections(targetSectionId);
+    currentSection = targetSectionId;
+  }
+
+  function toggleSections(sectionId) {
+    const sections = document.querySelectorAll('.settings-section');
+
+    sections.forEach(section => {
+      section.classList.remove('active');
+    });
+
+    const targetSection = document.getElementById(sectionId);
+    targetSection.classList.add('active');
+
+    // Show/hide sections
+    sections.forEach(s => {
+      s.style.opacity = s === targetSection ? '1' : '0';
+      s.style.pointerEvents = s === targetSection ? 'auto' : 'none';
+    });
+  }
+});
+
+</script>
 
 {% endblock %}

@@ -2444,3 +2444,26 @@ def update_security_group(access_token, permissions, group_name, group_id):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+
+
+def page_show_in_nav(page_id):
+    print(page_id)
+    try:
+        response = requests.post(constants.BASE_URL + f'/pages/toggle_show_in_nav/{page_id}')
+        print("Response Status Code:", response.status_code)  # Debug: Print status code
+        if response.status_code == 200:
+            print("hello")
+            result = response.json()
+            print("API Result:", result)  # Debug: Print API result
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+

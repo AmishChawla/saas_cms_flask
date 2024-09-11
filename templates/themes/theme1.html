@@ -162,7 +162,7 @@ body {
             <ul class="nav-links">
                 {% if pages %}
                     {% for page in pages %}
-                    {% if page.status == 'published' %}
+                    {% if page.status == 'published' and page.display_in_nav == 'yes' %}
                     <li><a href="#">{{ page.title }}</a></li>
                     {% endif %}
                     {% endfor %}

@@ -58,9 +58,11 @@
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
                         {% if current_user.profile_picture %}
-                            <img src="{{ current_user.profile_picture }}" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%;">
+                            <img src="{{ current_user.profile_picture }}" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%; object-fit: cover;">
                          {% else %}
-                            <img src="{{ url_for('static', filename='images/man.png') }}" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%;">
+                            <div class="profile-placeholder" data-username="{{ current_user.username }}" style="width: 25px; height: 25px; margin-right: 10px; border-radius: 50%; border: 1px solid #b0bec5; display: flex; align-items: center; justify-content: center;">
+                            <span style="color: white; font-weight: bold;">{{ current_user.username[0].upper() }}</span>
+                        </div>
                         {% endif %}
                         <span class="menu-title">{{ current_user.username }}</span>
         </a>
@@ -480,6 +482,17 @@ $(document).ready(function() {
 });
 
 </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#FF8333', '#33FFF5', '#F533FF'];
+
+    document.querySelectorAll('.profile-placeholder').forEach(function(element) {
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        element.style.backgroundColor = randomColor;
+    });
+    });
+  </script>
 {% block scripts %}{% endblock %}
 </div>
 </body>

@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+
+{% block title %}Menu Management{% endblock %}
+
+{% block content %}
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ebebe0;
+        }
+
+
+        .menu-tabs {
+            display: flex;
+            justify-content: left;
+            margin: 20px;
+            margin-bottom: 20px;
+        }
+
+        .menu-tabs button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            border: 1px solid #ccc;
+        }
+
+        .menu-tabs button.active {
+            background-color: #1e73be;
+            color: white;
+            border: 1px solid #1e73be;
+        }
+
+
+        /* Inline div for menu selection */
+        .menu-selection {
+            display: flex;
+            align-items: center;
+            margin: 20px;
+            margin-top: 20px;
+        }
+
+        .menu-selection p {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .menu-selection select {
+            padding: 8px;
+            margin-right: 10px;
+        }
+
+        .menu-selection button {
+            padding: 8px 12px;
+            text-decoration: none;
+            background-color: #d0d0d0;
+            color: #0a0f0f;
+            border: 1px solid #0a0f0f;
+            border-radius: 2px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .menu-selection a {
+            padding: 8px 12px;
+
+            margin: 2px;
+        }
+
+        .menu-selection button:hover {
+            background-color: #b8b894;
+        }
+
+        .menu-container {
+            margin: 20px;
+        }
+
+        /* Flexbox layout */
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .flex-left, .flex-right {
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+
+        .flex-left {
+            width: 30%;
+        }
+
+        .flex-right {
+            width: 68%;
+        }
+
+        /* Section Headings */
+        .flex-left h2, .flex-right h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        /* Style for Pages Section */
+        .flex-left ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .flex-left ul li {
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        /* Style for Menu Structure Section */
+        .flex-right ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .flex-right ul li {
+            padding: 10px;
+            background-color: #e9ecef;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            cursor: move;
+        }
+
+        .menu-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .menu-footer button {
+            background-color: #1e73be;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-footer button:hover {
+            background-color: #155d8b;
+        }
+
+        .menu-footer .delete-btn {
+            background-color: #e74c3c;
+        }
+
+        .menu-footer .delete-btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
+
+    <!-- Menu Header -->
+
+    <!-- Tabs for Switching Between Sections -->
+    <div class="menu-tabs">
+        <button class="tab-btn active" data-target="#edit-menu">Edit Menu</button>
+    </div>
+
+
+
+    <!-- Inline div for selecting a menu -->
+    <div class="menu-selection">
+        Edit your menu below.
+        or
+        <a href="#">Create a new menu</a>
+    </div>
+
+    <!-- Edit Menu Section -->
+    <div id="edit-menu" class="menu-container active">
+        <!-- Flex container for Pages and Menu Structure -->
+        <div class="flex-container">
+            <div class="flex-left">
+                <h2>Pages</h2>
+                <ul>
+                    <li>Home</li>
+                    <li>Services</li>
+                    <li>Contact</li>
+                </ul>
+            </div>
+
+            <div class="flex-right">
+                <h2>Menu Structure</h2>
+                <ul>
+                    <li>Home</li>
+                    <li>Services</li>
+                    <li>Contact Us</li>
+                </ul>
+
+                <div class="menu-footer">
+                    <button>Save Menu</button>
+                    <button class="delete-btn">Delete Menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manage Locations Section -->
+    <div id="manage-locations" class="menu-container" style="display:none;">
+        <div class="menu-content">
+            <h3>Manage Menu Locations</h3>
+            <p>Assign your menus to different theme locations.</p>
+
+            <div class="location-setting">
+                <label for="main-location">Main Navigation</label>
+                <select id="main-location">
+                    <option value="main">Main Navigation</option>
+                    <option value="footer">Footer Links</option>
+                    <option value="social">Social Media Links</option>
+                </select>
+            </div>
+
+            <div class="location-setting">
+                <label for="footer-location">Footer Links</label>
+                <select id="footer-location">
+                    <option value="footer">Footer Links</option>
+                    <option value="main">Main Navigation</option>
+                    <option value="social">Social Media Links</option>
+                </select>
+            </div>
+
+            <div class="menu-footer">
+                <button>Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tabs = document.querySelectorAll('.tab-btn');
+        const containers = document.querySelectorAll('.menu-container');
+        const flashMessage = document.getElementById('flash-msg');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                containers.forEach(c => c.style.display = 'none');
+
+                tab.classList.add('active');
+                document.querySelector(tab.dataset.target).style.display = 'block';
+            });
+        });
+
+        // Show the flash message for a few seconds
+        function showFlashMessage() {
+            flashMessage.style.display = 'block';
+            setTimeout(() => {
+                flashMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        // Example of triggering flash message (you can call this function after an action like save)
+        showFlashMessage();
+    </script>
+{% endblock %}
