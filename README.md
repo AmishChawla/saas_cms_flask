@@ -86,6 +86,7 @@ Run `python app.py` to run this project
 [Pages](documentation/pages.md) \
 [Newsletter](documentation/newsletter.md) \
 [Mail Setup](documentation/mail_setup.md) \
+[Themes](documentation/theme_customization.md) \
 [User Site](documentation/user_site.md)
  
 ## Demo
