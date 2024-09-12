@@ -4,19 +4,18 @@
 
 {% block content %}
 <style>
-    .navbar {
+    .theme-nav {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        background-color: #f4f4f9;
+        background-color: #fff;
         padding: 10px 20px;
-        border-bottom: 1px solid #ddd;
+
     }
 
-    .navbar .back-button {
+    .theme-nav .back-button {
         background-color: transparent;
         border: none;
-        color: #0073aa;
+        color: #a3a3c2;
         font-size: 13px;
         cursor: pointer;
         text-decoration: none;
@@ -24,10 +23,18 @@
         align-items: center;
         margin-top: 15px;
         margin-bottom: 15px;
+        margin-left: 40px;
+        margin-right: 20px;
     }
 
-    .navbar .back-button i {
-        margin-right: 5px;
+    .theme-nav i {
+        font-size: 13px;
+        margin-right: 20px;
+    }
+
+    .theme-nav p {
+        font-size: 13px;
+        margin-top: 15px;
     }
 
     .container {
@@ -71,7 +78,7 @@
     }
 
     .theme-action-button {
-        background-color: #c9356e;
+        background-color: #1a75ff;
         color: white;
         border: #ab235a;
         font-size: 14px;
@@ -93,7 +100,7 @@
     }
 
     .theme-action-button:hover {
-        background-color: #ab235a;
+        background-color: #005ce6;
     }
 
     .theme-customize-button:hover {
@@ -102,12 +109,17 @@
 
     .default-style {
         margin-top: 20px;
-        padding: 20px;
+
         border-radius: 4px;
     }
 
-    .default-style h4 {
+    .default-style h6 {
         margin-top: 30px;
+    }
+
+    h6 {
+        font-weight: bold;
+        margin-bottom: 10px;
     }
 
     .color-options {
@@ -222,12 +234,14 @@
         width: 375px;
         height: 667px;
     }
+
+
 </style>
 
-<div class="navbar" style="margin-bottom: 50px;">
+<div class="theme-nav" style="margin-bottom: 50px;">
     <a href="{{ url_for('all_themes') }}" class="back-button">
-        <i class="bi bi-arrow-left"></i> Back to Themes
-    </a>
+        Themes
+    </a> <i class="bi bi-chevron-right"></i> <p>{{ theme_name }}</p>
 </div>
 
 <div class="container theme-container">
@@ -244,16 +258,16 @@
     <button type="submit" class="theme-action-button">Activate This Design</button>
 </form>
 
-    <a href="{{ url_for('user_theme_customization', theme_name=theme_name, theme_id=theme_id) }}" class="theme-customize-button">Customize</a>
+    <a href="{{ url_for('user_theme_customization', theme_name=theme_name, theme_id=theme_id) }}" class="theme-customize-button">Preview & Customize</a>
 </div>
         </div>
 
         <div class="default-style">
-            <h3>Default Style</h3>
+            <h6>Default Style</h6>
             <div class="color-option" style="background-color: #f5f5f5;" data-name="Default" onclick="changeBackgroundColor('#f5f5f5')">
 
             </div>
-            <h4>Style variations</h4>
+            <h6>Style variations</h6>
             <div class="color-options">
                 <div class="color-option" style="background-color: #ff5555;" data-name="Red" onclick="changeBackgroundColor('#ff5555')">
 
