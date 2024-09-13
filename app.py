@@ -1743,13 +1743,15 @@ def theme_detail():
     # Retrieve theme_name and theme_id from query parameters
     theme_name = request.args.get('theme_name')
     theme_id = request.args.get('theme_id')
-
+    result = api_calls.get_user_all_posts(access_token=current_user.id)
+    if result is None:
+        result = []  # Set result to an empty list
     if not theme_name or not theme_id:
         # Redirect back to themes page or show an error if either parameter is missing
         return redirect(url_for('all_themes'))
 
     # Pass the theme name and theme ID to the template
-    return render_template('themes/theme_activation.html', theme_name=theme_name, theme_id=theme_id)
+    return render_template('themes/theme_activation.html', theme_name=theme_name, theme_id=theme_id, result=result)
 
 
 
@@ -2880,8 +2882,10 @@ def page_show_in_nav(page_id, theme_name, theme_id):
 @app.route('/user/appearance/menus')
 @login_required
 def menu_management():
-
-    return render_template('themes/theme_menu.html')
+    pages = api_calls.get_user_all_pages(access_token=current_user.id)
+    if pages is None:
+        pages = []  # Set pages to an empty list
+    return render_template('themes/theme_menu.html', pages=pages)
 
 
 @app.route('/robots.txt')

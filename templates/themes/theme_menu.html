@@ -16,12 +16,15 @@
             background-color: #ebebe0;
         }
 
-
+        .header {
+            padding: 20px 20px 15px 20px;
+        }
         .menu-tabs {
             display: flex;
             justify-content: left;
             margin: 20px;
             margin-bottom: 20px;
+            margin-top: 0;
         }
 
         .menu-tabs button {
@@ -45,6 +48,8 @@
             align-items: center;
             margin: 20px;
             margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 0 20px 0 20px;
         }
 
         .menu-selection p {
@@ -85,20 +90,29 @@
         .flex-container {
             display: flex;
             justify-content: space-between;
+            align-items: flex-start; /* Align items to the top */
+
         }
 
-        .flex-left, .flex-right {
+        .flex-right {
             background-color: white;
             padding: 20px;
+            border: 1px solid #ccc;
+        }
+        .flex-left {
+            background-color: white;
+
             border: 1px solid #ccc;
         }
 
         .flex-left {
             width: 30%;
+            box-sizing: border-box;
         }
 
         .flex-right {
             width: 68%;
+            box-sizing: border-box;
         }
 
         /* Section Headings */
@@ -111,16 +125,61 @@
         .flex-left ul {
             list-style-type: none;
             padding: 0;
+            margin-bottom: 0;
         }
 
         .flex-left ul li {
-            padding: 10px;
-            background-color: #f8f9fa;
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
-            cursor: pointer;
+        background-color: transparent;
+        padding: 10px 20px 10px 20px;
+        cursor: pointer;
+        color: #c1c1c1;
+        font-size: 16px;
+        position: relative;
+        border-bottom: 1px solid #ccc;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .flex-left ul li i {
+        font-size: 12px;
+        margin-left: 5px;
+    }
+
+
+    .page-filter {
+
+            display: flex;
         }
 
+    .page-filter button {
+            background-color: transparent;
+            cursor: pointer;
+            font-size: 12px;
+
+            color: #1e73be;
+            border: none;
+            padding: 4px 8px 4px 8px;
+        }
+
+    .page-filter-content {
+        background-color: #f1f1f1;
+        padding: 0 10px 0 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .accordion-content {
+        display: none;
+        background-color: transparent;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .active-tab {
+        font-weight: bold;
+        color: #1e73be;
+    }
         /* Style for Menu Structure Section */
         .flex-right ul {
             list-style-type: none;
@@ -160,107 +219,283 @@
         .menu-footer .delete-btn:hover {
             background-color: #c0392b;
         }
-    </style>
-
-    <!-- Menu Header -->
-
-    <!-- Tabs for Switching Between Sections -->
-    <div class="menu-tabs">
-        <button class="tab-btn active" data-target="#edit-menu">Edit Menu</button>
-    </div>
 
 
+        /* Initially hide all page contents */
+.page-content {
+    display: none;
+}
 
-    <!-- Inline div for selecting a menu -->
-    <div class="menu-selection">
-        Edit your menu below.
-        or
-        <a href="#">Create a new menu</a>
-    </div>
+/* Show the active content */
+.page-content.active {
+    display: block;
+    display: flex;
+    flex-direction: column;
+}
 
-    <!-- Edit Menu Section -->
-    <div id="edit-menu" class="menu-container active">
-        <!-- Flex container for Pages and Menu Structure -->
-        <div class="flex-container">
-            <div class="flex-left">
-                <h2>Pages</h2>
-                <ul>
-                    <li>Home</li>
-                    <li>Services</li>
-                    <li>Contact</li>
-                </ul>
-            </div>
+/* Style for active button */
+.page-btn.active {
+    color: #c2c2c2;
+    background-color: #f1f1f1;
+}
 
-            <div class="flex-right">
-                <h2>Menu Structure</h2>
-                <ul>
-                    <li>Home</li>
-                    <li>Services</li>
-                    <li>Contact Us</li>
-                </ul>
+    .content-space {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    max-height: 200px;
+    overflow-y: auto; /* Makes the content scrollable if it exceeds the max height */
+    scrollbar-width: none; /* For Firefox: hides the scrollbar */
+    -ms-overflow-style: none; /* For Internet Explorer and Edge */
+    }
 
-                <div class="menu-footer">
-                    <button>Save Menu</button>
-                    <button class="delete-btn">Delete Menu</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    /* Hide scrollbar for WebKit browsers (Chrome, Safari, etc.) */
+    .content-space::-webkit-scrollbar {
+        display: none;
+    }
 
-    <!-- Manage Locations Section -->
-    <div id="manage-locations" class="menu-container" style="display:none;">
-        <div class="menu-content">
-            <h3>Manage Menu Locations</h3>
-            <p>Assign your menus to different theme locations.</p>
+        .content-space label {
+    font-size: 12px;
+    color: #c2c2c2;
+    display: flex;
+    align-items: center;
+    padding: 2px 0;
+    cursor: pointer;
+}
 
-            <div class="location-setting">
-                <label for="main-location">Main Navigation</label>
-                <select id="main-location">
-                    <option value="main">Main Navigation</option>
-                    <option value="footer">Footer Links</option>
-                    <option value="social">Social Media Links</option>
-                </select>
-            </div>
+.content-space input[type="checkbox"] {
+    margin-right: 10px; /* Space between checkbox and label */
+}
 
-            <div class="location-setting">
-                <label for="footer-location">Footer Links</label>
-                <select id="footer-location">
-                    <option value="footer">Footer Links</option>
-                    <option value="main">Main Navigation</option>
-                    <option value="social">Social Media Links</option>
-                </select>
-            </div>
+        .add-menu-btn {
+            display: flex;
+            justify-content: space-between;
 
-            <div class="menu-footer">
-                <button>Save Changes</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const tabs = document.querySelectorAll('.tab-btn');
-        const containers = document.querySelectorAll('.menu-container');
-        const flashMessage = document.getElementById('flash-msg');
-
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                containers.forEach(c => c.style.display = 'none');
-
-                tab.classList.add('active');
-                document.querySelector(tab.dataset.target).style.display = 'block';
-            });
-        });
-
-        // Show the flash message for a few seconds
-        function showFlashMessage() {
-            flashMessage.style.display = 'block';
-            setTimeout(() => {
-                flashMessage.style.display = 'none';
-            }, 3000);
         }
 
-        // Example of triggering flash message (you can call this function after an action like save)
-        showFlashMessage();
-    </script>
+.add-menu-btn a {
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+.add-to-menu-btn {
+            border: 1px solid #c1c1c1;
+            color: #c2c2c2;
+            margin-top: 4px;
+            font-size: 12px;
+            padding: 4px 8px 4px 8px;
+            border-radius: 2px;
+
+        }
+
+
+        .create-menu-form {
+            display: flex;
+
+        }
+        .create-menu-form h2 {
+            font-size: 13px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .create-menu-form input[type="text"] {
+            height: 30px;
+            width: 70%;
+            margin-left: 20px;
+        }
+
+        .create-menu-form input[type="submit"] {
+            float: right;
+            height: 30px;
+            font-size: 13px;
+            color: #ffffff;
+            padding: 4px 8px 4px 8px;
+            background-color: #1e73be;
+            border: none;
+            border-radius: 2px;
+            margin-left: 20px;
+
+        }
+
+    </style>
+
+    <div class="header">
+    <h3>Menus</h3>
+</div>
+
+<div class="menu-tabs">
+    <button class="tab-btn active" data-target="#edit-menu">Edit Menu</button>
+</div>
+
+<div class="menu-selection">
+    Edit your menu below.
+    or
+    <a href="#">Create a new menu</a>
+</div>
+
+<div id="edit-menu" class="menu-container active">
+    <div class="flex-container">
+        <div class="flex-left">
+    <ul>
+        <li data-target="#pages-section">Pages <i class="fas fa-chevron-down"></i></li>
+        <div id="pages-section" class="accordion-content">
+            <div class="page-filter">
+                <button class="page-btn active" data-target=".page-most-recent">Most Recent</button>
+                <button class="page-btn" data-target=".page-view-all">View All</button>
+                <button class="page-btn" data-target=".page-search">Search</button>
+            </div>
+            <div class="page-filter-content">
+                <div class="page-most-recent page-content content-space">
+                    {% set published_pages = pages | selectattr('status', 'equalto', 'published') | list %}
+                    {% set sorted_pages = published_pages | sort(attribute='created_at', reverse=true) %}
+                    {% set recent_pages = sorted_pages[:5] %}
+
+                    {% if recent_pages %}
+                        {% for page in recent_pages %}
+                            <label>
+                                <input type="checkbox" name="pages" value="{{ page.id }}"> {{ page.title }}
+                            </label>
+                        {% endfor %}
+                    {% else %}
+                        <p>No Recent Page</p>
+                    {% endif %}
+                </div>
+                <div class="page-view-all page-content content-space">
+                    {% if pages %}
+                        {% for page in pages %}
+                    {% if page.status == 'published' %}
+                            <label>
+                                <input type="checkbox" name="pages" value="{{ page.id }}"> {{ page.title }}
+                            </label>
+                    {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <p>No Page</p>
+                    {% endif %}
+
+
+                </div>
+                <div class="page-search page-content content-space">
+                    <a>hiiiiiiiii</a>
+                </div>
+            </div>
+            <!-- Add more content here as needed -->
+            <div class="add-menu-btn">
+                <a href="#">Select All</a>
+                <button class="add-to-menu-btn">Add to Menu</button>
+            </div>
+
+        </div>
+        <li data-target="#posts-section">Posts <i class="fas fa-chevron-down"></i></li>
+        <div id="posts-section" class="accordion-content">
+            <h3>Posts</h3>
+            <p>Select from the available posts...</p>
+            <!-- Add more content here as needed -->
+        </div>
+        <li data-target="#custom-links-section">Custom Links <i class="fas fa-chevron-down"></i></li>
+        <div id="custom-links-section" class="accordion-content">
+            <h3>Custom Links</h3>
+            <p>Add custom links...</p>
+            <!-- Add more content here as needed -->
+        </div>
+        <li data-target="#categories-section">Categories <i class="fas fa-chevron-down"></i></li>
+        <div id="categories-section" class="accordion-content">
+            <h3>Categories</h3>
+            <p>Select from the available categories...</p>
+            <!-- Add more content here as needed -->
+        </div>
+    </ul>
+</div>
+
+
+        <div class="flex-right">
+            <div class="create-menu-form">
+                <h2>Menu Name</h2>
+                <input type="text" name="menu-name">
+                <input type="submit"  value="Create Menu">
+            </div>
+
+<!--            <ul>-->
+<!--                <li>Home</li>-->
+<!--                <li>Services</li>-->
+<!--                <li>Contact Us</li>-->
+<!--            </ul>-->
+
+<!--            <div class="menu-footer">-->
+<!--                <button>Save Menu</button>-->
+<!--                <button class="delete-btn">Delete Menu</button>-->
+<!--            </div>-->
+        </div>
+    </div>
+</div>
+
+<script>
+    const items = document.querySelectorAll('.flex-left ul li');
+    const accordionContents = document.querySelectorAll('.accordion-content');
+
+    items.forEach(item => {
+        item.addEventListener('click', () => {
+            const target = document.querySelector(item.dataset.target);
+
+            // Toggle the current section
+            if (target.style.display === 'block') {
+                target.style.display = 'none';
+                item.querySelector('i').classList.replace('fa-chevron-up', 'fa-chevron-down');
+                item.classList.remove('active-tab');
+            } else {
+                // Hide all sections and reset all arrows
+                accordionContents.forEach(content => content.style.display = 'none');
+                items.forEach(i => {
+                    i.querySelector('i').classList.replace('fa-chevron-up', 'fa-chevron-down');
+                    i.classList.remove('active-tab');
+                });
+
+                // Show the clicked section and change arrow to up
+                target.style.display = 'block';
+                item.querySelector('i').classList.replace('fa-chevron-down', 'fa-chevron-up');
+                item.classList.add('active-tab');
+            }
+        });
+    });
+
+    // Click the "Pages" section by default when the page loads
+    window.addEventListener('DOMContentLoaded', () => {
+        const defaultItem = document.querySelector('.flex-left ul li[data-target="#pages-section"]');
+        if (defaultItem) {
+            defaultItem.click();
+        }
+    });
+
+    // JavaScript to handle button clicks
+const pageButtons = document.querySelectorAll('.page-btn');
+const pageContents = document.querySelectorAll('.page-content');
+
+// Function to remove active class from all buttons and contents
+function resetPages() {
+    pageButtons.forEach(button => button.classList.remove('active'));
+    pageContents.forEach(content => content.classList.remove('active'));
+}
+
+// Add event listeners to the buttons
+pageButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        // Reset all buttons and contents
+        resetPages();
+
+        // Set the clicked button as active
+        button.classList.add('active');
+
+        // Show the corresponding content
+        const target = document.querySelector(button.dataset.target);
+        if (target) {
+            target.classList.add('active');
+        }
+    });
+});
+
+// Trigger the first button (Most Recent) on page load
+document.querySelector('.page-btn[data-target=".page-most-recent"]').click();
+
+</script>
+
 {% endblock %}
