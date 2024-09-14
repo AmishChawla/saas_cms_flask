@@ -2485,9 +2485,8 @@ def get_page_by_username_and_slug(username, page_slug):
 @requires_any_permission("access_chatbot")
 @login_required
 def chatbot():
-    try:
-        all_chats = api_calls.get_user_all_chats(access_token=current_user.id)
-    except:
+    all_chats = api_calls.get_user_all_chats(access_token=current_user.id)
+    if all_chats is None:
         all_chats = []
 
     return render_template('cms/AI/chatbot.html', all_chats=all_chats)

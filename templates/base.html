@@ -57,14 +57,12 @@
        {% if request.endpoint not in ['login', 'admin_login', 'register'] %}
             {% if current_user.is_authenticated %}
       <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-                        {% if current_user.profile_picture %}
-                            <img src="{{ current_user.profile_picture }}" alt="profile" style="width: 25px; height: 25px; margin-right:10px; border-radius:50%; object-fit: cover;">
-                         {% else %}
+        <a class="nav-link" data-toggle="dropdown" href="#" style="display: flex;">
+
                             <div class="profile-placeholder" data-username="{{ current_user.username }}" style="width: 25px; height: 25px; margin-right: 10px; border-radius: 50%; border: 1px solid #b0bec5; display: flex; align-items: center; justify-content: center;">
                             <span style="color: white; font-weight: bold;">{{ current_user.username[0].upper() }}</span>
                         </div>
-                        {% endif %}
+
                         <span class="menu-title">{{ current_user.username }}</span>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
@@ -126,7 +124,7 @@
             </a>
           </li>
            <li class="nav-item menu-open">
-            <a class="nav-link {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' or request.endpoint == 'user_post_list' or request.endpoint == 'media' or request.endpoint == 'user_all_medias' or request.endpoint == 'newsletter_subscribers' or request.endpoint == 'get_all_comment' or request.endpoint == 'user_all_pages' or request.endpoint == 'add_page' or request.endpoint == 'chatbot' or request.endpoint == 'all_themes' or request.endpoint == 'theme_detail' %}active{% endif %}" href="{{ url_for('user_all_post') }}">
+            <a class="nav-link {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' or request.endpoint == 'user_post_list' or request.endpoint == 'media' or request.endpoint == 'user_all_medias' or request.endpoint == 'newsletter_subscribers' or request.endpoint == 'get_all_comment' or request.endpoint == 'user_all_pages' or request.endpoint == 'add_page' or request.endpoint == 'chatbot' or request.endpoint == 'resume_parser' or request.endpoint == 'resume_collection' or request.endpoint == 'all_themes' or request.endpoint == 'theme_detail' %}active{% endif %}" href="{{ url_for('user_all_post') }}">
               <i class="far fa-regular fa-folder nav-icon"></i>
               <p>
                 CMS
@@ -236,8 +234,8 @@
               </li>
             </ul>
               </li>
-              <li class="nav-item menu-open">
-            <a class="nav-link {% if request.endpoint == 'resume_parser' or request.endpoint == 'resume_collection' %}active{% endif %}" href="#">
+              <li class="nav-item {% if request.endpoint == 'chatbot' or request.endpoint == 'resume_parser' or request.endpoint == 'resume_collection' %} menu-open {% endif %}">
+            <a class="nav-link" href="#">
               <i class="far fa-regular fa-folder nav-icon"></i>
               <p>
                 AI
@@ -245,6 +243,12 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ url_for('chatbot') }}" class="nav-link {% if request.endpoint == 'chatbot' %} active {% endif %}">
+                  <i class="far bi bi-chat-fill nav-icon"></i>
+                  <p>Chat</p>
+                </a>
+              </li>
               <li class="nav-item {% if request.endpoint == 'resume_parser' or request.endpoint == 'resume_collection' %} menu-open {% endif %}">
                 <a class="nav-link" href="resume_parser">
                   <i class="far bi bi-file-code-fill nav-icon"></i>
@@ -266,14 +270,10 @@
               </li>
             </ul>
               </li>
-              <li class="nav-item">
-                <a href="{{ url_for('chatbot') }}" class="nav-link {% if request.endpoint == 'chatbot' %} active {% endif %}">
-                  <i class="far bi bi-chat-fill nav-icon"></i>
-                  <p>Chat</p>
-                </a>
-              </li>
             </ul>
+
           </li>
+
               <li class="nav-item {% if request.endpoint == 'get_all_comment' %} menu-open {% endif %}">
                 <a href="#" class="nav-link">
                   <i class="far fa fa-comment nav-icon"></i>
