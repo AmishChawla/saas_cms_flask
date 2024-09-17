@@ -2467,10 +2467,10 @@ def page_show_in_nav(page_id):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
-def get_scrapped_jobs(access_token):
-    headers = {'Authorization': f'Bearer {access_token}'}
+def get_scrapped_jobs():
+    # headers = {'Authorization': f'Bearer {access_token}'}
     try:
-        response = requests.get(constants.BASE_URL + f'/admin/scrapped-jobs', headers=headers)
+        response = requests.get(constants.BASE_URL + f'/admin/scrapped-jobs')
         print("Response Status Code:", response.status_code)  # Debug: Print status code
         if response.status_code == 200:
             result = response.json()

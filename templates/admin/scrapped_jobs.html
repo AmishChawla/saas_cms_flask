@@ -1,6 +1,5 @@
-{% extends 'admin_base.html' %}
-
-{% block title %}User's all posts{% endblock %}
+    {% extends 'base.html' %}
+{% block title %} Scrapped Jobs {% endblock %}
 
 {% block content %}
 <link href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" rel="stylesheet">
@@ -14,7 +13,7 @@
 
             <div class="tab-content" style="margin-top: 1.5rem;">
                 <div class="tab-pane fade show active" id="published-posts">
-          <table id="scrappedJobsTable" class="display" style="width:100%;">
+          <table id="scrappedJobsTable" class="table table-hover" style="width:100%;">
             <thead>
               <tr>
                 <th>Job Title</th>
@@ -69,8 +68,8 @@
       </div>
     </div>
   </div>
-
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
 <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
 <script>
 new DataTable('#scrappedJobsTable');

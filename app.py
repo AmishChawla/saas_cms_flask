@@ -2839,10 +2839,8 @@ def menu_management():
     return render_template('themes/theme_menu.html', pages=pages)
 
 @app.route('/scrapped-jobs')
-@login_required
-@requires_any_permission("manage_user")
 def scrapped_jobs():
-    result = api_calls.get_scrapped_jobs(access_token=current_user.id)
+    result = api_calls.get_scrapped_jobs()
     if result is None:
         result = []  # Set result to an empty list
 
