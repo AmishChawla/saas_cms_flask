@@ -28,6 +28,7 @@
                 <th> Industry </th>
                 <th>Applicants</th>
                 <th> Apply Url </th>
+                <th> Posted Date </th>
               </tr>
             </thead>
             <tbody>
@@ -49,6 +50,14 @@
                 {% else %}
                 <td class="py-1" style=" text-overflow: ellipsis;"><a href="#">Apply</a></td>
                 {% endif %}
+                {% if data.posted_date %}
+                <td class="py-1">{{ data.posted_date.split('T')[0] }}</td>
+                {% else %}
+                <td class="py-1">Sorry, Cant scrape</td>
+                {% endif %}
+
+
+
 
               </tr>
               {% endfor %}
