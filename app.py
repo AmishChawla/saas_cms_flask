@@ -2731,54 +2731,6 @@ def delete_security_group(group_id):
 
 
 
-
-
-
-
-
-
-#####################################################################################################################################
-
-
-#####################################################################################################################################
-############################################## ALL ROUTES ABOVE THIS ################################################################
-################################################   SITEMAP.XML  #####################################################################
-#####################################################################################################################################
-def generate_urls(app):
-    """
-    Generates a list of URLs for all registered routes in the Flask app
-    that start with a username variable part.
-    """
-    urls = []
-    # Define a pattern that indicates a username variable part in the URL rule
-    username_pattern = '/<'
-
-    for rule in app.url_map.iter_rules():
-        # Ignore HEAD rules since they don't serve content
-        if rule.methods != {'HEAD'}:
-            # Check if the rule starts with a username variable part
-            if str(rule).startswith(username_pattern):
-                urls.append(str(rule))
-
-    return urls
-
-@app.route('/sitemap.xml')
-def sitemap():
-    urls = generate_urls(app)  # Use the function from Step 1
-    # Start building the sitemap structure
-    sitemap_xml = ET.Element('urlset', xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
-
-    for url in urls:
-        url_element = ET.SubElement(sitemap_xml, 'url')
-        loc = ET.SubElement(url_element, 'loc')
-        loc.text = url
-
-    # Convert the ElementTree object to a string
-    sitemap_str = ET.tostring(sitemap_xml, encoding='utf8').decode('utf8')
-
-    # Return the sitemap as an XML response
-    return Response(sitemap_str, mimetype="application/xml")
-
 @app.route("/user-theme-activation", methods=['GET', 'POST'])
 def user_theme_activation():
     # Extract form data
@@ -2885,6 +2837,63 @@ def menu_management():
     if pages is None:
         pages = []  # Set pages to an empty list
     return render_template('themes/theme_menu.html', pages=pages)
+
+@app.route('/scrapped-jobs')
+@login_required
+@requires_any_permission("manage_user")
+def scrapped_jobs():
+    result = api_calls.get_scrapped_jobs(access_token=current_user.id)
+    if result is None:
+        result = []  # Set result to an empty list
+
+    return render_template('admin/scrapped_jobs.html', result=result)
+
+
+
+
+
+
+#####################################################################################################################################
+
+
+#####################################################################################################################################
+############################################## ALL ROUTES ABOVE THIS ################################################################
+################################################   SITEMAP.XML  #####################################################################
+#####################################################################################################################################
+def generate_urls(app):
+    """
+    Generates a list of URLs for all registered routes in the Flask app
+    that start with a username variable part.
+    """
+    urls = []
+    # Define a pattern that indicates a username variable part in the URL rule
+    username_pattern = '/<'
+
+    for rule in app.url_map.iter_rules():
+        # Ignore HEAD rules since they don't serve content
+        if rule.methods != {'HEAD'}:
+            # Check if the rule starts with a username variable part
+            if str(rule).startswith(username_pattern):
+                urls.append(str(rule))
+
+    return urls
+
+@app.route('/sitemap.xml')
+def sitemap():
+    urls = generate_urls(app)  # Use the function from Step 1
+    # Start building the sitemap structure
+    sitemap_xml = ET.Element('urlset', xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
+
+    for url in urls:
+        url_element = ET.SubElement(sitemap_xml, 'url')
+        loc = ET.SubElement(url_element, 'loc')
+        loc.text = url
+
+    # Convert the ElementTree object to a string
+    sitemap_str = ET.tostring(sitemap_xml, encoding='utf8').decode('utf8')
+
+    # Return the sitemap as an XML response
+    return Response(sitemap_str, mimetype="application/xml")
 
 
 @app.route('/robots.txt')

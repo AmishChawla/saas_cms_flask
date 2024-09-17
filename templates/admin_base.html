@@ -11,7 +11,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>{% block title %}HireGen{% endblock %}</title>
 
   <title>{% block title %}SaaS CMS Boilerplate{% endblock %}</title>
 
@@ -208,6 +207,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </p>
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'scrapped_jobs' %}active{% endif %}" href="{{ url_for('scrapped_jobs') }}">
+                <i class="nav-icon far bi bi-trash3-fill"></i>
+              <p>
+                Scrapped Jobs
+              </p>
+            </a>
+          </li>
+
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
