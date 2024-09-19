@@ -2839,12 +2839,130 @@ def menu_management():
     return render_template('themes/theme_menu.html', pages=pages)
 
 @app.route('/scrapped-jobs')
+@login_required
+@requires_any_permission("scrapper_user")
 def scrapped_jobs():
-    result = api_calls.get_scrapped_jobs()
+    result = api_calls.get_scrapped_jobs(access_token=current_user.id)
     if result is None:
         result = []  # Set result to an empty list
 
-    return render_template('admin/scrapped_jobs.html', result=result)
+    return render_template('scrapper/scrapped_jobs.html', result=result)
+
+
+@app.route('/scrapper/login', methods=['GET', 'POST'])
+def scrapper_login():
+    session.pop('_flashes', None)
+    print('trying')
+    if current_user.is_authenticated:
+        return redirect(url_for('scrapped_jobs'))
+    form = forms.LoginForm()
+    print(form.validate_on_submit())
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+        response = api_calls.scrapper_login_api(email, password)
+
+        if response is not None and response.status_code == 200:
+            data = response.json()
+            id = data.get('id')
+            token = data.get('access_token')
+            role = data.get('role')
+            username = data.get('username')
+            email = data.get('email')
+            company = {}
+            services=[]
+            group = data.get('group', {})
+            profile_picture = data['profile_picture']
+
+            user = User(id=id, user_id=token, role=role, username=username, email=email, company=company,services=services,
+                        group=group, profile_picture=profile_picture)
+            login_user(user)
+            session['user'] = {
+                'id': id,
+                'user_id': token,
+                'role': role,
+                'username': username,
+                'email': email,
+                'company': company,
+                'services':services,
+                'group':group,
+                'profile_picture': profile_picture,
+            }
+            return redirect(url_for('scrapped_jobs'))
+        elif response.status_code == 400:
+            result = response.json()
+            message = result["detail"]
+            flash(message, category='error')
+        else:
+            # Handle the case where the response is None or the status code is not 200
+            print("Error: Response is None or status code is not 200")
+            flash('Login unsuccessful. Please check email and password.', category='error')
+
+    return render_template('scrapper/scrapper_login.html', form=form)
+
+
+@app.route('/scrapper/register', methods=['GET', 'POST'])
+def scrapper_register():
+    session.pop('_flashes', None)
+
+    form = forms.RegisterForm()
+    print("outside")
+    if form.validate_on_submit():
+        username = form.username.data
+        email = form.email.data
+        password = form.password.data
+        response = api_calls.scrapper_register_api(username, email, password)
+        print("inside")
+        if response.status_code == 200:
+            response = api_calls.scrapper_login_api(email, password)
+            if response is not None and response.status_code == 200:
+                data = response.json()
+                token = data.get('access_token')
+                id = data.get('id')
+                role = data.get('role')
+                username = data.get('username')
+                email = data.get('email')
+                company = {}
+                services = []
+                group = data.get('group', {})
+                profile_picture = data['profile_picture']
+
+                user = User(id=id, user_id=token, role=role, username=username, email=email,
+                            company=company, services=services, group=group,
+                            profile_picture=profile_picture)
+                login_user(user)
+                session['user'] = {
+                    'id': id,
+                    'user_id': token,
+                    'role': role,
+                    'username': username,
+                    'email': email,
+                    'company': company,
+                    'services': services,
+                    'group': group,
+                    'profile_picture': profile_picture
+                }
+            flash('Registration Successful', category='info')
+            return redirect(url_for('scrapped_jobs'))
+        elif response.status_code == 400:
+            result = response.json()
+            message = result["detail"]
+            flash(message, category='error')
+
+        else:
+            flash('Registration unsuccessful. Please check username, email and password.', category='error')
+
+    return render_template('scrapper/scrapper_register.html', form=form)
+
+
+@app.route('/scrapper/logout')
+@login_required
+def scrapper_logout():
+    logout_user()
+    session.clear()
+    flash('Logout successful!', 'success')
+    return redirect(url_for('scrapper_login'))
+
 
 
 
