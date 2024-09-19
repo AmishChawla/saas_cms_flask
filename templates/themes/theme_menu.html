@@ -25,20 +25,25 @@
             margin: 20px;
             margin-bottom: 20px;
             margin-top: 0;
+            border-bottom: 1px solid #c9c9c9;
         }
 
         .menu-tabs button {
             padding: 10px 20px;
             margin-right: 10px;
             cursor: pointer;
-            background-color: #f8f9fa;
-            border: 1px solid #ccc;
+            background-color: transparent;
+            border: 1px solid #c9c9c9;
+            border-bottom: none;
+            box-shadow: 0 2px 0 0 white;
         }
 
         .menu-tabs button.active {
-            background-color: #1e73be;
-            color: white;
-            border: 1px solid #1e73be;
+            background-color: transparent;
+            color: #111;
+            border: 1px solid #c9c9c9;
+            border-bottom: none;
+            box-shadow: 0 2px 0 0 white;
         }
 
 
@@ -445,9 +450,12 @@
     Select a menu to edit:
     <select id="menu-select" name="menu-select">
         <option value="" disabled selected>Select a menu</option>
-        <option value="menu1">Menu 1</option>
-        <option value="menu2">Menu 2</option>
-        <option value="menu3">Menu 3</option>
+        {% if menus %}
+            {% for menu in menus %}
+                <option value="{{ menu.id }}">{{ menu.name }}</option>
+            {% endfor %}
+        {% endif %}
+
         <!-- Add more options as needed -->
     </select>
     or
@@ -497,7 +505,10 @@
 
                 </div>
                 <div class="page-search page-content content-space">
-                    <a>hiiiiiiiii</a>
+                    <input type="text" id="search-input" placeholder="Search pages..." onkeyup="searchPages()">
+                    <div id="search-results">
+                            <!-- Search results will be dynamically inserted here -->
+                    </div>
                 </div>
             </div>
             <!-- Add more content here as needed -->
@@ -718,6 +729,11 @@ document.querySelector('.page-btn[data-target=".page-most-recent"]').click();
     // Submit selected page IDs when "Add to Menu" button is clicked
     document.querySelector('.add-to-menu-btn').addEventListener('click', function (e) {
         e.preventDefault(); // Prevent default behavior of button
+        const selectedMenu = document.querySelector('#menu-select').value; // Get the selected menu value
+        if (!selectedMenu) {
+            alert('Please select a menu before adding pages.');
+            return; // Exit the function if no menu is selected
+        }
         const selectedPageIds = [];
         const activeTabCheckboxes = document.querySelectorAll('.page-content.active input[type="checkbox"]:checked');
         activeTabCheckboxes.forEach(checkbox => {
@@ -773,18 +789,25 @@ document.querySelector('.page-btn[data-target=".page-most-recent"]').click();
     const menuSelect = document.getElementById('menu-select');
     const menuInput = document.querySelector('input[name="name"]');
     const createNewMenuLink = document.querySelector('.menu-selection a');
-    const submitButton = document.querySelector('input[type="submit"]'); // Reference to the submit button
-    const menuStructureDiv = document.querySelector('.menu-structure'); // Reference to the menu-structure div
+    const submitButton = document.querySelector('input[type="submit"]');
+    const menuStructureDiv = document.querySelector('.menu-structure');
+    const form = document.querySelector('.create-menu-form form'); // Reference to the form
 
     // Handle menu selection
     menuSelect.addEventListener('change', function() {
-        const selectedMenu = menuSelect.value;
-        if (selectedMenu) {
-            menuInput.value = selectedMenu; // Set input field with selected menu
+        const selectedMenuIndex = menuSelect.selectedIndex;
+        const selectedMenu = menuSelect.options[selectedMenuIndex].text; // Get the selected option's text (menu name)
+        const selectedMenuId = menuSelect.value; // Get the selected option's value (menu id)
+
+        if (selectedMenu && selectedMenuId) {
+            menuInput.value = selectedMenu; // Set input field with selected menu name
             submitButton.value = 'Save Menu'; // Change button text to 'Save Menu'
+            form.action = `{{ url_for('update_menu', menu_id='') }}/${selectedMenuId}`; // Append selectedMenuId to the form action URL
             if (menuStructureDiv) {
                 menuStructureDiv.style.display = 'block'; // Show the menu-structure div
             }
+        } else {
+            form.action = '{{ url_for("create_menu") }}'; // Reset form action to default
         }
     });
 
@@ -794,6 +817,7 @@ document.querySelector('.page-btn[data-target=".page-most-recent"]').click();
         menuSelect.value = ''; // Reset the dropdown to the default option
         menuInput.value = ''; // Clear the input field
         submitButton.value = 'Create Menu'; // Reset button text to 'Create Menu'
+        form.action = '{{ url_for("create_menu") }}'; // Reset form action to default for new menu creation
         if (menuStructureDiv) {
             menuStructureDiv.style.display = 'none'; // Hide the menu-structure div
         }
@@ -804,6 +828,32 @@ document.querySelector('.page-btn[data-target=".page-most-recent"]').click();
 
 
 </script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function searchPages() {
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            const pages = document.querySelectorAll('.page-view-all label'); // Adjust the selector to match where your pages are listed
+
+            let results = '';
+
+            pages.forEach(page => {
+                const title = page.textContent.toLowerCase();
+
+                if (title.includes(searchInput)) {
+                    results += `<label>${page.innerHTML}</label>`;
+                }
+            });
+
+            document.getElementById('search-results').innerHTML = results || '<p>No pages found</p>';
+        }
+
+        // Optional: Trigger search on input change
+        document.getElementById('search-input').addEventListener('input', searchPages);
+    });
+</script>
+
 
 
 {% endblock %}

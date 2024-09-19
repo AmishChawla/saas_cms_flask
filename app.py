@@ -2731,54 +2731,6 @@ def delete_security_group(group_id):
 
 
 
-
-
-
-
-
-
-#####################################################################################################################################
-
-
-#####################################################################################################################################
-############################################## ALL ROUTES ABOVE THIS ################################################################
-################################################   SITEMAP.XML  #####################################################################
-#####################################################################################################################################
-def generate_urls(app):
-    """
-    Generates a list of URLs for all registered routes in the Flask app
-    that start with a username variable part.
-    """
-    urls = []
-    # Define a pattern that indicates a username variable part in the URL rule
-    username_pattern = '/<'
-
-    for rule in app.url_map.iter_rules():
-        # Ignore HEAD rules since they don't serve content
-        if rule.methods != {'HEAD'}:
-            # Check if the rule starts with a username variable part
-            if str(rule).startswith(username_pattern):
-                urls.append(str(rule))
-
-    return urls
-
-@app.route('/sitemap.xml')
-def sitemap():
-    urls = generate_urls(app)  # Use the function from Step 1
-    # Start building the sitemap structure
-    sitemap_xml = ET.Element('urlset', xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
-
-    for url in urls:
-        url_element = ET.SubElement(sitemap_xml, 'url')
-        loc = ET.SubElement(url_element, 'loc')
-        loc.text = url
-
-    # Convert the ElementTree object to a string
-    sitemap_str = ET.tostring(sitemap_xml, encoding='utf8').decode('utf8')
-
-    # Return the sitemap as an XML response
-    return Response(sitemap_str, mimetype="application/xml")
-
 @app.route("/user-theme-activation", methods=['GET', 'POST'])
 def user_theme_activation():
     # Extract form data
@@ -2881,10 +2833,68 @@ def page_show_in_nav(page_id, theme_name, theme_id):
 @app.route('/user/appearance/menus')
 @login_required
 def menu_management():
+    menus = api_calls.get_user_all_menus(access_token=current_user.id)
+    if menus is None:
+        menus = []
     pages = api_calls.get_user_all_pages(access_token=current_user.id)
     if pages is None:
         pages = []  # Set pages to an empty list
-    return render_template('themes/theme_menu.html', pages=pages)
+    return render_template('themes/theme_menu.html', pages=pages, menus=menus)
+
+@app.route('/scrapped-jobs')
+def scrapped_jobs():
+    result = api_calls.get_scrapped_jobs()
+    if result is None:
+        result = []  # Set result to an empty list
+
+    return render_template('admin/scrapped_jobs.html', result=result)
+
+
+
+
+
+
+#####################################################################################################################################
+
+
+#####################################################################################################################################
+############################################## ALL ROUTES ABOVE THIS ################################################################
+################################################   SITEMAP.XML  #####################################################################
+#####################################################################################################################################
+def generate_urls(app):
+    """
+    Generates a list of URLs for all registered routes in the Flask app
+    that start with a username variable part.
+    """
+    urls = []
+    # Define a pattern that indicates a username variable part in the URL rule
+    username_pattern = '/<'
+
+    for rule in app.url_map.iter_rules():
+        # Ignore HEAD rules since they don't serve content
+        if rule.methods != {'HEAD'}:
+            # Check if the rule starts with a username variable part
+            if str(rule).startswith(username_pattern):
+                urls.append(str(rule))
+
+    return urls
+
+@app.route('/sitemap.xml')
+def sitemap():
+    urls = generate_urls(app)  # Use the function from Step 1
+    # Start building the sitemap structure
+    sitemap_xml = ET.Element('urlset', xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
+
+    for url in urls:
+        url_element = ET.SubElement(sitemap_xml, 'url')
+        loc = ET.SubElement(url_element, 'loc')
+        loc.text = url
+
+    # Convert the ElementTree object to a string
+    sitemap_str = ET.tostring(sitemap_xml, encoding='utf8').decode('utf8')
+
+    # Return the sitemap as an XML response
+    return Response(sitemap_str, mimetype="application/xml")
 
 
 @app.route('/user/appearance/menus/create-menu', methods=['GET', 'POST'])
@@ -2897,7 +2907,16 @@ def create_menu():
     else:
         return "Menu creation failed", 400  # Return an error response if something goes wrong
 
+@app.route('/user/appearance/menus/update-menu/<menu_id>', methods=['GET', 'POST'])
+@login_required
+def update_menu(menu_id):
+    name = request.form.get('name')
 
+    result = api_calls.update_menu(name=name, menu_id=menu_id, access_token=current_user.id)
+    if result:
+        return redirect(url_for('menu_management'))
+    else:
+        return "Menu creation failed", 400  # Return an error response if something goes wrong
 
 
 @app.route('/robots.txt')

@@ -1,0 +1,77 @@
+    {% extends 'base.html' %}
+{% block title %} Scrapped Jobs {% endblock %}
+
+{% block content %}
+<link href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" rel="stylesheet">
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
+      <div class="card">
+        <div class="card-body" style="overflow-x: auto;">
+          <div style="display:flex; justify-content:space-between;">
+            <h2 class="m-0">Scrapped Jobs</h2>
+          </div>
+
+            <div class="tab-content" style="margin-top: 1.5rem;">
+                <div class="tab-pane fade show active" id="published-posts">
+          <table id="scrappedJobsTable" class="table table-hover" style="width:100%;">
+            <thead>
+              <tr>
+                <th>Job Title</th>
+                <th>Job Link</th>
+                <th>State</th>
+                <th>Description</th>
+                <th>Company</th>
+                <th>Seniority Level</th>
+                <th>Job Type</th>
+                <th> Job Function</th>
+                <th> Industry </th>
+                <th>Applicants</th>
+                <th> Apply Url </th>
+                <th> Posted Date </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for data in result | reverse %}
+              <tr style="max-height: 100px; overflow-y: auto;">
+                <td class="py-1">{{ data.title }}</td>
+                <td class="py-1" style="text-overflow: ellipsis;"><a href="{{ data.job_link }}"> Job Link</a></td>
+                <td class="py-1">{{ data.state }}</td>
+                <td class="py-1" style="max-width:9vw; white-space: nowrap; overflow: hidden;text-overflow: ellipsis;">
+                  {{ data.description }}</td>
+                <td class="py-1">{{ data.company }}</td>
+                <td class="py-1">{{ data.seniority_level }}</td>
+                <td class="py-1">{{ data.job_type }}</td>
+                <td class="py-1">{{ data.job_function }}</td>
+                <td class="py-1">{{ data.industry }}</td>
+                <td class="py-1">{{ data.applicants }}</td>
+                {% if data.apply_url %}
+                <td class="py-1" style=" text-overflow: ellipsis;"><a href="{{ data.apply_url }}">Apply</a> </td>
+                {% else %}
+                <td class="py-1" style=" text-overflow: ellipsis;"><a href="#">Apply</a></td>
+                {% endif %}
+                {% if data.posted_date %}
+                <td class="py-1">{{ data.posted_date.split('T')[0] }}</td>
+                {% else %}
+                <td class="py-1">Sorry, Cant scrape</td>
+                {% endif %}
+
+
+
+
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+                </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+<script>
+new DataTable('#scrappedJobsTable');
+</script>
+{% endblock %}

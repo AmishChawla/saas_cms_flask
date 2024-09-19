@@ -2468,6 +2468,7 @@ def page_show_in_nav(page_id):
         print(f"An unexpected error occurred: {err}")
 
 
+
 def create_menu(name, access_token):
     print('Trying to create menu')
     headers = {'Authorization': f'Bearer {access_token}'}
@@ -2478,13 +2479,97 @@ def create_menu(name, access_token):
 
         # Log the status code and response body
         print(f"Response Status Code: {response.status_code}")
-        print(f"Response Content: {response.content.decode()}")
+        print(f"Response Content: {response.text}")
 
+        # Handle the response
         if response.status_code == 200:
+            print("Menu created successfully.")
             return response.json()
+        elif response.status_code == 400:
+            print("Bad request: Missing or invalid data.")
+        elif response.status_code == 401:
+            print("Unauthorized: Invalid or missing access token.")
+        elif response.status_code == 403:
+            print("Forbidden: Authentication required.")
+        elif response.status_code == 500:
+            print("Server error: Something went wrong on the server.")
         else:
-            print(f"Menu creation failed: {response.json()}")
-            return None
+            print(f"Unexpected response: {response.status_code} - {response.text}")
+        return None
+
+    except requests.exceptions.RequestException as e:
+        # Handle any exceptions that occur during the request
+        print(f"An error occurred while making the request: {str(e)}")
+        return None
+
+
+def get_user_all_menus(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.get(constants.BASE_URL + f'/user/get_user_menu', headers=headers)
+        print("Response Status Code:", response.status_code)  # Debug: Print status code
+        if response.status_code == 200:
+            result = response.json()
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def update_menu(name, menu_id, access_token):
+    print('Trying to create menu')
+    headers = {'Authorization': f'Bearer {access_token}'}
+    data = {"name": name}
+
+    try:
+        response = requests.put(constants.BASE_URL + f'/user/update_menu/{menu_id}', json=data, headers=headers)
+
+        # Log the status code and response body
+        print(f"Response Status Code: {response.status_code}")
+        print(f"Response Content: {response.text}")
+
+        # Handle the response
+        if response.status_code == 200:
+            print("Menu created successfully.")
+            return response.json()
+        elif response.status_code == 400:
+            print("Bad request: Missing or invalid data.")
+        elif response.status_code == 401:
+            print("Unauthorized: Invalid or missing access token.")
+        elif response.status_code == 403:
+            print("Forbidden: Authentication required.")
+        elif response.status_code == 500:
+            print("Server error: Something went wrong on the server.")
+        else:
+            print(f"Unexpected response: {response.status_code} - {response.text}")
+        return None
+
+    except requests.exceptions.RequestException as e:
+        # Handle any exceptions that occur during the request
+        print(f"An error occurred while making the request: {str(e)}")
+        return None
+
+
+
+def get_scrapped_jobs():
+    # headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.get(constants.BASE_URL + f'/admin/scrapped-jobs')
+        print("Response Status Code:", response.status_code)  # Debug: Print status code
+        if response.status_code == 200:
+            result = response.json()
+            return result
+
+        else:
+            print("API Error:", response.text)
+            abort(response.status_code)
 
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
