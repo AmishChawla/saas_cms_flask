@@ -1,0 +1,130 @@
+{% extends 'scrapper/scrapper_base.html' %}
+
+{% block title %}Scrapper Login{% endblock %}
+
+
+{% block content %}
+<style>
+    .separator {
+    width: 100%;
+    border-bottom: solid 1px;
+    position: relative;
+    margin: 30px 0px;
+}
+
+.separator::before {
+    content: "OR";
+    position: absolute;
+    left: 47%;
+    top: -8px;
+    background-color: #fff;
+    padding: 0px 10px;
+}
+
+.login-with-google-btn {
+  transition: background-color .3s, box-shadow .3s;
+
+  padding: 12px 16px 12px 42px;
+  border: none;
+  border-radius: 3px;
+  box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 1px 1px rgba(0, 0, 0, .25);
+
+  color: #757575;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",sans-serif;
+
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=);
+  background-color: white;
+  background-repeat: no-repeat;
+  background-position: 12px 11px;
+
+  &:hover {
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 2px 4px rgba(0, 0, 0, .25);
+  }
+
+  &:active {
+    background-color: #eeeeee;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow:
+      0 -1px 0 rgba(0, 0, 0, .04),
+      0 2px 4px rgba(0, 0, 0, .25),
+      0 0 0 3px #c8dafc;
+  }
+
+  &:disabled {
+    filter: grayscale(100%);
+    background-color: #ebebeb;
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 1px 1px rgba(0, 0, 0, .25);
+    cursor: not-allowed;
+  }
+}
+</style>
+<div class="container mt-5"></div>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card border-0">
+                    <!-- Add a card header "Login" -->
+                    <div class="card-header bg-white text-black text-center">
+                        <h2>Scrapper Login</h2>
+                    </div>
+
+                    <!-- Center the image, add padding, and resize -->
+                    <div class="card-img-top text-center my-3">
+                        <img src="{{ url_for('static', filename='images/login.png') }}" alt="Login Image" style="max-width: 300px; width: 5rem; height: 5rem;" class="img-fluid">
+                    </div>
+
+                    <div class="card-body">
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                <ul class="flashes alert alert-danger" style="list-style-type: none;">
+                                {% for message in messages %}
+                                    <li>{{ message }}</li>
+                                {% endfor %}
+                                </ul>
+                            {% endif %}
+                        {% endwith %}
+                        <form method="post" action="{{ url_for('scrapper_login') }}">
+                            {{ form.hidden_tag() }}
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label visually-hidden">Email:</label>
+                                <div class="input-group">
+                                    <span class="input-group-text text-danger"><i class="bi bi-envelope"></i></span>
+                                    {{ form.email(class="form-control", placeholder="Email", required=True) }}
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label visually-hidden">Password:</label>
+                                <div class="input-group">
+                                    <span class="input-group-text text-secondary"><i class="bi bi-lock-fill"></i></span>
+                                    {{ form.password(class="form-control", placeholder="Password", required=True) }}
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 col-6 mx-auto mb-3">
+                                {{ form.submit(class="btn btn-primary mt-2") }}
+                            </div>
+
+
+                            <p class="text-center">Don't have an account? <a href="{{ url_for('scrapper_register') }}" class="text-muted">SignUp here</a></p>
+
+<!--                            <div class="separator"></div>-->
+<!--                            <div class="mb-3 text-center">-->
+<!--                                <a role="button" class="login-with-google-btn" href="{{ url_for('google_login') }}">-->
+<!--                                    Sign in with Google-->
+<!--                                </a>-->
+<!--                            </div>-->
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+
+{% endblock %}

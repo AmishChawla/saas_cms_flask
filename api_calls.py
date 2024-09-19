@@ -2469,6 +2469,7 @@ def page_show_in_nav(page_id):
 
 
 
+
 def create_menu(name, access_token):
     print('Trying to create menu')
     headers = {'Authorization': f'Bearer {access_token}'}
@@ -2557,11 +2558,11 @@ def update_menu(name, menu_id, access_token):
         return None
 
 
+def get_scrapped_jobs(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
 
-def get_scrapped_jobs():
-    # headers = {'Authorization': f'Bearer {access_token}'}
     try:
-        response = requests.get(constants.BASE_URL + f'/admin/scrapped-jobs')
+        response = requests.get(constants.BASE_URL + f'/scrapper/scrapped-jobs', headers=headers)
         print("Response Status Code:", response.status_code)  # Debug: Print status code
         if response.status_code == 200:
             result = response.json()
@@ -2571,6 +2572,52 @@ def get_scrapped_jobs():
             print("API Error:", response.text)
             abort(response.status_code)
 
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+
+def scrapper_login_api(email, password):
+    print('trying2')
+    data = {
+        "username": email,
+        "password": password
+    }
+
+    try:
+        response = requests.post(constants.BASE_URL + '/scrapper-login', data=data)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def scrapper_register_api(username, email, password):
+    print('trying3')
+    headers = {'Content-Type': 'application/json'}
+    data = {
+        "username": username,
+        "email": email,
+        "password": password,
+        "role": "user",
+        "security_group": 9
+    }
+
+    try:
+        response = requests.post(constants.BASE_URL + f'/scrapper-register', data=json.dumps(data), headers=headers)
+        print(response.text)
+        return response
     except requests.exceptions.HTTPError as errh:
         print(f"HTTP Error: {errh}")
     except requests.exceptions.ConnectionError as errc:

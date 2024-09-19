@@ -1,0 +1,65 @@
+{% extends 'scrapper/scrapper_base.html' %}
+
+{% block title %}Scrapper Register{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card border-0">
+                    <!-- Add a card header "Register" -->
+                    <div class="card-header bg-white text-black text-center">
+                        <h2>Scrapper Register</h2>
+                    </div>
+
+                    <div class="card-body">
+
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                <ul class="flashes alert alert-danger" style="list-style-type: none;">
+                                {% for message in messages %}
+                                    <li>{{ message }}</li>
+                                {% endfor %}
+                                </ul>
+                            {% endif %}
+                        {% endwith %}
+
+                        <form method="post" action="{{ url_for('scrapper_register') }}" id="registeration_form">
+    {{ form.hidden_tag() }}
+
+    <div class="mb-3">
+        <label for="username" class="form-label visually-hidden" name="username">Username:</label>
+        {{ form.username(class="form-control", placeholder="Username", required=True) }}
+    </div>
+
+    <div class="mb-3">
+        <label for="email" class="form-label visually-hidden" name="email">Email:</label>
+        {{ form.email(class="form-control", placeholder="Email", required=True) }}
+    </div>
+
+    <div class="mb-3">
+        <label for="password" class="form-label visually-hidden" name="password">Password:</label>
+        {{ form.password(class="form-control", placeholder="Password", required=True) }}
+    </div>
+
+    <div class="mb-3">
+        <label for="confirm_password" class="form-label visually-hidden" name="confirm_password">Confirm Password:</label>
+        {{ form.confirm_password(class="form-control", placeholder="Confirm Password", required=True) }}
+    </div>
+
+                            <div class="d-grid gap-2 col-6 mx-auto mb-3">
+                                {{ form.submit(class="btn btn-primary mt-2") }}
+                            </div>
+
+    <p class="text-center">Already have an account? <a href="{{ url_for('scrapper_login') }}" class="text-muted">Login here</a></p>
+</form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
