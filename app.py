@@ -2887,6 +2887,19 @@ def menu_management():
     return render_template('themes/theme_menu.html', pages=pages)
 
 
+@app.route('/user/appearance/menus/create-menu', methods=['GET', 'POST'])
+@login_required
+def create_menu():
+    name = request.form.get('name')
+    result = api_calls.create_menu(name=name, access_token=current_user.id)
+    if result:
+        return redirect(url_for('menu_management'))
+    else:
+        return "Menu creation failed", 400  # Return an error response if something goes wrong
+
+
+
+
 @app.route('/robots.txt')
 def robots_txt():
     return send_from_directory('static', 'robots.txt', mimetype='text/plain')

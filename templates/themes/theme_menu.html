@@ -82,6 +82,13 @@
             background-color: #b8b894;
         }
 
+        .menu-selection select {
+            padding: 4px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+        }
+
         .menu-container {
             margin: 20px;
         }
@@ -298,9 +305,14 @@
             font-style: italic;
         }
 
+        .create-menu-form form {
+            display: flex;
+            width: 90%;
+        }
+
         .create-menu-form input[type="text"] {
             height: 30px;
-            width: 70%;
+            width: 80%;
             margin-left: 20px;
         }
 
@@ -317,6 +329,108 @@
 
         }
 
+
+        .menu-structure {
+    display: none; /* Hidden by default */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.menu-structure h3 {
+    margin-top: 0;
+}
+
+.menu-structure p {
+    font-size: 13px;
+}
+
+.menu-structure ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-structure ul li {
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 10px 20px 10px 20px;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menu-footer {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.menu-footer button {
+    padding: 4px 8px 4px 8px;
+    border: none;
+    border-radius: 2px;
+    color: white;
+    cursor: pointer;
+    font-size: 13px;
+
+}
+
+.menu-footer .save-btn {
+    background-color: #0056b3;
+}
+
+
+        .menu-footer a {
+            color: #c82333;
+            font-size: 13px;
+        }
+
+
+        .menu-settings {
+    margin-top: 20px;
+}
+
+.menu-settings h4 {
+    margin-bottom: 10px;
+}
+
+.menu-settings-items {
+    display: flex;
+
+}
+
+.menu-settings-items p {
+    font-size: 13px;
+    font-style: italic;
+    color: #111;
+    width: 20%;
+}
+
+.menu-settings label {
+    display: inline;
+    margin-bottom: 5px;
+    cursor: pointer;
+    color: #111;
+    font-size: 13px;
+    font-weight: normal;
+}
+.menu-settings-option {
+    color: #ccc;
+    font-size: 13px;
+}
+
+
+.menu-settings input[type="checkbox"] {
+    margin-right: 10px;
+}
+
     </style>
 
     <div class="header">
@@ -328,7 +442,14 @@
 </div>
 
 <div class="menu-selection">
-    Edit your menu below.
+    Select a menu to edit:
+    <select id="menu-select" name="menu-select">
+        <option value="" disabled selected>Select a menu</option>
+        <option value="menu1">Menu 1</option>
+        <option value="menu2">Menu 2</option>
+        <option value="menu3">Menu 3</option>
+        <!-- Add more options as needed -->
+    </select>
     or
     <a href="#">Create a new menu</a>
 </div>
@@ -411,8 +532,10 @@
         <div class="flex-right">
             <div class="create-menu-form">
                 <h2>Menu Name</h2>
-                <input type="text" name="menu-name">
+                <form action="{{ url_for('create_menu') }}" method="POST">
+                    <input type="text" name="name">
                 <input type="submit"  value="Create Menu">
+                </form>
             </div>
 
 <!--            <ul>-->
@@ -425,6 +548,66 @@
 <!--                <button>Save Menu</button>-->
 <!--                <button class="delete-btn">Delete Menu</button>-->
 <!--            </div>-->
+
+             <!-- The menu-structure div -->
+            <div class="menu-structure" style="display: none;">
+                <!-- Content for menu structure can be added here -->
+                <h4>Menu Structure</h4>
+                <p>Drag each item into the order you prefer. Click the arrow on the right of the item to reveal additional configuration options.</p>
+                <ul>
+                    <li>Home <i class="fas fa-chevron-down"></i></li>
+                    <li>Features <i class="fas fa-chevron-down"></i></li>
+                    <li>Sample Page <i class="fas fa-chevron-down"></i></li>
+                    <li>Contact us <i class="fas fa-chevron-down"></i></li>
+                    <!-- Add more items or structure as needed -->
+                </ul>
+
+                <!-- Menu Settings Section -->
+    <div class="menu-settings">
+        <h4>Menu Settings</h4>
+        <!-- Auto Add Pages -->
+        <div class="menu-settings-items">
+        <p>Auto add pages</p>
+        <div class="menu-settings-label">
+        <label for="auto-add-pages" class="menu-settings-option">
+            <input type="checkbox" id="auto-add-pages" name="auto-add-pages" value="auto add menu">
+            Automatically add new top-level pages to this menu
+        </label>
+        </div>
+        </div>
+        <br>
+
+        <!-- Theme Locations -->
+        <div class="menu-settings-items">
+        <p>Themes Locations</p>
+        <div class="menu-settings-label">
+        <label for="main-navigation" class="menu-settings-option">
+            <input type="checkbox" id="main-navigation" name="theme-location" value="Main Navigation"> Main Navigation
+        </label>
+        <br>
+        <label for="top-menu" class="menu-settings-option">
+            <input type="checkbox" id="top-menu" name="theme-location" value="Top Menu"> Top Menu
+        </label>
+        <br>
+        <label for="social-menu" class="menu-settings-option">
+            <input type="checkbox" id="social-menu" name="theme-location" value="Social Menu"> Social Menu
+        </label>
+        <br>
+        <label for="footer-menu" class="menu-settings-option">
+            <input type="checkbox" id="footer-menu" name="theme-location" value="Footer Menu"> Footer Menu
+        </label>
+        <br>
+        <label for="404-menu" class="menu-settings-option">
+            <input type="checkbox" id="404-menu" name="theme-location" value="404 Menu"> 404 Menu
+        </label>
+        </div>
+        </div>
+    </div>
+                <div class="menu-footer">
+                    <a href="#">Delete Menu</a>
+                    <button class="save-btn">Save Menu</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -497,5 +680,130 @@ pageButtons.forEach(button => {
 document.querySelector('.page-btn[data-target=".page-most-recent"]').click();
 
 </script>
+
+<script>
+   document.addEventListener('DOMContentLoaded', function () {
+    // Function to enable/disable Add to Menu button and update its background color and active class
+    function updateAddToMenuButtonState() {
+        const addToMenuButton = document.querySelector('.add-to-menu-btn');
+        const activeTabCheckboxes = document.querySelectorAll('.page-content.active input[type="checkbox"]');
+        const anyChecked = Array.from(activeTabCheckboxes).some(checkbox => checkbox.checked);
+
+        addToMenuButton.disabled = !anyChecked; // Enable button if any checkbox is checked
+
+        // Toggle 'btn-primary' background class and 'active' class
+        if (anyChecked) {
+            addToMenuButton.classList.add('btn-primary', 'active'); // Add primary background and active class
+        } else {
+            addToMenuButton.classList.remove('btn-primary', 'active'); // Remove primary background and active class
+        }
+    }
+
+    // Function to select/deselect all checkboxes in the active tab
+    document.querySelector('.add-menu-btn a').addEventListener('click', function (e) {
+        e.preventDefault();
+        const activeTabCheckboxes = document.querySelectorAll('.page-content.active input[type="checkbox"]');
+        const allChecked = Array.from(activeTabCheckboxes).every(checkbox => checkbox.checked);
+        activeTabCheckboxes.forEach(checkbox => {
+            checkbox.checked = !allChecked; // Toggle all checkboxes in the active tab
+        });
+        updateAddToMenuButtonState(); // Update button state
+    });
+
+    // Event listener for individual checkboxes to update button state when checked/unchecked
+    document.querySelectorAll('.page-content input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', updateAddToMenuButtonState);
+    });
+
+    // Submit selected page IDs when "Add to Menu" button is clicked
+    document.querySelector('.add-to-menu-btn').addEventListener('click', function (e) {
+        e.preventDefault(); // Prevent default behavior of button
+        const selectedPageIds = [];
+        const activeTabCheckboxes = document.querySelectorAll('.page-content.active input[type="checkbox"]:checked');
+        activeTabCheckboxes.forEach(checkbox => {
+            selectedPageIds.push(checkbox.value); // Collect checked page IDs
+        });
+
+        if (selectedPageIds.length > 0) {
+            // Submit the selected page IDs to the server using AJAX
+            fetch('/user/appearance/menus', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ page_ids: selectedPageIds }), // Sending selected page IDs as JSON
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Pages successfully added to the menu!');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('An error occurred while adding pages to the menu.');
+            });
+        } else {
+            alert("Please select at least one page before adding to the menu.");
+        }
+    });
+
+    // Tab switch functionality (for Most Recent, View All, Search)
+    document.querySelectorAll('.page-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            // Remove 'active' class from all tabs and buttons
+            document.querySelectorAll('.page-content').forEach(content => content.classList.remove('active'));
+            document.querySelectorAll('.page-btn').forEach(button => button.classList.remove('active'));
+
+            // Add 'active' class to clicked button and corresponding content
+            this.classList.add('active');
+            document.querySelector(this.dataset.target).classList.add('active');
+            updateAddToMenuButtonState(); // Update Add to Menu button state after tab change
+        });
+    });
+
+    // Initial check to disable "Add to Menu" button when the page loads
+    updateAddToMenuButtonState();
+});
+
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const menuSelect = document.getElementById('menu-select');
+    const menuInput = document.querySelector('input[name="name"]');
+    const createNewMenuLink = document.querySelector('.menu-selection a');
+    const submitButton = document.querySelector('input[type="submit"]'); // Reference to the submit button
+    const menuStructureDiv = document.querySelector('.menu-structure'); // Reference to the menu-structure div
+
+    // Handle menu selection
+    menuSelect.addEventListener('change', function() {
+        const selectedMenu = menuSelect.value;
+        if (selectedMenu) {
+            menuInput.value = selectedMenu; // Set input field with selected menu
+            submitButton.value = 'Save Menu'; // Change button text to 'Save Menu'
+            if (menuStructureDiv) {
+                menuStructureDiv.style.display = 'block'; // Show the menu-structure div
+            }
+        }
+    });
+
+    // Handle creating a new menu
+    createNewMenuLink.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default anchor click behavior
+        menuSelect.value = ''; // Reset the dropdown to the default option
+        menuInput.value = ''; // Clear the input field
+        submitButton.value = 'Create Menu'; // Reset button text to 'Create Menu'
+        if (menuStructureDiv) {
+            menuStructureDiv.style.display = 'none'; // Hide the menu-structure div
+        }
+        menuInput.focus(); // Focus on the input field
+    });
+});
+
+
+
+</script>
+
 
 {% endblock %}

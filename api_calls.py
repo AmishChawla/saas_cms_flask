@@ -2467,3 +2467,30 @@ def page_show_in_nav(page_id):
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
 
+
+def create_menu(name, access_token):
+    print('Trying to create menu')
+    headers = {'Authorization': f'Bearer {access_token}'}
+    data = {"name": name}
+
+    try:
+        response = requests.post(constants.BASE_URL + '/user/create_menu', json=data, headers=headers)
+
+        # Log the status code and response body
+        print(f"Response Status Code: {response.status_code}")
+        print(f"Response Content: {response.content.decode()}")
+
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(f"Menu creation failed: {response.json()}")
+            return None
+
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
