@@ -75,7 +75,7 @@
     }
 </style>
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
-<form method="post" action="{{ url_for('admin_edit_post', post_id=post_id) }}">
+<form method="post" action="{{ url_for('admin_edit_post', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', ''), post_id=post_id) }}">
         {{ form.hidden_tag() }}
 <aside class="control-sidebar control-sidebar-light">
     <!-- Control sidebar content goes here -->
@@ -115,8 +115,7 @@
       </div><!-- /.container-fluid -->
     </div>
 <div class="form-container">
-<!--    <form method="post" action="{{ url_for('add_post') }}">-->
-<!--        {{ form.hidden_tag() }}-->
+
 
         <div class="form-group">
             {{ form.title(class="form-control form-control-lg ", placeholder="Heading", required=True) }}

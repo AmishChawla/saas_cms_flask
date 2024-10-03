@@ -12,13 +12,234 @@
     <link href="{{ url_for('static', filename='assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 
   <!-- Theme style -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
 
   <style>
     .content-wrapper {
-      background-color: #ffffff;
+      background-color: #f6f7f7;
+
+    }
+
+
+.main-sidebar {
+  background-color: #23282d;
+
+}
+
+.card {
+  padding-left: 100px;
+  padding-right: 100px;
+  background-color: #f6f7f7;
+  box-shadow: none;
+}
+
+@media (max-width: 1200px) {
+  .card {
+    padding-left: 80px;
+    padding-right: 80px;
+  }
+}
+
+@media (max-width: 992px) {
+  .card {
+    padding-left: 60px;
+    padding-right: 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+
+@media (max-width: 576px) {
+  .card {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+
+div.dt-container.dt-empty-footer tbody > tr:last-child > * {
+    border-bottom: none !important;
+}
+
+div.dt-container div.dt-layout-row:last-of-type {
+   border-top: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.card .nav, .card .tab-pane {
+  background-color: #fff;
+}
+
+.card .dt-layout-cell {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+/* For Chrome, Safari, and other WebKit-based browsers */
+.card .dt-layout-cell::-webkit-scrollbar {
+  width: 1px;  /* Set the width of the scrollbar */
+  height: 1px; /* Set the height of the scrollbar (for horizontal scrolling) */
+}
+
+.card .dt-layout-cell::-webkit-scrollbar-thumb {
+  background-color: #888;  /* The color of the scrollbar thumb */
+  border-radius: 10px;      /* Optional: Rounded corners for the scrollbar thumb */
+}
+
+.card .dt-layout-cell::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* The color of the scrollbar track */
+}
+
+    .formatted-header__title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 26px;
+    margin-bottom: 0;
+    margin-top: 0;
+    padding: 0;
+    font-family: Roboto;
+
+}
+
+  .formatted-header__subtitle {
+    display: inline-block;
+    color: #646970;
+    font-size: .875rem;
+    letter-spacing: -.15px;
+    line-height: 20px;
+    margin: 0;
+  }
+
+  .card-body ul{
+    border: 1px solid #ccc;
+    height: 50px;
+  }
+
+  .card-body ul li a{
+    box-sizing: border-box;
+    height: 50px;
+    padding-top: 12px;
+
+  }
+
+  .nav-link {
+    color: #3c434a;
+  }
+
+  .card-body ul li:hover{
+    background-color: #e9f0f5;
+  }
+
+  .nav-link.active {
+    border-bottom: 1px solid #111;
+    color: #646970;
+  }
+
+  .nav-link .count {
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    padding: 0 6px;
+    margin-left: 10px;
+  }
+
+  .tab-pane {
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+
+  .dt-container.dt-empty-footer .dt-layout-cell.dt-start label {
+    margin-left: 10px;
+  }
+
+  #postTabs {
+    display: flex;
+}
+
+#searchContainer {
+  margin-top: 1.5rem;
+}
+
+#searchContainer .input-group {
+    width: 100%;
+    height: 50px;
+    border: 1px solid #ccc;
+}
+
+#searchContainer .form-control {
+    flex-grow: 1;
+    height: 100%;
+    border: none;
+
+    outline: none;
+}
+
+#searchIcon {
+    cursor: pointer;
+}
+
+#closeSearch {
+    cursor: pointer;
+}
+
+  .mirrored-icon {
+    transform: scaleX(-1); /* Flips the icon horizontally */
+}
+
+
+  #searchIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px; /* Adjust width as needed */
+    height: 40px; /* Adjust height as needed */
+    margin: 0 auto; /* Center horizontally */
+    color: #646970; /* Set the icon color */
+    cursor: pointer; /* Add a pointer on hover */
+}
+
+#searchIcon i {
+    font-size: 16px; /* Adjust icon size if necessary */
+}
+
+
+    .nav-sidebar.nav-item.nav-link.active {
+      background-color: #0073aa;
+    }
+
+    [class*=sidebar-dark-] .nav-treeview.open-menu-section {
+      background: #32373c;
+    }
+
+    [class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active-menu {
+      background-color: #0073aa;
+      color: #fff;
+    }
+
+    [class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active {
+      background: none;
+      color: #eee;
+      font-weight: bold;
+      border-bottom: none;
+    }
+
+    .main-header, .brand-link {
+      background-color: #1d2327;
+      color: #f0f0f1;
+
+    }
+
+    .navbar-light .navbar-nav .nav-link {
+      color: #f0f0f1 !important;
     }
 
   </style>
@@ -37,13 +258,14 @@
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
        {% endif %}
-
+      {% if request.endpoint is in ['login', 'admin_login', 'register'] %}
       <li class="nav-item d-none d-sm-inline-block">
         <a href="{{ url_for('index',role=role)}}" class="nav-link">Home</a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
         <a href="{{ url_for('index',role=role)}}" class="nav-link">About</a>
       </li>
+      {% endif %}
     </ul>
 
     <!-- Right navbar links -->
@@ -107,13 +329,26 @@
     <div class="sidebar">
 
       <nav class="mt-2">
+        <a class="site__content" href="#" title="View #" aria-label="View #" style="display: flex;
+    padding-left: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    position: relative;"><div class="bi bi-house-fill" style="height: 32px; width: 32px; line-height: 32px; font-size: 32px; margin-right: 4px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="gridicon gridicons-globe" height="18" width="18"><use xlink:href="/calypso/images/../images/gridicons-47c7fb356fcb2d963681.svg#gridicons-globe"></use></svg></div><div class="site__info"><div class="site__title" style="display: block;
+    font-size: .875rem;
+    font-weight: 400;
+     color: #eee;">Site Title</div><div class="site__domain" style="display: block;
+    font-size: .75rem;
+
+    margin-top: -1px;
+     color: #a2aab2;">{{ current_user.username }}.{{ ROOT_URL.replace('http://', '').replace('/', '') }}</div></div></a>
+
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
 
           <li class="nav-item">
-            <a class="nav-link {% if request.endpoint == 'user_dashboard' %}active{% endif %}" href="{{ url_for('user_dashboard') }}">
-              <i class="nav-icon far fa fa-chart-pie">
+            <a class="nav-link {% if request.endpoint == 'user_dashboard' %}active{% endif %}" href="{{ url_for('user_dashboard', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}">
+              <i class="nav-icon far fa fa-home">
               </i>
               <p>
                 Dashboard
@@ -121,147 +356,147 @@
             </a>
           </li>
            <li class="nav-item menu-open">
-            <a class="nav-link {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' or request.endpoint == 'user_post_list' or request.endpoint == 'media' or request.endpoint == 'user_all_medias' or request.endpoint == 'newsletter_subscribers' or request.endpoint == 'get_all_comment' or request.endpoint == 'user_all_pages' or request.endpoint == 'add_page' or request.endpoint == 'chatbot' or request.endpoint == 'resume_parser' or request.endpoint == 'resume_collection' or request.endpoint == 'all_themes' or request.endpoint == 'theme_detail' or request.endpoint == 'menu_management' or request.endpoint == 'create_menu' %}active{% endif %}" href="{{ url_for('user_all_post') }}">
+            <a class="nav-link {% if request.endpoint == 'user_all_post' or request.endpoint == 'view_post'  or request.endpoint == 'get_post' or request.endpoint == 'add_post' or request.endpoint == 'admin_edit_post' or request.endpoint == 'add_category' or request.endpoint == 'update_category' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_subcategory' or request.endpoint == 'get_subcategories' or request.endpoint == 'add_subcategory' or request.endpoint == 'update_subcategory' or request.endpoint == 'add_tag' or request.endpoint == 'edit_tag' or request.endpoint == 'user_all_tag' or request.endpoint == 'user_post_list' or request.endpoint == 'media' or request.endpoint == 'user_all_medias' or request.endpoint == 'newsletter_subscribers' or request.endpoint == 'get_all_comment' or request.endpoint == 'user_all_pages' or request.endpoint == 'add_page' or request.endpoint == 'chatbot' or request.endpoint == 'resume_parser' or request.endpoint == 'resume_collection' or request.endpoint == 'all_themes' or request.endpoint == 'theme_detail' or request.endpoint == 'menu_management' or request.endpoint == 'create_menu' %}{% endif %}" href="{{ url_for('user_all_post', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}">
               <i class="far fa-regular fa-folder nav-icon"></i>
               <p>
                 CMS
-                <i class="right fas fa-angle-left"></i>
+
               </p>
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item {% if request.endpoint == 'user_all_post' or request.endpoint == 'add_post' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_tag' %} menu-open {% endif %}">
-                <a class="nav-link" href="#">
-                  <i class="far fa-circle nav-icon"></i>
+                <a class="nav-link  {% if request.endpoint == 'user_all_post' or request.endpoint == 'add_post' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_tag' %} active-menu {% endif %}" href="#">
+                  <i class="far bi bi-pin-angle-fill nav-icon"></i>
                   <p>Posts</p>
-                  <i class="right fas fa-angle-left"></i>
+
                 </a>
-                <ul class="nav nav-treeview">
+                <ul class="nav nav-treeview {% if request.endpoint == 'user_all_post' or request.endpoint == 'add_post' or request.endpoint == 'user_all_category' or request.endpoint == 'user_all_tag' %}  open-menu-section {% endif %}">
               <li class="nav-item">
-                <a class="nav-link {% if request.endpoint == 'user_all_post' %} active {% endif %}" href="{{ url_for('user_all_post') }}">
-                  <i class="far fa fa-laptop nav-icon"></i>
-                  <p>My Posts</p>
+                <a class="nav-link {% if request.endpoint == 'user_all_post' %} active {% endif %}" href="{{ url_for('user_all_post', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}">
+
+                  <p>All Posts</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{ url_for('add_post') }}" class="nav-link {% if request.endpoint == 'add_post' %} active {% endif %}">
-                  <i class="far fa fa-plus nav-icon" aria-hidden="true"></i>
-                  <p>Write new Post</p>
+                <a href="{{ url_for('add_post', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="nav-link {% if request.endpoint == 'add_post' %} active {% endif %}">
+
+                  <p>Add New Post</p>
                 </a>
               </li>
                   <li class="nav-item">
-                <a href="{{ url_for('user_all_category') }}" class="nav-link {% if request.endpoint == 'user_all_category' %} active {% endif %}">
-                  <i class="far fa fa-shapes nav-icon"></i>
+                <a href="{{ url_for('user_all_category', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="nav-link {% if request.endpoint == 'user_all_category' %} active {% endif %}">
+
                   <p>Categories</p>
                 </a>
               </li>
                   <li class="nav-item">
-                <a href="{{ url_for('user_all_tag') }}" class="nav-link {% if request.endpoint == 'user_all_tag' %} active {% endif %}">
-                  <i class="far fa fa-tag nav-icon"></i>
+                <a href="{{ url_for('user_all_tag', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="nav-link {% if request.endpoint == 'user_all_tag' %} active {% endif %}">
+
                   <p>Tags</p>
                 </a>
               </li>
             </ul>
               </li>
               <li class="nav-item {% if request.endpoint == 'user_all_medias' or request.endpoint == 'media' %} menu-open {% endif %}">
-                <a href="#" class="nav-link">
+                <a href="#" class="nav-link {% if request.endpoint == 'user_all_medias' or request.endpoint == 'media' %} active-menu {% endif %}">
                   <i class="far fa fa-film nav-icon"></i>
                   <p>Media</p>
-                  <i class="right fas fa-angle-left"></i>
+
                 </a>
-                <ul class="nav nav-treeview">
+                <ul class="nav nav-treeview {% if request.endpoint == 'user_all_medias' or request.endpoint == 'media' %} open-menu-section {% endif %}">
               <li class="nav-item">
-                <a href="{{ url_for('user_all_medias') }}" class="nav-link {% if request.endpoint == 'user_all_medias' %} active {% endif %}">
-                  <i class="far fa fa-play nav-icon"></i>
-                  <p>My Media</p>
+                <a href="{{ url_for('user_all_medias', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="nav-link {% if request.endpoint == 'user_all_medias' %} active {% endif %}">
+
+                  <p>All Medias</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{ url_for('media') }}" class="nav-link {% if request.endpoint == 'media' %} active {% endif %}">
-                  <i class="far fa fa-plus-square nav-icon"></i>
-                  <p>Upload Media</p>
+                <a href="{{ url_for('media', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="nav-link {% if request.endpoint == 'media' %} active {% endif %}">
+
+                  <p>Upload New Media</p>
                 </a>
               </li>
             </ul>
               </li>
               <li class="nav-item {% if request.endpoint == 'user_all_pages' or request.endpoint == 'add_page' %} menu-open {% endif %}">
-                <a href="#" class="nav-link">
+                <a href="#" class="nav-link {% if request.endpoint == 'user_all_pages' or request.endpoint == 'add_page' %} active-menu {% endif %}">
                   <i class="far bi bi-window-stack nav-icon"></i>
                   <p>Pages</p>
-                  <i class="right fas fa-angle-left"></i>
+
                 </a>
-                <ul class="nav nav-treeview">
+                <ul class="nav nav-treeview {% if request.endpoint == 'user_all_pages' or request.endpoint == 'add_page' %} open-menu-section {% endif %}">
               <li class="nav-item">
                 <a href="{{ url_for('user_all_pages') }}" class="nav-link {% if request.endpoint == 'user_all_pages' %} active {% endif %}">
-                  <i class="far bi bi-window-dock nav-icon"></i>
-                  <p>My Pages</p>
+
+                  <p>All Pages</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="{{ url_for('add_page') }}" class="nav-link {% if request.endpoint == 'add_page' %} active {% endif %}">
-                  <i class="far bi bi-window-plus nav-icon"></i>
-                  <p>Add Page</p>
+
+                  <p>Add New Page</p>
                 </a>
               </li>
             </ul>
               </li>
               <li class="nav-item {% if request.endpoint == 'user_all_forms' or request.endpoint == 'formbuilder' or request.endpoint == 'user_feedbacks' %} menu-open {% endif %}">
-                <a href="#" class="nav-link">
+                <a href="#" class="nav-link {% if request.endpoint == 'user_all_forms' or request.endpoint == 'formbuilder' or request.endpoint == 'user_feedbacks' %} active-menu {% endif %}">
                   <i class="far bi bi-window-stack nav-icon"></i>
                   <p>Forms & Feedbacks</p>
-                  <i class="right fas fa-angle-left"></i>
+
                 </a>
-                <ul class="nav nav-treeview">
+                <ul class="nav nav-treeview {% if request.endpoint == 'user_all_forms' or request.endpoint == 'formbuilder' or request.endpoint == 'user_feedbacks' %} open-menu-section {% endif %}">
               <li class="nav-item">
                 <a href="{{ url_for('user_all_forms') }}" class="nav-link {% if request.endpoint == 'user_all_forms' %} active {% endif %}">
-                  <i class="far bi bi-window-dock nav-icon"></i>
+
                   <p>My Forms</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="{{ url_for('formbuilder') }}" class="nav-link {% if request.endpoint == 'formbuilder' %} active {% endif %}">
-                  <i class="far bi bi-window-plus nav-icon"></i>
+
                   <p>Add Form</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="{{ url_for('user_feedbacks') }}" class="nav-link {% if request.endpoint == 'user_feedbacks' %} active {% endif %}">
-                  <i class="far bi bi-chat-right-text nav-icon"></i>
+
                   <p>Feedback</p>
                 </a>
               </li>
             </ul>
               </li>
               <li class="nav-item {% if request.endpoint == 'chatbot' or request.endpoint == 'resume_parser' or request.endpoint == 'resume_collection' %} menu-open {% endif %}">
-            <a class="nav-link" href="#">
+            <a class="nav-link {% if request.endpoint == 'chatbot' or request.endpoint == 'resume_parser' or request.endpoint == 'resume_collection' %} active-menu {% endif %}" href="#">
               <i class="far fa-regular fa-folder nav-icon"></i>
               <p>
                 AI
-                <i class="right fas fa-angle-left"></i>
+
               </p>
             </a>
-            <ul class="nav nav-treeview">
+            <ul class="nav nav-treeview {% if request.endpoint == 'chatbot' or request.endpoint == 'resume_parser' or request.endpoint == 'resume_collection' %} open-menu-section {% endif %}">
               <li class="nav-item">
                 <a href="{{ url_for('chatbot') }}" class="nav-link {% if request.endpoint == 'chatbot' %} active {% endif %}">
-                  <i class="far bi bi-chat-fill nav-icon"></i>
+
                   <p>Chat</p>
                 </a>
               </li>
               <li class="nav-item {% if request.endpoint == 'resume_parser' or request.endpoint == 'resume_collection' %} menu-open {% endif %}">
                 <a class="nav-link" href="resume_parser">
-                  <i class="far bi bi-file-code-fill nav-icon"></i>
+
                   <p>Resume Parser</p>
-                  <i class="right fas fa-angle-left"></i>
+
                 </a>
                 <ul class="nav nav-treeview">
               <li class="nav-item">
                 <a class="nav-link {% if request.endpoint == 'resume_parser' %} active {% endif %}" href="{{ url_for('resume_parser') }}">
-                  <i class="far bi bi-file-earmark-code nav-icon"></i>
+
                   <p>Resume Parser</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="{{ url_for('resume_collection') }}" class="nav-link {% if request.endpoint == 'resume_collection' %} active {% endif %}">
-                  <i class="far bi bi-journal-code nav-icon" aria-hidden="true"></i>
+
                   <p>Resume Collection</p>
                 </a>
               </li>
@@ -272,15 +507,15 @@
           </li>
 
               <li class="nav-item {% if request.endpoint == 'get_all_comment' %} menu-open {% endif %}">
-                <a href="#" class="nav-link">
+                <a href="#" class="nav-link {% if request.endpoint == 'get_all_comment' %} active-menu {% endif %}">
                   <i class="far fa fa-comment nav-icon"></i>
                   <p>Comments</p>
-                  <i class="right fas fa-angle-left"></i>
+
                 </a>
-                <ul class="nav nav-treeview">
+                <ul class="nav nav-treeview {% if request.endpoint == 'get_all_comment' %} open-menu-section {% endif %}">
               <li class="nav-item">
                 <a href="{{ url_for('get_all_comment') }}" class="nav-link {% if request.endpoint == 'get_all_comment' %} active {% endif %}">
-                  <i class="far fa fa-comments nav-icon"></i>
+
                   <p>All comments</p>
                 </a>
               </li>
@@ -300,28 +535,28 @@
                 </a>
               </li>
               <li class="nav-item {% if request.endpoint == 'all_themes' or request.endpoint == 'theme_detail' or request.endpoint == 'menu_management' or request.endpoint == 'create_menu' %} menu-open {% endif %}">
-    <a class="nav-link" href="{{ url_for('all_themes') }}">
+    <a class="nav-link {% if request.endpoint == 'all_themes' or request.endpoint == 'theme_detail' or request.endpoint == 'menu_management' or request.endpoint == 'create_menu' %} active-menu {% endif %}" href="{{ url_for('all_themes', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}">
         <i class="fas fa-adjust nav-icon"></i>
         <p>Appearance</p>
-      <i class="right fas fa-angle-left"></i>
+
     </a>
-                <ul class="nav nav-treeview">
+                <ul class="nav nav-treeview {% if request.endpoint == 'all_themes' or request.endpoint == 'theme_detail' or request.endpoint == 'menu_management' or request.endpoint == 'create_menu' %} open-menu-section {% endif %}">
               <li class="nav-item">
-                <a href="{{ url_for('all_themes') }}" class="nav-link {% if request.endpoint == 'all_themes' or request.endpoint == 'theme_detail' %} active {% endif %}">
-                  <i class="fas fa-adjust nav-icon"></i>
+                <a href="{{ url_for('all_themes', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="nav-link {% if request.endpoint == 'all_themes' or request.endpoint == 'theme_detail' %} active {% endif %}">
+
                   <p>Themes</p>
                 </a>
               </li>
                   <li class="nav-item">
                 <a href="" class="nav-link">
 
-                  <i class="bi bi-pencil-square nav-icon"></i>
+
                   <p>Customize</p>
                 </a>
               </li>
                   <li class="nav-item">
-                <a href="{{ url_for('menu_management') }}" class="nav-link {% if request.endpoint == 'menu_management' or request.endpoint == 'create_menu' %} active {% endif %}">
-                  <i class="bi bi-list nav-icon"></i>
+                <a href="{{ url_for('menu_management', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', ''))}}" class="nav-link {% if request.endpoint == 'menu_management' or request.endpoint == 'create_menu' %} active {% endif %}">
+
                   <p>Menus</p>
                 </a>
               </li>
@@ -383,7 +618,7 @@
 
   <!-- Main Footer -->
 
-
+{% if request.endpoint == 'login' or request.endpoint == 'register' or request.endpoint == 'admin_login' or request.endpoint == 'login' %}
 <footer id="footer" class="py-5 bg-light" style="margin-top: 25vh;width:100%">
 
     <div class="footer-top">
@@ -441,6 +676,7 @@
 
 
   </footer>
+    {% endif %}
 
 </div>
 <!-- ./wrapper -->
@@ -475,6 +711,40 @@ $(document).ready(function() {
 });
 
 </script>
+
+  <script>
+
+    $(document).ready(function() {
+    // Function to handle the sidebar toggle and visibility changes
+    function handleSidebarToggle() {
+        setTimeout(function() {
+            if ($('body').hasClass('sidebar-collapse')) {
+                // Hide site content when sidebar is collapsed
+                $('.site__content').hide();
+
+                // Hide nav-treeview when sidebar is collapsed
+                $('[class*=sidebar-dark-] .nav-treeview.open-menu-section').hide();
+            } else {
+                // Show site content when sidebar is expanded
+                $('.site__content').show();
+
+                // Show nav-treeview when sidebar is expanded
+                $('[class*=sidebar-dark-] .nav-treeview.open-menu-section').show();
+            }
+        }, 300); // Delay for sidebar animation to complete
+    }
+
+    // Detect when the sidebar toggle button is clicked
+    $('[data-widget="pushmenu"]').on('click', function () {
+        handleSidebarToggle();
+    });
+
+    // Initialize the state on page load
+    handleSidebarToggle();
+});
+
+
+  </script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {

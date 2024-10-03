@@ -86,7 +86,7 @@
                     <ul class="dropdown-menu" aria-labelledby="updatePasswordDropdown" style="position:absolute;left:-50px">
                       <li>
                         {% if current_user.role != 'admin' %}
-                          <a class="dropdown-item" href="{{ url_for('user_dashboard') }}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Dashboard<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
+                          <a class="dropdown-item" href="{{ url_for('user_dashboard', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Dashboard<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
                         {% else %}
                           <a class="dropdown-item" href="{{ url_for('admin_dashboard') }}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Dashboard<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
                         {% endif %}

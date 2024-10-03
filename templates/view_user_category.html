@@ -8,20 +8,26 @@
     <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
       <div class="card">
         <div class="card-body" style="overflow-x: auto;">
-            <div style="display:flex; justify-content:space-between;">
-            <h2 class="m-0">Categories</h2>
-            <div style="display: flex; justify-content: space-between;">
-              <a class="btn btn-info" href="{{ url_for('add_category')}}" style="padding: 6px 30px 6px 30px;">
-                <span class="menu-title">Add new category</span>
-              </a>
-              <a class="btn btn-info" href="{{ url_for('add_subcategory') }}" style="padding: 6px 30px 6px 30px;margin-left:10px;">
-                <span class="menu-title">Add new subcategory</span>
-              </a>
+          <div>
+            <h1 class="formatted-header__title">Categories </h1>
+            <p class="formatted-header__subtitle">Create, edit, and manage the categories on your site. <a class="inline-support-link" href="#" target="_blank" rel="noopener noreferrer"><span class="inline-support-link__nowrap">Learn&nbsp;more</span></a>.</p>
             </div>
+<!--            <div style="display:flex; justify-content:space-between;">-->
+<!--            <h2 class="m-0">Categories</h2>-->
+<!--            <div style="display: flex; justify-content: space-between;">-->
+<!--              <a class="btn btn-info" href="{{ url_for('add_category')}}" style="padding: 6px 30px 6px 30px;">-->
+<!--                <span class="menu-title">Add new category</span>-->
+<!--              </a>-->
+<!--              <a class="btn btn-info" href="{{ url_for('add_subcategory') }}" style="padding: 6px 30px 6px 30px;margin-left:10px;">-->
+<!--                <span class="menu-title">Add new subcategory</span>-->
+<!--              </a>-->
+<!--            </div>-->
 
-          </div>
+<!--          </div>-->
 
-          </div>
+
+        <div class="tab-content" style="margin-top: 1.5rem;">
+                <div class="tab-pane fade show active" id="category">
           <table id="usercategoryTable" class="hover" style="width:100%;">
             <thead>
               <tr>
@@ -65,11 +71,50 @@
               {% endfor %}
             </tbody>
           </table>
+                  </div>
+          </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
 <script>new DataTable('#usercategoryTable');</script>
+
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+       // Select all elements that have the 'dt-search' class
+       var searchElements = document.querySelectorAll('.dt-search');
+
+       searchElements.forEach(function(searchElement) {
+           // Create the first anchor element (button) for "Add New Category"
+           var newButtonCategory = document.createElement('a');
+           newButtonCategory.href = '{{ url_for('add_category', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}';  // Set your desired URL here
+           newButtonCategory.classList.add('btn', 'btn-primary', 'mr-2');  // Added 'mr-2' for margin between buttons
+           newButtonCategory.id = 'addNewCategoryButton';
+           newButtonCategory.textContent = 'Add New Category';
+
+           // Create the second anchor element (button) for "Add New Subcategory"
+           var newButtonSubcategory = document.createElement('a');
+           newButtonSubcategory.href = '{{ url_for('add_subcategory', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}';  // Set your desired URL here
+           newButtonSubcategory.classList.add('btn', 'btn-primary');
+           newButtonSubcategory.id = 'addNewSubcategoryButton';
+           newButtonSubcategory.textContent = 'Add New Subcategory';
+
+           // Add a 10px gap before the buttons
+           newButtonCategory.style.marginLeft = '10px';
+           newButtonSubcategory.style.marginTop = '0';
+           newButtonCategory.style.marginTop = '0';
+
+           // Insert the buttons after the search element
+           searchElement.insertAdjacentElement('beforeend', newButtonCategory);  // Insert the first button at the end of .dt-search
+           searchElement.insertAdjacentElement('beforeend', newButtonSubcategory);  // Insert the second button right after the first
+       });
+   });
+</script>
+
+
+
+
 {% endblock %}

@@ -30,7 +30,7 @@
               <div class="icon">
                 <i class="fas bi bi-pin-fill"></i>
               </div>
-              <a href="{{ url_for('user_all_post') }}" class="small-box-footer">
+              <a href="{{ url_for('user_all_post', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="small-box-footer">
                 More info <i class="fas fa-arrow-circle-right"></i>
               </a>
             </div>

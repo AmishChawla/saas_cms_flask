@@ -616,7 +616,7 @@
     </div>
                 <div class="menu-footer">
                     <a href="#">Delete Menu</a>
-                    <button class="save-btn">Save Menu</button>
+                    <button id="save-btn" class="save-btn" type="submit">Save Menu</button>
                 </div>
             </div>
         </div>
@@ -742,10 +742,10 @@ document.querySelector('.page-btn[data-target=".page-most-recent"]').click();
 
         if (selectedPageIds.length > 0) {
             // Submit the selected page IDs to the server using AJAX
-            fetch('/user/appearance/menus', {
+            fetch(`/user/appearance/menus/update-menu-page/${selectedMenu}`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json' // Specify content type
                 },
                 body: JSON.stringify({ page_ids: selectedPageIds }), // Sending selected page IDs as JSON
             })
@@ -789,9 +789,26 @@ document.querySelector('.page-btn[data-target=".page-most-recent"]').click();
     const menuSelect = document.getElementById('menu-select');
     const menuInput = document.querySelector('input[name="name"]');
     const createNewMenuLink = document.querySelector('.menu-selection a');
-    const submitButton = document.querySelector('input[type="submit"]');
+    const submitButton = document.querySelector('input[type="submit"]'); // "Save Menu" button
+    const saveButton = document.getElementById('save-btn'); // "save-btn" button
     const menuStructureDiv = document.querySelector('.menu-structure');
     const form = document.querySelector('.create-menu-form form'); // Reference to the form
+
+    // Function to collect checkbox states
+    function collectThemeLocationStates() {
+        const checkboxes = document.querySelectorAll('input[name="theme-location"]:checked'); // Select checked checkboxes
+        const themeLocations = Array.from(checkboxes).map(checkbox => checkbox.value); // Get values of checked checkboxes
+
+        // Create a hidden input field to submit the selected theme locations
+        let themeLocationInput = document.querySelector('input[name="selected_theme_locations"]');
+        if (!themeLocationInput) {
+            themeLocationInput = document.createElement('input');
+            themeLocationInput.type = 'hidden';
+            themeLocationInput.name = 'selected_theme_locations'; // Name it appropriately for your backend
+            form.appendChild(themeLocationInput);
+        }
+        themeLocationInput.value = themeLocations.join(','); // Join values with a comma or use another delimiter
+    }
 
     // Handle menu selection
     menuSelect.addEventListener('change', function() {
@@ -823,8 +840,18 @@ document.querySelector('.page-btn[data-target=".page-most-recent"]').click();
         }
         menuInput.focus(); // Focus on the input field
     });
-});
 
+    // Handle form submission for both "Save Menu" button and "save-btn"
+    function handleFormSubmission(event) {
+        event.preventDefault(); // Prevent immediate form submission
+        collectThemeLocationStates(); // Collect checkbox states
+        form.submit(); // Now, submit the form
+    }
+
+    // Attach the form submission handler to both buttons
+    submitButton.addEventListener('click', handleFormSubmission);
+    saveButton.addEventListener('click', handleFormSubmission);
+});
 
 
 </script>

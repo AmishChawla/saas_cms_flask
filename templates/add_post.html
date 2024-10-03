@@ -156,7 +156,7 @@
 </style>
 
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
-<form method="post" action="{{ url_for('add_post') }}" id="postForm">
+<form method="post" action="{{ url_for('add_post', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" id="postForm">
     {{ form.hidden_tag() }}
     <aside class="control-sidebar control-sidebar-light">
         <div class="p-3">

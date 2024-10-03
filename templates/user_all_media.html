@@ -8,19 +8,26 @@
 
 {% block content %}
 
+
 <link href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" rel="stylesheet">
   <div class="row">
     <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
       <div class="card">
         <div class="card-body" style="overflow-x: auto;">
-          <div style="display:flex; justify-content:space-between;">
-            <h2 class="m-0">My Media</h2>
-            <div style="display: flex; justify-content: space-between;">
-              <a class="btn btn-info" href="{{ url_for('media')}}" style="padding: 6px 30px 6px 30px;">
-                <span class="menu-title">Add new media</span>
-              </a>
+          <div>
+            <h1 class="formatted-header__title">Media </h1>
+            <p class="formatted-header__subtitle">Manage all the media on your site, including images, video, and more. <a class="inline-support-link" href="#" target="_blank" rel="noopener noreferrer"><span class="inline-support-link__nowrap">Learn&nbsp;more</span></a>.</p>
             </div>
-          </div>
+<!--          <div style="display:flex; justify-content:space-between;">-->
+<!--            <h2 class="m-0">My Media</h2>-->
+<!--            <div style="display: flex; justify-content: space-between;">-->
+<!--              <a class="btn btn-info" href="#" style="padding: 6px 30px 6px 30px;">-->
+<!--                <span class="menu-title">Add new media</span>-->
+<!--              </a>-->
+<!--            </div>-->
+<!--          </div>-->
+          <div class="tab-content" style="margin-top: 1.5rem;">
+                <div class="tab-pane fade show active" id="category">
           <table id="userMediaTable" class="" style="width:100%;">
             <thead>
               <tr>
@@ -43,7 +50,7 @@
                 <td style="display: flex; margin-top: 20%; margin-bottom:40%;">
 
 
-                  <button class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}">Delete</button>
+                  <a class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}"><i class="bi bi-trash3-fill " style="color:#6b1313; font-size: 1.5rem"></i></a>
 
                   <!-- Modal for delete button -->
                   <div class="modal fade" id="deleteModal_{{ data.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel_{{ data.id }}" aria-hidden="true">
@@ -68,6 +75,8 @@
               {% endfor %}
             </tbody>
           </table>
+                  </div>
+            </div>
         </div>
       </div>
     </div>
@@ -76,4 +85,27 @@
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script>new DataTable('#userMediaTable');</script>
+
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+       // Select all elements that have the 'dt-search' class
+       var searchElements = document.querySelectorAll('.dt-search');
+
+       searchElements.forEach(function(searchElement) {
+           // Create the first anchor element (button) for "Add New Media"
+           var newButtonMedia = document.createElement('a'); // Define the newButtonMedia variable here
+           newButtonMedia.href = '{{ url_for('media', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}'; // Set your desired URL here
+           newButtonMedia.classList.add('btn', 'btn-primary', 'mr-2'); // Added 'mr-2' for margin between buttons
+           newButtonMedia.id = 'addNewMediaButton';
+           newButtonMedia.textContent = 'Add New Media';
+
+           // Add a 10px gap before the buttons
+           newButtonMedia.style.marginLeft = '10px';
+
+           // Insert the buttons after the search element
+           searchElement.insertAdjacentElement('beforeend', newButtonMedia); // Insert the first button at the end of .dt-search
+       });
+   });
+</script>
+
 {% endblock %}

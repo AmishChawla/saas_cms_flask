@@ -2038,6 +2038,27 @@ def get_user_all_pages(access_token):
         print(f"An unexpected error occurred: {err}")
 
 
+def get_user_page_by_username(username):
+
+    try:
+        response = requests.get(constants.BASE_URL + f'/pages/get_user_page_by_username/{username}')
+        print("Response Status Code:", response.status_code)
+        if response.status_code == 200:
+            result = response.json()
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
+
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
 def delete_page(page_id, access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
     try:
@@ -2524,11 +2545,12 @@ def get_user_all_menus(access_token):
         print(f"An unexpected error occurred: {err}")
 
 
-def update_menu(name, menu_id, access_token):
+def update_menu(name, theme_location, menu_id, access_token):
     print('Trying to create menu')
     headers = {'Authorization': f'Bearer {access_token}'}
-    data = {"name": name}
-
+    data = {"name": name,
+            "theme_location": theme_location}
+    print(theme_location)
     try:
         response = requests.put(constants.BASE_URL + f'/user/update_menu/{menu_id}', json=data, headers=headers)
 
@@ -2557,6 +2579,47 @@ def update_menu(name, menu_id, access_token):
         print(f"An error occurred while making the request: {str(e)}")
         return None
 
+def update_menu_page(menu_id, page_ids, access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    data = {
+        "page_ids": page_ids  # Sending the list of page IDs
+    }
+    print(page_ids)
+    try:
+        response = requests.put(constants.BASE_URL + f'/menus/update_menu_page/{menu_id}', headers=headers, json=data)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            response.raise_for_status()  # Raise an error for bad responses
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+def get_user_menu_by_username(username):
+
+    try:
+        response = requests.get(constants.BASE_URL + f'/menus/get_user_menu_by_username/{username}')
+        print("Response Status Code:", response.status_code)
+        if response.status_code == 200:
+            result = response.json()
+            return result
+        else:
+            print("API Error:", response.text)  # Debug: Print error message from API
+
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
 
 def get_scrapped_jobs(access_token):
     headers = {'Authorization': f'Bearer {access_token}'}

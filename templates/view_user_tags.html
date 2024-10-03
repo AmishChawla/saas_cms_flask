@@ -9,15 +9,20 @@
     <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
       <div class="card">
         <div class="card-body" style="overflow-x: auto;">
-                    <div style="display:flex; justify-content:space-between;">
-            <h2 class="m-0">Tags</h2>
-            <div style="display: flex; justify-content: space-between;">
-              <a class="btn btn-info" href="{{ url_for('add_post')}}" style="padding: 6px 30px 6px 30px;">
-                <span class="menu-title">Add Tag</span>
-              </a>
+<!--                    <div style="display:flex; justify-content:space-between;">-->
+<!--            <h2 class="m-0">Tags</h2>-->
+<!--            <div style="display: flex; justify-content: space-between;">-->
+<!--              <a class="btn btn-info" href="{{ url_for('add_post', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', ''))}}" style="padding: 6px 30px 6px 30px;">-->
+<!--                <span class="menu-title">Add Tag</span>-->
+<!--              </a>-->
+<!--            </div>-->
+<!--          </div>-->
+          <div>
+            <h1 class="formatted-header__title">Tags </h1>
+            <p class="formatted-header__subtitle">Create, edit, and manage the tags on your site. <a class="inline-support-link" href="#" target="_blank" rel="noopener noreferrer"><span class="inline-support-link__nowrap">Learn&nbsp;more</span></a>.</p>
             </div>
-          </div>
-
+<div class="tab-content" style="margin-top: 1.5rem;">
+                <div class="tab-pane fade show active" id="tag">
           <table id="usertagTable" class="hover" style="width:100%;">
             <thead>
               <tr>
@@ -61,6 +66,8 @@
               {% endfor %}
             </tbody>
           </table>
+                  </div>
+  </div>
         </div>
       </div>
     </div>
@@ -68,4 +75,27 @@
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
 <script>new DataTable('#usertagTable');</script>
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+       // Select all elements that have the 'dt-search' class
+       var searchElements = document.querySelectorAll('.dt-search');
+
+       searchElements.forEach(function(searchElement) {
+           // Create the first anchor element (button) for "Add New Tag"
+           var newButtonTag = document.createElement('a');
+           newButtonTag.href = '{{ url_for('add_post', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}';  // Set your desired URL here
+           newButtonTag.classList.add('btn', 'btn-primary', 'mr-2');  // Added 'mr-2' for margin between buttons
+           newButtonTag.id = 'addNewTagButton';
+           newButtonTag.textContent = 'Add New Tag';
+
+           // Add a 10px gap before the buttons
+           newButtonTag.style.marginLeft = '10px';
+           newButtonTag.style.marginTop = '0';
+
+           // Insert the buttons after the search element
+           searchElement.insertAdjacentElement('beforeend', newButtonTag);  // Insert the first button at the end of .dt-search
+
+       });
+   });
+</script>
 {% endblock %}

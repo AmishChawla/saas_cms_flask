@@ -148,6 +148,56 @@ body {
     padding: 20px 0;
 }
 
+.nav-link {
+    text-decoration: none; /* Remove underline */
+
+    color: white; /* Text color */
+    padding: 0 10px; /* Padding for links */
+    display: block; /* Make the entire area clickable */
+    transition: background-color 0.3s; /* Smooth background transition */
+}
+
+
+.dropdown {
+    position: absolute; /* Position dropdown below menu */
+    background: #fff; /* White background for dropdown */
+    border-radius: 4px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for dropdown */
+    z-index: 1; /* Ensure it appears above other content */
+    display: none; /* Hide by default */
+    list-style-type: none;
+}
+
+.dropdown li {
+    padding: 6px 10px; /* Padding for dropdown items */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.dropdown li a {
+    color: #333; /* Dark text for dropdown items */
+    text-decoration: none; /* Remove underline */
+    transition: background-color 0.3s; /* Smooth background transition */
+}
+
+.dropdown li a:hover {
+    background-color: #f0f0f0; /* Light background on hover */
+}
+
+.dropdown-icon {
+    margin-left: 5px; /* Space between text and icon */
+    font-size: 0.8em; /* Smaller size for icon */
+    display: inline-block;
+    vertical-align: middle; /* Align icon vertically */
+}
+
+/* Show dropdown when hovering over the parent li */
+.nav-links > li:hover .dropdown {
+    display: block; /* Show the dropdown on hover */
+}
+
+
+
+
 </style>
 <body>
     <!-- Navigation -->
@@ -159,21 +209,30 @@ body {
             {% else %}
             <div class="logo">MySite</div>
             {% endif %}
-            <ul class="nav-links">
-                {% if pages %}
+           <ul class="nav-links">
+    {% if menus %}
+        {% for menu in menus %}
+            <li>
+                <a href="#" class="nav-link"
+                   onclick="toggleDropdown(event, '{{ menu.id }}')">{{ menu.name }} {% if pages|selectattr('menu_id', 'equalto', menu.id)|list|length > 0 %}  <!-- Check if pages exist -->
+                    <span class="dropdown-icon">▼</span>  <!-- Dropdown icon -->
+                {% endif %}</a>
+                <ul class="dropdown" id="dropdown-{{ menu.id }}" style="display: none;">
                     {% for page in pages %}
-                    {% if page.status == 'published' and page.display_in_nav == 'yes' %}
-                    <li><a href="#">{{ page.title }}</a></li>
-                    {% endif %}
+                        {% if page.menu_id == menu.id and page.status == 'published' %}
+                            <li><a href="{{ url_for('get_page_by_id', page_id=page.id) }}">{{ page.title }}</a></li>
+                        {% endif %}
                     {% endfor %}
-                    {% else %}
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#">Contact</a></li>
-                    {% endif %}
-
-            </ul>
+                </ul>
+            </li>
+        {% endfor %}
+    {% else %}
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Contact</a></li>
+    {% endif %}
+</ul>
         </div>
     </nav>
 
@@ -250,6 +309,42 @@ body {
             <p>&copy; 2024 MySite. All rights reserved.</p>
         </div>
     </footer>
+
+
+    <script>
+    function toggleDropdown(event, menuId) {
+    event.preventDefault(); // Prevent default anchor behavior
+    const dropdown = document.getElementById(`dropdown-${menuId}`);
+    const icon = event.currentTarget.querySelector('.dropdown-icon');
+
+    // Toggle the display of the dropdown
+    if (dropdown.style.display === 'block') {
+        dropdown.style.display = 'none'; // Close the dropdown
+        icon.style.transform = 'rotate(0deg)'; // Reset rotation
+    } else {
+        dropdown.style.display = 'block'; // Open the dropdown
+        icon.style.transform = 'rotate(180deg)'; // Rotate icon
+    }
+}
+
+// Close dropdown if clicked outside
+window.onclick = function(event) {
+    // Check if the click is outside the dropdown and the menu links
+    if (!event.target.matches('.nav-link') && !event.target.matches('.dropdown') && !event.target.closest('.nav-link')) {
+        const dropdowns = document.querySelectorAll('.dropdown');
+        const icons = document.querySelectorAll('.dropdown-icon');
+
+        dropdowns.forEach(dropdown => {
+            dropdown.style.display = 'none'; // Hide all dropdowns
+        });
+
+        icons.forEach(icon => {
+            icon.style.transform = 'rotate(0deg)'; // Reset all icons to original position
+        });
+    }
+};
+
+</script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {

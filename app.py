@@ -105,7 +105,7 @@ def requires_any_permission(*required_permissions):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    return render_template('index.html', ROOT_URL=ROOT_URL)
 
 
 @app.route('/upload', methods=['GET', 'POST'])
@@ -145,9 +145,9 @@ def upload_pdf():
             # data_rows = csv_reader[1:]
             # Process the uploaded files or redirect to a new page
             xml_data = result.get('xml_file')
-            return render_template('result.html', csv_data=csv_data, xml_data=xml_data)
+            return render_template('result.html', ROOT_URL=ROOT_URL,  csv_data=csv_data, xml_data=xml_data)
 
-    return render_template('upload_pdf.html', form=form)
+    return render_template('upload_pdf.html', ROOT_URL=ROOT_URL,  form=form)
 
 
 def empty_folder(folder):
@@ -169,9 +169,9 @@ def login():
     print('trying')
     if current_user.is_authenticated:
         if current_user.company is not None:
-            return redirect(url_for('user_dashboard'))
+            return redirect(url_for('user_dashboard', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
         else:
-            return redirect(url_for('company_register'))
+            return redirect(url_for('company_register', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
     form = forms.LoginForm()
     print(form.validate_on_submit())
     if form.validate_on_submit():
@@ -207,9 +207,9 @@ def login():
                 'profile_picture': profile_picture,
             }
             if current_user.company is not None:
-                return redirect(url_for('user_dashboard'))
+                return redirect(url_for('user_dashboard', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
             else:
-                return redirect(url_for('company_register'))
+                return redirect(url_for('company_register', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
         elif response.status_code == 400:
             result = response.json()
             message = result["detail"]
@@ -219,7 +219,7 @@ def login():
             print("Error: Response is None or status code is not 200")
             flash('Login unsuccessful. Please check email and password.', category='error')
 
-    return render_template('login.html', form=form)
+    return render_template('login.html', ROOT_URL=ROOT_URL,  form=form)
 
 @app.route('/google-login')
 def google_login():
@@ -233,7 +233,7 @@ def callback():
     if error:
         # Handle the error, e.g., log it or redirect to an error page
         print(f"OAuth2 Error: {error}")
-        return redirect(url_for('login'))
+        return redirect(url_for('login', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
     code = request.args.get('code')
     params = {
         'code': code,
@@ -276,9 +276,9 @@ def callback():
         'profile_picture': profile_picture
     }
     if current_user.company is not None:
-        return redirect(url_for('user_dashboard'))
+        return redirect(url_for('user_dashboard', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
     else:
-        return redirect(url_for('company_register'))
+        return redirect(url_for('company_register', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -331,12 +331,12 @@ def register():
         else:
             flash('Registration unsuccessful. Please check username, email and password.', category='error')
 
-    return render_template('register.html', form=form)
+    return render_template('register.html', ROOT_URL=ROOT_URL,  form=form)
 
 
-@app.route("/dashboard")
+@app.route("/dashboard/<username>.<root_url>")
 @login_required
-def user_dashboard():
+def user_dashboard(username, root_url):
     response = api_calls.get_user_profile(access_token=current_user.id)
     if response.status_code == 200:
         result = response.json()
@@ -347,7 +347,7 @@ def user_dashboard():
     subscriber_count = stats["total_newsletter_subscribers"]
     feedback_count = stats["total_feedbacks"]
 
-    return render_template('dashboard.html', resume_data=resume_data, comment_count=comment_count, post_count=post_count, subscriber_count=subscriber_count, feedback_count=feedback_count)
+    return render_template('dashboard.html', ROOT_URL=ROOT_URL, resume_data=resume_data, comment_count=comment_count, post_count=post_count, subscriber_count=subscriber_count, feedback_count=feedback_count)
 
 
 
@@ -1057,15 +1057,15 @@ def all_post():
     return render_template('all_posts.html', result=result)
 
 
-@app.route('/user/all-posts')
+@app.route('/posts/<username>.<root_url>')
 @requires_any_permission("manage_posts")
 @login_required
-def user_all_post():
+def user_all_post(username, root_url):
     result = api_calls.get_user_all_posts(access_token=current_user.id)
     if result is None:
         result = []  # Set result to an empty list
 
-    return render_template('user_all_post.html', result=result)
+    return render_template('user_all_post.html', ROOT_URL=ROOT_URL, result=result)
 
 
 @app.route('/<username>/posts', methods=['GET', 'POST'])
@@ -1080,27 +1080,31 @@ def user_post_list(username):
     # Get the activated theme
     activated_theme = api_calls.get_user_theme_by_username(username=username)  # Ensure current_user is accessible
     print(activated_theme)
-    pages = api_calls.get_user_all_pages(access_token=current_user.id)
+    pages = api_calls.get_user_page_by_username(username=username)
     if pages is None:
         pages = []  # Set result to an empty list
 
+    menus = api_calls.get_user_menu_by_username(username=username)
+    if menus is None:
+        menus = []  # Set result to an empty list
+    print(menus)
     if form.validate_on_submit():
         name = form.name.data
         email = form.email.data
         response_status = api_calls.subscribe_to_newsletter(name=name, email=email, username=username)
         if response_status == 200:
-            return redirect(url_for('user_post_list', username=username, toast='new_sub'))
+            return redirect(url_for('user_post_list', ROOT_URL=ROOT_URL, username=username, toast='new_sub'))
         elif response_status == 409:
-            return redirect(url_for('user_post_list', username=username, toast='already_sub'))
+            return redirect(url_for('user_post_list', ROOT_URL=ROOT_URL, username=username, toast='already_sub'))
         else:
-            return redirect(url_for('user_post_list', username=username, toast='null'))
+            return redirect(url_for('user_post_list', ROOT_URL=ROOT_URL, username=username, toast='null'))
 
     # Render the appropriate template based on the activated theme
     if activated_theme is not None and activated_theme != {}:
-        return render_template(f'themes/theme{activated_theme["theme_id"]}.html', pages=pages, activated_theme=activated_theme, result=result, response=response,
+        return render_template(f'themes/theme{activated_theme["theme_id"]}.html', ROOT_URL=ROOT_URL, menus=menus, pages=pages, activated_theme=activated_theme, result=result, response=response,
                                form=form, username=username, toast=toast)
     else:
-        return render_template('user_post_list.html', pages=pages, result=result, response=response, form=form, username=username,
+        return render_template('user_post_list.html', ROOT_URL=ROOT_URL, menus=menus, pages=pages, result=result, response=response, form=form, username=username,
                                toast=toast)
 
 
@@ -1126,17 +1130,17 @@ def user_delete_post(post_id):
     result = api_calls.admin_delete_post(post_id=post_id, access_token=current_user.id)
     print(result.status_code)
     if result.status_code == 200:
-        return redirect(url_for('user_all_post'))
+        return redirect(url_for('user_all_post', ROOT_URL=ROOT_URL, username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
     else:
         abort(result.status_code)
 
 
 
 
-@app.route('/posts/add-post', methods=['GET', 'POST'])
+@app.route('/post/<username>.<root_url>', methods=['GET', 'POST'])
 @requires_any_permission("manage_posts")
 @login_required
-def add_post():
+def add_post(username, root_url):
     form = forms.AddPost()
     media_form = forms.AddMediaForm()
 
@@ -1164,7 +1168,7 @@ def add_post():
         tags_list = form.tags.data.split(",")
 
         if form.preview.data:
-            return redirect(url_for('preview_post'))
+            return redirect(url_for('preview_post', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
 
         post_data = {
             'title': form.title.data,
@@ -1194,7 +1198,7 @@ def add_post():
                         api_calls.send_newsletter(access_token=current_user.id, subject=form.title.data, body=form.content.data, post_url=post_url)
                     except Exception as e:
                         print(f"Problem sending newsletter: {e}")
-                return redirect(url_for('user_all_post' if current_user.role == 'user' else 'all_post'))
+                return redirect(url_for('user_all_post', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '') if current_user.role == 'user' else 'all_post'))
             else:
                 flash("Failed to create post", "danger")
         except Exception as e:
@@ -1211,14 +1215,14 @@ def add_post():
         if not is_service_allowed:
             return redirect(url_for('user_view_plan'))
 
-    return render_template('add_post.html', form=form, media_form=media_form, categories=category_choices,
+    return render_template('add_post.html', ROOT_URL=ROOT_URL,  form=form, media_form=media_form, categories=category_choices,
                            result=media_result, forms_result=forms_result, root_url=root_url)
 
 
-@app.route('/posts/preview-post', methods=['GET', 'POST'])
+@app.route('/post/preview-post/<username>.<root_url>', methods=['GET', 'POST'])
 @requires_any_permission("manage_posts")
 @login_required
-def preview_post():
+def preview_post(username, root_url):
     date_obj = datetime.utcnow()
     formatted_date = date_obj.strftime('%d %B %Y')
     form = forms.AddPost()
@@ -1257,7 +1261,7 @@ def preview_post():
                 if result:
 
                     if current_user.role == 'user':
-                        return redirect(url_for('user_all_post'))
+                        return redirect(url_for('user_all_post', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
                     else:
                         return redirect(url_for('all_post'))
                 else:
@@ -1289,7 +1293,7 @@ def preview_post():
                     except Exception as e:
                         raise 'Problem sending newsletter' + e
                     if current_user.role == 'user':
-                        return redirect(url_for('user_all_post'))
+                        return redirect(url_for('user_all_post', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
                     else:
                         return redirect(url_for('all_post'))
                 else:
@@ -1297,7 +1301,7 @@ def preview_post():
             except Exception as e:
                 flash(f"Error creating post: {e}", "danger")
 
-    return render_template('preview_post.html', post_preview=post_preview, author_name=current_user.username, form=form, tags=tags_list, created_at=formatted_date)
+    return render_template('preview_post.html', ROOT_URL=ROOT_URL,  post_preview=post_preview, author_name=current_user.username, form=form, tags=tags_list, created_at=formatted_date)
 
 # @app.route("/posts/preview_post", methods=['GET', 'POST'])
 # @login_required
@@ -1336,7 +1340,7 @@ def add_category():
         print(response.status_code)
         if (response.status_code == 200):
             flash('Category added Successful', category='info')
-            return redirect(url_for('user_all_category'))
+            return redirect(url_for('user_all_category', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
         else:
             flash('Some problem occured', category='error')
 
@@ -1354,23 +1358,23 @@ def update_category(category_id):
         print(response.status_code)
         if (response.status_code == 200):
             flash('Category updated Successful', category='info')
-            return redirect(url_for('user_all_category'))
+            return redirect(url_for('user_all_category', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
         else:
             flash('Some problem occured', category='error')
 
     return render_template('update_user_category.html', form=form, category_id=category_id)
 
 
-@app.route('/user/all-categories')
+@app.route('/settings/taxonomies/category/<username>.<root_url>')
 @requires_any_permission("manage_posts")
 @login_required
-def user_all_category():
+def user_all_category(username, root_url):
     result = api_calls.get_user_all_categories(access_token=current_user.id)
     if result is None:
         result = []  # Set result to an empty list
     print(result)
 
-    return render_template('view_user_category.html', result=result)
+    return render_template('view_user_category.html', ROOT_URL=ROOT_URL, result=result)
 
 
 @app.route('/user/all-subcategories/<category_id>')
@@ -1396,7 +1400,7 @@ def add_tag():
         print(response.status_code)
         if (response.status_code == 200):
             flash('Tag added Successful')
-            return redirect(url_for('user_all_tag'))
+            return redirect(url_for('user_all_tag', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
         else:
             flash('Some problem occured')
 
@@ -1431,19 +1435,19 @@ def delete_tag(tag_id):
         flash('Tag deleted successfully')
     else:
         flash('Some problem occurred while deleting the tag')
-    return redirect(url_for('user_all_tag'))
+    return redirect(url_for('user_all_tag', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
 
 
-@app.route('/user/all-tags')
+@app.route('/settings/taxonomies/post_tag/<username>.<root_url>')
 @requires_any_permission("manage_posts")
 @login_required
-def user_all_tag():
+def user_all_tag(username, root_url):
     result = api_calls.get_user_all_tags(access_token=current_user.id)
     if result is None:
         result = []  # Set result to an empty list
     print(result)
 
-    return render_template('view_user_tags.html', result=result)
+    return render_template('view_user_tags.html', ROOT_URL=ROOT_URL, result=result)
 
 
 @app.route("/users/delete-category/<category_id>", methods=['GET', 'POST'])
@@ -1453,7 +1457,7 @@ def user_delete_category(category_id):
     result = api_calls.user_delete_category(category_id=category_id, access_token=current_user.id)
     print(result.status_code)
     if result.status_code == 200:
-        return redirect(url_for('user_all_category'))
+        return redirect(url_for('user_all_category', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
 
 
 @app.route('/user/subcategories/<int:category_id>')
@@ -1478,7 +1482,7 @@ def add_subcategory():
         print(response.status_code)
         if (response.status_code == 200):
             flash('Subcategory added Successful', category='info')
-            return redirect(url_for('user_all_category'))
+            return redirect(url_for('user_all_category', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
         else:
             flash('Some problem occured', category='error')
 
@@ -1500,7 +1504,7 @@ def update_subcategory(subcategory_id):
         print(response.status_code)
         if (response.status_code == 200):
             flash('Subcategory added Successful', category='info')
-            return redirect(url_for('user_all_category'))
+            return redirect(url_for('user_all_category', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
         else:
             flash('Some problem occured', category='error')
 
@@ -1515,12 +1519,12 @@ def user_delete_subcategory(subcategory_id):
     result = api_calls.user_delete_subcategory(subcategory_id=subcategory_id, access_token=current_user.id)
     print(result.status_code)
     if result.status_code == 200:
-        return redirect(url_for('user_all_category'))
+        return redirect(url_for('user_all_category', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
 
 
-@app.route('/posts/update-post/<post_id>', methods=['GET', 'POST'])
+@app.route('/post/<username>.<root_url>/<post_id>', methods=['GET', 'POST'])
 @requires_any_permission("manage_posts")
-def admin_edit_post(post_id):
+def admin_edit_post(post_id, username, root_url):
     form = forms.AddPost()
     post = api_calls.get_post(post_id=post_id)
 
@@ -1570,7 +1574,7 @@ def admin_edit_post(post_id):
                 )
                 if current_user.role == 'user':
                     print("redirecting")
-                    return redirect(url_for('user_all_post'))
+                    return redirect(url_for('user_all_post', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
 
                 # if result:
                 #     print("success")
@@ -1608,7 +1612,7 @@ def admin_edit_post(post_id):
     form.tags.data = ", ".join([tag['tag'] for tag in tags_list])
     form.content.data = post['content']
 
-    return render_template('edit_post_form.html', form=form, post_id=post_id)
+    return render_template('edit_post_form.html', ROOT_URL=ROOT_URL, form=form, post_id=post_id)
 
 
 ############################################################ SUBSCRIPTION #############################################################
@@ -1691,11 +1695,11 @@ def get_all_subscriptions():
 
 
 
-@app.route('/user/add-media', methods=['GET', 'POST'])
+@app.route('/user/add-media/<username>.<root_url>', methods=['GET', 'POST'])
 
 @login_required
 @requires_any_permission("manage_media")
-def media():
+def media(username, root_url):
     form = forms.AddMediaForm()  # Use the AddMediaForm class
     if request.method == 'POST':
         files = request.files.getlist('files')
@@ -1723,18 +1727,24 @@ def media():
 
         if response and response.status_code == 200:
             empty_folder(media_folder)
-            return jsonify({"message": "Media added successfully", "redirect": url_for('user_all_medias')}), 200
+            return jsonify({"message": "Media added successfully", "redirect": url_for('user_all_medias', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', ''))}), 200
         else:
             return jsonify({"message": "Some problem occurred"}), response.status_code if response else 500
 
-    return render_template('media.html', form=form)
+    return render_template('media.html',ROOT_URL=ROOT_URL, form=form)
 
 
-@app.route('/user/appearance/themes')
+@app.route('/themes/<username>.<root_url>', methods=['GET', 'POST'])
 @login_required
-def all_themes():
+def all_themes(username, root_url):
+    cleaned_root_url = ROOT_URL.replace('http://', '').replace('/', '')
 
-    return render_template('appearance_themes.html')
+    print(f"cleaned_root_url: {cleaned_root_url}")
+    print(f"root_url: {root_url}")
+
+    return render_template('appearance_themes.html', ROOT_URL=cleaned_root_url)
+
+
 
 
 @app.route('/user/appearance/theme_detail')
@@ -1871,7 +1881,7 @@ def get_post_by_username_and_slug(username, post_date, post_slug):
         comment_like_result = []
     print(comment_like_result)
 
-    return render_template('post.html', comment_like_result=comment_like_result, result=result, title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags, post_id=id, post_date=post_date, post_slug=post_slug, category_id=category_id)
+    return render_template('post.html', ROOT_URL=ROOT_URL, comment_like_result=comment_like_result, result=result, title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags, post_id=id, post_date=post_date, post_slug=post_slug, category_id=category_id)
 
 
 @app.route('/post/<post_id>', methods=['GET', 'POST'])
@@ -1914,16 +1924,16 @@ def get_post_by_id(post_id):
 
 
 
-@app.route('/user/all-media')
+@app.route('/media/<username>.<root_url>')
 @login_required
-def user_all_medias():
+def user_all_medias(username, root_url):
     root_url = constants.ROOT_URL + '/'
     result = api_calls.get_user_all_medias(access_token=current_user.id)
     if result is None:
         result = []  # Set result to an empty list
     print(result)
 
-    return render_template('user_all_media.html', result=result, root_url=root_url)
+    return render_template('user_all_media.html', ROOT_URL=ROOT_URL, result=result, root_url=root_url)
 
 
 @app.route('/posts/comment/<int:post_id>/<username>/<post_date>/<post_slug>', methods=['GET', 'POST'])
@@ -2404,7 +2414,7 @@ def get_page_by_id(page_id):
     title = response["title"]
     content = response["content"]
 
-    return render_template('cms/pages/page.html', title=title, content=content)
+    return render_template('cms/pages/page.html', ROOT_URL=ROOT_URL,  title=title, content=content)
 
 
 @app.route('/user/pages/update-page/<page_id>', methods=['GET', 'POST'])
@@ -2830,16 +2840,16 @@ def page_show_in_nav(page_id, theme_name, theme_id):
                            theme_name=theme_name,
                            page_id=page_id)
 
-@app.route('/user/appearance/menus')
+@app.route('/appearance/menus/<username>.<root_url>')
 @login_required
-def menu_management():
+def menu_management(username, root_url):
     menus = api_calls.get_user_all_menus(access_token=current_user.id)
     if menus is None:
         menus = []
     pages = api_calls.get_user_all_pages(access_token=current_user.id)
     if pages is None:
         pages = []  # Set pages to an empty list
-    return render_template('themes/theme_menu.html', pages=pages, menus=menus)
+    return render_template('themes/theme_menu.html', ROOT_URL=ROOT_URL, pages=pages, menus=menus)
 
 @app.route('/scrapped-jobs')
 @login_required
@@ -3021,20 +3031,61 @@ def create_menu():
     name = request.form.get('name')
     result = api_calls.create_menu(name=name, access_token=current_user.id)
     if result:
-        return redirect(url_for('menu_management'))
+        return redirect(url_for('menu_management', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
     else:
         return "Menu creation failed", 400  # Return an error response if something goes wrong
+
 
 @app.route('/user/appearance/menus/update-menu/<menu_id>', methods=['GET', 'POST'])
 @login_required
 def update_menu(menu_id):
-    name = request.form.get('name')
+    if request.method == 'POST':
+        name = request.form.get('name')
+        # Get selected theme locations from the form
+        selected_theme_locations = request.form.get('selected_theme_locations')
+        print(selected_theme_locations)
+        # If selected_theme_locations is not None, split it into a list
+        if selected_theme_locations:
+            selected_theme_locations = selected_theme_locations.split(',')
 
-    result = api_calls.update_menu(name=name, menu_id=menu_id, access_token=current_user.id)
+        # Call the API to update the menu
+        result = api_calls.update_menu(
+            name=name,
+            menu_id=menu_id,
+            access_token=current_user.id,
+            theme_location=selected_theme_locations  # Pass the theme locations to the API call
+        )
+
+        if result:
+            return redirect(url_for('menu_management', username=current_user.username,
+                                    root_url=ROOT_URL.replace('http://', '').replace('/', '')))
+        else:
+            return "Menu update failed", 400  # Return an error response if something goes wrong
+
+
+@app.route('/user/appearance/menus/update-menu-page/<menu_id>', methods=['POST'])
+@login_required
+def update_menu_page(menu_id):
+    # Get the JSON data from the request
+    data = request.get_json()
+    page_ids = data.get('page_ids', [])
+    print(menu_id)
+    print(page_ids)
+    if not page_ids:
+        return jsonify({"error": "No page IDs provided"}), 400  # Return error if no page IDs are sent
+
+    # Call the API to update the menu
+    result = api_calls.update_menu_page(
+        menu_id=menu_id,
+        page_ids=page_ids,
+        access_token=current_user.id
+    )
+
     if result:
-        return redirect(url_for('menu_management'))
+        return jsonify({"message": "Menu updated successfully", "updated_pages": result}), 200
     else:
-        return "Menu creation failed", 400  # Return an error response if something goes wrong
+        return jsonify({"error": "Menu update failed"}), 400  # Return an error response if something goes wrong
+
 
 
 @app.route('/robots.txt')
