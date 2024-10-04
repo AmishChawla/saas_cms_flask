@@ -4,7 +4,7 @@
     {% extends 'admin_base.html' %}
 {% endif %}
 
-{% block title %}Add Category{% endblock %}
+{% block title %}Update Category{% endblock %}
 
 {% block content %}
     <div class="container mt-5">
@@ -12,13 +12,13 @@
             <div class="col-md-6">
                 <div class="card border-0">
                     <div class="card-header bg-white text-black text-center">
-                        <h2>Add Category</h2>
+                        <h2>Update Category</h2>
                     </div>
 
                     <div class="card-body">
 
 
-                        <form method="post" action="{{ url_for('update_category', category_id=category_id) }}">
+                        <form method="post" action="{{ url_for('update_category', category_id=category_id, username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}">
                             {{ form.hidden_tag() }}
 
                             <div class="mb-3">

@@ -18,7 +18,7 @@
                     <div class="card-body">
 
 
-                        <form method="post" action="{{ url_for('add_category') }}">
+                        <form method="post" action="{{ url_for('add_category', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}">
                             {{ form.hidden_tag() }}
 
                             <div class="mb-3">

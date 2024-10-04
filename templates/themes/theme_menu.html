@@ -100,11 +100,43 @@
 
         /* Flexbox layout */
         .flex-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start; /* Align items to the top */
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Align items to the top */
+    flex-wrap: wrap; /* Allows wrapping for smaller screens */
 
-        }
+}
+
+/* For small screens (mobile devices) */
+@media (max-width: 600px) {
+    .flex-container {
+        flex-direction: column; /* Stack items vertically */
+        justify-content: center; /* Center items in the container */
+
+    }
+    .flex-left, .flex-right {
+        width: 100% !important;
+    }
+}
+
+/* For medium screens (tablets) */
+@media (min-width: 601px) and (max-width: 1024px) {
+    .flex-container {
+        flex-direction: row;
+        justify-content: space-around; /* Spread items evenly */
+        align-items: flex-start;
+    }
+}
+
+/* For large screens (desktops) */
+@media (min-width: 1025px) {
+    .flex-container {
+        flex-direction: row;
+        justify-content: space-between; /* Maintain space between items */
+        align-items: flex-start;
+    }
+}
+
 
         .flex-right {
             background-color: white;

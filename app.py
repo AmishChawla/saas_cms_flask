@@ -1329,10 +1329,10 @@ def preview_post(username, root_url):
 #     return redirect(url_for('add_post'))
 
 
-@app.route("/user/add-category", methods=['GET', 'POST'])
+@app.route("/user/add-category/<username>.<root_url>", methods=['GET', 'POST'])
 @requires_any_permission("manage_posts")
 @login_required
-def add_category():
+def add_category(username, root_url):
     form = forms.AddCategory()
     if form.validate_on_submit():
         category = form.category.data
@@ -1344,13 +1344,13 @@ def add_category():
         else:
             flash('Some problem occured', category='error')
 
-    return render_template('user_add_category.html', form=form)
+    return render_template('user_add_category.html', ROOT_URL=ROOT_URL, form=form)
 
 
-@app.route("/user/update-category/<category_id>", methods=['GET', 'POST'])
+@app.route("/user/update-category/<category_id>/<username>.<root_url>", methods=['GET', 'POST'])
 @requires_any_permission("manage_posts")
 @login_required
-def update_category(category_id):
+def update_category(category_id, username, root_url):
     form = forms.AddCategory()
     if form.validate_on_submit():
         category = form.category.data
@@ -1362,7 +1362,7 @@ def update_category(category_id):
         else:
             flash('Some problem occured', category='error')
 
-    return render_template('update_user_category.html', form=form, category_id=category_id)
+    return render_template('update_user_category.html', ROOT_URL=ROOT_URL, form=form, category_id=category_id)
 
 
 @app.route('/settings/taxonomies/category/<username>.<root_url>')
@@ -1407,10 +1407,10 @@ def add_tag():
     return render_template('user_add_tags.html', form=form)
 
 
-@app.route("/user/edit-tag/<int:tag_id>", methods=['GET', 'POST'])
+@app.route("/user/edit-tag/<int:tag_id>/<username>.<root_url>", methods=['GET', 'POST'])
 @requires_any_permission("manage_posts")
 @login_required
-def edit_tag(tag_id):
+def edit_tag(tag_id, username, root_url):
     form = forms.EditTag()
     if form.validate_on_submit():
         new_tag = form.tag.data
@@ -1418,11 +1418,11 @@ def edit_tag(tag_id):
         print(response.status_code)
         if response.status_code == 200:
             flash('Tag edited successfully')
-            return redirect(url_for('user_all_tag'))
+            return redirect(url_for('user_all_tag', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
         else:
             flash('Some problem occurred while editing the tag')
 
-    return render_template('user_edit_tag.html', form=form, tag_id=tag_id)
+    return render_template('user_edit_tag.html', ROOT_URL=ROOT_URL, form=form, tag_id=tag_id)
 
 
 @app.route("/user/delete-tag/<int:tag_id>", methods=['GET', 'POST'])
@@ -1458,6 +1458,8 @@ def user_delete_category(category_id):
     print(result.status_code)
     if result.status_code == 200:
         return redirect(url_for('user_all_category', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
+    else:
+        abort(result.status_code)
 
 
 @app.route('/user/subcategories/<int:category_id>')
@@ -1467,10 +1469,10 @@ def get_subcategories(category_id):
     return jsonify({'subcategories': subcategories})
 
 
-@app.route("/user/add-subcategory", methods=['GET', 'POST'])
+@app.route("/user/add-subcategory/<username>.<root_url>", methods=['GET', 'POST'])
 @requires_any_permission("manage_posts")
 @login_required
-def add_subcategory():
+def add_subcategory(username, root_url):
     form = forms.AddSubcategory()
     categories = api_calls.get_user_all_categories(access_token=current_user.id)
     category_choices = [(category['id'], category['category']) for category in categories]
@@ -1486,7 +1488,7 @@ def add_subcategory():
         else:
             flash('Some problem occured', category='error')
 
-    return render_template('user_add_subcategory.html', form=form, categories=category_choices)
+    return render_template('user_add_subcategory.html', ROOT_URL=ROOT_URL, form=form, categories=category_choices)
 
 
 @app.route("/user/update-subcategory/<subcategory_id>", methods=['GET', 'POST'])
@@ -1674,13 +1676,13 @@ def resume_subscription(subscription_id):
         print(e)
 
 
-@app.route('/purchase_history', methods=['GET'])
+@app.route('/purchase_history/<username>.<root_url>', methods=['GET'])
 @login_required
-def get_purchase_history():
+def get_purchase_history(username, root_url):
     access_token = current_user.id
     purchase_data = api_calls.purchase_history(access_token)
 
-    return render_template('purchase_history.html', purchase_data=purchase_data)
+    return render_template('purchase_history.html', ROOT_URL=ROOT_URL, purchase_data=purchase_data)
 
 
 @app.route('/admin/all-subscriptions', methods=['GET'])
@@ -1695,11 +1697,11 @@ def get_all_subscriptions():
 
 
 
-@app.route('/user/add-media/<username>.<root_url>', methods=['GET', 'POST'])
+@app.route('/user/add-media', methods=['GET', 'POST'])
 
 @login_required
 @requires_any_permission("manage_media")
-def media(username, root_url):
+def media():
     form = forms.AddMediaForm()  # Use the AddMediaForm class
     if request.method == 'POST':
         files = request.files.getlist('files')
@@ -1854,7 +1856,7 @@ def get_post(post_title):
 
 
 
-    return render_template('post.html', title=post_title, content=content, author_name=author_name,
+    return render_template('post.html', ROOT_URL=ROOT_URL, title=post_title, content=content, author_name=author_name,
                            created_at=formatted_date, category=category_name, tags=tags, result=result, post_id=post_id)
 
 @app.route('/<username>/posts/<post_date>/<post_slug>', methods=['GET', 'POST'])
@@ -1964,15 +1966,15 @@ def comment(post_id, username, post_date, post_slug):
 
 
 
-@app.route('/posts/all-comment', methods=['GET', 'POST'])
+@app.route('/comments/<username>.<root_url>', methods=['GET', 'POST'])
 @login_required
-def get_all_comment():
+def get_all_comment(username, root_url):
     result = api_calls.get_all_comments(access_token = current_user.id)
     if result is None:
         result = []  # Set result to an empty list
     print(result)
 
-    return render_template('comments_table.html', result=result)
+    return render_template('comments_table.html', ROOT_URL=ROOT_URL, result=result)
 
 
 
@@ -1986,9 +1988,9 @@ def deactivate_comment(comment_id):
         return redirect(url_for('get_all_comment'))
 
 
-@app.route('/settings/comments', methods=['GET', 'POST'])
+@app.route('/settings//<username>.<root_url>', methods=['GET', 'POST'])
 @login_required
-def comment_setting():
+def comment_setting(username, root_url):
     print("comment setting")
     if request.method == 'POST':
         # Extract form data
@@ -2034,7 +2036,7 @@ def comment_setting():
         access_token=current_user.id
     )
 
-    return render_template('comments_settings.html', result=result)
+    return render_template('comments_settings.html', ROOT_URL=ROOT_URL, result=result)
 
 
 
@@ -2072,12 +2074,12 @@ def remove_like_from_comment_route(comment_like_id, comment_id, username, post_d
 
 ###################################form builder################
 
-@app.route('/formbuilder')
+@app.route('/formbuilder/<username>.<root_url>')
 @requires_any_permission("manage_forms")
 @login_required
-def formbuilder():
+def formbuilder(username, root_url):
     unique_id = str(uuid.uuid4())
-    return render_template('cms/formbuilder/formbuilder.html', form_unique_id=unique_id)
+    return render_template('cms/formbuilder/formbuilder.html', ROOT_URL=ROOT_URL, form_unique_id=unique_id)
 
 
 @app.route('/formbuilder/form-create', methods=['GET', 'POST'])
@@ -2104,16 +2106,16 @@ def formbuilder_delete_form(form_id):
     result = api_calls.delete_form_by_unique_id(form_id=form_id, access_token=current_user.id)
     return redirect(url_for('user_all_forms'))
 
-@app.route('/user/all-forms')
+@app.route('/forms/<username>.<root_url>')
 @requires_any_permission("manage_forms")
 @login_required
-def user_all_forms():
+def user_all_forms(username, root_url):
     forms = api_calls.get_user_all_forms(access_token=current_user.id)
     if forms is None:
         forms = []  # Set result to an empty list
 
 
-    return render_template('cms/formbuilder/user_all_forms.html', result=forms)
+    return render_template('cms/formbuilder/user_all_forms.html', ROOT_URL=ROOT_URL, result=forms)
 
 
 @app.route('/user/forms/<form_id>', methods=['GET', 'POST'])
@@ -2255,15 +2257,15 @@ def email_settings():
 ############################################################## NEWSLETTER ##############################################################
 
 
-@app.route("/newsletter-subscribers", methods=['GET', 'POST'])
+@app.route("/newsletter-subscribers/<username>.<root_url>", methods=['GET', 'POST'])
 @login_required
-def newsletter_subscribers():
+def newsletter_subscribers(username, root_url):
     subscriber_info = api_calls.get_all_newsletter_subscribers(access_token=current_user.id)
     subscribers = subscriber_info['subscribers']
     sub_count = subscriber_info['active_sub_count']
     unsub_count = subscriber_info['inactive_sub_count']
 
-    return render_template('newsletter_subscribers.html', result=subscribers, sub_count=sub_count,
+    return render_template('newsletter_subscribers.html', ROOT_URL=ROOT_URL, result=subscribers, sub_count=sub_count,
                            unsub_count=unsub_count)
 
 
@@ -2300,12 +2302,12 @@ def user_contact_form(username):
         return redirect(url_for('user_post_list', username=username))
 
 
-@app.route("/user/feedbacks", methods=['GET', 'POST'])
+@app.route("/feedbacks/<username>.<root_url>", methods=['GET', 'POST'])
 @login_required
-def user_feedbacks():
+def user_feedbacks(username, root_url):
     feedbacks = api_calls.get_all_user_feedbacks(access_token=current_user.id)
 
-    return render_template('user_feedbacks.html', result=feedbacks)
+    return render_template('user_feedbacks.html', ROOT_URL=ROOT_URL, result=feedbacks)
 
 @app.route("/<username>/posts/category/<category>/<category_id>", methods=['GET', 'POST'])
 def posts_by_category(username, category, category_id):
@@ -2322,10 +2324,10 @@ def posts_by_tag(username, tag, tag_id):
 #################################################### PAGES ##################################################
 
 
-@app.route('/user/pages/add-page', methods=['GET', 'POST'])
+@app.route('/user/pages/add-page/<username>.<root_url>', methods=['GET', 'POST'])
 @requires_any_permission("manage_pages")
 @login_required
-def add_page():
+def add_page(username, root_url):
     form = forms.AddPage()
 
     if form.validate_on_submit():
@@ -2340,7 +2342,7 @@ def add_page():
 
                 if result:
                     if current_user.role == 'user':
-                        return redirect(url_for('user_all_pages'))
+                        return redirect(url_for('user_all_pages', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
                     else:
                         return redirect(url_for('all_post'))
                 else:
@@ -2377,10 +2379,10 @@ def add_page():
     if current_user.role == 'user':
         is_service_allowed = api_calls.is_service_access_allowed(current_user.id)
         if is_service_allowed:
-            return render_template('cms/pages/add_page.html', form=form, result=media_result, root_url=root_url)
+            return render_template('cms/pages/add_page.html', ROOT_URL=ROOT_URL, form=form, result=media_result, root_url=root_url)
         return redirect(url_for('user_view_plan'))
     else:
-        return render_template('cms/pages/add_page.html', form=form, result=media_result, root_url=root_url)
+        return render_template('cms/pages/add_page.html', ROOT_URL=ROOT_URL, form=form, result=media_result, root_url=root_url)
 
     forms_result = api_calls.get_user_all_forms(access_token=current_user.id)
     if forms_result is None:
@@ -2396,14 +2398,14 @@ def add_page():
 
 
 
-@app.route('/user/all-pages')
+@app.route('/pages/<username>.<root_url>')
 @requires_any_permission("manage_pages")
 @login_required
-def user_all_pages():
+def user_all_pages(username, root_url):
     pages = api_calls.get_user_all_pages(access_token=current_user.id)
     if pages is None:
         pages = []  # Set result to an empty list
-    return render_template('cms/pages/user_all_pages.html', result=pages)
+    return render_template('cms/pages/user_all_pages.html', ROOT_URL=ROOT_URL, result=pages)
 
 
 @app.route('/user/page/<page_id>', methods=['GET', 'POST'])
@@ -2417,10 +2419,10 @@ def get_page_by_id(page_id):
     return render_template('cms/pages/page.html', ROOT_URL=ROOT_URL,  title=title, content=content)
 
 
-@app.route('/user/pages/update-page/<page_id>', methods=['GET', 'POST'])
+@app.route('/user/pages/update-page/<page_id>/<username>.<root_url>', methods=['GET', 'POST'])
 @requires_any_permission("manage_pages")
 @login_required
-def update_page(page_id):
+def update_page(page_id, username, root_url):
     form = forms.AddPage()
     page = api_calls.get_page(page_id=page_id)
 
@@ -2441,7 +2443,7 @@ def update_page(page_id):
                 )
                 if current_user.role == 'user':
                     print("redirecting")
-                    return redirect(url_for('user_all_pages'))
+                    return redirect(url_for('user_all_pages', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
 
             except Exception as e:
                 print(f"Error updating post: {e}")
@@ -2455,13 +2457,13 @@ def update_page(page_id):
                     access_token=current_user.id  
                 )
                 if current_user.role == 'user':
-                    return redirect(url_for('user_all_pages'))
+                    return redirect(url_for('user_all_pages', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
             except Exception as e:
                 print(f"Error updating post: {e}")
     form.title.data = page['title']
     form.content.data = page['content']
 
-    return render_template('cms/pages/update_page.html', form=form, page=page)
+    return render_template('cms/pages/update_page.html', ROOT_URL=ROOT_URL,  form=form, page=page)
 
 
 @app.route("/user/pages/delete-page/<page_id>", methods=['GET', 'POST'])
@@ -2491,15 +2493,15 @@ def get_page_by_username_and_slug(username, page_slug):
 
 ###################################################### CHATBOT ####################################################################
 
-@app.route('/chatbot')
+@app.route('/chatbot/<username>.<root_url>')
 @requires_any_permission("access_chatbot")
 @login_required
-def chatbot():
+def chatbot(username, root_url):
     all_chats = api_calls.get_user_all_chats(access_token=current_user.id)
     if all_chats is None:
         all_chats = []
 
-    return render_template('cms/AI/chatbot.html', all_chats=all_chats)
+    return render_template('cms/AI/chatbot.html', ROOT_URL=ROOT_URL, all_chats=all_chats)
 
 
 @app.route('/send_message', methods=['POST'])
@@ -2643,10 +2645,10 @@ def parse_multiple_resumes(file_paths):
     return parsed_resumes
 
 
-@app.route('/resume-parser', methods=['GET', 'POST'])
+@app.route('/resume-parser/<username>.<root_url>', methods=['GET', 'POST'])
 @requires_any_permission("access_resume_parser")
 @login_required
-def resume_parser():
+def resume_parser(username, root_url):
     form = forms.UploadForm()
     if form.validate_on_submit():
         uploaded_files = request.files.getlist('files')
@@ -2671,18 +2673,18 @@ def resume_parser():
         # Render results
         return parsed_resumes
 
-    return render_template('upload_pdf.html', form=form)
+    return render_template('upload_pdf.html', ROOT_URL=ROOT_URL, form=form)
 
 
-@app.route('/resume-collection')
+@app.route('/resume-collection/<username>.<root_url>')
 @requires_any_permission("access_resume_parser")
 @login_required
-def resume_collection():
+def resume_collection(username, root_url):
     try:
         resume_collection = api_calls.get_past_resume_records(access_token=current_user.id)
     except: resume_collection = []
 
-    return render_template('cms/AI/resume_collection.html', result=resume_collection)
+    return render_template('cms/AI/resume_collection.html', ROOT_URL=ROOT_URL, result=resume_collection)
 
 #####################################################################################################################################################################################################
 ##################################################### ADMIN ######################################################################

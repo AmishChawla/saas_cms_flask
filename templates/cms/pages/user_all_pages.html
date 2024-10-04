@@ -8,24 +8,58 @@
     <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
       <div class="card">
         <div class="card-body" style="overflow-x: auto;">
-          <div style="display:flex; justify-content:space-between;">
-            <h2 class="m-0">My Pages</h2>
-            <div style="display: flex; justify-content: space-between;">
-              <a href="{{ url_for('user_post_list', username=current_user.username) }}" class="d-block" style="margin-right:0.5rem; margin-top:6px; font-weight:bolder; font-size:1.1rem;">Visit Site</a>
-
-              <a class="btn btn-info" href="{{ url_for('add_page')}}" style="padding: 6px 30px 6px 30px;">
-                <span class="menu-title">Add</span>
-              </a>
-            </div>
+          <div>
+            <h1 class="formatted-header__title">Pages </h1>
+            <p class="formatted-header__subtitle">Create, edit, and manage the pages on your site. <a class="inline-support-link" href="#" target="_blank" rel="noopener noreferrer"><span class="inline-support-link__nowrap">Learn&nbsp;more</span></a>.</p>
           </div>
-            <ul class="nav nav-tabs" id="pageTabs" style="margin-top: 1.5rem;">
+<!--          <div style="display:flex; justify-content:space-between;">-->
+<!--            <h2 class="m-0">My Pages</h2>-->
+<!--            <div style="display: flex; justify-content: space-between;">-->
+<!--              <a href="{{ url_for('user_post_list', username=current_user.username) }}" class="d-block" style="margin-right:0.5rem; margin-top:6px; font-weight:bolder; font-size:1.1rem;">Visit Site</a>-->
+
+<!--              <a class="btn btn-info" href="#" style="padding: 6px 30px 6px 30px;">-->
+<!--                <span class="menu-title">Add</span>-->
+<!--              </a>-->
+<!--            </div>-->
+<!--          </div>-->
+            <ul class="nav" id="pageTabs" style="margin-top: 1.5rem; position: relative;">
             <li class="nav-item">
-              <a class="nav-link active" id="published-tab" data-toggle="tab" href="#published-pages">Published </a>
+              <a class="nav-link active" id="published-tab" data-toggle="tab" href="#published-pages">Published
+                <span class="count">
+                {{ result | selectattr('status', 'equalto', 'published') | list | length }}
+            </span>
+              </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" id="drafts-tab" data-toggle="tab" href="#draft-pages">Drafts </a>
+              <a class="nav-link" id="drafts-tab" data-toggle="tab" href="#draft-pages">Drafts
+              <span class="count">
+                {{ result | selectattr('status', 'equalto', 'draft') | list | length }}
+            </span>
+              </a>
             </li>
+              <li class="nav-item" style="margin-left: auto;">
+        <a href="javascript:void(0)" id="searchIcon">
+            <i class="fas fa-search mirrored-icon"></i>
+        </a>
+    </li>
           </ul>
+
+          <div id="searchContainer" style="display: none;">
+    <div class="input-group">
+        <span class="input-group-prepend">
+            <span class="input-group-text">
+                <i class="fas fa-search mirrored-icon"></i> <!-- Mirrored Search Icon in Input -->
+            </span>
+        </span>
+        <input type="text" id="searchInput" class="form-control" placeholder="Search posts...">
+        <span class="input-group-append">
+            <button class="btn" type="button" id="closeSearch">
+                <i class="fas fa-times mirrored-icon"></i> <!-- Close Icon (Mirrored) -->
+            </button>
+        </span>
+    </div>
+</div>
+
             <div class="tab-content" style="margin-top: 1.5rem;">
                 <div class="tab-pane fade show active" id="published-pages">
           <table id="userpagesTable" class="hover" style="width:100%;">
@@ -48,7 +82,7 @@
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 
-                  <a  href="{{ url_for('update_page', page_id=data.id) }}" style="margin-right: 1rem;" data-toggle="tooltip" data-placement="top" title="Modify"><i class="bi bi-pen" style="color:#0b4647; font-size: 1.5rem"></i></a>
+                  <a  href="{{ url_for('update_page', page_id=data.id, username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" style="margin-right: 1rem;" data-toggle="tooltip" data-placement="top" title="Modify"><i class="bi bi-pen" style="color:#0b4647; font-size: 1.5rem"></i></a>
                   <a  data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}" data-toggle="tooltip" data-placement="top" title="Delete"><i class="bi bi-trash3-fill " style="color:#6b1313; font-size: 1.5rem"></i></a>
 
                   <!-- Modal for delete button -->
@@ -96,7 +130,7 @@
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 
-                  <a href="{{ url_for('update_page', page_id=data.id) }}" style="margin-right: 1rem;" data-toggle="tooltip" data-placement="top" title="Publish"><i class="bi bi-vector-pen" style="color:#0b0a3d; font-size: 1.5rem"></i></a>
+                  <a href="{{ url_for('update_page', page_id=data.id, username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" style="margin-right: 1rem;" data-toggle="tooltip" data-placement="top" title="Publish"><i class="bi bi-vector-pen" style="color:#0b0a3d; font-size: 1.5rem"></i></a>
 
                   <a data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}" data-toggle="tooltip" data-placement="top" title="Delete"><i class="bi bi-trash3-fill" style="color:#6b1313; font-size: 1.5rem"></i></a>
 
@@ -137,4 +171,94 @@
 new DataTable('#userpagesTable');
 new DataTable('#draftpageTable');
 </script>
+
+<script>
+  document.getElementById('searchIcon').addEventListener('click', function() {
+    document.getElementById('pageTabs').style.display = 'none';
+    document.getElementById('searchContainer').style.display = 'block';
+});
+
+document.getElementById('closeSearch').addEventListener('click', function() {
+    document.getElementById('searchContainer').style.display = 'none';
+    document.getElementById('pageTabs').style.display = 'flex';
+});
+
+</script>
+
+<script>
+  document.getElementById('searchInput').addEventListener('keyup', function() {
+    // Get the search query
+    const searchQuery = this.value.toLowerCase();
+
+    // Select the tables
+    const publishedTable = document.querySelector('#userpagesTable tbody');
+    const draftTable = document.querySelector('#draftpageTable tbody');
+
+    // Function to filter table rows
+    function filterTableRows(table) {
+        const rows = table.getElementsByTagName('tr');
+
+        // Loop through all rows, and hide those that don't match the search query
+        for (let i = 0; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let rowContent = '';
+            for (let j = 0; j < cells.length; j++) {
+                rowContent += cells[j].textContent.toLowerCase();
+            }
+
+            if (rowContent.includes(searchQuery)) {
+                rows[i].style.display = ''; // Show row
+            } else {
+                rows[i].style.display = 'none'; // Hide row
+            }
+        }
+    }
+
+    // Filter both the published and draft tables
+    filterTableRows(publishedTable);
+    filterTableRows(draftTable);
+});
+
+// Clear search button functionality
+document.getElementById('clearSearch').addEventListener('click', function() {
+    document.getElementById('searchInput').value = ''; // Clear input field
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach(row => row.style.display = ''); // Show all rows
+});
+
+</script>
+
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+    // Select all elements that have the 'dt-search' class
+    var searchElements = document.querySelectorAll('.dt-search');
+
+    searchElements.forEach(function(searchElement) {
+        var parentElement = searchElement.parentElement;  // Get the parent div of each .dt-search
+
+        if (parentElement) {
+            // Create the new div with the button inside
+            var newDiv = document.createElement('div');
+            newDiv.classList.add('dt-layout-cell', 'dt-end');
+
+            // Create the anchor element (button)
+            var newButton = document.createElement('a');
+            newButton.href = '{{ url_for('add_page', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', ''))}}';  // Set your desired URL here
+            newButton.classList.add('btn', 'btn-primary');
+            newButton.id = 'addNewPageButton';
+            newButton.textContent = 'Add New Page';
+
+            // Append the button to the new div
+            newDiv.appendChild(newButton);
+
+            // Replace the original search element with the new div
+            parentElement.replaceWith(newDiv);
+        }
+    });
+});
+
+
+
+</script>
+
 {% endblock %}

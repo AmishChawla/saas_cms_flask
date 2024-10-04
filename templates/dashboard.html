@@ -47,7 +47,7 @@
               <div class="icon">
                 <i class="bi bi-bell-fill"></i>
               </div>
-              <a href="{{ url_for('newsletter_subscribers') }}" class="small-box-footer">
+              <a href="{{ url_for('newsletter_subscribers', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="small-box-footer">
                 More info <i class="fas fa-arrow-circle-right"></i>
               </a>
             </div>
@@ -64,7 +64,7 @@
               <div class="icon">
                 <i class="fas fa-comment"></i>
               </div>
-              <a href="{{ url_for('get_all_comment') }}" class="small-box-footer">
+              <a href="{{ url_for('get_all_comment', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="small-box-footer">
                 More info <i class="fas fa-arrow-circle-right"></i>
               </a>
             </div>
@@ -81,7 +81,7 @@
               <div class="icon">
                 <i class="fas bi bi-chat-right-text"></i>
               </div>
-              <a href="{{ url_for('user_feedbacks') }}" class="small-box-footer">
+              <a href="{{ url_for('user_feedbacks', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="small-box-footer">
                 More info <i class="fas fa-arrow-circle-right"></i>
               </a>
             </div>

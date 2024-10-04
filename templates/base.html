@@ -26,6 +26,9 @@
 
     }
 
+.content {
+  margin-top: 0;
+}
 
 .main-sidebar {
   background-color: #23282d;
@@ -220,7 +223,7 @@ div.dt-container div.dt-layout-row:last-of-type {
       background: #32373c;
     }
 
-    [class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active-menu {
+    .nav-item>.nav-link.active-menu {
       background-color: #0073aa;
       color: #fff;
     }
@@ -347,7 +350,7 @@ div.dt-container div.dt-layout-row:last-of-type {
                with font-awesome or any other icon font library -->
 
           <li class="nav-item">
-            <a class="nav-link {% if request.endpoint == 'user_dashboard' %}active{% endif %}" href="{{ url_for('user_dashboard', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}">
+            <a class="nav-link {% if request.endpoint == 'user_dashboard' %}active-menu{% endif %}" href="{{ url_for('user_dashboard', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}">
               <i class="nav-icon far fa fa-home">
               </i>
               <p>
@@ -426,13 +429,13 @@ div.dt-container div.dt-layout-row:last-of-type {
                 </a>
                 <ul class="nav nav-treeview {% if request.endpoint == 'user_all_pages' or request.endpoint == 'add_page' %} open-menu-section {% endif %}">
               <li class="nav-item">
-                <a href="{{ url_for('user_all_pages') }}" class="nav-link {% if request.endpoint == 'user_all_pages' %} active {% endif %}">
+                <a href="{{ url_for('user_all_pages', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="nav-link {% if request.endpoint == 'user_all_pages' %} active {% endif %}">
 
                   <p>All Pages</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{ url_for('add_page') }}" class="nav-link {% if request.endpoint == 'add_page' %} active {% endif %}">
+                <a href="{{ url_for('add_page', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="nav-link {% if request.endpoint == 'add_page' %} active {% endif %}">
 
                   <p>Add New Page</p>
                 </a>
@@ -447,19 +450,19 @@ div.dt-container div.dt-layout-row:last-of-type {
                 </a>
                 <ul class="nav nav-treeview {% if request.endpoint == 'user_all_forms' or request.endpoint == 'formbuilder' or request.endpoint == 'user_feedbacks' %} open-menu-section {% endif %}">
               <li class="nav-item">
-                <a href="{{ url_for('user_all_forms') }}" class="nav-link {% if request.endpoint == 'user_all_forms' %} active {% endif %}">
+                <a href="{{ url_for('user_all_forms', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="nav-link {% if request.endpoint == 'user_all_forms' %} active {% endif %}">
 
                   <p>My Forms</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{ url_for('formbuilder') }}" class="nav-link {% if request.endpoint == 'formbuilder' %} active {% endif %}">
+                <a href="{{ url_for('formbuilder', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="nav-link {% if request.endpoint == 'formbuilder' %} active {% endif %}">
 
                   <p>Add Form</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{ url_for('user_feedbacks') }}" class="nav-link {% if request.endpoint == 'user_feedbacks' %} active {% endif %}">
+                <a href="{{ url_for('user_feedbacks', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="nav-link {% if request.endpoint == 'user_feedbacks' %} active {% endif %}">
 
                   <p>Feedback</p>
                 </a>
@@ -476,7 +479,7 @@ div.dt-container div.dt-layout-row:last-of-type {
             </a>
             <ul class="nav nav-treeview {% if request.endpoint == 'chatbot' or request.endpoint == 'resume_parser' or request.endpoint == 'resume_collection' %} open-menu-section {% endif %}">
               <li class="nav-item">
-                <a href="{{ url_for('chatbot') }}" class="nav-link {% if request.endpoint == 'chatbot' %} active {% endif %}">
+                <a href="{{ url_for('chatbot', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="nav-link {% if request.endpoint == 'chatbot' %} active {% endif %}">
 
                   <p>Chat</p>
                 </a>
@@ -489,13 +492,13 @@ div.dt-container div.dt-layout-row:last-of-type {
                 </a>
                 <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a class="nav-link {% if request.endpoint == 'resume_parser' %} active {% endif %}" href="{{ url_for('resume_parser') }}">
+                <a class="nav-link {% if request.endpoint == 'resume_parser' %} active {% endif %}" href="{{ url_for('resume_parser', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}">
 
                   <p>Resume Parser</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{ url_for('resume_collection') }}" class="nav-link {% if request.endpoint == 'resume_collection' %} active {% endif %}">
+                <a href="{{ url_for('resume_collection', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="nav-link {% if request.endpoint == 'resume_collection' %} active {% endif %}">
 
                   <p>Resume Collection</p>
                 </a>
@@ -514,7 +517,7 @@ div.dt-container div.dt-layout-row:last-of-type {
                 </a>
                 <ul class="nav nav-treeview {% if request.endpoint == 'get_all_comment' %} open-menu-section {% endif %}">
               <li class="nav-item">
-                <a href="{{ url_for('get_all_comment') }}" class="nav-link {% if request.endpoint == 'get_all_comment' %} active {% endif %}">
+                <a href="{{ url_for('get_all_comment', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="nav-link {% if request.endpoint == 'get_all_comment' %} active {% endif %}">
 
                   <p>All comments</p>
                 </a>
@@ -523,13 +526,13 @@ div.dt-container div.dt-layout-row:last-of-type {
               </li>
 
               <li class="nav-item">
-                <a href="{{ url_for('comment_setting') }}" class="nav-link {% if request.endpoint == 'comment_setting' %} active {% endif %}">
+                <a href="{{ url_for('comment_setting', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="nav-link {% if request.endpoint == 'comment_setting' %} active-menu {% endif %}">
                   <i class="far fa fa-cog nav-icon"></i>
                   <p>Settings</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{ url_for('newsletter_subscribers') }}" class="nav-link {% if request.endpoint == 'newsletter_subscribers' %} active {% endif %}">
+                <a href="{{ url_for('newsletter_subscribers', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="nav-link {% if request.endpoint == 'newsletter_subscribers' %} active-menu {% endif %}">
                   <i class="far fa-thin fa-newspaper nav-icon"></i>
                   <p>Newsletter</p>
                 </a>
@@ -567,7 +570,7 @@ div.dt-container div.dt-layout-row:last-of-type {
             </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% if request.endpoint == 'get_purchase_history' %}active{% endif %}" href="{{ url_for('get_purchase_history') }}">
+            <a class="nav-link {% if request.endpoint == 'get_purchase_history' %} active-menu {% endif %}" href="{{ url_for('get_purchase_history', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}">
               <i class="far fa fa-history nav-icon"></i>
               <p>
                 Purchase History

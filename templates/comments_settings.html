@@ -97,7 +97,7 @@
 </div>
 
 <div id="discussion" class="settings-section active">
-<form method="POST" action="{{ url_for('comment_setting') }}">
+<form method="POST" action="{{ url_for('comment_setting', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}">
   <h2>Default post settings</h2>
   <div class="setting-group">
     <input type="checkbox" id="notify-linked-blogs" name="notify_linked_blogs" {% if result.notify_linked_blogs %}checked{% endif %}>

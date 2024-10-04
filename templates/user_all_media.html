@@ -65,7 +65,7 @@
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                          <a type="button" class="btn btn-danger" href="{{ url_for('admin_delete_post', post_id=data.id) }}">Delete</a>
+                          <a type="button" class="btn btn-danger" href="#">Delete</a>
                         </div>
                       </div>
                     </div>
@@ -94,7 +94,7 @@
        searchElements.forEach(function(searchElement) {
            // Create the first anchor element (button) for "Add New Media"
            var newButtonMedia = document.createElement('a'); // Define the newButtonMedia variable here
-           newButtonMedia.href = '{{ url_for('media', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}'; // Set your desired URL here
+           newButtonMedia.href = '{{ url_for('media') }}'; // Set your desired URL here
            newButtonMedia.classList.add('btn', 'btn-primary', 'mr-2'); // Added 'mr-2' for margin between buttons
            newButtonMedia.id = 'addNewMediaButton';
            newButtonMedia.textContent = 'Add New Media';

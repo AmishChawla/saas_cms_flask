@@ -268,7 +268,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="upload-form" method="post" action="{{ url_for('media') }}" enctype="multipart/form-data">
+                <form id="upload-form" method="post" action="{{ url_for('media', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" enctype="multipart/form-data">
                     <label for="deviceMediaInput" class="btn btn-outline-primary btn-select">Select Files</label>
                     <input type="file" id="deviceMediaInput" class="file-input" multiple style="display: none;">
                     <div id="selectedDeviceMediaContainer" class="mt-3"></div>

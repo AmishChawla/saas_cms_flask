@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}User's all posts{% endblock %}
+{% block title %}Comments{% endblock %}
 
 {% block content %}
 <link href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" rel="stylesheet">
@@ -8,8 +8,9 @@
     <div class="col-lg-12 grid-margin stretch-card" style="padding-right: 0; padding-left: 0;">
       <div class="card">
         <div class="card-body" style="overflow-x: auto;">
-          <div style="display:flex; justify-content:space-between;">
-            <h2 class="m-0">Comments</h2>
+          <div>
+            <h1 class="formatted-header__title">Comments </h1>
+            <p class="formatted-header__subtitle">View, reply to, and manage all the comments across your site. <a class="inline-support-link" href="#" target="_blank" rel="noopener noreferrer"><span class="inline-support-link__nowrap">Learn&nbsp;more</span></a>.</p>
           </div>
 
             <div class="tab-content" style="margin-top: 1.5rem;">
@@ -30,7 +31,7 @@
                 <td class="py-1">{{ data.user.username }}</td>
                 <td class="py-1">{{ data.comment }}</td>
                 <td class="py-1">
-                  <form action="{{ url_for('get_post', post_title=data.posts.title | lower | replace(' ', '')) }}" method="POST" style="display:inline;">
+                  <form action="{{ url_for('get_post_by_username_and_slug', username=data.posts.author_name, post_date=data.posts.created_at.split('T')[0], post_slug=data.posts.slug) }}" method="POST" style="display:inline;">
                     <input type="hidden" name="post_id" value="{{ data.posts.id }}">
                     <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left; color: blue;">
                         {{ data.posts.title }}

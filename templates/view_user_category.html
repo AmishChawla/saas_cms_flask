@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}User's all posts{% endblock %}
+{% block title %}User's all categories{% endblock %}
 
 {% block content %}
 <link href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" rel="stylesheet">
@@ -15,10 +15,10 @@
 <!--            <div style="display:flex; justify-content:space-between;">-->
 <!--            <h2 class="m-0">Categories</h2>-->
 <!--            <div style="display: flex; justify-content: space-between;">-->
-<!--              <a class="btn btn-info" href="{{ url_for('add_category')}}" style="padding: 6px 30px 6px 30px;">-->
+<!--              <a class="btn btn-info" href="#" style="padding: 6px 30px 6px 30px;">-->
 <!--                <span class="menu-title">Add new category</span>-->
 <!--              </a>-->
-<!--              <a class="btn btn-info" href="{{ url_for('add_subcategory') }}" style="padding: 6px 30px 6px 30px;margin-left:10px;">-->
+<!--              <a class="btn btn-info" href="#" style="padding: 6px 30px 6px 30px;margin-left:10px;">-->
 <!--                <span class="menu-title">Add new subcategory</span>-->
 <!--              </a>-->
 <!--            </div>-->
@@ -45,7 +45,7 @@
                 <td class="py-1">{{ data.created_at.split('T')[0] }} {{ data.created_at.split('T')[1][:8] }}</td>
                 <td style="display: flex">
 
-                  <a class="button button1" style="margin-right: 1rem;" href="{{ url_for('update_category', category_id=data.id) }}"><i class="bi bi-pen" style="color:#0b4647; font-size: 1.5rem"></i></a>
+                  <a class="button button1" style="margin-right: 1rem;" href="{{ url_for('update_category', category_id=data.id, username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}"><i class="bi bi-pen" style="color:#0b4647; font-size: 1.5rem"></i></a>
                   <a class="button button2" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ data.id }}"><i class="bi bi-trash3-fill " style="color:#6b1313; font-size: 1.5rem"></i></a>
 
                   <!-- Modal for delete button -->
