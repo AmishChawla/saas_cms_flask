@@ -59,10 +59,10 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="aiDropdown" style="position:absolute;left:-50px">
                       <li>
-                          <a class="dropdown-item" href="{{ url_for('chatbot') }}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Chat<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
+                          <a class="dropdown-item" href="{{ url_for('chatbot', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" onMouseOver="this.style.color='blue'" onMouseOut="this.style.color='grey'" style="display: flex; justify-content: space-between;">Chat<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
                      </li>
                       <li>
-                            <a class="dropdown-item" href="{{ url_for('resume_parser') }}" onmouseover="this.style.color='blue'" onmouseout="this.style.color='grey'" style="display: flex; justify-content: space-between;">Parse Resume<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
+                            <a class="dropdown-item" href="{{ url_for('resume_parser', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" onmouseover="this.style.color='blue'" onmouseout="this.style.color='grey'" style="display: flex; justify-content: space-between;">Parse Resume<i class="mdi mdi-account-edit menu-icon" style="margin-left:10px"></i></a>
                         </li>
 
                     </ul>
