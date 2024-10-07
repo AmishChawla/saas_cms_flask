@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Infield Style Theme</title>
-
 </head>
 <style>
     /* Basic Reset */
@@ -14,116 +13,116 @@
     box-sizing: border-box;
 }
 
-body {
+.theme1-body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
     color: #333;
 }
 
-.container {
+.theme1-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
 /* Navigation */
-.navbar {
+.theme1-navbar {
     background: #fff;
     color: #111;
     padding: 10px 0;
 }
 
-.navbar .logo {
+.theme1-navbar .theme1-logo {
     font-size: 24px;
     font-weight: bold;
 }
 
-.navbar .nav-links {
+.theme1-navbar .theme1-nav-links {
     list-style: none;
     display: flex;
     justify-content: flex-end;
 }
 
-.navbar .nav-links li {
+.theme1-navbar .theme1-nav-links li {
     margin-left: 20px;
 }
 
-.navbar .nav-links a {
+.theme1-navbar .theme1-nav-links a {
     color: #111;
     text-decoration: none;
 }
 
-.navbar .nav-links a:hover {
+.theme1-navbar .theme1-nav-links a:hover {
     color: #ff6347;
 }
 
 /* Hero Section */
-.hero {
+.theme1-hero {
     background: url('https://via.placeholder.com/1200x400') no-repeat center center/cover;
     color: #fff;
     padding: 60px 0;
     text-align: center;
 }
 
-.hero h1 {
+.theme1-hero h1 {
     font-size: 48px;
     margin-bottom: 10px;
 }
 
-.hero p {
+.theme1-hero p {
     font-size: 18px;
 }
 
 /* Blog Posts */
-.blog-posts {
+.theme1-blog-posts {
     padding: 40px 0;
 }
 
-.blog-posts h2 {
+.theme1-blog-posts h2 {
     text-align: center;
     margin-bottom: 40px;
 }
 
-.post-grid {
+.theme1-post-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
 }
 
-.post {
+.theme1-post {
     background: #f4f4f4;
     padding: 20px;
     border-radius: 5px;
     text-align: center;
 }
 
-.post img {
+.theme1-post img {
     max-width: 100%;
     height: auto;
     border-radius: 5px;
 }
 
-.post h3 {
+.theme1-post h3 {
     margin-top: 15px;
     font-size: 24px;
 }
 
-.post p {
+.theme1-post p {
     margin: 15px 0;
 }
 
-.post .read-more {
+.theme1-post .theme1-read-more {
     color: #ff6347;
     text-decoration: none;
     font-weight: bold;
 }
 
-.post .read-more:hover {
+.theme1-post .theme1-read-more:hover {
     text-decoration: underline;
 }
 
 /* Load More Button */
-.load-more {
+.theme1-load-more {
     display: block;
     margin: 20px auto;
     padding: 10px 20px;
@@ -136,109 +135,104 @@ body {
     transition: background-color 0.3s ease;
 }
 
-.load-more:hover {
+.theme1-load-more:hover {
     background-color: #ff6347;
 }
 
 /* Footer */
-.footer {
+.theme1-footer {
     background: #333;
     color: #fff;
     text-align: center;
     padding: 20px 0;
 }
 
-.nav-link {
-    text-decoration: none; /* Remove underline */
-
-    color: white; /* Text color */
-    padding: 0 10px; /* Padding for links */
-    display: block; /* Make the entire area clickable */
-    transition: background-color 0.3s; /* Smooth background transition */
+.theme1-nav-link {
+    text-decoration: none;
+    color: white;
+    padding: 0 10px;
+    display: block;
+    transition: background-color 0.3s;
 }
 
-
-.dropdown {
-    position: absolute; /* Position dropdown below menu */
-    background: #fff; /* White background for dropdown */
-    border-radius: 4px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for dropdown */
-    z-index: 1; /* Ensure it appears above other content */
-    display: none; /* Hide by default */
+.theme1-dropdown {
+    position: absolute;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    display: none;
     list-style-type: none;
 }
 
-.dropdown li {
-    padding: 6px 10px; /* Padding for dropdown items */
-    white-space: nowrap; /* Prevent text wrapping */
+.theme1-dropdown li {
+    padding: 6px 10px;
+    white-space: nowrap;
 }
 
-.dropdown li a {
-    color: #333; /* Dark text for dropdown items */
-    text-decoration: none; /* Remove underline */
-    transition: background-color 0.3s; /* Smooth background transition */
+.theme1-dropdown li a {
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.3s;
 }
 
-.dropdown li a:hover {
-    background-color: #f0f0f0; /* Light background on hover */
+.theme1-dropdown li a:hover {
+    background-color: #f0f0f0;
 }
 
-.dropdown-icon {
-    margin-left: 5px; /* Space between text and icon */
-    font-size: 0.8em; /* Smaller size for icon */
+.theme1-dropdown-icon {
+    margin-left: 5px;
+    font-size: 0.8em;
     display: inline-block;
-    vertical-align: middle; /* Align icon vertically */
+    vertical-align: middle;
 }
 
-/* Show dropdown when hovering over the parent li */
-.nav-links > li:hover .dropdown {
-    display: block; /* Show the dropdown on hover */
+.theme1-nav-links > li:hover .theme1-dropdown {
+    display: block;
 }
-
-
-
 
 </style>
-<body>
+<body class="theme1-body">
     <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
+    <nav class="theme1-navbar">
+        <div class="theme1-container">
             {% if activated_theme %}
-            <div class="logo">{{ activated_theme.site_title }}</div>
-
+            <div class="theme1-logo">{{ activated_theme.site_title }}</div>
             {% else %}
-            <div class="logo">MySite</div>
+            <div class="theme1-logo">MySite</div>
             {% endif %}
-           <ul class="nav-links">
-    {% if menus %}
-        {% for menu in menus %}
-            <li>
-                <a href="#" class="nav-link"
-                   onclick="toggleDropdown(event, '{{ menu.id }}')">{{ menu.name }} {% if pages|selectattr('menu_id', 'equalto', menu.id)|list|length > 0 %}  <!-- Check if pages exist -->
-                    <span class="dropdown-icon">▼</span>  <!-- Dropdown icon -->
-                {% endif %}</a>
-                <ul class="dropdown" id="dropdown-{{ menu.id }}" style="display: none;">
-                    {% for page in pages %}
-                        {% if page.menu_id == menu.id and page.status == 'published' %}
-                            <li><a href="{{ url_for('get_page_by_id', page_id=page.id) }}">{{ page.title }}</a></li>
-                        {% endif %}
+            <ul class="theme1-nav-links">
+                {% if menus %}
+                    {% for menu in menus %}
+                        <li>
+                            <a href="#" class="theme1-nav-link"
+                               onclick="toggleDropdown(event, '{{ menu.id }}')">{{ menu.name }}
+                                {% if pages|selectattr('menu_id', 'equalto', menu.id)|list|length > 0 %}
+                                    <span class="theme1-dropdown-icon">▼</span>
+                                {% endif %}
+                            </a>
+                            <ul class="theme1-dropdown" id="dropdown-{{ menu.id }}" style="display: none;">
+                                {% for page in pages %}
+                                    {% if page.menu_id == menu.id and page.status == 'published' %}
+                                        <li><a href="{{ url_for('get_page_by_id', page_id=page.id) }}">{{ page.title }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </li>
                     {% endfor %}
-                </ul>
-            </li>
-        {% endfor %}
-    {% else %}
-        <li><a href="#">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Blog</a></li>
-        <li><a href="#">Contact</a></li>
-    {% endif %}
-</ul>
+                {% else %}
+                    <li><a href="#" class="theme1-nav-link">Home</a></li>
+                    <li><a href="#" class="theme1-nav-link">About</a></li>
+                    <li><a href="#" class="theme1-nav-link">Blog</a></li>
+                    <li><a href="#" class="theme1-nav-link">Contact</a></li>
+                {% endif %}
+            </ul>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <header class="hero">
-        <div class="container">
+    <header class="theme1-hero">
+        <div class="theme1-container">
             {% if activated_theme %}
             <h1>{{ activated_theme.heading }}</h1>
             {% else %}
@@ -249,163 +243,59 @@ body {
             {% else %}
             <p>Explore the world of design and development</p>
             {% endif %}
-
         </div>
     </header>
 
     <!-- Blog Posts Section -->
-    <section class="blog-posts">
-        <div class="container">
+    <section class="theme1-blog-posts">
+        <div class="theme1-container">
             <h2>Latest Posts</h2>
-            <div id="post-grid" class="post-grid">
-                <!-- Initial set of posts -->
+            <div id="post-grid" class="theme1-post-grid">
                 {% if result %}
                 {% for data in result %}
-                <article class="post">
+                <article class="theme1-post">
                     <img src="https://via.placeholder.com/300" alt="Post Image">
                    <form action="{{ url_for('get_post_by_username_and_slug', username=data.author_name, post_date=data.created_at.split('T')[0], post_slug=data.slug) }}" method="POST" style="display:inline;">
                             <input type="hidden" name="post_id" value="{{ data.id }}">
                             <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left;">
-                                <h3 class="post-title">{{ data.title }}</h3>
+                                <h3 class="theme1-post-title">{{ data.title }}</h3>
                             </button>
                         </form>
-                    <p class="post-meta">
-                            Posted by
-                            <a href="{{ url_for('user_post_list', username=data.author_name) }}">{{ data.author_name }}</a>
-                            on {{ data.created_at.split('T')[0] }} at {{ data.created_at.split('T')[1][:8] }}
-                        </p>
+                    <p class="theme1-post-meta">
+                        Posted by
+                        <a href="{{ url_for('user_post_list', username=data.author_name) }}">{{ data.author_name }}</a>
+                        on {{ data.created_at.split('T')[0] }} at {{ data.created_at.split('T')[1][:8] }}
+                    </p>
                 </article>
                 {% endfor %}
                 {% else %}
                 <!-- Initial set of posts -->
-                <article class="post">
+                <article class="theme1-post">
                     <img src="https://via.placeholder.com/300" alt="Post Image">
                     <h3>Post Title 1</h3>
                     <p>Posted by <a>Author name</a> on DATE at Time</p>
-
                 </article>
-                <article class="post">
+                <article class="theme1-post">
                     <img src="https://via.placeholder.com/300" alt="Post Image">
                     <h3>Post Title 2</h3>
                     <p>Posted by <a>Author name</a> on DATE at Time</p>
-
                 </article>
-                <article class="post">
+                <article class="theme1-post">
                     <img src="https://via.placeholder.com/300" alt="Post Image">
                     <h3>Post Title 3</h3>
                     <p>Posted by <a>Author name</a> on DATE at Time</p>
-
                 </article>
-
                 {% endif %}
             </div>
-            <button id="load-more" class="load-more">Load More</button>
+            <button id="load-more" class="theme1-load-more">Load More</button>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 MySite. All rights reserved.</p>
+    <footer class="theme1-footer">
+        <div class="theme1-container">
+            <p>&copy; 2023 My Blog. All rights reserved.</p>
         </div>
     </footer>
-
-
-    <script>
-    function toggleDropdown(event, menuId) {
-    event.preventDefault(); // Prevent default anchor behavior
-    const dropdown = document.getElementById(`dropdown-${menuId}`);
-    const icon = event.currentTarget.querySelector('.dropdown-icon');
-
-    // Toggle the display of the dropdown
-    if (dropdown.style.display === 'block') {
-        dropdown.style.display = 'none'; // Close the dropdown
-        icon.style.transform = 'rotate(0deg)'; // Reset rotation
-    } else {
-        dropdown.style.display = 'block'; // Open the dropdown
-        icon.style.transform = 'rotate(180deg)'; // Rotate icon
-    }
-}
-
-// Close dropdown if clicked outside
-window.onclick = function(event) {
-    // Check if the click is outside the dropdown and the menu links
-    if (!event.target.matches('.nav-link') && !event.target.matches('.dropdown') && !event.target.closest('.nav-link')) {
-        const dropdowns = document.querySelectorAll('.dropdown');
-        const icons = document.querySelectorAll('.dropdown-icon');
-
-        dropdowns.forEach(dropdown => {
-            dropdown.style.display = 'none'; // Hide all dropdowns
-        });
-
-        icons.forEach(icon => {
-            icon.style.transform = 'rotate(0deg)'; // Reset all icons to original position
-        });
-    }
-};
-
-</script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-    const postGrid = document.getElementById("post-grid");
-    const loadMoreButton = document.getElementById("load-more");
-    let currentPostIndex = 3;
-
-    const posts = [
-        {
-            title: "Post Title 4",
-            content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            img: "https://via.placeholder.com/300",
-        },
-        {
-            title: "Post Title 5",
-            content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            img: "https://via.placeholder.com/300",
-        },
-        {
-            title: "Post Title 6",
-            content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            img: "https://via.placeholder.com/300",
-        },
-        {
-            title: "Post Title 7",
-            content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            img: "https://via.placeholder.com/300",
-        },
-        {
-            title: "Post Title 8",
-            content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            img: "https://via.placeholder.com/300",
-        },
-        {
-            title: "Post Title 9",
-            content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            img: "https://via.placeholder.com/300",
-        },
-    ];
-
-    loadMoreButton.addEventListener("click", function () {
-        for (let i = currentPostIndex; i < currentPostIndex + 3; i++) {
-            if (i >= posts.length) {
-                loadMoreButton.style.display = "none";
-                break;
-            }
-            const post = posts[i];
-            const postElement = document.createElement("article");
-            postElement.classList.add("post");
-            postElement.innerHTML = `
-                <img src="${post.img}" alt="Post Image">
-                <h3>${post.title}</h3>
-                <p>${post.content}</p>
-                <a href="#" class="read-more">Read More</a>
-            `;
-            postGrid.appendChild(postElement);
-        }
-        currentPostIndex += 3;
-    });
-});
-
-    </script>
 </body>
 </html>

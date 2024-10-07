@@ -19,70 +19,70 @@
             background-color: #f4f4f4;
         }
 
-        .container {
+        /* Theme 3 Container */
+        .theme3-container {
             max-width: 100%;
             margin: 0 auto;
             padding: 0 20px;
         }
 
         /* Header */
-        .header {
+        .theme3-header {
             background: #333;
             color: #fff;
             padding: 20px 0;
             text-align: center;
         }
 
-        .header h1 {
+        .theme3-header h1 {
             margin-bottom: 10px;
         }
 
-        .header p {
+        .theme3-header p {
             margin: 0;
         }
 
         /* Navigation */
-        .navbar {
+        .theme3-navbar {
             background: #fff;
             border-bottom: 1px solid #ddd;
             padding: 10px 0;
         }
 
-        .navbar ul {
+        .theme3-navbar ul {
             list-style: none;
             display: flex;
             justify-content: center;
             align-items: center;
-
         }
 
-        .navbar ul li {
+        .theme3-navbar ul li {
             margin: 0 15px;
         }
 
-        .navbar ul li a {
+        .theme3-navbar ul li a {
             color: #333;
             text-decoration: none;
             padding: 5px 10px;
             transition: color 0.3s;
         }
 
-        .navbar ul li a:hover {
+        .theme3-navbar ul li a:hover {
             color: #007bff;
         }
 
         /* Main Content */
-        .main-content {
+        .theme3-main-content {
             padding: 20px 0;
         }
 
-        .post-grid {
+        .theme3-post-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
         }
 
-        .post {
+        .theme3-post {
             background: #fff;
             border-radius: 5px;
             overflow: hidden;
@@ -91,11 +91,11 @@
             padding: 20px;
         }
 
-        .post:hover {
+        .theme3-post:hover {
             transform: translateY(-5px);
         }
 
-        .post img {
+        .theme3-post img {
             width: 100%;
             height: 200px;
             object-fit: cover;
@@ -103,24 +103,24 @@
             margin-bottom: 15px;
         }
 
-        .post h2 {
+        .theme3-post h2 {
             font-size: 20px;
             margin-bottom: 10px;
         }
 
-        .post p {
+        .theme3-post p {
             font-size: 14px;
             color: #666;
         }
 
-        .post-meta {
+        .theme3-post-meta {
             font-size: 12px;
             color: #999;
             margin-bottom: 15px;
         }
 
         /* Load More Button */
-        .load-more {
+        .theme3-load-more {
             display: block;
             margin: 20px auto;
             padding: 10px 20px;
@@ -133,12 +133,12 @@
             transition: background-color 0.3s ease;
         }
 
-        .load-more:hover {
+        .theme3-load-more:hover {
             background-color: #0056b3;
         }
 
         /* Footer */
-        .footer {
+        .theme3-footer {
             background: #333;
             color: #fff;
             text-align: center;
@@ -149,8 +149,8 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
-        <div class="container">
+    <header class="theme3-header">
+        <div class="theme3-container">
             {% if activated_theme %}
             <h1>{{ activated_theme.heading }}</h1>
             {% else %}
@@ -161,13 +161,12 @@
             {% else %}
             <p>Clean and minimalist design</p>
             {% endif %}
-
         </div>
     </header>
 
     <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
+    <nav class="theme3-navbar">
+        <div class="theme3-container">
             <ul>
                 {% if pages %}
                     {% for page in pages %}
@@ -175,80 +174,73 @@
                     <li><a href="#">{{ page.title }}</a></li>
                     {% endif %}
                     {% endfor %}
-                    {% else %}
+                {% else %}
                     <li><a href="#">Home</a></li>
                     <li><a href="#">About</a></li>
                     <li><a href="#">Blog</a></li>
                     <li><a href="#">Contact</a></li>
-                    {% endif %}
+                {% endif %}
             </ul>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="main-content">
-        <div class="container" id="post-list">
+    <main class="theme3-main-content">
+        <div class="theme3-container" id="post-list">
             <!-- Grid layout for posts -->
-            <div class="post-grid">
+            <div class="theme3-post-grid">
                 {% if result %}
                 {% for data in result %}
-                <div class="post">
+                <div class="theme3-post">
                     <img src="https://via.placeholder.com/500x300" alt="Post Image">
                     <form action="{{ url_for('get_post_by_username_and_slug', username=data.author_name, post_date=data.created_at.split('T')[0], post_slug=data.slug) }}" method="POST" style="display:inline;">
-                            <input type="hidden" name="post_id" value="{{ data.id }}">
-                            <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left;">
-                                <h2 class="post-title">{{ data.title }}</h2>
-                            </button>
-                        </form>
-
-                    <p class="post-meta">
-                            Posted by
-                            <a href="{{ url_for('user_post_list', username=data.author_name) }}">{{ data.author_name }}</a>
-                            on {{ data.created_at.split('T')[0] }} at {{ data.created_at.split('T')[1][:8] }}
-                        </p>
-
+                        <input type="hidden" name="post_id" value="{{ data.id }}">
+                        <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left;">
+                            <h2 class="post-title">{{ data.title }}</h2>
+                        </button>
+                    </form>
+                    <p class="theme3-post-meta">
+                        Posted by
+                        <a href="{{ url_for('user_post_list', username=data.author_name) }}">{{ data.author_name }}</a>
+                        on {{ data.created_at.split('T')[0] }} at {{ data.created_at.split('T')[1][:8] }}
+                    </p>
                 </div>
                 {% endfor %}
                 {% else %}
                 <!-- Example posts -->
-                <div class="post">
+                <div class="theme3-post">
                     <img src="https://via.placeholder.com/500x300" alt="Post Image">
                     <h2>Post Title 1</h2>
-                    <p class="post-meta">Posted by Author Name on August 1, 2024</p>
-
+                    <p class="theme3-post-meta">Posted by Author Name on August 1, 2024</p>
                 </div>
-                <div class="post">
+                <div class="theme3-post">
                     <img src="https://via.placeholder.com/500x300" alt="Post Image">
                     <h2>Post Title 2</h2>
-                    <p class="post-meta">Posted by Author Name on August 2, 2024</p>
-
+                    <p class="theme3-post-meta">Posted by Author Name on August 2, 2024</p>
                 </div>
-                <div class="post">
+                <div class="theme3-post">
                     <img src="https://via.placeholder.com/500x300" alt="Post Image">
                     <h2>Post Title 3</h2>
-                    <p class="post-meta">Posted by Author Name on August 3, 2024</p>
-
+                    <p class="theme3-post-meta">Posted by Author Name on August 3, 2024</p>
                 </div>
-                <div class="post">
+                <div class="theme3-post">
                     <img src="https://via.placeholder.com/500x300" alt="Post Image">
                     <h2>Post Title 4</h2>
-                    <p class="post-meta">Posted by Author Name on August 4, 2024</p>
-
+                    <p class="theme3-post-meta">Posted by Author Name on August 4, 2024</p>
                 </div>
-                 {% endif %}
+                {% endif %}
                 <!-- More posts will be loaded here -->
             </div>
-            <button id="load-more" class="load-more">Load More</button>
+            <button id="load-more" class="theme3-load-more">Load More</button>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
+    <footer class="theme3-footer">
+        <div class="theme3-container">
             <p>&copy; 2024 Bark Style Theme. All rights reserved.</p>
         </div>
     </footer>
-
 
 </body>
 </html>

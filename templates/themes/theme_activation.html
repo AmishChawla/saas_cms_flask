@@ -1,8 +1,13 @@
-{% extends 'base.html' %}
+{% if current_user.role == "admin" %}
+    {% extends 'admin_base.html' %}
+{% else %}
+    {% extends 'base.html' %}
+{% endif %}
 
 {% block title %}Theme Details{% endblock %}
 
 {% block content %}
+
 <style>
     .theme-nav {
         display: flex;
@@ -63,7 +68,7 @@
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        
+
     }
 
     .theme-title {
@@ -239,7 +244,7 @@
 </style>
 
 <div class="theme-nav" style="margin-bottom: 50px;">
-    <a href="{{ url_for('all_themes') }}" class="back-button">
+    <a href="{{ url_for('all_themes', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')) }}" class="back-button">
         Themes
     </a> <i class="bi bi-chevron-right"></i> <p>{{ theme_name }}</p>
 </div>

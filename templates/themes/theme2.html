@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nook Style Theme</title>
+    <title>Style Theme 2</title>
     <style>
         /* Basic Reset */
         * {
@@ -16,83 +16,83 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: #333;
-            background-color: #f5f5f5;
+            background-color: #eef2f3;
         }
 
-        .container {
+        .theme2-container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
 
         /* Navigation */
-        .navbar {
+        .theme2-navbar {
             background: #fff;
             border-bottom: 1px solid #ddd;
             padding: 10px 0;
         }
 
-        .navbar .logo {
+        .theme2-navbar .theme2-logo {
             font-size: 24px;
             font-weight: bold;
             color: #333;
         }
 
-        .navbar .nav-links {
+        .theme2-navbar .theme2-nav-links {
             list-style: none;
             display: flex;
             justify-content: flex-end;
         }
 
-        .navbar .nav-links li {
+        .theme2-navbar .theme2-nav-links li {
             margin-left: 20px;
         }
 
-        .navbar .nav-links a {
+        .theme2-navbar .theme2-nav-links a {
             color: #333;
             text-decoration: none;
             padding: 5px;
             transition: color 0.3s;
         }
 
-        .navbar .nav-links a:hover {
-            color: #007bff;
+        .theme2-navbar .theme2-nav-links a:hover {
+            color: #28a745;
         }
 
         /* Hero Section */
-        .hero {
+        .theme2-hero {
             background: url('https://via.placeholder.com/1200x400') no-repeat center center/cover;
             color: #fff;
             padding: 60px 0;
             text-align: center;
         }
 
-        .hero h1 {
+        .theme2-hero h1 {
             font-size: 48px;
             margin-bottom: 10px;
         }
 
-        .hero p {
+        .theme2-hero p {
             font-size: 18px;
         }
 
         /* Portfolio Section */
-        .portfolio {
+        .theme2-portfolio {
             padding: 40px 0;
         }
 
-        .portfolio h2 {
+        .theme2-portfolio h2 {
             text-align: center;
             margin-bottom: 40px;
         }
 
-        .portfolio-list {
+        .theme2-portfolio-list {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        .portfolio-item {
+        .theme2-portfolio-item {
             background: #fff;
             border-radius: 5px;
             overflow: hidden;
@@ -101,45 +101,45 @@
             padding: 20px;
         }
 
-        .portfolio-item:hover {
+        .theme2-portfolio-item:hover {
             transform: translateY(-5px);
         }
 
-        .portfolio-img {
+        .theme2-portfolio-img {
             width: 500px;
             height: 300px;
             object-fit: cover;
             margin-bottom: 20px;
         }
 
-        .portfolio-info {
+        .theme2-portfolio-info {
             padding: 15px;
             flex-grow: 1;
         }
 
-        .portfolio-info h1 {
+        .theme2-portfolio-info h1 {
             font-size: 24px;
             margin-bottom: 10px;
         }
 
-        .portfolio-info .post-meta {
+        .theme2-portfolio-info .post-meta {
             font-size: 14px;
             color: #999;
             margin-bottom: 20px;
         }
 
-        .portfolio-info p {
+        .theme2-portfolio-info p {
             font-size: 16px;
             color: #666;
         }
 
         /* Load More Button */
-        .load-more {
+        .theme2-load-more {
             display: block;
             margin: 20px auto;
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #007bff;
+            background-color: #28a745;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -147,12 +147,12 @@
             transition: background-color 0.3s ease;
         }
 
-        .load-more:hover {
-            background-color: #0056b3;
+        .theme2-load-more:hover {
+            background-color: #218838;
         }
 
         /* Footer */
-        .footer {
+        .theme2-footer {
             background: #333;
             color: #fff;
             text-align: center;
@@ -163,34 +163,33 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
+    <nav class="theme2-navbar">
+        <div class="theme2-container">
             {% if activated_theme %}
-            <div class="logo">{{ activated_theme.site_title }}</div>
-
+            <div class="theme2-logo">{{ activated_theme.site_title }}</div>
             {% else %}
-            <div class="logo">NookStyle</div>
+            <div class="theme2-logo">NookStyle 2</div>
             {% endif %}
-            <ul class="nav-links">
+            <ul class="theme2-nav-links">
                 {% if pages %}
                     {% for page in pages %}
                     {% if page.status == 'published' and page.display_in_nav == 'yes' %}
                     <li><a href="#">{{ page.title }}</a></li>
                     {% endif %}
                     {% endfor %}
-                    {% else %}
+                {% else %}
                     <li><a href="#">Home</a></li>
                     <li><a href="#">About</a></li>
                     <li><a href="#">Blog</a></li>
                     <li><a href="#">Contact</a></li>
-                    {% endif %}
+                {% endif %}
             </ul>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <header class="hero">
-        <div class="container">
+    <header class="theme2-hero">
+        <div class="theme2-container">
             {% if activated_theme %}
             <h1>{{ activated_theme.heading }}</h1>
             {% else %}
@@ -205,67 +204,57 @@
     </header>
 
     <!-- Portfolio Section -->
-    <section class="portfolio">
-        <div class="container">
+    <section class="theme2-portfolio">
+        <div class="theme2-container">
             <h2>Recent Works</h2>
             {% if result %}
-            {% for data in result %}
-            <div id="portfolio-list" class="portfolio-list">
-                <!-- Portfolio items -->
-                <div class="portfolio-item">
-                                       <form action="{{ url_for('get_post_by_username_and_slug', username=data.author_name, post_date=data.created_at.split('T')[0], post_slug=data.slug) }}" method="POST" style="display:inline;">
-                            <input type="hidden" name="post_id" value="{{ data.id }}">
-                            <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left;">
-                                <h1>{{ data.title }}</h1>
-                            </button>
-                        </form>
-
+            <div id="portfolio-list" class="theme2-portfolio-list">
+                {% for data in result %}
+                <div class="theme2-portfolio-item">
+                    <form action="{{ url_for('get_post_by_username_and_slug', username=data.author_name, post_date=data.created_at.split('T')[0], post_slug=data.slug) }}" method="POST" style="display:inline;">
+                        <input type="hidden" name="post_id" value="{{ data.id }}">
+                        <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left;">
+                            <h1>{{ data.title }}</h1>
+                        </button>
+                    </form>
                     <p class="post-meta">Posted by {{data.author_name}} on {{ data.created_at.split('T')[0] }}</p>
-                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
-
+                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="theme2-portfolio-img">
                 </div>
-
+                {% endfor %}
             </div>
-                        {% endfor %}
             {% else %}
-            <div id="portfolio-list" class="portfolio-list">
-                <!-- Portfolio items -->
-                <div class="portfolio-item">
+            <div id="portfolio-list" class="theme2-portfolio-list">
+                <div class="theme2-portfolio-item">
                     <h1>Project Title 1</h1>
                     <p class="post-meta">Posted by Author Name on July 30, 2024</p>
-                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
-
+                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="theme2-portfolio-img">
                 </div>
-                <div class="portfolio-item">
+                <div class="theme2-portfolio-item">
                     <h1>Project Title 2</h1>
                     <p class="post-meta">Posted by Author Name on July 30, 2024</p>
-                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
-
+                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="theme2-portfolio-img">
                 </div>
-                <div class="portfolio-item">
+                <div class="theme2-portfolio-item">
                     <h1>Project Title 3</h1>
                     <p class="post-meta">Posted by Author Name on July 30, 2024</p>
-                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
-
+                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="theme2-portfolio-img">
                 </div>
-                <div class="portfolio-item">
+                <div class="theme2-portfolio-item">
                     <h1>Project Title 4</h1>
                     <p class="post-meta">Posted by Author Name on July 30, 2024</p>
-                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="portfolio-img">
-
+                    <img src="https://via.placeholder.com/500x300" alt="Portfolio Item" class="theme2-portfolio-img">
                 </div>
             </div>
-
             {% endif %}
 
-            <button id="load-more" class="load-more">Load More</button>
+            <button id="load-more" class="theme2-load-more">Load More</button>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 NookStyle. All rights reserved.</p>
+    <footer class="theme2-footer">
+        <div class="theme2-container">
+            <p>&copy; 2024 NookStyle 2. All rights reserved.</p>
         </div>
     </footer>
 
@@ -273,54 +262,37 @@
         document.addEventListener("DOMContentLoaded", function () {
             const portfolioList = document.getElementById("portfolio-list");
             const loadMoreButton = document.getElementById("load-more");
-            let currentPortfolioIndex = 4;
+            let currentPortfolioIndex = 4; // Assuming 4 items are initially displayed
 
-            const portfolioItems = [
-                {
-                    title: "Project Title 5",
-                    description: "This is a detailed description of the fifth project. It covers the main features and goals of the project, providing insights into the development process and the outcomes achieved. The content here can be expanded to include any relevant information that readers might find useful or interesting.",
-                    img: "https://via.placeholder.com/500x300",
-                    date: "July 30, 2024",
-                },
-                {
-                    title: "Project Title 6",
-                    description: "This is a detailed description of the sixth project. It covers the main features and goals of the project, providing insights into the development process and the outcomes achieved. The content here can be expanded to include any relevant information that readers might find useful or interesting.",
-                    img: "https://via.placeholder.com/500x300",
-                    date: "July 31, 2024",
-                },
-                {
-                    title: "Project Title 7",
-                    description: "This is a detailed description of the seventh project. It covers the main features and goals of the project, providing insights into the development process and the outcomes achieved. The content here can be expanded to include any relevant information that readers might find useful or interesting.",
-                    img: "https://via.placeholder.com/500x300",
-                    date: "August 1, 2024",
-                },
-                // Add more items as needed
-            ];
+            loadMoreButton.addEventListener("click", function () {
+                // Here you can implement your load more functionality
+                // For simplicity, I'm going to just show a few more items
+                const newItems = [
+                    {
+                        title: "Project Title 5",
+                        author: "Author Name",
+                        date: "July 30, 2024",
+                        img: "https://via.placeholder.com/500x300"
+                    },
+                    {
+                        title: "Project Title 6",
+                        author: "Author Name",
+                        date: "July 30, 2024",
+                        img: "https://via.placeholder.com/500x300"
+                    }
+                ];
 
-            function loadMorePortfolioItems() {
-                const itemsToLoad = portfolioItems.slice(currentPortfolioIndex, currentPortfolioIndex + 3);
-                currentPortfolioIndex += 3;
-
-                itemsToLoad.forEach(item => {
-                    const div = document.createElement("div");
-                    div.className = "portfolio-item";
-                    div.innerHTML = `
+                newItems.forEach(item => {
+                    const itemDiv = document.createElement("div");
+                    itemDiv.className = "theme2-portfolio-item";
+                    itemDiv.innerHTML = `
                         <h1>${item.title}</h1>
-                        <p class="post-meta">Posted by Author Name on ${item.date}</p>
-                        <img src="${item.img}" alt="Portfolio Item" class="portfolio-img">
-                        <div class="portfolio-info">
-                            <p>${item.description}</p>
-                        </div>
+                        <p class="post-meta">Posted by ${item.author} on ${item.date}</p>
+                        <img src="${item.img}" alt="Portfolio Item" class="theme2-portfolio-img">
                     `;
-                    portfolioList.appendChild(div);
+                    portfolioList.appendChild(itemDiv);
                 });
-
-                if (currentPortfolioIndex >= portfolioItems.length) {
-                    loadMoreButton.style.display = "none";
-                }
-            }
-
-            loadMoreButton.addEventListener("click", loadMorePortfolioItems);
+            });
         });
     </script>
 </body>

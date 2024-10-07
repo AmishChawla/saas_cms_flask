@@ -178,7 +178,7 @@ def login():
         email = form.email.data
         password = form.password.data
         response = api_calls.user_login(email, password)
-
+        print(response)
         if response is not None and response.status_code == 200:
             data = response.json()
             id = data.get('id')
@@ -203,7 +203,7 @@ def login():
                 'email': email,
                 'services': services,
                 'company': company,
-                'group':group,
+                'group': group,
                 'profile_picture': profile_picture,
             }
             if current_user.company is not None:
@@ -1749,21 +1749,21 @@ def all_themes(username, root_url):
 
 
 
-@app.route('/user/appearance/theme_detail')
+@app.route('/theme/<theme_name>/<username>.<root_url>')
 @login_required
-def theme_detail():
+def theme_detail(theme_name, username, root_url):
     # Retrieve theme_name and theme_id from query parameters
-    theme_name = request.args.get('theme_name')
+
     theme_id = request.args.get('theme_id')
     result = api_calls.get_user_all_posts(access_token=current_user.id)
     if result is None:
         result = []  # Set result to an empty list
     if not theme_name or not theme_id:
         # Redirect back to themes page or show an error if either parameter is missing
-        return redirect(url_for('all_themes'))
+        return redirect(url_for('all_themes', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
 
     # Pass the theme name and theme ID to the template
-    return render_template('themes/theme_activation.html', theme_name=theme_name, theme_id=theme_id, result=result)
+    return render_template('themes/theme_activation.html', ROOT_URL=ROOT_URL, theme_name=theme_name, theme_id=theme_id, result=result)
 
 
 
@@ -2797,7 +2797,7 @@ def user_active_theme():
             access_token=current_user.id
         )
 
-        return redirect(url_for('all_themes'))
+        return redirect(url_for('all_themes', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
     except Exception as e:
         print(e)
         # Handle the error appropriately
@@ -2817,7 +2817,7 @@ def user_theme_customization():
     if pages is None:
         pages = []  # Set result to an empty list
 
-    return render_template(f'themes/customization/theme{theme_id}_customization_form.html', pages=pages, result=result, theme_id=theme_id, theme_name=theme_name, page_id=None)
+    return render_template(f'themes/customization/theme{theme_id}_customization_form.html', ROOT_URL=ROOT_URL, pages=pages, result=result, theme_id=theme_id, theme_name=theme_name, page_id=None)
 
 
 @app.route('/nav-items/show-in-nav/<page_id>/<theme_name>/<theme_id>', methods=['GET', 'POST'])
