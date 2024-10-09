@@ -162,7 +162,10 @@
 
 <div class="container">
     <div class="header">
-        <h1>Themes</h1>
+        <div>
+            <h1 class="formatted-header__title">Themes </h1>
+            <p class="formatted-header__subtitle">Select or update the visual design for your site. <a class="inline-support-link" href="#" target="_blank" rel="noopener noreferrer"><span class="inline-support-link__nowrap">Learn&nbsp;more</span></a>.</p>
+          </div>
         <div class="header-buttons">
             <a href="{{ url_for('user_post_list', username=current_user.username) }}" class="d-block" style="margin-right:0.5rem; margin-top:6px; font-weight:bolder; font-size:1.1rem;">Visit Site</a>
         </div>

@@ -32,13 +32,18 @@
             <tr>
 <!--              <a href="{{ url_for('admin_view_user_profile', user_id=row.id) }}">-->
                 <td><input type="checkbox" class="select-checkbox"></td>
-                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('user_post_list', username=row.username) }}')" style="text-transform: capitalize;">{{ row.username }}</td>
+                 <td class="clickable text-center" onclick="redirectToPage('{{ url_for('user_post_list', username=row.username) if row.username else '#' }}')" style="text-transform: capitalize;">{{ row.username }}</td>
 
 
-                <td><a href="{{ url_for('user_post_list', username=row.username) }}"> /{{row.username}}/posts </a></td>
+                <td>{% if row.username %}
+        <a href="{{ url_for('user_post_list', username=row.username) }}">/{{ row.username }}/posts</a>
+    {% else %}
+        N/A
+    {% endif %}</td>
 
                 <td>
-    <a href="{{ url_for('user_post_list', username=row.username) }}"><i class="bi bi-box-arrow-right" style="color:#0b4647; font-size: 1.5rem"></i></a>
+    <a href="#" style="margin-right: 1rem;"><i class="bi bi-pen" style="color:#0b4647; font-size: 1.5rem"></i></a>
+    <a data-bs-toggle="modal" data-bs-target="#deleteModal_{{ row.id }}"><i class="bi bi-trash3-fill " style="color:#6b1313; font-size: 1.5rem"></i></a>
 
     <!-- Modal for delete button --></td>
 

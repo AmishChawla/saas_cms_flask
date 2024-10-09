@@ -539,7 +539,7 @@ def admin_login():
         else:
             flash('Login unsuccessful. Please check email and password.', category='error')
 
-    return render_template('admin_login.html', form=form)
+    return render_template('admin_login.html', ROOT_URL=ROOT_URL, form=form)
 
 
 @app.route("/admin/add-user", methods=['GET', 'POST'])
