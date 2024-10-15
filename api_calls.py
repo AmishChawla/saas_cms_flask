@@ -2689,3 +2689,5 @@ def scrapper_register_api(username, email, password):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"An unexpected error occurred: {err}")
+
+

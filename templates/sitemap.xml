@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="#"?>
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1; /* Highlight on hover */
+    }
+
+    a {
+        color: #007BFF;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Link</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td><a href="http://35.154.190.245:5000/login" target="_blank">http://35.154.190.245:5000/login</a></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td><a href="http://35.154.190.245:5000" target="_blank">http://35.154.190.245:5000</a></td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td><a href="http://35.154.190.245:5000/register" target="_blank">http://35.154.190.245:5000/register</a></td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td><a href="http://35.154.190.245:5000/pricing" target="_blank">http://35.154.190.245:5000/pricing</a></td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td><a href="http://35.154.190.245:5000/users/view-posts" target="_blank">http://35.154.190.245:5000/users/view-posts</a></td>
+        </tr>
+
+    </tbody>
+</table>

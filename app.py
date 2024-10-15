@@ -3090,6 +3090,12 @@ def update_menu_page(menu_id):
 
 
 
+@app.route("/sitemap-xml")
+def sitemap_xml():
+
+    return render_template('sitemap.xml')
+
+
 @app.route('/robots.txt')
 def robots_txt():
     return send_from_directory('static', 'robots.txt', mimetype='text/plain')
