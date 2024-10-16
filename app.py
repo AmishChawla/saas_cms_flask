@@ -1830,7 +1830,7 @@ def view_post():
         response = []
     print(result)
 
-    return render_template('list_of_posts.html', result=result, response=response)
+    return render_template('list_of_posts.html', ROOT_URL=ROOT_URL, result=result, response=response)
 
 
 @app.route('/posts/<post_title>', methods=['GET', 'POST'])
