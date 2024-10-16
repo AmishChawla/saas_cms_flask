@@ -85,7 +85,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <input type="text" id="search-input" placeholder="Search posts" style="margin-right: auto; margin-left: 20px;">
             {% if current_user.role == "user" %}
-            <a class="btn btn-info" href="{{ url_for('add_post')}}" style="padding: 6px 30px 6px 30px;">
+            <a class="btn btn-info" href="{{ url_for('add_post', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', ''))}}" style="padding: 6px 30px 6px 30px;">
                 <span class="menu-title">Add new post</span>
             </a>
             {% endif %}
