@@ -254,7 +254,7 @@
                 {% if result %}
                 {% for data in result %}
                 <article class="theme1-post">
-                    <img src="https://via.placeholder.com/300" alt="Post Image">
+                    <img src="https://wallpaperaccess.com/full/4148220.jpg" alt="Post Image">
                    <form action="{{ url_for('get_post_by_username_and_slug', username=data.author_name, post_date=data.created_at.split('T')[0], post_slug=data.slug) }}" method="POST" style="display:inline;">
                             <input type="hidden" name="post_id" value="{{ data.id }}">
                             <button type="submit" style="border: none; background: none; padding: 0; cursor: pointer; text-align: left;">
@@ -271,17 +271,17 @@
                 {% else %}
                 <!-- Initial set of posts -->
                 <article class="theme1-post">
-                    <img src="https://via.placeholder.com/300" alt="Post Image">
+                    <img src="https://wallpaperaccess.com/full/4148220.jpg" alt="Post Image">
                     <h3>Post Title 1</h3>
                     <p>Posted by <a>Author name</a> on DATE at Time</p>
                 </article>
                 <article class="theme1-post">
-                    <img src="https://via.placeholder.com/300" alt="Post Image">
+                    <img src="https://wallpaperaccess.com/full/4148220.jpg" alt="Post Image">
                     <h3>Post Title 2</h3>
                     <p>Posted by <a>Author name</a> on DATE at Time</p>
                 </article>
                 <article class="theme1-post">
-                    <img src="https://via.placeholder.com/300" alt="Post Image">
+                    <img src="https://wallpaperaccess.com/full/4148220.jpg" alt="Post Image">
                     <h3>Post Title 3</h3>
                     <p>Posted by <a>Author name</a> on DATE at Time</p>
                 </article>

@@ -1,0 +1,11 @@
+{% extends 'CSS_customization.html' %}
+
+{% block title %}My Pages{% endblock %}
+
+{% block content %}
+
+<body>
+{% include 'themes/theme' ~ theme_id ~ '.html' %}
+</body>
+
+{% endblock %}

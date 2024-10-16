@@ -1043,7 +1043,7 @@ def delete_plan(plan_id):
 @app.route("/pricing", methods=['GET', 'POST'])
 def user_view_plan():
     result = api_calls.get_all_plans()
-    return render_template('pricing.html', result=result)
+    return render_template('pricing.html', ROOT_URL=ROOT_URL, result=result)
 
 
 @app.route('/admin/posts')
@@ -3094,6 +3094,20 @@ def update_menu_page(menu_id):
 def sitemap_xml():
 
     return render_template('sitemap.xml')
+
+
+@app.route("/customize-css")
+def customize_css():
+
+    result = api_calls.get_user_post_by_username(username=current_user.username) or []
+    activated_theme = api_calls.get_user_theme_by_username(username=current_user.username)
+
+    if activated_theme is not None and activated_theme != {}:
+        return render_template(f'themes/customization/external_css_customization.html', ROOT_URL=ROOT_URL, theme_id=activated_theme["theme_id"], theme_name=activated_theme["theme_name"], activated_theme=activated_theme, result=result)
+    return render_template('themes/customization/external_css_customization.html')
+
+
+
 
 
 @app.route('/robots.txt')

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Customize Appearance</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Icons -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/plugins/fontawesome-free/css/all.min.css') }}">
+  <link href="{{ url_for('static', filename='assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/adminlte.min.css') }}">
+  <link href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+  <style>
+    /* Sidebar Styles */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 250px;
+      height: 100vh;
+      background-color: #f0f0f1;
+      color: #3c434a;
+
+      overflow: hidden;
+      z-index: 1000;
+    }
+
+
+
+
+
+    .sidebar .site-title + .design-link {
+      margin-top: 80px; /* Add space between the site-title div and design-link */
+    }
+
+    .sidebar .design-link {
+      display: block;
+      margin: 20px 0;
+      text-decoration: none;
+      color: #d0d0d0;
+      font-weight: bold;
+    }
+
+    .sidebar .design-link span {
+     font-size: 1.2em;
+    }
+
+    .sidebar .design-link:hover {
+      text-decoration: none;
+    }
+
+    .sidebar .description {
+      margin-bottom: 30px;
+      font-size: 13px;
+      color: #ccc;
+      line-height: 1.5;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar ul li a {
+    width: 100%;
+       height : 40px;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #949494;
+      font-size: 1em;
+      position: relative;
+      padding: 10px 10px 11px 14px;
+      background-color: #fff;
+      border-bottom: 1px solid #c1c1c1;
+    }
+
+    .sidebar ul li a i {
+      margin-right: 10px;
+      width: 24px;
+      text-align: center;
+    }
+
+    .sidebar ul li a span {
+      flex: 1 1 0%;
+      margin-left: 5px;
+      font-size: 13px;
+    }
+
+
+
+    .content {
+      margin-left: 270px;
+      padding: 20px;
+    }
+
+    .sidebar ul li a:hover {
+       background-color: #f6f7f7; /* Primary color on hover */
+
+      border-left-color: #2271b1;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1050;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px;
+      background-color: #f8f9fa; /* Off-white background */
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content .search-field {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-content .search-field input {
+      flex-grow: 1;
+      padding: 10px;
+      font-size: 14px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .modal-content .search-field i {
+      margin-left: 10px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    .modal-content .nav-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+
+
+    .modal-content .nav-list li a {
+
+       height : 40px;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #111;
+      font-size: 1em;
+      position: relative;
+      padding-left: 10px;
+    }
+
+    .modal-content .nav-list li a span {
+      flex: 1 1 0%;
+      margin-left: 5px;
+      font-size: 13px;
+    }
+
+    .modal-content .nav-list li a i {
+      margin-right: 10px;
+      width: 24px;
+      text-align: center;
+    }
+
+    .modal-content .nav-list li a:hover {
+      background-color: #007bff; /* Primary color on hover */
+      color: white;
+      border: none;
+      border-radius: 2px;
+    }
+
+    .modal-content .nav-list li a .bi-chevron-right {
+      display: none; /* Hide chevron-right icon in modal */
+    }
+
+
+
+
+    .selected-item {
+    background-color: var(--bs-primary); /* Bootstrap's primary color */
+    color: white;
+}
+
+
+    .color-container {
+  display: grid;
+  grid-template-columns: repeat(2, 110px);
+  grid-template-rows: repeat(2, 60px);
+  gap: 10px;
+}
+
+.rectangle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 100px;
+  height: 60px;
+  color: #c7c7c7;
+  font-size: 20px;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.text {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+}
+
+.text i {
+  margin: 0 2px; /* Adjust the spacing between dots */
+}
+
+.color-name {
+  position: absolute;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.rectangle:hover .color-name {
+  opacity: 1;
+}
+
+.rectangle:hover .text {
+  opacity: 0;
+}
+
+
+
+
+  </style>
+</head>
+<body class="hold-transition sidebar-mini">
+  <div class="wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+<div class="sidebar-header d-flex align-items-center" style="padding: 10px; justify-content:space-between; margin-bottom: 4px;">
+      <!-- Cross button with visible text/icon -->
+      <button class="btn" id="closeButton" aria-label="Close" style="font-size: 16px; background-color:none; border: 1px solid #c1c1c1;">
+        &times; <!-- Visible close icon (X) -->
+      </button>
+
+      <!-- Save button, initially disabled, with spacing -->
+      <button class="btn ms-2" id="saveButton" disabled style="border: 1px solid #c1c1c1;">
+        Save
+      </button>
+    </div>
+
+      <div class="side-title" style="height: 60px;padding: 10px; background-color: #fff; margin-bottom: 15px;">
+        <p style=" font-size: 13px; color: #949494">
+          You are customizing
+        </p>
+      </div>
+
+      <nav>
+        <ul class="nav flex-column" id="navItems">
+          <li class="nav-item">
+            <a href="#" class="nav-link" id="style-title-link">
+
+              <span>Style Identity</span>
+              <i class="bi bi-chevron-right" style="font-size: 13px"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" id="additional-css">
+
+              <span>Additional CSS</span>
+              <i class="bi bi-chevron-right" style="font-size: 13px"></i>
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+    </aside>
+    <!-- Content Wrapper -->
+    <div class="content" id="block-content">
+      <!-- Your content goes here -->
+      {% block content %}
+
+      {% endblock %}
+    </div>
+  </div>
+
+
+
+
+<script>
+ document.getElementById('additional-css').addEventListener('click', function(event) {
+    event.preventDefault();
+
+    // Change the text of the p tag in the side-title class
+    const sideTitle = document.querySelector('.side-title p');
+    sideTitle.textContent = 'Customizing Additional CSS';
+
+    // Replace the nav content with a form input field for additional CSS
+    const nav = document.querySelector('nav');
+    nav.innerHTML = `
+        <form id="additionalCssForm">
+            <div class="form-group" style="padding: 10px;">
+                <label for="additionalCssInput" style="font-size: 13px; color: #949494;">Enter your custom CSS:</label>
+                <textarea id="additionalCssInput" class="form-control" rows="10" style="width: 100%; resize: vertical; overflow-y: auto;"></textarea>
+            </div>
+        </form>
+    `;
+
+    // Add an event listener to enable the Save button when there's text in the textarea
+    const additionalCssInput = document.getElementById('additionalCssInput');
+    const saveButton = document.getElementById('saveButton');
+
+    additionalCssInput.addEventListener('input', function() {
+        if (additionalCssInput.value.trim()) {
+            // Enable the Save button and change its style and text
+            saveButton.disabled = false;
+            saveButton.style.backgroundColor = '#007bff'; // Bootstrap primary color
+            saveButton.style.color = '#fff'; // White text for better contrast
+            saveButton.textContent = 'Save Changes';
+        } else {
+            // Disable the Save button and revert its style and text
+            saveButton.disabled = true;
+            saveButton.style.backgroundColor = 'transparent'; // Default background color
+            saveButton.style.color = '#000'; // Default text color
+            saveButton.textContent = 'Save';
+        }
+    });
+});
+
+// Event listener for the cross button to go back to the previous page
+document.getElementById('closeButton').addEventListener('click', function() {
+    window.history.back();
+});
+
+
+</script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- AdminLTE App -->
+  <script src="{{ url_for('static', filename='assets/dist/js/adminlte.min.js') }}"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+
+</body>
+</html>
