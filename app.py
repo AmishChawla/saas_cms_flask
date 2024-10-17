@@ -1386,7 +1386,7 @@ def user_all_subcategory(category_id):
         result = []  # Set result to an empty list
     print(result)
 
-    return render_template('view_user_subcategory.html', result=result)
+    return render_template('view_user_subcategory.html', ROOT_URL=ROOT_URL, result=result)
 
 
 @app.route("/user/add-tag", methods=['GET', 'POST'])
@@ -1499,18 +1499,23 @@ def update_subcategory(subcategory_id):
     categories = api_calls.get_user_all_categories(access_token=current_user.id)
     category_choices = [(category['id'], category['category']) for category in categories]
     form.category.choices = category_choices
+
     if form.validate_on_submit():
         subcategory = form.subcategory.data
         category_id = form.category.data
         response = api_calls.update_subcategory(subcategory_id, subcategory, category_id, access_token=current_user.id)
-        print(response.status_code)
-        if (response.status_code == 200):
-            flash('Subcategory added Successful', category='info')
-            return redirect(url_for('user_all_category', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
-        else:
-            flash('Some problem occured', category='error')
 
-    return render_template('update_user_subcategory.html', form=form, subcategory_id=subcategory_id,
+        # Assuming 'status_code' is a key in the response dictionary
+        status_code = response.get('status_code', None)
+
+        if status_code == 200:
+            flash('Subcategory updated successfully', category='info')
+            return redirect(url_for('user_all_category', username=current_user.username,
+                                    root_url=ROOT_URL.replace('http://', '').replace('/', '')))
+        else:
+            flash('Some problem occurred', category='error')
+
+    return render_template('update_user_subcategory.html', ROOT_URL=ROOT_URL, form=form, subcategory_id=subcategory_id,
                            categories=category_choices)
 
 
@@ -1736,6 +1741,21 @@ def media():
     return render_template('media.html',ROOT_URL=ROOT_URL, form=form)
 
 
+@app.route("/user/delete-media/<int:media_id>", methods=['GET', 'POST'])
+@requires_any_permission("manage_media")
+@login_required
+def delete_media(media_id):
+    response = api_calls.delete_media(media_id, access_token=current_user.id)
+    print(response.status_code)
+    if response.status_code == 200:
+        flash('Media deleted successfully')
+    else:
+        flash('Some problem occurred while deleting the tag')
+    return redirect(url_for('user_all_medias', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
+
+
+
+
 @app.route('/themes/<username>.<root_url>', methods=['GET', 'POST'])
 @login_required
 def all_themes(username, root_url):
@@ -1911,7 +1931,7 @@ def get_post_by_id(post_id):
         comment_like_result = []
     print(comment_like_result)
 
-    return render_template('post.html', comment_like_result=comment_like_result, result=result, title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags, post_id=id, post_date=post_date, post_slug=post_slug)
+    return render_template('post.html', ROOT_URL=ROOT_URL, comment_like_result=comment_like_result, result=result, title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags, post_id=id, post_date=post_date, post_slug=post_slug)
 
 ################################################ CHATBOT #########################################################
 
@@ -1936,6 +1956,8 @@ def user_all_medias(username, root_url):
     print(result)
 
     return render_template('user_all_media.html', ROOT_URL=ROOT_URL, result=result, root_url=root_url)
+
+
 
 
 @app.route('/posts/comment/<int:post_id>/<username>/<post_date>/<post_slug>', methods=['GET', 'POST'])
@@ -2094,17 +2116,17 @@ def formbuilder_createform():
     unique_id = data.get('unique_id', '')
     try:
         form_created = api_calls.create_form(form_name=form_name, form_html=form_html, form_unique_id=unique_id, access_token=current_user.id)
-        return redirect(url_for('user_all_forms'))
+        return redirect(url_for('user_all_forms', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
     except Exception as e:
         print(e)
-        return redirect(url_for('formbuilder'))
+        return redirect(url_for('formbuilder', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
 
 @app.route("/form/delete-form/<form_id>", methods=['GET', 'POST'])
 @requires_any_permission("manage_forms")
 @login_required
 def formbuilder_delete_form(form_id):
     result = api_calls.delete_form_by_unique_id(form_id=form_id, access_token=current_user.id)
-    return redirect(url_for('user_all_forms'))
+    return redirect(url_for('user_all_forms', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
 
 @app.route('/forms/<username>.<root_url>')
 @requires_any_permission("manage_forms")
@@ -2134,7 +2156,7 @@ def formbuilder_viewform(form_id):
     else:
         form_responses = [json.loads(item) for item in form_responses]
 
-    return render_template('cms/formbuilder/view_form.html', form_html=form_html,form_name=form_name, form_responses=form_responses)
+    return render_template('cms/formbuilder/view_form.html', ROOT_URL=ROOT_URL, form_html=form_html, form_name=form_name, form_responses=form_responses)
 
 
 @app.route('/form/thank-you')
@@ -2361,7 +2383,7 @@ def add_page(username, root_url):
 
                 if result:
                     if current_user.role == 'user':
-                        return redirect(url_for('user_all_pages'))
+                        return redirect(url_for('user_all_pages', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
                     else:
                         return redirect(url_for('all_pages'))
                 else:
@@ -2472,7 +2494,7 @@ def update_page(page_id, username, root_url):
 def user_delete_page(page_id):
     result = api_calls.delete_page(page_id=page_id, access_token=current_user.id)
     if result.status_code == 200:
-        return redirect(url_for('user_all_pages'))
+        return redirect(url_for('user_all_pages', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
 
 
 @app.route('/<username>/pages/<page_slug>', methods=['GET', 'POST'])

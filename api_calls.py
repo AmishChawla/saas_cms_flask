@@ -1494,6 +1494,24 @@ def upload_medias(file_list, access_token):
         print(f"An unexpected error occurred: {err}")
 
 
+def delete_media(media_id, access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    try:
+        response = requests.delete(constants.BASE_URL + f'/user-media/{media_id}', headers=headers)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
+
+
 def subscribe_to_newsletter(name, email, username):
     print("inside api call")
 
