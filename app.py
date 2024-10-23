@@ -1064,6 +1064,7 @@ def user_all_post(username, root_url):
     result = api_calls.get_user_all_posts(access_token=current_user.id)
     if result is None:
         result = []  # Set result to an empty list
+    print(result)
 
     return render_template('user_all_post.html', ROOT_URL=ROOT_URL, result=result)
 
@@ -3129,6 +3130,14 @@ def customize_css():
     return render_template('themes/customization/external_css_customization.html')
 
 
+
+@app.route('/new-themes/')
+@requires_any_permission("manage_posts")
+@login_required
+def user_all_new_theme():
+    response = api_calls.get_all_categories() or []
+
+    return render_template('themes/techcrunch.html', ROOT_URL=ROOT_URL, response=response)
 
 
 
