@@ -3131,13 +3131,13 @@ def customize_css():
 
 
 
-@app.route('/new-themes/')
-@requires_any_permission("manage_posts")
-@login_required
-def user_all_new_theme():
-    response = api_calls.get_all_categories() or []
-
-    return render_template('themes/techcrunch.html', ROOT_URL=ROOT_URL, response=response)
+# @app.route('/new-themes/')
+# @requires_any_permission("manage_posts")
+# @login_required
+# def user_all_new_theme():
+#     response = api_calls.get_all_categories() or []
+#
+#     return render_template('themes/theme4.html', ROOT_URL=ROOT_URL, response=response)
 
 
 
