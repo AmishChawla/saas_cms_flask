@@ -1069,7 +1069,7 @@ def user_all_post(username, root_url):
     return render_template('user_all_post.html', ROOT_URL=ROOT_URL, result=result)
 
 
-@app.route('/<username>/posts', methods=['GET', 'POST'])
+@app.route('/<username>/', methods=['GET', 'POST'])
 def user_post_list(username):
     toast = request.args.get('toast', 'null')  # Get toast value from query params
     form = forms.SubscribeToNewsletterForm()
