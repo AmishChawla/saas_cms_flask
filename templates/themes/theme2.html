@@ -171,17 +171,29 @@
             <div class="theme2-logo">NookStyle 2</div>
             {% endif %}
             <ul class="theme2-nav-links">
-                {% if pages %}
-                    {% for page in pages %}
-                    {% if page.status == 'published' and page.display_in_nav == 'yes' %}
-                    <li><a href="#">{{ page.title }}</a></li>
-                    {% endif %}
+                {% if menus %}
+                    {% for menu in menus %}
+                        <li>
+                            <a href="#" class="theme1-nav-link"
+                               onclick="toggleDropdown(event, '{{ menu.id }}')">{{ menu.name }}
+                                {% if pages|selectattr('menu_id', 'equalto', menu.id)|list|length > 0 %}
+                                    <span class="theme1-dropdown-icon">▼</span>
+                                {% endif %}
+                            </a>
+                            <ul class="theme1-dropdown" id="dropdown-{{ menu.id }}" style="display: none;">
+                                {% for page in pages %}
+                                    {% if page.menu_id == menu.id and page.status == 'published' %}
+                                        <li><a href="{{ url_for('get_page_by_id', page_id=page.id) }}">{{ page.title }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </li>
                     {% endfor %}
                 {% else %}
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#">Contact</a></li>
+                    <li><a href="#" class="theme2-nav-link">Home</a></li>
+                    <li><a href="#" class="theme2-nav-link">About</a></li>
+                    <li><a href="#" class="theme2-nav-link">Blog</a></li>
+                    <li><a href="#" class="theme2-nav-link">Contact</a></li>
                 {% endif %}
             </ul>
         </div>
