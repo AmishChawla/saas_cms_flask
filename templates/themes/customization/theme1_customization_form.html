@@ -46,7 +46,7 @@
             text-decoration: none;
         }
         .hero {
-            background: url('https://via.placeholder.com/1200x400') no-repeat center center/cover;
+            background: url('https://sfwallpaper.com/images/plain-color-wallpaper-background-12.jpg') no-repeat center center/cover;
             padding: 60px 0;
             text-align: center;
             transition: background-image 0.3s ease-in-out;
@@ -109,12 +109,7 @@
             border: none;
             cursor: pointer;
         }
-        .footer {
-            background-color: #333;
-            padding: 20px 0;
-            color: #fff;
-            text-align: center;
-        }
+
         .sticky-save {
             position: sticky;
             bottom: 20px;
@@ -129,6 +124,128 @@
             border: none;
             cursor: pointer;
         }
+
+        /* Footer */
+.theme1-footer {
+    background-color: #2c2c2c;
+    color: #ffffff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.theme1-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer-sections {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.footer-sections div {
+    flex: 1;
+    margin: 10px;
+    min-width: 200px;
+}
+
+.footer-about, .footer-links, .footer-contact {
+    text-align: left;
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin: 5px 0;
+}
+
+.footer-links a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.footer-socials a {
+    color: #ffffff;
+    margin: 0 10px;
+    font-size: 24px;
+    transition: color 0.3s;
+}
+
+.footer-socials a:hover {
+    color: #cccccc;
+}
+
+
+.footer-bottom {
+    border-top: 1px solid #444;
+    padding-top: 10px;
+}
+
+        .theme1-footer input[type="text"] {
+            border: none;
+            background: none;
+            font-size: 13px;
+            color: white;
+
+            width: 100%;
+            outline: none;
+        }
+
+
+
+        .theme1-nav-link {
+    text-decoration: none;
+    color: white;
+    padding: 0 10px;
+    display: block;
+    transition: background-color 0.3s;
+}
+
+.theme1-dropdown {
+    position: absolute;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    display: none;
+    list-style-type: none;
+}
+
+.theme1-dropdown li {
+    padding: 6px 10px;
+    white-space: nowrap;
+}
+
+.theme1-dropdown li a {
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.theme1-dropdown li a:hover {
+    background-color: #f0f0f0;
+}
+
+.theme1-dropdown-icon {
+    margin-left: 5px;
+    font-size: 0.8em;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.theme1-nav-links > li:hover .theme1-dropdown {
+    display: block;
+}
     </style>
 
 <body>
@@ -142,18 +259,30 @@
                     <input type="hidden" name="theme_id" value="{{ theme_id }}">
                 </div>
                 <ul class="nav-links">
-                    {% if pages %}
-                    {% for page in pages %}
-                    {% if page.status == 'published' and page.display_in_nav == 'yes' %}
-                    <li><a href="#">{{ page.title }}</a></li>
-                    {% endif %}
+                    {% if menus %}
+                    {% for menu in menus %}
+                        <li>
+                            <a href="#" class="theme1-nav-link"
+                               onclick="toggleDropdown(event, '{{ menu.id }}')">{{ menu.name }}
+                                {% if pages|selectattr('menu_id', 'equalto', menu.id)|list|length > 0 %}
+                                    <span class="theme1-dropdown-icon">▼</span>
+                                {% endif %}
+                            </a>
+                            <ul class="theme1-dropdown" id="dropdown-{{ menu.id }}" style="display: none;">
+                                {% for page in pages %}
+                                    {% if page.menu_id == menu.id and page.status == 'published' %}
+                                        <li><a href="{{ url_for('get_page_by_id', page_id=page.id) }}">{{ page.title }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </li>
                     {% endfor %}
-                    {% else %}
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#">Contact</a></li>
-                    {% endif %}
+                {% else %}
+                    <li><a href="#" class="theme1-nav-link">Home</a></li>
+                    <li><a href="#" class="theme1-nav-link">About</a></li>
+                    <li><a href="#" class="theme1-nav-link">Blog</a></li>
+                    <li><a href="#" class="theme1-nav-link">Contact</a></li>
+                {% endif %}
                 </ul>
             </div>
         </nav>
@@ -176,7 +305,7 @@
                     {% if result %}
                 {% for data in result %}
                 <article class="post">
-                    <img src="https://via.placeholder.com/300" alt="Post Image">
+                    <img src="https://via.placeholder.com/150" alt="Post Image">
 
                     <h3 class="post-title">{{ data.title }}</h3>
                     <p class="post-meta">
@@ -214,11 +343,47 @@
         </section>
 
         <!-- Footer -->
-        <footer class="footer">
-            <div class="container">
-                <p>&copy; 2024 MySite. All rights reserved.</p>
+        <footer class="theme1-footer">
+    <div class="theme1-container">
+        <div class="footer-sections">
+            <div class="footer-about">
+                <h4>About Us</h4>
+                <input type="text" name="about_us" value="Welcome to My Blog – your source for insightful articles, latest news, and inspiration. Join us on our journey to explore new horizons!">
+
             </div>
-        </footer>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="/privacy-policy">Privacy Policy</a></li>
+                    <li><a href="/terms">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <input type="text" name="contact_us" value="contact@myblog.com">
+
+
+            </div>
+        </div>
+        <div class="footer-socials">
+    <a href="#" onclick="showInput('facebook')" id="facebookIcon"><i class="bi bi-facebook"></i></a>
+    <input type="text" id="facebookInput" class="social-input" name="facebook" placeholder="Enter Facebook URL" style="display: none;">
+
+    <a href="#" onclick="showInput('twitter')" id="twitterIcon"><i class="bi bi-twitter-x"></i></a>
+    <input type="text" id="twitterInput" class="social-input" name="twitter" placeholder="Enter Twitter URL" style="display: none;">
+
+    <a href="#" onclick="showInput('instagram')" id="instagramIcon"><i class="bi bi-instagram"></i></a>
+    <input type="text" id="instagramInput" class="social-input" name="instagram" placeholder="Enter Instagram URL" style="display: none;">
+
+</div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2023 My Blog. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
 
         <!-- Save Button -->
         <div class="sticky-save">
@@ -248,6 +413,22 @@
                 event.preventDefault(); // Prevent form submission for debugging
             }
         });
+
+       function showInput(platform) {
+    // Hide all input fields first
+    const inputs = document.querySelectorAll('.social-input');
+    inputs.forEach(input => {
+        input.style.display = 'none';
+    });
+
+    // Show the input field for the selected platform
+    const selectedInput = document.getElementById(platform + 'Input');
+    if (selectedInput) {
+        selectedInput.style.display = 'block';
+    }
+}
+
+
     </script>
 </body>
 

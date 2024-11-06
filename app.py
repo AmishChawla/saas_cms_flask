@@ -2807,7 +2807,12 @@ def user_active_theme():
     logo_text = request.form.get('logo_text')
     hero_title = request.form.get('hero_title')
     hero_subtitle = request.form.get('hero_subtitle')
+    facebook = request.form.get('facebook')
+    twitter = request.form.get('twitter')
+    instagram = request.form.get('instagram')
 
+    contact_us = request.form.get('contact_us')
+    about_us = request.form.get('about_us')
     try:
         # Assuming api_calls.user_active_theme is modified to accept these parameters
         active_theme = api_calls.user_active_theme(
@@ -2816,7 +2821,12 @@ def user_active_theme():
             logo_text=logo_text,
             hero_title=hero_title,
             hero_subtitle=hero_subtitle,
+            facebook=facebook,
+            twitter=twitter,
+            instagram=instagram,
 
+            contact_us=contact_us,
+            about_us=about_us,
             access_token=current_user.id
         )
 

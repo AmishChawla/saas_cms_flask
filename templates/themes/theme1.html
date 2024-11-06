@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Infield Style Theme</title>
+    <link href="{{ url_for('static', filename='assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
 </head>
 <style>
     /* Basic Reset */
@@ -141,11 +142,70 @@
 
 /* Footer */
 .theme1-footer {
-    background: #333;
-    color: #fff;
-    text-align: center;
+    background-color: #2c2c2c;
+    color: #ffffff;
     padding: 20px 0;
+    text-align: center;
 }
+
+.theme1-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer-sections {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.footer-sections div {
+    flex: 1;
+    margin: 10px;
+    min-width: 200px;
+}
+
+.footer-about, .footer-links, .footer-contact {
+    text-align: left;
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin: 5px 0;
+}
+
+.footer-links a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.footer-socials a {
+    color: #ffffff;
+    margin: 0 10px;
+    font-size: 24px;
+    transition: color 0.3s;
+}
+
+.footer-socials a:hover {
+    color: #cccccc;
+}
+
+
+.footer-bottom {
+    border-top: 1px solid #444;
+    padding-top: 10px;
+}
+
 
 .theme1-nav-link {
     text-decoration: none;
@@ -293,10 +353,53 @@
 
     <!-- Footer -->
     <footer class="theme1-footer">
-        <div class="theme1-container">
+    <div class="theme1-container">
+        <div class="footer-sections">
+            <div class="footer-about">
+                <h4>About Us</h4>
+                {% if activated_theme.footer_heading %}
+            <p>{{ activated_theme.footer_heading }}</p>
+            {% else %}
+            <p>Welcome to My Blog – your source for insightful articles, latest news, and inspiration. Join us on our journey to explore new horizons!</p>
+            {% endif %}
+
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="/privacy-policy">Privacy Policy</a></li>
+                    <li><a href="/terms">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                {% if activated_theme.gmail %}
+            <p>{{ activated_theme.gmail }}</p>
+            {% else %}
+                <p>Email: contact@myblog.com</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="footer-socials">
+            {% if activated_theme.facebook %}
+             <a href="{{ activated_theme.facebook }}" target="_blank"><i class="bi bi-facebook"></i></a>
+            {% endif %}
+            {% if activated_theme.twitter %}
+             <a href="{{ activated_theme.twitter }}" target="_blank"><i class="bi bi-twitter-x"></i></a>
+            {% endif %}
+            {% if activated_theme.instagram %}
+             <a href="{{ activated_theme.instagram }}" target="_blank"><i class="bi bi-instagram"></i></a>
+            {% endif %}
+
+        </div>
+        <div class="footer-bottom">
             <p>&copy; 2023 My Blog. All rights reserved.</p>
         </div>
-    </footer>
+    </div>
+</footer>
+
 
 <script>
     async function fetchRandomImageFromPexels(category) {

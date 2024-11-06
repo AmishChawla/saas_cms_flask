@@ -2120,7 +2120,7 @@ def user_theme_activation(access_token, theme_id, theme_name):
 
 
 
-def user_active_theme(access_token, theme_id, theme_name, logo_text, hero_title, hero_subtitle):
+def user_active_theme(access_token, theme_id, theme_name, logo_text, hero_title, hero_subtitle, facebook, twitter, instagram, contact_us, about_us):
     headers = {'Authorization': f'Bearer {access_token}'}
 
     # Prepare data
@@ -2130,10 +2130,15 @@ def user_active_theme(access_token, theme_id, theme_name, logo_text, hero_title,
         "site_title": logo_text,
         "heading": hero_title,
         "description": hero_subtitle,
+        "facebook": facebook,
+        "twitter": twitter,
+        "instagram": instagram,
+        "gmail": contact_us,
+        "footer_heading": about_us,
         "background_image": 'https://example.com/image.jpg'
     }
 
-
+    print(data)
 
     try:
         response = requests.post(constants.BASE_URL + '/user/create_user_theme', json=data, headers=headers)
