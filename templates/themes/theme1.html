@@ -26,6 +26,14 @@
     padding: 0 20px;
 }
 
+.theme1-container-nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
 /* Navigation */
 .theme1-navbar {
     background: #fff;
@@ -42,6 +50,7 @@
     list-style: none;
     display: flex;
     justify-content: flex-end;
+    margin-top: 10px;
 }
 
 .theme1-navbar .theme1-nav-links li {
@@ -255,7 +264,7 @@
 <body class="theme1-body">
     <!-- Navigation -->
     <nav class="theme1-navbar">
-        <div class="theme1-container">
+        <div class="theme1-container-nav">
             {% if activated_theme %}
             <div class="theme1-logo">{{ activated_theme.site_title }}</div>
             {% else %}

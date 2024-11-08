@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infield Style Theme</title>
+    <title>Style Theme 2</title>
     <link href="{{ url_for('static', filename='assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Icons -->
@@ -19,6 +19,95 @@
 </head>
 <!-- Page Header -->
 <style>
+.theme2-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .theme2-container-nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+        /* Navigation */
+        .theme2-navbar {
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+
+        .theme2-navbar .theme2-logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .theme2-navbar .theme2-nav-links {
+            list-style: none;
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .theme2-navbar ul.theme2-nav-links {
+            padding-left: 0;
+        }
+
+        .theme2-navbar .theme2-nav-links li {
+            margin-left: 20px;
+        }
+
+        .theme2-navbar .theme2-nav-links a {
+            color: #333;
+            text-decoration: none;
+            padding: 5px;
+            transition: color 0.3s;
+        }
+
+        .theme2-navbar .theme2-nav-links a:hover {
+            color: #28a745;
+        }
+
+.theme1-dropdown {
+    position: absolute;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    display: none;
+    list-style-type: none;
+}
+
+.theme1-dropdown li {
+    padding: 6px 10px;
+    white-space: nowrap;
+}
+
+.theme1-dropdown li a {
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.theme1-dropdown li a:hover {
+    background-color: #f0f0f0;
+}
+
+.theme1-dropdown-icon {
+    margin-left: 5px;
+    font-size: 0.8em;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.theme1-nav-links > li:hover .theme1-dropdown {
+    display: block;
+}
+
             .custom-button {
           border: none;
           outline: none;
@@ -100,11 +189,162 @@
         }
 
 
+    /* Footer */
+       .theme2-footer {
+    background-color: #333;
+    color: #ffffff;
+    padding: 40px 20px;
+    font-family: Arial, sans-serif;
+}
 
+.theme2-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.footer-brand, .footer-links, .footer-newsletter, .footer-socials {
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+}
+
+.footer-brand h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.footer-brand p {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.footer-links h4, .footer-newsletter h4, .footer-socials h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin: 5px 0;
+}
+
+.footer-links a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    color: #bbbbbb;
+}
+
+.footer-newsletter p {
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.footer-newsletter form {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.footer-newsletter input[type="email"] {
+    padding: 10px;
+    border: none;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+.footer-newsletter button {
+    padding: 10px 20px;
+    background-color: #ff6a00;
+    border: none;
+    border-radius: 3px;
+    color: #ffffff;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.footer-newsletter button:hover {
+    background-color: #e65a00;
+}
+
+.footer-socials a {
+    color: #ffffff;
+    margin: 0 8px;
+    font-size: 20px;
+    transition: color 0.3s;
+}
+
+.footer-socials a:hover {
+    color: #ff6a00;
+}
+
+.footer-bottom {
+    border-top: 1px solid #555;
+    padding-top: 15px;
+    font-size: 14px;
+    text-align: center;
+    width: 100%;
+}
 
 </style>
 
-<div class="col-md-10 ml-0 mb-4 pt-3">
+<nav class="theme2-navbar">
+        <div class="theme2-container-nav">
+            {% if activated_theme %}
+            <div class="theme2-logo">{{ activated_theme.site_title }}</div>
+            {% else %}
+            <div class="theme2-logo">NookStyle 2</div>
+            {% endif %}
+            <ul class="theme2-nav-links">
+                {% if menus %}
+                    {% for menu in menus %}
+                        <li>
+                            <a href="#" class="theme1-nav-link"
+                               onclick="toggleDropdown(event, '{{ menu.id }}')">{{ menu.name }}
+                                {% if pages|selectattr('menu_id', 'equalto', menu.id)|list|length > 0 %}
+                                    <span class="theme1-dropdown-icon">▼</span>
+                                {% endif %}
+                            </a>
+                            <ul class="theme1-dropdown" id="dropdown-{{ menu.id }}" style="display: none;">
+                                {% for page in pages %}
+                                    {% if page.menu_id == menu.id and page.status == 'published' %}
+                                        <li><a href="{{ url_for('get_page_by_id', page_id=page.id) }}">{{ page.title }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li><a href="#" class="theme2-nav-link">Home</a></li>
+                    <li><a href="#" class="theme2-nav-link">About</a></li>
+                    <li><a href="#" class="theme2-nav-link">Blog</a></li>
+                    <li><a href="#" class="theme2-nav-link">Contact</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+
+
+<div class="col-md-10 ml-0 mb-4 pt-3" style="width: 100%;">
     <header class="masthead">
         <div class="container position-relative px-4 px-lg-5">
             <div class="row gx-4 gx-lg-5 justify-content-left">
@@ -279,7 +519,53 @@
 </div>
 
 
+<!-- Footer -->
+    <footer class="theme2-footer">
+    <div class="theme2-container">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>About Us</h3>
+                <p>Your source for design inspiration, home styling tips, and lifestyle trends. Join our community and stay inspired!</p>
+            </div>
 
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-newsletter">
+                <h4>Newsletter</h4>
+                <p>Sign up to receive updates and exclusive content.</p>
+                <form action="#" method="POST">
+                    <input type="email" name="email" placeholder="Enter your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+
+            <div class="footer-socials">
+                <h4>Follow Us</h4>
+                {% if activated_theme.facebook %}
+             <a href="{{ activated_theme.facebook }}" target="_blank"><i class="bi bi-facebook"></i></a>
+            {% endif %}
+            {% if activated_theme.twitter %}
+             <a href="{{ activated_theme.twitter }}" target="_blank"><i class="bi bi-twitter-x"></i></a>
+            {% endif %}
+            {% if activated_theme.instagram %}
+             <a href="{{ activated_theme.instagram }}" target="_blank"><i class="bi bi-instagram"></i></a>
+            {% endif %}
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2024 NookStyle 2. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

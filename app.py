@@ -1894,6 +1894,7 @@ def get_post_by_username_and_slug(username, post_date, post_slug):
     formatted_date = date_obj.strftime('%d %B %Y')
     tags =response["tags"]
 
+    activated_theme = api_calls.get_user_theme_by_username(username=username)
 
     result = api_calls.get_a_post_all_comments(post_id=id)
     if result is None:
@@ -1904,7 +1905,21 @@ def get_post_by_username_and_slug(username, post_date, post_slug):
         comment_like_result = []
     print(comment_like_result)
 
-    return render_template('post.html', ROOT_URL=ROOT_URL, comment_like_result=comment_like_result, result=result, title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags, post_id=id, post_date=post_date, post_slug=post_slug, category_id=category_id)
+    pages = api_calls.get_user_page_by_username(username=username)
+    if pages is None:
+        pages = []  # Set result to an empty list
+
+    menus = api_calls.get_user_menu_by_username(username=username)
+    if menus is None:
+        menus = []  # Set result to an empty list
+    print(menus)
+
+    if activated_theme is not None and activated_theme != {}:
+        return render_template(f'themes/theme{activated_theme["theme_id"]}_post.html', ROOT_URL=ROOT_URL, pages=pages, menus=menus, activated_theme=activated_theme, comment_like_result=comment_like_result, result=result, title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags, post_id=id, post_date=post_date, post_slug=post_slug, category_id=category_id)
+    else:
+        return render_template('post.html', ROOT_URL=ROOT_URL, pages=pages, menus=menus, activated_theme=activated_theme, comment_like_result=comment_like_result, result=result, title=title, content=content, author_name=author_name, created_at=formatted_date, category=category_name, tags=tags, post_id=id, post_date=post_date, post_slug=post_slug, category_id=category_id)
+
+
 
 
 @app.route('/post/<post_id>', methods=['GET', 'POST'])

@@ -25,6 +25,14 @@
             padding: 0 20px;
         }
 
+        .theme2-container-nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
         /* Navigation */
         .theme2-navbar {
             background: #fff;
@@ -42,6 +50,11 @@
             list-style: none;
             display: flex;
             justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .theme2-navbar ul.theme2-nav-links {
+            padding-left: 0;
         }
 
         .theme2-navbar .theme2-nav-links li {
@@ -152,19 +165,126 @@
         }
 
         /* Footer */
-        .theme2-footer {
-            background: #333;
-            color: #fff;
-            text-align: center;
-            padding: 20px 0;
-            margin-top: 20px;
-        }
+       .theme2-footer {
+    background-color: #333;
+    color: #ffffff;
+    padding: 40px 20px;
+    font-family: Arial, sans-serif;
+}
+
+.theme2-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.footer-brand, .footer-links, .footer-newsletter, .footer-socials {
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+}
+
+.footer-brand h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.footer-brand p {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.footer-links h4, .footer-newsletter h4, .footer-socials h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin: 5px 0;
+}
+
+.footer-links a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    color: #bbbbbb;
+}
+
+.footer-newsletter p {
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.footer-newsletter form {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.footer-newsletter input[type="email"] {
+    padding: 10px;
+    border: none;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+.footer-newsletter button {
+    padding: 10px 20px;
+    background-color: #ff6a00;
+    border: none;
+    border-radius: 3px;
+    color: #ffffff;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.footer-newsletter button:hover {
+    background-color: #e65a00;
+}
+
+.footer-socials a {
+    color: #ffffff;
+    margin: 0 8px;
+    font-size: 20px;
+    transition: color 0.3s;
+}
+
+.footer-socials a:hover {
+    color: #ff6a00;
+}
+
+.footer-bottom {
+    border-top: 1px solid #555;
+    padding-top: 15px;
+    font-size: 14px;
+    text-align: center;
+    width: 100%;
+}
+
     </style>
 </head>
 <body>
     <!-- Navigation -->
     <nav class="theme2-navbar">
-        <div class="theme2-container">
+        <div class="theme2-container-nav">
             {% if activated_theme %}
             <div class="theme2-logo">{{ activated_theme.site_title }}</div>
             {% else %}
@@ -230,7 +350,7 @@
                         </button>
                     </form>
                     <p class="post-meta">Posted by {{data.author_name}} on {{ data.created_at.split('T')[0] }}</p>
-                    <img src="https://wallpaperaccess.com/full/4148220.jpg" alt="Portfolio Item" class="theme2-portfolio-img">
+
                 </div>
                 {% endfor %}
             </div>
@@ -265,10 +385,52 @@
 
     <!-- Footer -->
     <footer class="theme2-footer">
-        <div class="theme2-container">
+    <div class="theme2-container">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>About Us</h3>
+                <p>Your source for design inspiration, home styling tips, and lifestyle trends. Join our community and stay inspired!</p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-newsletter">
+                <h4>Newsletter</h4>
+                <p>Sign up to receive updates and exclusive content.</p>
+                <form action="#" method="POST">
+                    <input type="email" name="email" placeholder="Enter your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+
+            <div class="footer-socials">
+                <h4>Follow Us</h4>
+                {% if activated_theme.facebook %}
+             <a href="{{ activated_theme.facebook }}" target="_blank"><i class="bi bi-facebook"></i></a>
+            {% endif %}
+            {% if activated_theme.twitter %}
+             <a href="{{ activated_theme.twitter }}" target="_blank"><i class="bi bi-twitter-x"></i></a>
+            {% endif %}
+            {% if activated_theme.instagram %}
+             <a href="{{ activated_theme.instagram }}" target="_blank"><i class="bi bi-instagram"></i></a>
+            {% endif %}
+            </div>
+        </div>
+
+        <div class="footer-bottom">
             <p>&copy; 2024 NookStyle 2. All rights reserved.</p>
         </div>
-    </footer>
+    </div>
+</footer>
+
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
