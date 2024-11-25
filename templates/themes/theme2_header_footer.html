@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Style Theme 2</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #eef2f3;
+        }
+
+        .theme2-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .theme2-container-nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+        /* Navigation */
+        .theme2-navbar {
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+
+        .theme2-navbar .theme2-logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .theme2-navbar .theme2-nav-links {
+            list-style: none;
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .theme2-navbar ul.theme2-nav-links {
+            padding-left: 0;
+        }
+
+        .theme2-navbar .theme2-nav-links li {
+            margin-left: 20px;
+        }
+
+        .theme2-navbar .theme2-nav-links a {
+            color: #333;
+            text-decoration: none;
+            padding: 5px;
+            transition: color 0.3s;
+        }
+
+        .theme2-navbar .theme2-nav-links a:hover {
+            color: #28a745;
+        }
+
+        /* Hero Section */
+        .theme2-hero {
+            background: url('https://www.pixelstalk.net/wp-content/uploads/2016/06/Free-HD-Solid-Color-Wallpaper-Download.jpg') no-repeat center center/cover;
+            color: #fff;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .theme2-hero h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .theme2-hero p {
+            font-size: 18px;
+        }
+
+        /* Portfolio Section */
+        .theme2-portfolio {
+            padding: 40px 0;
+        }
+
+        .theme2-portfolio h2 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .theme2-portfolio-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .theme2-portfolio-item {
+            background: #fff;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            padding: 20px;
+        }
+
+        .theme2-portfolio-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .theme2-portfolio-img {
+            width: 500px;
+            height: 300px;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+
+        .theme2-portfolio-info {
+            padding: 15px;
+            flex-grow: 1;
+        }
+
+        .theme2-portfolio-info h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .theme2-portfolio-info .post-meta {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        .theme2-portfolio-info p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        /* Load More Button */
+        .theme2-load-more {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .theme2-load-more:hover {
+            background-color: #218838;
+        }
+
+        /* Footer */
+       .theme2-footer {
+    background-color: #333;
+    color: #ffffff;
+    padding: 40px 20px;
+    font-family: Arial, sans-serif;
+}
+
+.theme2-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.footer-brand, .footer-links, .footer-newsletter, .footer-socials {
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+}
+
+.footer-brand h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.footer-brand p {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.footer-links h4, .footer-newsletter h4, .footer-socials h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin: 5px 0;
+}
+
+.footer-links a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    color: #bbbbbb;
+}
+
+.footer-newsletter p {
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.footer-newsletter form {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.footer-newsletter input[type="email"] {
+    padding: 10px;
+    border: none;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+.footer-newsletter button {
+    padding: 10px 20px;
+    background-color: #ff6a00;
+    border: none;
+    border-radius: 3px;
+    color: #ffffff;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.footer-newsletter button:hover {
+    background-color: #e65a00;
+}
+
+.footer-socials a {
+    color: #ffffff;
+    margin: 0 8px;
+    font-size: 20px;
+    transition: color 0.3s;
+}
+
+.footer-socials a:hover {
+    color: #ff6a00;
+}
+
+.footer-bottom {
+    border-top: 1px solid #555;
+    padding-top: 15px;
+    font-size: 14px;
+    text-align: center;
+    width: 100%;
+}
+
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="theme2-navbar">
+        <div class="theme2-container-nav">
+            {% if activated_theme %}
+            <div class="theme2-logo">{{ activated_theme.site_title }}</div>
+            {% else %}
+            <div class="theme2-logo">NookStyle 2</div>
+            {% endif %}
+            <ul class="theme2-nav-links">
+                {% if menus %}
+                    {% for menu in menus %}
+                        <li>
+                            <a href="#" class="theme1-nav-link"
+                               onclick="toggleDropdown(event, '{{ menu.id }}')">{{ menu.name }}
+                                {% if pages|selectattr('menu_id', 'equalto', menu.id)|list|length > 0 %}
+                                    <span class="theme1-dropdown-icon">▼</span>
+                                {% endif %}
+                            </a>
+                            <ul class="theme1-dropdown" id="dropdown-{{ menu.id }}" style="display: none;">
+                                {% for page in pages %}
+                                    {% if page.menu_id == menu.id and page.status == 'published' %}
+                                        <li><a href="{{ url_for('get_page_by_id', page_id=page.id) }}">{{ page.title }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li><a href="#" class="theme2-nav-link">Home</a></li>
+                    <li><a href="#" class="theme2-nav-link">About</a></li>
+                    <li><a href="#" class="theme2-nav-link">Blog</a></li>
+                    <li><a href="#" class="theme2-nav-link">Contact</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    {% block content %}
+       {% endblock %}
+
+
+    <!-- Footer -->
+    <footer class="theme2-footer">
+    <div class="theme2-container">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>About Us</h3>
+                <p>Your source for design inspiration, home styling tips, and lifestyle trends. Join our community and stay inspired!</p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-newsletter">
+                <h4>Newsletter</h4>
+                <p>Sign up to receive updates and exclusive content.</p>
+                <form action="#" method="POST">
+                    <input type="email" name="email" placeholder="Enter your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+
+            <div class="footer-socials">
+                <h4>Follow Us</h4>
+                {% if activated_theme.facebook or activated_theme.twitter or activated_theme.instagram %}
+                {% if activated_theme.facebook %}
+             <a href="{{ activated_theme.facebook }}" target="_blank"><i class="bi bi-facebook"></i></a>
+            {% endif %}
+            {% if activated_theme.twitter %}
+             <a href="{{ activated_theme.twitter }}" target="_blank"><i class="bi bi-twitter-x"></i></a>
+            {% endif %}
+            {% if activated_theme.instagram %}
+             <a href="{{ activated_theme.instagram }}" target="_blank"><i class="bi bi-instagram"></i></a>
+            {% endif %}
+                {% else %}
+            <a href="#" target="_blank"><i class="bi bi-facebook"></i></a>
+            <a href="#" target="_blank"><i class="bi bi-twitter-x"></i></a>
+            <a href="#" target="_blank"><i class="bi bi-instagram"></i></a>
+            {% endif %}
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2024 NookStyle 2. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const portfolioList = document.getElementById("portfolio-list");
+            const loadMoreButton = document.getElementById("load-more");
+            let currentPortfolioIndex = 4; // Assuming 4 items are initially displayed
+
+            loadMoreButton.addEventListener("click", function () {
+                // Here you can implement your load more functionality
+                // For simplicity, I'm going to just show a few more items
+                const newItems = [
+                    {
+                        title: "Project Title 5",
+                        author: "Author Name",
+                        date: "July 30, 2024",
+                        img: "https://via.placeholder.com/500x300"
+                    },
+                    {
+                        title: "Project Title 6",
+                        author: "Author Name",
+                        date: "July 30, 2024",
+                        img: "https://via.placeholder.com/500x300"
+                    }
+                ];
+
+                newItems.forEach(item => {
+                    const itemDiv = document.createElement("div");
+                    itemDiv.className = "theme2-portfolio-item";
+                    itemDiv.innerHTML = `
+                        <h1>${item.title}</h1>
+                        <p class="post-meta">Posted by ${item.author} on ${item.date}</p>
+                        <img src="${item.img}" alt="Portfolio Item" class="theme2-portfolio-img">
+                    `;
+                    portfolioList.appendChild(itemDiv);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

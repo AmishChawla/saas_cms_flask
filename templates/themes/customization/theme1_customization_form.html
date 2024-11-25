@@ -254,10 +254,28 @@
         <nav class="navbar">
             <div class="container">
                 <div class="logo">
-                    <input type="text" name="logo_text" value="MySite">
-                    <input type="hidden" name="theme_name" value="{{ theme_name }}">
-                    <input type="hidden" name="theme_id" value="{{ theme_id }}">
-                </div>
+    <!-- Logo Preview (Image) -->
+    <img id="logo-preview" style="display: none; max-width: 100px;" />
+
+    <!-- Logo Text Input -->
+    <input type="text" id="logo-text-input" name="logo_text" value="MySite" oninput="handleTextInput()" />
+
+    <!-- Logo Image Icon -->
+    <div id="logo-image-icon" onclick="openImageSelector()" style="cursor: pointer;">
+        <i class="bi bi-image"></i>
+    </div>
+
+    <!-- Hidden File Input for Image -->
+    <input type="file" id="logo-image-input" name="logo_image" accept="image/*" style="display: none;" onchange="handleImageSelection()" />
+
+    <!-- Hidden Final Logo Type -->
+    <input type="hidden" name="logo_final" id="logo-final-input" value="text" />
+
+    <!-- Hidden Theme Inputs -->
+    <input type="hidden" name="theme_name" value="{{ theme_name }}">
+    <input type="hidden" name="theme_id" value="{{ theme_id }}">
+</div>
+
                 <ul class="nav-links">
                     {% if menus %}
                     {% for menu in menus %}
@@ -392,6 +410,70 @@
     </form>
 
     <script>
+   // Function to open the image file input when the logo icon is clicked
+function openImageSelector() {
+    document.getElementById('logo-image-input').click();
+}
+
+// Handle image selection
+function handleImageSelection() {
+    const fileInput = document.getElementById('logo-image-input');
+    const file = fileInput.files[0];
+    const logoPreview = document.getElementById('logo-preview');
+    const logoTextInput = document.getElementById('logo-text-input');
+    const logoFinalInput = document.getElementById('logo-final-input');
+    const logoImageIcon = document.getElementById('logo-image-icon');
+
+    if (file) {
+        // Display the selected image
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            logoPreview.src = e.target.result;
+            logoPreview.style.display = 'block'; // Show the image
+        };
+        reader.readAsDataURL(file);
+
+        // Update input states
+        logoTextInput.style.display = 'none'; // Hide text input
+        logoImageIcon.style.display = 'none'; // Hide image icon
+        logoFinalInput.value = 'image'; // Set final type to image
+    }
+}
+
+// Handle text input
+function handleTextInput() {
+    const logoTextInput = document.getElementById('logo-text-input');
+    const logoPreview = document.getElementById('logo-preview');
+    const logoFinalInput = document.getElementById('logo-final-input');
+    const logoImageIcon = document.getElementById('logo-image-icon');
+
+    if (logoTextInput.value.trim()) {
+        // Hide the image and icon if text is being typed
+        logoPreview.style.display = 'none';
+        logoImageIcon.style.display = 'none';
+        logoFinalInput.value = 'text'; // Set final type to text
+    } else {
+        // Show the image icon when the text input is cleared
+        logoImageIcon.style.display = 'block';
+    }
+}
+
+// On form submission, ensure the correct field is sent
+document.getElementById('theme-customization-form').addEventListener('submit', function (event) {
+    const logoFinalInput = document.getElementById('logo-final-input');
+    const logoTextInput = document.getElementById('logo-text-input');
+    const logoImageInput = document.getElementById('logo-image-input');
+
+    if (logoFinalInput.value === 'text' && !logoTextInput.value.trim()) {
+        event.preventDefault();
+        alert('Please provide a logo text or select an image.');
+    }
+});
+
+</script>
+
+
+    <script>
         // Handle file input and display the selected image
 
 
@@ -430,6 +512,11 @@
 
 
     </script>
+<script>
+    // Initialize CKEditor on the textarea by ID
+    CKEDITOR.replace('content');
+</script>
+<script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
 </body>
 
 {% endblock %}

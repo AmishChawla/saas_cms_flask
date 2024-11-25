@@ -2120,9 +2120,10 @@ def user_theme_activation(access_token, theme_id, theme_name):
 
 
 
-def user_active_theme(access_token, theme_id, theme_name, logo_text, hero_title, hero_subtitle, facebook, twitter, instagram, contact_us, about_us):
+def user_active_theme(access_token, theme_id, theme_name, logo_text, logo_image, hero_title, hero_subtitle, facebook, twitter, instagram, contact_us, about_us):
     headers = {'Authorization': f'Bearer {access_token}'}
 
+    print(logo_text)
     # Prepare data
     data = {
         "theme_id": theme_id,
@@ -2134,14 +2135,22 @@ def user_active_theme(access_token, theme_id, theme_name, logo_text, hero_title,
         "twitter": twitter,
         "instagram": instagram,
         "gmail": contact_us,
-        "footer_heading": about_us,
-        "background_image": 'https://example.com/image.jpg'
+        "footer_heading": about_us
     }
 
-    print(data)
+    # Add the logo image as a file
+    files = None
+    if logo_image:
+        mime_type = "image/jpeg" if logo_image.name.endswith(".jpg") or logo_image.name.endswith(".jpeg") else "image/png"
+        files = {"logo_image": (logo_image, open(logo_image, 'rb'), mime_type)}
 
     try:
-        response = requests.post(constants.BASE_URL + '/user/create_user_theme', json=data, headers=headers)
+        response = requests.post(
+            constants.BASE_URL + '/user/create_user_theme',
+            data=data,
+            headers=headers,
+            files=files  # Include the file if provided
+        )
         print("Response Status Code:", response.status_code)
         if response.status_code == 200:
             result = response.json()
@@ -2157,7 +2166,6 @@ def user_active_theme(access_token, theme_id, theme_name, logo_text, hero_title,
         print(f"Timeout Error: {errt}")
     except RequestException as err:
         print(f"An unexpected error occurred: {err}")
-
 
 def get_user_from_google_login(user_info):
 
@@ -2601,6 +2609,22 @@ def update_menu(name, theme_location, menu_id, access_token):
         # Handle any exceptions that occur during the request
         print(f"An error occurred while making the request: {str(e)}")
         return None
+
+def delete_menu(menu_id, access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    try:
+        response = requests.delete(constants.BASE_URL + f'/menus/delete-menu/{menu_id}', headers=headers)
+        return response
+    except requests.exceptions.HTTPError as errh:
+        print(f"HTTP Error: {errh}")
+    except requests.exceptions.ConnectionError as errc:
+        print(f"Error Connecting: {errc}")
+    except requests.exceptions.Timeout as errt:
+        print(f"Timeout Error: {errt}")
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}")
+
+
 
 def update_menu_page(menu_id, page_ids, access_token):
     headers = {'Authorization': f'Bearer {access_token}'}

@@ -1783,8 +1783,9 @@ def theme_detail(theme_name, username, root_url):
         # Redirect back to themes page or show an error if either parameter is missing
         return redirect(url_for('all_themes', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
 
+    activated_theme = api_calls.get_user_theme_by_username(username=username)
     # Pass the theme name and theme ID to the template
-    return render_template('themes/theme_activation.html', ROOT_URL=ROOT_URL, theme_name=theme_name, theme_id=theme_id, result=result)
+    return render_template('themes/theme_activation.html', ROOT_URL=ROOT_URL, activated_theme=activated_theme, theme_name=theme_name, theme_id=theme_id, result=result)
 
 
 
@@ -2810,36 +2811,57 @@ def user_theme_activation():
 
 @app.route("/user-active-theme", methods=['GET', 'POST'])
 def user_active_theme():
-    # Extract form data
     theme_name = request.form.get('theme_name')
     theme_id = request.form.get('theme_id')
 
-    # Ensure that mandatory fields are present
+    # Ensure mandatory fields are present
     if not theme_name or not theme_id:
         return "Theme name and ID are required.", 400
 
-    # Extract optional form data only if they are present
+    # Extract optional data
     logo_text = request.form.get('logo_text')
+    logo_final = request.form.get('logo_final')  # Determines whether logo is text or image
+    logo_image = request.files.get('logo_image')  # Uploaded file
     hero_title = request.form.get('hero_title')
     hero_subtitle = request.form.get('hero_subtitle')
     facebook = request.form.get('facebook')
     twitter = request.form.get('twitter')
     instagram = request.form.get('instagram')
-
     contact_us = request.form.get('contact_us')
     about_us = request.form.get('about_us')
+    print(logo_text)
+    # Handle uploaded image
+    logo_filename = None
+    logo_image_url = None
+    if logo_final == 'image' and logo_image:
+        # Save the uploaded logo image
+        logos_dir = os.path.join("templates", "themes", "logos")
+        os.makedirs(logos_dir, exist_ok=True)  # Ensure the directory exists
+        print(current_user.id)
+        # Secure the filename and save the file
+        logo_filename = secure_filename(f"{current_user.user_id}_{theme_id}_{logo_image.filename}")
+        logo_path = os.path.join(logos_dir, logo_filename)
+
+        try:
+            logo_image.save(logo_path)
+            logo_image_url = f"{logos_dir}/{logo_filename}"
+        except Exception as e:
+            flash(f"Error saving the logo image: {e}", "error")
+            return redirect(request.referrer)
+
+
     try:
-        # Assuming api_calls.user_active_theme is modified to accept these parameters
+        # Assuming `api_calls.user_active_theme` accepts these parameters
         active_theme = api_calls.user_active_theme(
             theme_name=theme_name,
             theme_id=theme_id,
-            logo_text=logo_text,
+            logo_text=logo_text if logo_final == 'text' else None,
+            logo_image=logo_filename if logo_final == 'image' else None,
             hero_title=hero_title,
             hero_subtitle=hero_subtitle,
             facebook=facebook,
             twitter=twitter,
             instagram=instagram,
-
             contact_us=contact_us,
             about_us=about_us,
             access_token=current_user.id
@@ -2848,7 +2870,6 @@ def user_active_theme():
         return redirect(url_for('all_themes', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
     except Exception as e:
         print(e)
-        # Handle the error appropriately
         return "An error occurred while updating the theme.", 500
 
 
@@ -2896,10 +2917,26 @@ def menu_management(username, root_url):
     menus = api_calls.get_user_all_menus(access_token=current_user.id)
     if menus is None:
         menus = []
+        print(menus)
     pages = api_calls.get_user_all_pages(access_token=current_user.id)
     if pages is None:
         pages = []  # Set pages to an empty list
     return render_template('themes/theme_menu.html', ROOT_URL=ROOT_URL, pages=pages, menus=menus)
+
+@app.route("/delete-menu/<menu_id>", methods=['GET', 'POST'])
+@login_required
+def delete_menu(menu_id):
+    result = api_calls.delete_menu(menu_id=menu_id, access_token=current_user.id)
+
+    # Print the status code for debugging purposes
+    print(result.status_code)
+
+    if result.status_code == 200:
+        flash('Post deleted successfully', category='info')
+        return redirect(url_for('menu_management', username=current_user.username, root_url=ROOT_URL.replace('http://', '').replace('/', '')))
+    else:
+        abort(result.status_code)
+
 
 @app.route('/scrapped-jobs')
 @login_required

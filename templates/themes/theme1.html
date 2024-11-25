@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infield Style Theme</title>
-    <link href="{{ url_for('static', filename='assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
-</head>
+{% extends 'themes/theme1_header_footer.html' %}
+
+
+{% block title %}Theme1{% endblock %}
+
+{% block content %}
 <style>
     /* Basic Reset */
 * {
@@ -262,42 +260,7 @@
 
 </style>
 <body class="theme1-body">
-    <!-- Navigation -->
-    <nav class="theme1-navbar">
-        <div class="theme1-container-nav">
-            {% if activated_theme %}
-            <div class="theme1-logo">{{ activated_theme.site_title }}</div>
-            {% else %}
-            <div class="theme1-logo">MySite</div>
-            {% endif %}
-            <ul class="theme1-nav-links">
-                {% if menus %}
-                    {% for menu in menus %}
-                        <li>
-                            <a href="#" class="theme1-nav-link"
-                               onclick="toggleDropdown(event, '{{ menu.id }}')">{{ menu.name }}
-                                {% if pages|selectattr('menu_id', 'equalto', menu.id)|list|length > 0 %}
-                                    <span class="theme1-dropdown-icon">▼</span>
-                                {% endif %}
-                            </a>
-                            <ul class="theme1-dropdown" id="dropdown-{{ menu.id }}" style="display: none;">
-                                {% for page in pages %}
-                                    {% if page.menu_id == menu.id and page.status == 'published' %}
-                                        <li><a href="{{ url_for('get_page_by_id', page_id=page.id) }}">{{ page.title }}</a></li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        </li>
-                    {% endfor %}
-                {% else %}
-                    <li><a href="#" class="theme1-nav-link">Home</a></li>
-                    <li><a href="#" class="theme1-nav-link">About</a></li>
-                    <li><a href="#" class="theme1-nav-link">Blog</a></li>
-                    <li><a href="#" class="theme1-nav-link">Contact</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </nav>
+
 
     <!-- Hero Section -->
     <header class="theme1-hero">
@@ -360,54 +323,7 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="theme1-footer">
-    <div class="theme1-container">
-        <div class="footer-sections">
-            <div class="footer-about">
-                <h4>About Us</h4>
-                {% if activated_theme.footer_heading %}
-            <p>{{ activated_theme.footer_heading }}</p>
-            {% else %}
-            <p>Welcome to My Blog – your source for insightful articles, latest news, and inspiration. Join us on our journey to explore new horizons!</p>
-            {% endif %}
 
-            </div>
-            <div class="footer-links">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="/about">About</a></li>
-                    <li><a href="/contact">Contact</a></li>
-                    <li><a href="/privacy-policy">Privacy Policy</a></li>
-                    <li><a href="/terms">Terms of Service</a></li>
-                </ul>
-            </div>
-            <div class="footer-contact">
-                <h4>Contact Us</h4>
-                {% if activated_theme.gmail %}
-            <p>{{ activated_theme.gmail }}</p>
-            {% else %}
-                <p>Email: contact@myblog.com</p>
-                {% endif %}
-            </div>
-        </div>
-        <div class="footer-socials">
-            {% if activated_theme.facebook %}
-             <a href="{{ activated_theme.facebook }}" target="_blank"><i class="bi bi-facebook"></i></a>
-            {% endif %}
-            {% if activated_theme.twitter %}
-             <a href="{{ activated_theme.twitter }}" target="_blank"><i class="bi bi-twitter-x"></i></a>
-            {% endif %}
-            {% if activated_theme.instagram %}
-             <a href="{{ activated_theme.instagram }}" target="_blank"><i class="bi bi-instagram"></i></a>
-            {% endif %}
-
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2023 My Blog. All rights reserved.</p>
-        </div>
-    </div>
-</footer>
 
 
 <script>
@@ -450,5 +366,7 @@
     });
 </script>
 
+
+
 </body>
-</html>
+{% endblock %}

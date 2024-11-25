@@ -550,24 +550,24 @@
             </div>
 
         </div>
-        <li data-target="#posts-section">Posts <i class="fas fa-chevron-down"></i></li>
-        <div id="posts-section" class="accordion-content">
-            <h3>Posts</h3>
-            <p>Select from the available posts...</p>
-            <!-- Add more content here as needed -->
-        </div>
-        <li data-target="#custom-links-section">Custom Links <i class="fas fa-chevron-down"></i></li>
-        <div id="custom-links-section" class="accordion-content">
-            <h3>Custom Links</h3>
-            <p>Add custom links...</p>
-            <!-- Add more content here as needed -->
-        </div>
-        <li data-target="#categories-section">Categories <i class="fas fa-chevron-down"></i></li>
-        <div id="categories-section" class="accordion-content">
-            <h3>Categories</h3>
-            <p>Select from the available categories...</p>
-            <!-- Add more content here as needed -->
-        </div>
+<!--        <li data-target="#posts-section">Posts <i class="fas fa-chevron-down"></i></li>-->
+<!--        <div id="posts-section" class="accordion-content">-->
+<!--            <h3>Posts</h3>-->
+<!--            <p>Select from the available posts...</p>-->
+<!--            &lt;!&ndash; Add more content here as needed &ndash;&gt;-->
+<!--        </div>-->
+<!--        <li data-target="#custom-links-section">Custom Links <i class="fas fa-chevron-down"></i></li>-->
+<!--        <div id="custom-links-section" class="accordion-content">-->
+<!--            <h3>Custom Links</h3>-->
+<!--            <p>Add custom links...</p>-->
+<!--            &lt;!&ndash; Add more content here as needed &ndash;&gt;-->
+<!--        </div>-->
+<!--        <li data-target="#categories-section">Categories <i class="fas fa-chevron-down"></i></li>-->
+<!--        <div id="categories-section" class="accordion-content">-->
+<!--            <h3>Categories</h3>-->
+<!--            <p>Select from the available categories...</p>-->
+<!--            &lt;!&ndash; Add more content here as needed &ndash;&gt;-->
+<!--        </div>-->
     </ul>
 </div>
 
@@ -595,29 +595,13 @@
              <!-- The menu-structure div -->
             <div class="menu-structure" style="display: none;">
                 <!-- Content for menu structure can be added here -->
-                <h4>Menu Structure</h4>
-                <p>Drag each item into the order you prefer. Click the arrow on the right of the item to reveal additional configuration options.</p>
-                <ul>
-                    <li>Home <i class="fas fa-chevron-down"></i></li>
-                    <li>Features <i class="fas fa-chevron-down"></i></li>
-                    <li>Sample Page <i class="fas fa-chevron-down"></i></li>
-                    <li>Contact us <i class="fas fa-chevron-down"></i></li>
-                    <!-- Add more items or structure as needed -->
-                </ul>
+
 
                 <!-- Menu Settings Section -->
     <div class="menu-settings">
         <h4>Menu Settings</h4>
         <!-- Auto Add Pages -->
-        <div class="menu-settings-items">
-        <p>Auto add pages</p>
-        <div class="menu-settings-label">
-        <label for="auto-add-pages" class="menu-settings-option">
-            <input type="checkbox" id="auto-add-pages" name="auto-add-pages" value="auto add menu">
-            Automatically add new top-level pages to this menu
-        </label>
-        </div>
-        </div>
+
         <br>
 
         <!-- Theme Locations -->
@@ -647,7 +631,7 @@
         </div>
     </div>
                 <div class="menu-footer">
-                    <a href="#">Delete Menu</a>
+                    <a href="#" id="delete-menu-link">Delete Menu</a>
                     <button id="save-btn" class="save-btn" type="submit">Save Menu</button>
                 </div>
             </div>
@@ -913,6 +897,19 @@ document.querySelector('.page-btn[data-target=".page-most-recent"]').click();
     });
 </script>
 
+<script>
+document.querySelector('#menu-select').addEventListener('change', function () {
+    const selectedMenuId = this.value; // Get the selected menu ID
+    const deleteLink = document.querySelector('#delete-menu-link'); // Get the delete link element
 
+    if (selectedMenuId) {
+        // Update the href dynamically with the selected menu ID
+        deleteLink.href = `/delete-menu/${selectedMenuId}`;
+    } else {
+        // Reset the href if no menu is selected
+        deleteLink.href = '#';
+    }
+});
+</script>
 
 {% endblock %}
